@@ -1,0 +1,48 @@
+---
+title: PCA and MDS
+author: Lluís Revilla Sancho
+date: '2019-04-09'
+slug: pca-and-mds
+categories: [r]
+tags:
+  - PCA
+  - MDS
+image:
+  caption: ''
+  focal_point: ''
+---
+
+Many has been said about the relation of PCA and MDS. For instance [this](https://stats.stackexchange.com/a/14017/105234), or [this other one](https://stats.stackexchange.com/a/60759/105234) on the practical point of view, however it has been different. In R we have on base (really stats package) three functions: `prcomp`, `princomp` and `cmdscale`
+
+We will compare the outpot of the three of them on this dataset:
+```{r mock_up}
+set.seed(547913)
+x <- runif(100)
+M <- matrix(x, ncol = 10, nrow = 10)
+```
+
+## prcomp
+
+```{r prcomp}
+stats:::prcomp.default
+M_prcomp <- prcomp(M)
+plot(M_prcomp$rotation)
+```
+
+## princomp
+
+```{r princomp}
+stats:::princomp.default
+M_princomp <- princomp(M)
+plot(M_princomp$scores)
+```
+
+## cmdscale
+
+```{r cmdscale}
+cmdscale
+M_dist <- as.dist(M)
+M_cmdscale <- cmdscale(M_dist)
+plot(M_cmdscale)
+```
+

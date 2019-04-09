@@ -36,6 +36,232 @@
     </item>
     
     <item>
+      <title>PCA and MDS</title>
+      <link>/post/pca-and-mds/</link>
+      <pubDate>Tue, 09 Apr 2019 00:00:00 +0000</pubDate>
+      
+      <guid>/post/pca-and-mds/</guid>
+      <description>
+
+
+&lt;p&gt;Many has been said about the relation of PCA and MDS. For instance &lt;a href=&#34;https://stats.stackexchange.com/a/14017/105234&#34;&gt;this&lt;/a&gt;, or &lt;a href=&#34;https://stats.stackexchange.com/a/60759/105234&#34;&gt;this other one&lt;/a&gt; on the practical point of view, however it has been different. In R we have on base (really stats package) three functions: &lt;code&gt;prcomp&lt;/code&gt;, &lt;code&gt;princomp&lt;/code&gt; and &lt;code&gt;cmdscale&lt;/code&gt;&lt;/p&gt;
+&lt;p&gt;We will compare the outpot of the three of them on this dataset:&lt;/p&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;set.seed(547913)
+x &amp;lt;- runif(100)
+M &amp;lt;- matrix(x, ncol = 10, nrow = 10)&lt;/code&gt;&lt;/pre&gt;
+&lt;div id=&#34;prcomp&#34; class=&#34;section level2&#34;&gt;
+&lt;h2&gt;prcomp&lt;/h2&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;stats:::prcomp.default&lt;/code&gt;&lt;/pre&gt;
+&lt;pre&gt;&lt;code&gt;## function (x, retx = TRUE, center = TRUE, scale. = FALSE, tol = NULL, 
+##     rank. = NULL, ...) 
+## {
+##     chkDots(...)
+##     x &amp;lt;- as.matrix(x)
+##     x &amp;lt;- scale(x, center = center, scale = scale.)
+##     cen &amp;lt;- attr(x, &amp;quot;scaled:center&amp;quot;)
+##     sc &amp;lt;- attr(x, &amp;quot;scaled:scale&amp;quot;)
+##     if (any(sc == 0)) 
+##         stop(&amp;quot;cannot rescale a constant/zero column to unit variance&amp;quot;)
+##     n &amp;lt;- nrow(x)
+##     p &amp;lt;- ncol(x)
+##     k &amp;lt;- if (!is.null(rank.)) {
+##         stopifnot(length(rank.) == 1, is.finite(rank.), as.integer(rank.) &amp;gt; 
+##             0)
+##         min(as.integer(rank.), n, p)
+##     }
+##     else min(n, p)
+##     s &amp;lt;- svd(x, nu = 0, nv = k)
+##     j &amp;lt;- seq_len(k)
+##     s$d &amp;lt;- s$d/sqrt(max(1, n - 1))
+##     if (!is.null(tol)) {
+##         rank &amp;lt;- sum(s$d &amp;gt; (s$d[1L] * tol))
+##         if (rank &amp;lt; k) {
+##             j &amp;lt;- seq_len(k &amp;lt;- rank)
+##             s$v &amp;lt;- s$v[, j, drop = FALSE]
+##         }
+##     }
+##     dimnames(s$v) &amp;lt;- list(colnames(x), paste0(&amp;quot;PC&amp;quot;, j))
+##     r &amp;lt;- list(sdev = s$d, rotation = s$v, center = if (is.null(cen)) FALSE else cen, 
+##         scale = if (is.null(sc)) FALSE else sc)
+##     if (retx) 
+##         r$x &amp;lt;- x %*% s$v
+##     class(r) &amp;lt;- &amp;quot;prcomp&amp;quot;
+##     r
+## }
+## &amp;lt;bytecode: 0x556a44b2d908&amp;gt;
+## &amp;lt;environment: namespace:stats&amp;gt;&lt;/code&gt;&lt;/pre&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;M_prcomp &amp;lt;- prcomp(M)
+plot(M_prcomp$rotation)&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;&lt;img src=&#34;./post/2019-04-09-pca-and-mds_files/figure-html/prcomp-1.png&#34; width=&#34;672&#34; /&gt;&lt;/p&gt;
+&lt;/div&gt;
+&lt;div id=&#34;princomp&#34; class=&#34;section level2&#34;&gt;
+&lt;h2&gt;princomp&lt;/h2&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;stats:::princomp.default&lt;/code&gt;&lt;/pre&gt;
+&lt;pre&gt;&lt;code&gt;## function (x, cor = FALSE, scores = TRUE, covmat = NULL, subset = rep_len(TRUE, 
+##     nrow(as.matrix(x))), fix_sign = TRUE, ...) 
+## {
+##     chkDots(...)
+##     cl &amp;lt;- match.call()
+##     cl[[1L]] &amp;lt;- as.name(&amp;quot;princomp&amp;quot;)
+##     z &amp;lt;- if (!missing(x)) 
+##         as.matrix(x)[subset, , drop = FALSE]
+##     if (is.list(covmat)) {
+##         if (any(is.na(match(c(&amp;quot;cov&amp;quot;, &amp;quot;n.obs&amp;quot;), names(covmat))))) 
+##             stop(&amp;quot;&amp;#39;covmat&amp;#39; is not a valid covariance list&amp;quot;)
+##         cv &amp;lt;- covmat$cov
+##         n.obs &amp;lt;- covmat$n.obs
+##         cen &amp;lt;- covmat$center
+##     }
+##     else if (is.matrix(covmat)) {
+##         if (!missing(x)) 
+##             warning(&amp;quot;both &amp;#39;x&amp;#39; and &amp;#39;covmat&amp;#39; were supplied: &amp;#39;x&amp;#39; will be ignored&amp;quot;)
+##         cv &amp;lt;- covmat
+##         n.obs &amp;lt;- NA
+##         cen &amp;lt;- NULL
+##     }
+##     else if (is.null(covmat)) {
+##         dn &amp;lt;- dim(z)
+##         if (dn[1L] &amp;lt; dn[2L]) 
+##             stop(&amp;quot;&amp;#39;princomp&amp;#39; can only be used with more units than variables&amp;quot;)
+##         covmat &amp;lt;- cov.wt(z)
+##         n.obs &amp;lt;- covmat$n.obs
+##         cv &amp;lt;- covmat$cov * (1 - 1/n.obs)
+##         cen &amp;lt;- covmat$center
+##     }
+##     else stop(&amp;quot;&amp;#39;covmat&amp;#39; is of unknown type&amp;quot;)
+##     if (!is.numeric(cv)) 
+##         stop(&amp;quot;PCA applies only to numerical variables&amp;quot;)
+##     if (cor) {
+##         sds &amp;lt;- sqrt(diag(cv))
+##         if (any(sds == 0)) 
+##             stop(&amp;quot;cannot use &amp;#39;cor = TRUE&amp;#39; with a constant variable&amp;quot;)
+##         cv &amp;lt;- cv/(sds %o% sds)
+##     }
+##     edc &amp;lt;- eigen(cv, symmetric = TRUE)
+##     ev &amp;lt;- edc$values
+##     if (any(neg &amp;lt;- ev &amp;lt; 0)) {
+##         if (any(ev[neg] &amp;lt; -9 * .Machine$double.eps * ev[1L])) 
+##             stop(&amp;quot;covariance matrix is not non-negative definite&amp;quot;)
+##         else ev[neg] &amp;lt;- 0
+##     }
+##     cn &amp;lt;- paste0(&amp;quot;Comp.&amp;quot;, 1L:ncol(cv))
+##     names(ev) &amp;lt;- cn
+##     dimnames(edc$vectors) &amp;lt;- if (missing(x)) 
+##         list(dimnames(cv)[[2L]], cn)
+##     else list(dimnames(x)[[2L]], cn)
+##     sdev &amp;lt;- sqrt(ev)
+##     sc &amp;lt;- setNames(if (cor) 
+##         sds
+##     else rep.int(1, ncol(cv)), colnames(cv))
+##     fix &amp;lt;- if (fix_sign) 
+##         function(A) {
+##             mysign &amp;lt;- function(x) ifelse(x &amp;lt; 0, -1, 1)
+##             A[] &amp;lt;- apply(A, 2L, function(x) x * mysign(x[1L]))
+##             A
+##         }
+##     else identity
+##     ev &amp;lt;- fix(edc$vectors)
+##     scr &amp;lt;- if (scores &amp;amp;&amp;amp; !missing(x) &amp;amp;&amp;amp; !is.null(cen)) 
+##         scale(z, center = cen, scale = sc) %*% ev
+##     if (is.null(cen)) 
+##         cen &amp;lt;- rep(NA_real_, nrow(cv))
+##     edc &amp;lt;- list(sdev = sdev, loadings = structure(ev, class = &amp;quot;loadings&amp;quot;), 
+##         center = cen, scale = sc, n.obs = n.obs, scores = scr, 
+##         call = cl)
+##     class(edc) &amp;lt;- &amp;quot;princomp&amp;quot;
+##     edc
+## }
+## &amp;lt;bytecode: 0x556a42d24900&amp;gt;
+## &amp;lt;environment: namespace:stats&amp;gt;&lt;/code&gt;&lt;/pre&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;M_princomp &amp;lt;- princomp(M)
+plot(M_princomp$scores)&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;&lt;img src=&#34;./post/2019-04-09-pca-and-mds_files/figure-html/princomp-1.png&#34; width=&#34;672&#34; /&gt;&lt;/p&gt;
+&lt;/div&gt;
+&lt;div id=&#34;cmdscale&#34; class=&#34;section level2&#34;&gt;
+&lt;h2&gt;cmdscale&lt;/h2&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;cmdscale&lt;/code&gt;&lt;/pre&gt;
+&lt;pre&gt;&lt;code&gt;## function (d, k = 2, eig = FALSE, add = FALSE, x.ret = FALSE, 
+##     list. = eig || add || x.ret) 
+## {
+##     if (anyNA(d)) 
+##         stop(&amp;quot;NA values not allowed in &amp;#39;d&amp;#39;&amp;quot;)
+##     if (!list.) {
+##         if (eig) 
+##             warning(&amp;quot;eig=TRUE is disregarded when list.=FALSE&amp;quot;)
+##         if (x.ret) 
+##             warning(&amp;quot;x.ret=TRUE is disregarded when list.=FALSE&amp;quot;)
+##     }
+##     if (is.null(n &amp;lt;- attr(d, &amp;quot;Size&amp;quot;))) {
+##         if (add) 
+##             d &amp;lt;- as.matrix(d)
+##         x &amp;lt;- as.matrix(d^2)
+##         storage.mode(x) &amp;lt;- &amp;quot;double&amp;quot;
+##         if ((n &amp;lt;- nrow(x)) != ncol(x)) 
+##             stop(&amp;quot;distances must be result of &amp;#39;dist&amp;#39; or a square matrix&amp;quot;)
+##         rn &amp;lt;- rownames(x)
+##     }
+##     else {
+##         rn &amp;lt;- attr(d, &amp;quot;Labels&amp;quot;)
+##         x &amp;lt;- matrix(0, n, n)
+##         if (add) 
+##             d0 &amp;lt;- x
+##         x[row(x) &amp;gt; col(x)] &amp;lt;- d^2
+##         x &amp;lt;- x + t(x)
+##         if (add) {
+##             d0[row(x) &amp;gt; col(x)] &amp;lt;- d
+##             d &amp;lt;- d0 + t(d0)
+##         }
+##     }
+##     n &amp;lt;- as.integer(n)
+##     if (is.na(n) || n &amp;gt; 46340) 
+##         stop(gettextf(&amp;quot;invalid value of %s&amp;quot;, &amp;quot;&amp;#39;n&amp;#39;&amp;quot;), domain = NA)
+##     if ((k &amp;lt;- as.integer(k)) &amp;gt; n - 1 || k &amp;lt; 1) 
+##         stop(&amp;quot;&amp;#39;k&amp;#39; must be in {1, 2, ..  n - 1}&amp;quot;)
+##     x &amp;lt;- .Call(C_DoubleCentre, x)
+##     if (add) {
+##         i2 &amp;lt;- n + (i &amp;lt;- 1L:n)
+##         Z &amp;lt;- matrix(0, 2L * n, 2L * n)
+##         Z[cbind(i2, i)] &amp;lt;- -1
+##         Z[i, i2] &amp;lt;- -x
+##         Z[i2, i2] &amp;lt;- .Call(C_DoubleCentre, 2 * d)
+##         e &amp;lt;- eigen(Z, symmetric = FALSE, only.values = TRUE)$values
+##         add.c &amp;lt;- max(Re(e))
+##         x &amp;lt;- matrix(double(n * n), n, n)
+##         non.diag &amp;lt;- row(d) != col(d)
+##         x[non.diag] &amp;lt;- (d[non.diag] + add.c)^2
+##         x &amp;lt;- .Call(C_DoubleCentre, x)
+##     }
+##     e &amp;lt;- eigen(-x/2, symmetric = TRUE)
+##     ev &amp;lt;- e$values[seq_len(k)]
+##     evec &amp;lt;- e$vectors[, seq_len(k), drop = FALSE]
+##     k1 &amp;lt;- sum(ev &amp;gt; 0)
+##     if (k1 &amp;lt; k) {
+##         warning(gettextf(&amp;quot;only %d of the first %d eigenvalues are &amp;gt; 0&amp;quot;, 
+##             k1, k), domain = NA)
+##         evec &amp;lt;- evec[, ev &amp;gt; 0, drop = FALSE]
+##         ev &amp;lt;- ev[ev &amp;gt; 0]
+##     }
+##     points &amp;lt;- evec * rep(sqrt(ev), each = n)
+##     dimnames(points) &amp;lt;- list(rn, NULL)
+##     if (list.) {
+##         evalus &amp;lt;- e$values
+##         list(points = points, eig = if (eig) evalus, x = if (x.ret) x, 
+##             ac = if (add) add.c else 0, GOF = sum(ev)/c(sum(abs(evalus)), 
+##                 sum(pmax(evalus, 0))))
+##     }
+##     else points
+## }
+## &amp;lt;bytecode: 0x556a449626c0&amp;gt;
+## &amp;lt;environment: namespace:stats&amp;gt;&lt;/code&gt;&lt;/pre&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;M_dist &amp;lt;- as.dist(M)
+M_cmdscale &amp;lt;- cmdscale(M_dist)
+plot(M_cmdscale)&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;&lt;img src=&#34;./post/2019-04-09-pca-and-mds_files/figure-html/cmdscale-1.png&#34; width=&#34;672&#34; /&gt;&lt;/p&gt;
+&lt;/div&gt;
+</description>
+    </item>
+    
+    <item>
       <title>Display Jupyter Notebooks with Academic</title>
       <link>/post/jupyter/</link>
       <pubDate>Tue, 05 Feb 2019 00:00:00 +0000</pubDate>

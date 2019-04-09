@@ -1,0 +1,955 @@
+<!DOCTYPE html>
+<html lang="en-us">
+<head>
+
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="generator" content="Source Themes Academic 4.1.0">
+  <meta name="generator" content="Hugo 0.54.0" />
+
+  
+
+  
+  
+  
+  
+  
+    
+    
+    
+  
+  
+
+  <meta name="author" content="Lluís Revilla Sancho">
+
+  
+  
+  
+    
+  
+  <meta name="description" content="Many has been said about the relation of PCA and MDS. For instance this, or this other one on the practical point of view, however it has been different. In R we have on base (really stats package) three functions: prcomp, princomp and cmdscale
+We will compare the outpot of the three of them on this dataset:
+set.seed(547913) x &lt;- runif(100) M &lt;- matrix(x, ncol = 10, nrow = 10) prcomp stats:::prcomp.">
+
+  
+  <link rel="alternate" hreflang="en-us" href="../../post/pca-and-mds/">
+
+  
+
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+  
+  
+  <meta name="theme-color" content="#2962ff">
+  
+
+  
+  
+  
+  
+    
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/4.1.3/css/bootstrap.min.css" integrity="sha256-eSi1q2PG6J7g7ib17yAaWMcrr5GrtohYChqibrV7PBE=" crossorigin="anonymous">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/academicons/1.8.6/css/academicons.min.css" integrity="sha256-uFVgMKfistnJAfoCUQigIl+JfUaP47GrRKjf6CTPVmw=" crossorigin="anonymous">
+    <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.6.0/css/all.css" integrity="sha384-aOkxzJ5uQz7WBObEZcHvV5JvRW3TUc2rNPA7pe3AwnsUohiw1Vj2Rgx2KSOkF5+h" crossorigin="anonymous">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/fancybox/3.2.5/jquery.fancybox.min.css" integrity="sha256-ygkqlh3CYSUri3LhQxzdcm0n1EQvH2Y+U5S2idbLtxs=" crossorigin="anonymous">
+
+    
+    
+    
+      
+    
+    
+      
+      
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/styles/github.min.css" crossorigin="anonymous">
+      
+    
+
+    
+
+    
+
+  
+
+  
+  
+  <link rel="stylesheet" href="//fonts.googleapis.com/css?family=Montserrat:400,700|Roboto:400,400italic,700|Roboto+Mono">
+  
+
+  <link rel="stylesheet" href="../../styles.css">
+  
+
+  
+  
+  
+
+  
+  <link rel="alternate" href="../../index.xml" type="application/rss+xml" title="B101nfo">
+  <link rel="feed" href="../../index.xml" type="application/rss+xml" title="B101nfo">
+  
+
+  <link rel="manifest" href="../../site.webmanifest">
+  <link rel="icon" type="image/png" href="../../img/icon.png">
+  <link rel="apple-touch-icon" type="image/png" href="../../img/icon-192.png">
+
+  <link rel="canonical" href="../../post/pca-and-mds/">
+
+  
+  
+  
+  
+    
+    
+  
+  <meta property="twitter:card" content="summary">
+  
+  <meta property="twitter:site" content="@Lluis_Rev">
+  <meta property="twitter:creator" content="@Lluis_Rev">
+  
+  <meta property="og:site_name" content="B101nfo">
+  <meta property="og:url" content="/post/pca-and-mds/">
+  <meta property="og:title" content="PCA and MDS | B101nfo">
+  <meta property="og:description" content="Many has been said about the relation of PCA and MDS. For instance this, or this other one on the practical point of view, however it has been different. In R we have on base (really stats package) three functions: prcomp, princomp and cmdscale
+We will compare the outpot of the three of them on this dataset:
+set.seed(547913) x &lt;- runif(100) M &lt;- matrix(x, ncol = 10, nrow = 10) prcomp stats:::prcomp."><meta property="og:image" content="/img/icon-192.png">
+  <meta property="og:locale" content="en-us">
+  
+  <meta property="article:published_time" content="2019-04-09T00:00:00&#43;00:00">
+  
+  <meta property="article:modified_time" content="2019-04-09T00:00:00&#43;00:00">
+  
+
+  
+
+  
+
+  <title>PCA and MDS | B101nfo</title>
+
+</head>
+<body id="top" data-spy="scroll" data-target="#TableOfContents" data-offset="71" >
+  <aside class="search-results" id="search">
+  <div class="container">
+    <section class="search-header">
+
+      <div class="row no-gutters justify-content-between mb-3">
+        <div class="col-6">
+          <h1>Search</h1>
+        </div>
+        <div class="col-6 col-search-close">
+          <a class="js-search" href="#"><i class="fas fa-times-circle text-muted" aria-hidden="true"></i></a>
+        </div>
+      </div>
+
+      <div id="search-box">
+        
+        <input name="q" id="search-query" placeholder="Search..." autocapitalize="off"
+        autocomplete="off" autocorrect="off" role="textbox" spellcheck="false" type="search">
+        
+      </div>
+
+    </section>
+    <section class="section-search-results">
+
+      <div id="search-hits">
+        
+      </div>
+
+    </section>
+  </div>
+</aside>
+
+
+<nav class="navbar navbar-light fixed-top navbar-expand-lg py-0" id="navbar-main">
+  <div class="container">
+
+    
+      <a class="navbar-brand" href="../../">B101nfo</a>
+      
+      <button type="button" class="navbar-toggler" data-toggle="collapse"
+              data-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
+        <span><i class="fas fa-bars"></i></span>
+      </button>
+      
+
+    
+    <div class="collapse navbar-collapse" id="navbar">
+
+      
+      
+      <ul class="navbar-nav mr-auto">
+        
+
+        
+
+        
+        
+        
+          
+        
+
+        <li class="nav-item">
+          <a class="nav-link" href="../../#about">
+            
+            <span>Home</span>
+            
+          </a>
+        </li>
+
+        
+        
+
+        
+
+        
+        
+        
+          
+        
+
+        <li class="nav-item">
+          <a class="nav-link" href="../../#posts">
+            
+            <span>Posts</span>
+            
+          </a>
+        </li>
+
+        
+        
+
+        
+
+        
+        
+        
+          
+        
+
+        <li class="nav-item">
+          <a class="nav-link" href="../../publication/">
+            
+            <span>Publications</span>
+            
+          </a>
+        </li>
+
+        
+        
+
+        
+
+        
+        
+        
+          
+        
+
+        <li class="nav-item">
+          <a class="nav-link" href="../../software/">
+            
+            <span>Software</span>
+            
+          </a>
+        </li>
+
+        
+        
+
+      
+      </ul>
+      <ul class="navbar-nav ml-auto">
+      
+
+        
+
+        
+        <li class="nav-item">
+          <a class="nav-link js-search" href="#"><i class="fas fa-search" aria-hidden="true"></i></a>
+        </li>
+        
+
+        
+
+        
+        <li class="nav-item">
+          <a class="nav-link js-dark-toggle" href="#"><i class="fas fa-moon" aria-hidden="true"></i></a>
+        </li>
+        
+
+      </ul>
+
+    </div>
+  </div>
+</nav>
+
+
+<article class="article" itemscope itemtype="http://schema.org/Article">
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+  
+  
+  
+<div class="article-container pt-3">
+  <h1 itemprop="name">PCA and MDS</h1>
+
+  
+
+  
+    
+
+
+
+<meta content="2019-04-09 00:00:00 &#43;0000 UTC" itemprop="datePublished">
+<meta content="2019-04-09 00:00:00 &#43;0000 UTC" itemprop="dateModified">
+
+<div class="article-metadata">
+
+  
+  
+
+  
+  <span class="article-date">
+    
+    
+      
+    
+    <time>Apr 9, 2019</time>
+  </span>
+  
+
+  
+
+  
+  <span class="middot-divider"></span>
+  <span class="article-reading-time">
+    6 min read
+  </span>
+  
+
+  
+  
+
+  
+  
+  
+  <span class="middot-divider"></span>
+  <span class="article-categories">
+    <i class="fas fa-folder"></i>
+    
+    <a href="../../categories/r/">r</a>
+    
+  </span>
+  
+  
+
+  
+    
+<div class="share-box" aria-hidden="true">
+  <ul class="share">
+    <li>
+      <a class="twitter"
+         href="https://twitter.com/intent/tweet?text=PCA%20and%20MDS&amp;url=%2fpost%2fpca-and-mds%2f"
+         target="_blank" rel="noopener">
+        <i class="fab fa-twitter"></i>
+      </a>
+    </li>
+    <li>
+      <a class="facebook"
+         href="https://www.facebook.com/sharer.php?u=%2fpost%2fpca-and-mds%2f"
+         target="_blank" rel="noopener">
+        <i class="fab fa-facebook-f"></i>
+      </a>
+    </li>
+    <li>
+      <a class="linkedin"
+         href="https://www.linkedin.com/shareArticle?mini=true&amp;url=%2fpost%2fpca-and-mds%2f&amp;title=PCA%20and%20MDS"
+         target="_blank" rel="noopener">
+        <i class="fab fa-linkedin-in"></i>
+      </a>
+    </li>
+    <li>
+      <a class="weibo"
+         href="http://service.weibo.com/share/share.php?url=%2fpost%2fpca-and-mds%2f&amp;title=PCA%20and%20MDS"
+         target="_blank" rel="noopener">
+        <i class="fab fa-weibo"></i>
+      </a>
+    </li>
+    <li>
+      <a class="email"
+         href="mailto:?subject=PCA%20and%20MDS&amp;body=%2fpost%2fpca-and-mds%2f">
+        <i class="fas fa-envelope"></i>
+      </a>
+    </li>
+  </ul>
+</div>
+
+
+  
+
+</div>
+
+    
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+</div>
+
+
+
+  <div class="article-container">
+
+    <div class="article-style" itemprop="articleBody">
+      
+
+
+<p>Many has been said about the relation of PCA and MDS. For instance <a href="https://stats.stackexchange.com/a/14017/105234">this</a>, or <a href="https://stats.stackexchange.com/a/60759/105234">this other one</a> on the practical point of view, however it has been different. In R we have on base (really stats package) three functions: <code>prcomp</code>, <code>princomp</code> and <code>cmdscale</code></p>
+<p>We will compare the outpot of the three of them on this dataset:</p>
+<pre class="r"><code>set.seed(547913)
+x &lt;- runif(100)
+M &lt;- matrix(x, ncol = 10, nrow = 10)</code></pre>
+<div id="prcomp" class="section level2">
+<h2>prcomp</h2>
+<pre class="r"><code>stats:::prcomp.default</code></pre>
+<pre><code>## function (x, retx = TRUE, center = TRUE, scale. = FALSE, tol = NULL, 
+##     rank. = NULL, ...) 
+## {
+##     chkDots(...)
+##     x &lt;- as.matrix(x)
+##     x &lt;- scale(x, center = center, scale = scale.)
+##     cen &lt;- attr(x, &quot;scaled:center&quot;)
+##     sc &lt;- attr(x, &quot;scaled:scale&quot;)
+##     if (any(sc == 0)) 
+##         stop(&quot;cannot rescale a constant/zero column to unit variance&quot;)
+##     n &lt;- nrow(x)
+##     p &lt;- ncol(x)
+##     k &lt;- if (!is.null(rank.)) {
+##         stopifnot(length(rank.) == 1, is.finite(rank.), as.integer(rank.) &gt; 
+##             0)
+##         min(as.integer(rank.), n, p)
+##     }
+##     else min(n, p)
+##     s &lt;- svd(x, nu = 0, nv = k)
+##     j &lt;- seq_len(k)
+##     s$d &lt;- s$d/sqrt(max(1, n - 1))
+##     if (!is.null(tol)) {
+##         rank &lt;- sum(s$d &gt; (s$d[1L] * tol))
+##         if (rank &lt; k) {
+##             j &lt;- seq_len(k &lt;- rank)
+##             s$v &lt;- s$v[, j, drop = FALSE]
+##         }
+##     }
+##     dimnames(s$v) &lt;- list(colnames(x), paste0(&quot;PC&quot;, j))
+##     r &lt;- list(sdev = s$d, rotation = s$v, center = if (is.null(cen)) FALSE else cen, 
+##         scale = if (is.null(sc)) FALSE else sc)
+##     if (retx) 
+##         r$x &lt;- x %*% s$v
+##     class(r) &lt;- &quot;prcomp&quot;
+##     r
+## }
+## &lt;bytecode: 0x556a44b2d908&gt;
+## &lt;environment: namespace:stats&gt;</code></pre>
+<pre class="r"><code>M_prcomp &lt;- prcomp(M)
+plot(M_prcomp$rotation)</code></pre>
+<p><img src="../../post/2019-04-09-pca-and-mds_files/figure-html/prcomp-1.png" width="672" /></p>
+</div>
+<div id="princomp" class="section level2">
+<h2>princomp</h2>
+<pre class="r"><code>stats:::princomp.default</code></pre>
+<pre><code>## function (x, cor = FALSE, scores = TRUE, covmat = NULL, subset = rep_len(TRUE, 
+##     nrow(as.matrix(x))), fix_sign = TRUE, ...) 
+## {
+##     chkDots(...)
+##     cl &lt;- match.call()
+##     cl[[1L]] &lt;- as.name(&quot;princomp&quot;)
+##     z &lt;- if (!missing(x)) 
+##         as.matrix(x)[subset, , drop = FALSE]
+##     if (is.list(covmat)) {
+##         if (any(is.na(match(c(&quot;cov&quot;, &quot;n.obs&quot;), names(covmat))))) 
+##             stop(&quot;&#39;covmat&#39; is not a valid covariance list&quot;)
+##         cv &lt;- covmat$cov
+##         n.obs &lt;- covmat$n.obs
+##         cen &lt;- covmat$center
+##     }
+##     else if (is.matrix(covmat)) {
+##         if (!missing(x)) 
+##             warning(&quot;both &#39;x&#39; and &#39;covmat&#39; were supplied: &#39;x&#39; will be ignored&quot;)
+##         cv &lt;- covmat
+##         n.obs &lt;- NA
+##         cen &lt;- NULL
+##     }
+##     else if (is.null(covmat)) {
+##         dn &lt;- dim(z)
+##         if (dn[1L] &lt; dn[2L]) 
+##             stop(&quot;&#39;princomp&#39; can only be used with more units than variables&quot;)
+##         covmat &lt;- cov.wt(z)
+##         n.obs &lt;- covmat$n.obs
+##         cv &lt;- covmat$cov * (1 - 1/n.obs)
+##         cen &lt;- covmat$center
+##     }
+##     else stop(&quot;&#39;covmat&#39; is of unknown type&quot;)
+##     if (!is.numeric(cv)) 
+##         stop(&quot;PCA applies only to numerical variables&quot;)
+##     if (cor) {
+##         sds &lt;- sqrt(diag(cv))
+##         if (any(sds == 0)) 
+##             stop(&quot;cannot use &#39;cor = TRUE&#39; with a constant variable&quot;)
+##         cv &lt;- cv/(sds %o% sds)
+##     }
+##     edc &lt;- eigen(cv, symmetric = TRUE)
+##     ev &lt;- edc$values
+##     if (any(neg &lt;- ev &lt; 0)) {
+##         if (any(ev[neg] &lt; -9 * .Machine$double.eps * ev[1L])) 
+##             stop(&quot;covariance matrix is not non-negative definite&quot;)
+##         else ev[neg] &lt;- 0
+##     }
+##     cn &lt;- paste0(&quot;Comp.&quot;, 1L:ncol(cv))
+##     names(ev) &lt;- cn
+##     dimnames(edc$vectors) &lt;- if (missing(x)) 
+##         list(dimnames(cv)[[2L]], cn)
+##     else list(dimnames(x)[[2L]], cn)
+##     sdev &lt;- sqrt(ev)
+##     sc &lt;- setNames(if (cor) 
+##         sds
+##     else rep.int(1, ncol(cv)), colnames(cv))
+##     fix &lt;- if (fix_sign) 
+##         function(A) {
+##             mysign &lt;- function(x) ifelse(x &lt; 0, -1, 1)
+##             A[] &lt;- apply(A, 2L, function(x) x * mysign(x[1L]))
+##             A
+##         }
+##     else identity
+##     ev &lt;- fix(edc$vectors)
+##     scr &lt;- if (scores &amp;&amp; !missing(x) &amp;&amp; !is.null(cen)) 
+##         scale(z, center = cen, scale = sc) %*% ev
+##     if (is.null(cen)) 
+##         cen &lt;- rep(NA_real_, nrow(cv))
+##     edc &lt;- list(sdev = sdev, loadings = structure(ev, class = &quot;loadings&quot;), 
+##         center = cen, scale = sc, n.obs = n.obs, scores = scr, 
+##         call = cl)
+##     class(edc) &lt;- &quot;princomp&quot;
+##     edc
+## }
+## &lt;bytecode: 0x556a42d24900&gt;
+## &lt;environment: namespace:stats&gt;</code></pre>
+<pre class="r"><code>M_princomp &lt;- princomp(M)
+plot(M_princomp$scores)</code></pre>
+<p><img src="../../post/2019-04-09-pca-and-mds_files/figure-html/princomp-1.png" width="672" /></p>
+</div>
+<div id="cmdscale" class="section level2">
+<h2>cmdscale</h2>
+<pre class="r"><code>cmdscale</code></pre>
+<pre><code>## function (d, k = 2, eig = FALSE, add = FALSE, x.ret = FALSE, 
+##     list. = eig || add || x.ret) 
+## {
+##     if (anyNA(d)) 
+##         stop(&quot;NA values not allowed in &#39;d&#39;&quot;)
+##     if (!list.) {
+##         if (eig) 
+##             warning(&quot;eig=TRUE is disregarded when list.=FALSE&quot;)
+##         if (x.ret) 
+##             warning(&quot;x.ret=TRUE is disregarded when list.=FALSE&quot;)
+##     }
+##     if (is.null(n &lt;- attr(d, &quot;Size&quot;))) {
+##         if (add) 
+##             d &lt;- as.matrix(d)
+##         x &lt;- as.matrix(d^2)
+##         storage.mode(x) &lt;- &quot;double&quot;
+##         if ((n &lt;- nrow(x)) != ncol(x)) 
+##             stop(&quot;distances must be result of &#39;dist&#39; or a square matrix&quot;)
+##         rn &lt;- rownames(x)
+##     }
+##     else {
+##         rn &lt;- attr(d, &quot;Labels&quot;)
+##         x &lt;- matrix(0, n, n)
+##         if (add) 
+##             d0 &lt;- x
+##         x[row(x) &gt; col(x)] &lt;- d^2
+##         x &lt;- x + t(x)
+##         if (add) {
+##             d0[row(x) &gt; col(x)] &lt;- d
+##             d &lt;- d0 + t(d0)
+##         }
+##     }
+##     n &lt;- as.integer(n)
+##     if (is.na(n) || n &gt; 46340) 
+##         stop(gettextf(&quot;invalid value of %s&quot;, &quot;&#39;n&#39;&quot;), domain = NA)
+##     if ((k &lt;- as.integer(k)) &gt; n - 1 || k &lt; 1) 
+##         stop(&quot;&#39;k&#39; must be in {1, 2, ..  n - 1}&quot;)
+##     x &lt;- .Call(C_DoubleCentre, x)
+##     if (add) {
+##         i2 &lt;- n + (i &lt;- 1L:n)
+##         Z &lt;- matrix(0, 2L * n, 2L * n)
+##         Z[cbind(i2, i)] &lt;- -1
+##         Z[i, i2] &lt;- -x
+##         Z[i2, i2] &lt;- .Call(C_DoubleCentre, 2 * d)
+##         e &lt;- eigen(Z, symmetric = FALSE, only.values = TRUE)$values
+##         add.c &lt;- max(Re(e))
+##         x &lt;- matrix(double(n * n), n, n)
+##         non.diag &lt;- row(d) != col(d)
+##         x[non.diag] &lt;- (d[non.diag] + add.c)^2
+##         x &lt;- .Call(C_DoubleCentre, x)
+##     }
+##     e &lt;- eigen(-x/2, symmetric = TRUE)
+##     ev &lt;- e$values[seq_len(k)]
+##     evec &lt;- e$vectors[, seq_len(k), drop = FALSE]
+##     k1 &lt;- sum(ev &gt; 0)
+##     if (k1 &lt; k) {
+##         warning(gettextf(&quot;only %d of the first %d eigenvalues are &gt; 0&quot;, 
+##             k1, k), domain = NA)
+##         evec &lt;- evec[, ev &gt; 0, drop = FALSE]
+##         ev &lt;- ev[ev &gt; 0]
+##     }
+##     points &lt;- evec * rep(sqrt(ev), each = n)
+##     dimnames(points) &lt;- list(rn, NULL)
+##     if (list.) {
+##         evalus &lt;- e$values
+##         list(points = points, eig = if (eig) evalus, x = if (x.ret) x, 
+##             ac = if (add) add.c else 0, GOF = sum(ev)/c(sum(abs(evalus)), 
+##                 sum(pmax(evalus, 0))))
+##     }
+##     else points
+## }
+## &lt;bytecode: 0x556a449626c0&gt;
+## &lt;environment: namespace:stats&gt;</code></pre>
+<pre class="r"><code>M_dist &lt;- as.dist(M)
+M_cmdscale &lt;- cmdscale(M_dist)
+plot(M_cmdscale)</code></pre>
+<p><img src="../../post/2019-04-09-pca-and-mds_files/figure-html/cmdscale-1.png" width="672" /></p>
+</div>
+
+    </div>
+
+    
+
+
+<div class="article-tags">
+  
+  <a class="badge badge-light" href="../../tags/pca/">PCA</a>
+  
+  <a class="badge badge-light" href="../../tags/mds/">MDS</a>
+  
+</div>
+
+
+
+
+    
+      
+
+
+
+
+
+
+  
+
+
+
+
+
+
+
+<div class="media author-card" itemscope itemtype="http://schema.org/Person">
+  
+  
+  <img class="portrait mr-3" src="../../author/admin/avatar_hu52a603635ecebd45650b162dadabb4e5_12861_250x250_fill_q90_lanczos_center.jpg" itemprop="image" alt="Avatar">
+  
+
+  <div class="media-body">
+    <h5 class="card-title" itemprop="name"><a href="../../authors/admin">Lluís Revilla Sancho</a></h5>
+    <h6 class="card-subtitle">PhD student</h6>
+    <p class="card-text" itemprop="description">My research interests include functional enrichment, data integration and transcriptomics.</p>
+    <ul class="network-icon" aria-hidden="true">
+      
+      
+      
+      
+        
+      
+      
+      
+      
+      
+      <li>
+        <a itemprop="sameAs" href="mailto:lluis.revilla&#43;blog@gmail.com" >
+          <i class="fas fa-envelope"></i>
+        </a>
+      </li>
+      
+      
+      
+      
+        
+      
+      
+      
+      
+      
+        
+      
+      <li>
+        <a itemprop="sameAs" href="https://twitter.com/Lluis_Rev" target="_blank" rel="noopener">
+          <i class="fab fa-twitter"></i>
+        </a>
+      </li>
+      
+      
+      
+      
+      
+      
+      
+      
+        
+      
+      <li>
+        <a itemprop="sameAs" href="https://scholar.google.es/citations?user=Hin4p3MAAAAJ&amp;hl=en" target="_blank" rel="noopener">
+          <i class="ai ai-google-scholar"></i>
+        </a>
+      </li>
+      
+      
+      
+      
+        
+      
+      
+      
+      
+      
+        
+      
+      <li>
+        <a itemprop="sameAs" href="https://github.com/llrs" target="_blank" rel="noopener">
+          <i class="fab fa-github"></i>
+        </a>
+      </li>
+      
+      
+      
+      
+      
+      
+      
+      
+        
+      
+      <li>
+        <a itemprop="sameAs" href="https://orcid.org/0000-0001-9747-2570" target="_blank" rel="noopener">
+          <i class="ai ai-orcid"></i>
+        </a>
+      </li>
+      
+    </ul>
+  </div>
+</div>
+
+
+
+      
+      
+    
+
+    
+
+    
+
+
+  </div>
+</article>
+
+<div class="container">
+  <footer class="site-footer">
+  
+  <p class="powered-by">
+    <a href="../../privacy/">Privacy Policy</a>
+  </p>
+  
+
+  <p class="powered-by">
+    
+
+    Powered by the
+    <a href="https://sourcethemes.com/academic/" target="_blank" rel="noopener">Academic theme</a> for
+    <a href="https://gohugo.io" target="_blank" rel="noopener">Hugo</a>.
+
+    
+    <span class="float-right" aria-hidden="true">
+      <a href="#" id="back_to_top">
+        <span class="button_icon">
+          <i class="fas fa-chevron-up fa-2x"></i>
+        </span>
+      </a>
+    </span>
+    
+  </p>
+</footer>
+
+</div>
+
+
+<div id="modal" class="modal fade" role="dialog">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title">Cite</h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+        <pre><code class="tex hljs"></code></pre>
+      </div>
+      <div class="modal-footer">
+        <a class="btn btn-outline-primary my-1 js-copy-cite" href="#" target="_blank">
+          <i class="fas fa-copy"></i> Copy
+        </a>
+        <a class="btn btn-outline-primary my-1 js-download-cite" href="#" target="_blank">
+          <i class="fas fa-download"></i> Download
+        </a>
+        <div id="modal-error"></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+    
+
+    
+    
+
+    
+    
+    
+      <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.3.1/jquery.min.js" integrity="sha512-+NqPlbbtM1QqiK8ZAo4Yrj2c4lNQoGv8P79DPtKzj++l5jnN39rHA/xsqn8zE9l0uSoxaCdrOgFs6yjyfbBxSg==" crossorigin="anonymous"></script>
+      <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery.imagesloaded/4.1.4/imagesloaded.pkgd.min.js" integrity="sha256-lqvxZrPLtfffUl2G/e7szqSvPBILGbwmsGE1MKlOi0Q=" crossorigin="anonymous"></script>
+      <script src="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/4.1.3/js/bootstrap.min.js" integrity="sha256-VsEqElsCHSGmnmHXGQzvoWjWwoznFSZc6hs7ARLRacQ=" crossorigin="anonymous"></script>
+      <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery.isotope/3.0.6/isotope.pkgd.min.js" integrity="sha256-CBrpuqrMhXwcLLUd5tvQ4euBHCdh7wGlDfNz8vbu/iI=" crossorigin="anonymous"></script>
+      <script src="https://cdnjs.cloudflare.com/ajax/libs/fancybox/3.2.5/jquery.fancybox.min.js" integrity="sha256-X5PoE3KU5l+JcX+w09p/wHl9AzK333C4hJ2I9S5mD4M=" crossorigin="anonymous"></script>
+
+      
+        
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/highlight.min.js" integrity="sha256-/BfiIkHlHoVihZdc6TFuj7MmJ0TWcWsMXkeDFwhi0zw=" crossorigin="anonymous"></script>
+        
+        <script src="//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/languages/r.min.js"></script>
+        
+      
+
+      
+      
+    
+
+    
+    
+
+    
+    
+    
+
+    
+    
+    <script>hljs.initHighlightingOnLoad();</script>
+    
+
+    
+    
+    <script>
+      const search_index_filename = "/index.json";
+      const i18n = {
+        'placeholder': "Search...",
+        'results': "results found",
+        'no_results': "No results found"
+      };
+      const content_type = {
+        'post': "Posts",
+        'project': "Projects",
+        'publication' : "Publications",
+        'talk' : "Talks"
+        };
+    </script>
+    
+
+    
+    
+
+    
+    
+    <script id="search-hit-fuse-template" type="text/x-template">
+      <div class="search-hit" id="summary-{{key}}">
+      <div class="search-hit-content">
+        <div class="search-hit-name">
+          <a href="{{relpermalink}}">{{title}}</a>
+          <div class="article-metadata search-hit-type">{{type}}</div>
+          <p class="search-hit-description">{{snippet}}</p>
+        </div>
+      </div>
+      </div>
+    </script>
+    
+
+    
+    
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/fuse.js/3.2.1/fuse.min.js" integrity="sha256-VzgmKYmhsGNNN4Ph1kMW+BjoYJM2jV5i4IlFoeZA9XI=" crossorigin="anonymous"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/mark.js/8.11.1/jquery.mark.min.js" integrity="sha256-4HLtjeVgH0eIB3aZ9mLYF6E8oU5chNdjU6p6rrXpl9U=" crossorigin="anonymous"></script>
+    
+
+    
+    
+
+    
+    
+    
+    
+    
+    
+    
+      
+    
+    
+    
+    
+    <script src="../../js/academic.min.d7381f2d79e6271d4da28f474f49096c.js"></script>
+
+  </body>
+</html>
+
