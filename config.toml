@@ -1,0 +1,8 @@
+theme = "hugo-academic"
+baseURL = "llrs.github.io/blog/"
+languageCode = "en-us"
+title = "Blogging"
+ignoreFiles = ["\\.Rmd$", "\\.Rmarkdown$", "_files$", "_cache$"]
+
+relativeURLs = true
+enableEmoji = true
