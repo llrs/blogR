@@ -1,0 +1,33 @@
+---
+title: PhD selection
+author: Lluís Revilla Sancho
+date: '2019-04-14'
+slug: phd-selection
+categories: []
+tags: []
+image:
+  caption: ''
+  focal_point: ''
+---
+
+
+```{r}
+students <- 1000
+probability <- rbeta(students, 5, 5)
+inteligence <- rnorm(students)
+grades <- rnorm(students)
+plot(inteligence, grades)
+```
+Now we supose that the grades are based on the inteligence
+```{r}
+grades_inteligence <- grades+inteligence
+plot(inteligence, grades_inteligence)
+```
+Now we can simulate some other variables
+```{r}
+problems <- runif(students)
+problems_with_students <- grades_inteligence-problems
+plot(inteligence, problems_with_students)
+df <- data.frame(inteligence, grades, problems)
+```
+

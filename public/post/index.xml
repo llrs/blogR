@@ -6,10 +6,21 @@
     <description>Recent content in Posts on B101nfo</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en-us</language>
-    <lastBuildDate>Tue, 09 Apr 2019 00:00:00 +0000</lastBuildDate>
+    <lastBuildDate>Sun, 14 Apr 2019 00:00:00 +0000</lastBuildDate>
     
 	<atom:link href="/post/index.xml" rel="self" type="application/rss+xml" />
     
+    
+    <item>
+      <title>PhD selection</title>
+      <link>/post/phd-selection/</link>
+      <pubDate>Sun, 14 Apr 2019 00:00:00 +0000</pubDate>
+      
+      <guid>/post/phd-selection/</guid>
+      <description> students &amp;lt;- 1000 probability &amp;lt;- rbeta(students, 5, 5) inteligence &amp;lt;- rnorm(students) grades &amp;lt;- rnorm(students) plot(inteligence, grades) Now we supose that the grades are based on the inteligence
+grades_inteligence &amp;lt;- grades+inteligence plot(inteligence, grades_inteligence) Now we can simulate some other variables
+problems &amp;lt;- runif(students) problems_with_students &amp;lt;- grades_inteligence-problems plot(inteligence, problems_with_students) df &amp;lt;- data.frame(inteligence, grades, problems) </description>
+    </item>
     
     <item>
       <title>PCA and MDS</title>

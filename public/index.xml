@@ -36,6 +36,34 @@
     </item>
     
     <item>
+      <title>PhD selection</title>
+      <link>/post/phd-selection/</link>
+      <pubDate>Sun, 14 Apr 2019 00:00:00 +0000</pubDate>
+      
+      <guid>/post/phd-selection/</guid>
+      <description>
+
+
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;students &amp;lt;- 1000
+probability &amp;lt;- rbeta(students, 5, 5)
+inteligence &amp;lt;- rnorm(students)
+grades &amp;lt;- rnorm(students)
+plot(inteligence, grades)&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;&lt;img src=&#34;./post/2019-04-14-phd-selection_files/figure-html/unnamed-chunk-1-1.png&#34; width=&#34;672&#34; /&gt;
+Now we supose that the grades are based on the inteligence&lt;/p&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;grades_inteligence &amp;lt;- grades+inteligence
+plot(inteligence, grades_inteligence)&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;&lt;img src=&#34;./post/2019-04-14-phd-selection_files/figure-html/unnamed-chunk-2-1.png&#34; width=&#34;672&#34; /&gt;
+Now we can simulate some other variables&lt;/p&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;problems &amp;lt;- runif(students)
+problems_with_students &amp;lt;- grades_inteligence-problems
+plot(inteligence, problems_with_students)&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;&lt;img src=&#34;./post/2019-04-14-phd-selection_files/figure-html/unnamed-chunk-3-1.png&#34; width=&#34;672&#34; /&gt;&lt;/p&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;df &amp;lt;- data.frame(inteligence, grades, problems)&lt;/code&gt;&lt;/pre&gt;
+</description>
+    </item>
+    
+    <item>
       <title>PCA and MDS</title>
       <link>/post/pca-and-mds/</link>
       <pubDate>Tue, 09 Apr 2019 00:00:00 +0000</pubDate>
@@ -88,11 +116,23 @@ M &amp;lt;- matrix(x, ncol = 10, nrow = 10)&lt;/code&gt;&lt;/pre&gt;
 ##     class(r) &amp;lt;- &amp;quot;prcomp&amp;quot;
 ##     r
 ## }
-## &amp;lt;bytecode: 0x556a44b2d908&amp;gt;
+## &amp;lt;bytecode: 0x55e265aa0650&amp;gt;
 ## &amp;lt;environment: namespace:stats&amp;gt;&lt;/code&gt;&lt;/pre&gt;
 &lt;pre class=&#34;r&#34;&gt;&lt;code&gt;M_prcomp &amp;lt;- prcomp(M)
 plot(M_prcomp$rotation)&lt;/code&gt;&lt;/pre&gt;
 &lt;p&gt;&lt;img src=&#34;./post/2019-04-09-pca-and-mds_files/figure-html/prcomp-1.png&#34; width=&#34;672&#34; /&gt;&lt;/p&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;M_prcomp$rotation[1:10, 1:2]&lt;/code&gt;&lt;/pre&gt;
+&lt;pre&gt;&lt;code&gt;##               PC1         PC2
+##  [1,] -0.22557903 -0.45794036
+##  [2,]  0.20084830 -0.49472788
+##  [3,] -0.36106196 -0.06796242
+##  [4,] -0.04042137 -0.19776900
+##  [5,]  0.47538969  0.03790801
+##  [6,] -0.29464293 -0.28278067
+##  [7,] -0.24926025  0.12461926
+##  [8,] -0.08235154  0.47127438
+##  [9,]  0.45357250 -0.36434371
+## [10,]  0.43511396  0.22366429&lt;/code&gt;&lt;/pre&gt;
 &lt;/div&gt;
 &lt;div id=&#34;princomp&#34; class=&#34;section level2&#34;&gt;
 &lt;h2&gt;princomp&lt;/h2&gt;
@@ -171,11 +211,23 @@ plot(M_prcomp$rotation)&lt;/code&gt;&lt;/pre&gt;
 ##     class(edc) &amp;lt;- &amp;quot;princomp&amp;quot;
 ##     edc
 ## }
-## &amp;lt;bytecode: 0x556a42d24900&amp;gt;
+## &amp;lt;bytecode: 0x55e265192e00&amp;gt;
 ## &amp;lt;environment: namespace:stats&amp;gt;&lt;/code&gt;&lt;/pre&gt;
 &lt;pre class=&#34;r&#34;&gt;&lt;code&gt;M_princomp &amp;lt;- princomp(M)
 plot(M_princomp$scores)&lt;/code&gt;&lt;/pre&gt;
 &lt;p&gt;&lt;img src=&#34;./post/2019-04-09-pca-and-mds_files/figure-html/princomp-1.png&#34; width=&#34;672&#34; /&gt;&lt;/p&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;M_princomp$scores[1:10, 1:2]&lt;/code&gt;&lt;/pre&gt;
+&lt;pre&gt;&lt;code&gt;##             Comp.1       Comp.2
+##  [1,] -0.805589530  0.316761323
+##  [2,] -0.258524683 -0.289328086
+##  [3,] -0.208908743 -0.527063309
+##  [4,]  0.142497647  0.039243307
+##  [5,] -0.698753661 -0.144250131
+##  [6,]  0.006096989  0.975808798
+##  [7,]  0.788321400 -0.008304383
+##  [8,] -0.120707570 -0.233847577
+##  [9,]  0.604636715  0.136609136
+## [10,]  0.550931437 -0.265629080&lt;/code&gt;&lt;/pre&gt;
 &lt;/div&gt;
 &lt;div id=&#34;cmdscale&#34; class=&#34;section level2&#34;&gt;
 &lt;h2&gt;cmdscale&lt;/h2&gt;
@@ -251,7 +303,7 @@ plot(M_princomp$scores)&lt;/code&gt;&lt;/pre&gt;
 ##     }
 ##     else points
 ## }
-## &amp;lt;bytecode: 0x556a449626c0&amp;gt;
+## &amp;lt;bytecode: 0x55e265a66890&amp;gt;
 ## &amp;lt;environment: namespace:stats&amp;gt;&lt;/code&gt;&lt;/pre&gt;
 &lt;pre class=&#34;r&#34;&gt;&lt;code&gt;M_dist &amp;lt;- as.dist(M)
 M_cmdscale &amp;lt;- cmdscale(M_dist)

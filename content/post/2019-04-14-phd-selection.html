@@ -1,0 +1,30 @@
+---
+title: PhD selection
+author: Lluís Revilla Sancho
+date: '2019-04-14'
+slug: phd-selection
+categories: []
+tags: []
+image:
+  caption: ''
+  focal_point: ''
+---
+
+
+
+<pre class="r"><code>students &lt;- 1000
+probability &lt;- rbeta(students, 5, 5)
+inteligence &lt;- rnorm(students)
+grades &lt;- rnorm(students)
+plot(inteligence, grades)</code></pre>
+<p><img src="/post/2019-04-14-phd-selection_files/figure-html/unnamed-chunk-1-1.png" width="672" />
+Now we supose that the grades are based on the inteligence</p>
+<pre class="r"><code>grades_inteligence &lt;- grades+inteligence
+plot(inteligence, grades_inteligence)</code></pre>
+<p><img src="/post/2019-04-14-phd-selection_files/figure-html/unnamed-chunk-2-1.png" width="672" />
+Now we can simulate some other variables</p>
+<pre class="r"><code>problems &lt;- runif(students)
+problems_with_students &lt;- grades_inteligence-problems
+plot(inteligence, problems_with_students)</code></pre>
+<p><img src="/post/2019-04-14-phd-selection_files/figure-html/unnamed-chunk-3-1.png" width="672" /></p>
+<pre class="r"><code>df &lt;- data.frame(inteligence, grades, problems)</code></pre>

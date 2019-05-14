@@ -27,6 +27,7 @@ M <- matrix(x, ncol = 10, nrow = 10)
 stats:::prcomp.default
 M_prcomp <- prcomp(M)
 plot(M_prcomp$rotation)
+M_prcomp$rotation[1:10, 1:2]
 ```
 
 ## princomp
@@ -35,6 +36,7 @@ plot(M_prcomp$rotation)
 stats:::princomp.default
 M_princomp <- princomp(M)
 plot(M_princomp$scores)
+M_princomp$scores[1:10, 1:2]
 ```
 
 ## cmdscale
