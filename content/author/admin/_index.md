@@ -9,7 +9,7 @@ authors = ["admin"]
 superuser = true
 
 # Role/position
-role = "PhD student"
+role = "Bioinformatician"
 
 # Organizations/Affiliations
 #   Separate multiple entries with a comma, using the form: `[ {name="Org1", url=""}, {name="Org2", url=""} ]`.
@@ -18,10 +18,10 @@ organizations = [ { name = "Universitat de Barcelona",  url = "https://www.ub.ed
                 ]
 
 # Short bio (displayed in user profile at end of posts)
-bio = "My research interests include functional enrichment, data integration and transcriptomics."
+bio = "Bioinformatician with interests in functional enrichment, data integration and transcriptomics."
 
 # Enter email to display Gravatar (if Gravatar enabled in Config)
-email = ""
+email = "lluis.revilla+llrs@gmail.com"
 
 # List (academic) interests or hobbies
 interests = [
@@ -68,7 +68,7 @@ user_groups = ["Researchers", "Visitors"]
 [[social]]
   icon = "google-scholar"
   icon_pack = "ai"
-  link = "https://scholar.google.es/citations?user=Hin4p3MAAAAJ&hl=en"
+  link = "https://scholar.google.es/citations?user=Hin4p3MAAAAJ&hl"
 
 [[social]]
   icon = "github"
@@ -89,4 +89,4 @@ user_groups = ["Researchers", "Visitors"]
 
 +++
 
-I am a bioinformatics PhD student at the [IBD](https://ibd-bcn.org) lab of Dr. Julià Panès under the supervision of Azucena Salas. My research interests include functional enrichment, transcriptomics, data integration. I have produced some pieces of software mainly in Bioconductor. 
+I am a bioinformatician doing my PhD at the [IBD](https://ibd-bcn.org) lab of Dr. Julià Panès under the supervision of Azucena Salas. My research interests include functional enrichment, transcriptomics, data integration and analysis outside comparisons. I have produced some pieces of software mainly in Bioconductor. 
