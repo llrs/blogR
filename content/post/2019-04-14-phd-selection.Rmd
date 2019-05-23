@@ -8,20 +8,52 @@ tags: []
 image:
   caption: ''
   focal_point: ''
+editor_options: 
+  chunk_output_type: console
 ---
 
+In this blogpost I will try to experiment how to simulate the conditions for ending a PhD program and obtaining the doctorate, from the school.
+
+I will base this simulation on three principles:
+
+1. There are some variables that are normally distributed.
+2. There are some variables that are uniform distributed.
+3. There are some varaiables that are not randomly distributed.
+
+
+Those that are normally distributed will be simulated using the rbeta function, 
+but I will create a symmetric distribution. Assuming that the maximum of the variables will be either 1 or -1, and the average will be 0.
 
 ```{r}
+library("tidyverse")
 students <- 1000
-probability <- rbeta(students, 5, 5)
-inteligence <- rnorm(students)
-grades <- rnorm(students)
-plot(inteligence, grades)
+inteligence <- rbeta(students, 5, 5)
+sex <- sample(c("F","M"), students, replace = TRUE)
+simulation <- data.frame(student = 1:students,
+           inteligence = inteligence,
+           sex = sex) %>% 
+  mutate(grades = inteligence + runif(students))
+
+scale01 <- function(x) {
+  m <- max(abs(x))
+  mm <- mean(x, na.rm = TRUE)
+  (x - mm)/m
+}
+simulation$grades <- scale01(simulation$grades)
+simulation %>% 
+  ggplot() +
+  geom_point(aes(inteligence, grades, col = sex))
 ```
 Now we supose that the grades are based on the inteligence
 ```{r}
-grades_inteligence <- grades+inteligence
-plot(inteligence, grades_inteligence)
+simulation %>% 
+  ggplot() +
+  geom_histogram(aes(inteligence, fill = sex), bins = 100) +
+  facet_wrap(~sex)
+simulation %>% 
+  ggplot() +
+  geom_histogram(aes(grades, fill = sex), bins = 100) +
+  facet_wrap(~sex)
 ```
 Now we can simulate some other variables
 ```{r}
