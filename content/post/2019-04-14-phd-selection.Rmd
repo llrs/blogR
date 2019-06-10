@@ -56,10 +56,4 @@ simulation %>%
   facet_wrap(~sex)
 ```
 Now we can simulate some other variables
-```{r}
-problems <- runif(students)
-problems_with_students <- grades_inteligence-problems
-plot(inteligence, problems_with_students)
-df <- data.frame(inteligence, grades, problems)
-```
 

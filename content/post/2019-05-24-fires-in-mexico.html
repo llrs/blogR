@@ -1,0 +1,99 @@
+---
+title: Forest fires in Mexico
+author: Lluís Revilla Sancho
+date: '2019-05-24'
+slug: fires-mexico
+categories:
+  - r
+tags:
+  - r
+  - tidyverse
+  - maps
+  - gganimate
+image:
+  caption: ''
+  focal_point: ''
+editor_options: 
+  chunk_output_type: console
+---
+
+
+
+<div id="evolucion-de-los-incendios-forestales-en-mexico" class="section level1">
+<h1>Evolucion de los incendios forestales en México</h1>
+<p>I saw a map on twitter and I wanted to see if I could change a bit and improve it:</p>
+<blockquote class="twitter-tweet" data-lang="es">
+<p lang="es" dir="ltr">
+Les presento como han evolucionado los incendios forestales en México entre 2010 y 2017.<br><br>El gif esta basado en 64000 incendios registrados por la <a href="https://twitter.com/CONAFOR?ref_src=twsrc%5Etfw"><span class="citation">@CONAFOR</span></a> <a href="https://twitter.com/hashtag/ContingenciaCDMX?src=hash&amp;ref_src=twsrc%5Etfw">#ContingenciaCDMX</a><a href="https://twitter.com/hashtag/R4DS?src=hash&amp;ref_src=twsrc%5Etfw">#R4DS</a><a href="https://twitter.com/hashtag/RStats?src=hash&amp;ref_src=twsrc%5Etfw">#RStats</a> <a href="https://t.co/hHx1HBeb07">pic.twitter.com/hHx1HBeb07</a>
+</p>
+— Adrian Bautista (<span class="citation">@4drianbautista</span>) <a href="https://twitter.com/4drianbautista/status/1129429109212213248?ref_src=twsrc%5Etfw">17 de mayo de 2019</a>
+</blockquote>
+<script async src="https://platform.twitter.com/widgets.js" charset="utf-8"></script>
+<p>I wanted to make so that the fires change the size with time to appear and disappear instead of moving around Mexico.</p>
+<p>I got the <a href="https://github.com/bautista-adrian/Incendios_Mx/blob/master/Incendios.R">code from Andrian</a>, which I adapted for this post:</p>
+<p>I ran the code and stored it:</p>
+<pre class="r"><code>library(&quot;here&quot;)</code></pre>
+<pre><code>## here() starts at /home/lluis/Documents/Projects/blogR</code></pre>
+<pre class="r"><code>library(&quot;ggplot2&quot;)</code></pre>
+<pre><code>## Registered S3 methods overwritten by &#39;ggplot2&#39;:
+##   method         from 
+##   [.quosures     rlang
+##   c.quosures     rlang
+##   print.quosures rlang</code></pre>
+<pre class="r"><code>library(&quot;gganimate&quot;)
+library(&quot;ggthemes&quot;)
+# Maps from mexico
+# devtools::install_github(&#39;diegovalle/mxmaps&#39;)
+library(&quot;mxmaps&quot;)
+plottable &lt;- readRDS(here(&quot;static&quot;, &quot;fires-mexico&quot;, &quot;fires_mexico.RDS&quot;))
+head(plottable)</code></pre>
+<pre><code>##   Grados_Lon Minutos_Lon Segundos_Lon Grados_Lat Minutos_Lat Segundos_Lat
+## 1        102           8         36.7         21          58         30.0
+## 2        102          12         42.9         22          51         27.4
+## 3        102          38         32.1         22           1         46.5
+## 4        102          33         53.9         21          55         29.8
+## 5        102          13          7.7         22           5         55.6
+## 6        102          35         21.8         22          16         24.7
+##              Tamaño  Año  Latitud  Longitud
+## 1 11 a 20 Hectáreas 2010 21.97500 -102.8565
+## 2 11 a 20 Hectáreas 2010 22.85761 -102.7881
+## 3   0 a 5 Hectáreas 2010 22.02958 -102.3577
+## 4   0 a 5 Hectáreas 2010 21.92494 -102.4350
+## 5   0 a 5 Hectáreas 2010 22.09878 -102.7812
+## 6   0 a 5 Hectáreas 2010 22.27353 -102.4106</code></pre>
+</div>
+<div id="plot" class="section level1">
+<h1>Plot</h1>
+<p>My main objective was to remove the points moving above the country from year to year.
+The problem is that the aesthetic was grouped ad the very definition by group.</p>
+<pre class="r"><code>data(mxstate.map)
+
+m &lt;- ggplot() + 
+  geom_polygon(data = mxstate.map, aes(x = long, y = lat, group = group), 
+               fill = &quot;grey&quot;, color = &quot;black&quot;) +
+  geom_point(data = plottable, 
+             aes(x = Longitud, y = Latitud, group = Año), alpha = .2, color = &quot;red&quot;) +
+  theme(plot.subtitle = element_text(size = 32, color = &quot;grey&quot;)) +
+  scale_size_discrete()  +
+  theme_map()  +
+  coord_map()</code></pre>
+<pre><code>## Warning: Using size for a discrete variable is not advised.</code></pre>
+<pre class="r"><code>m</code></pre>
+<p><img src="/post/2019-05-24-fires-in-mexico_files/figure-html/map-1.png" width="672" /></p>
+</div>
+<div id="animation" class="section level1">
+<h1>Animation</h1>
+<p>Now that we have the plot and the fires we can animate it by each year:</p>
+<pre class="r"><code>gganimation &lt;- m +
+  transition_states(Año, transition_length = 12, state_length = 1, wrap = FALSE) +
+    enter_fade() + 
+    exit_fade() + 
+    labs(title = &quot;Incendios forestales registrados en México&quot;,
+         subtitle = &quot;Año {closest_state}&quot;, 
+         x = element_blank(),
+         y = element_blank(), 
+         caption = &quot;Source: CONAFOR / Elaboracion: @4drian.bautista &amp; @Lluís_Rev&quot;)
+
+animate(gganimation, fps = 25, duration = 20, width = 960, height = 540)</code></pre>
+<p><img src="/post/2019-05-24-fires-in-mexico_files/figure-html/animation-1.gif" /><!-- --></p>
+</div>
