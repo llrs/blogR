@@ -1,0 +1,179 @@
+---
+title: "Advanced use of BaseSet"
+author: 'Lluís Revilla Sancho'
+subtitle: "Exploring Bioconductor packages"
+date: "2019-06-10"
+slug: BaseSet-advanced
+twitter: "@Lluis_Rev"
+categories:
+  - r
+tags: []
+output:
+  xaringan::moon_reader:
+    lib_dir: libs
+    nature:
+      highlightStyle: github
+      highlightLines: true
+      countIncrementalSlides: false
+editor_options: 
+  chunk_output_type: console
+---
+
+
+
+<div id="bioconductor-packages" class="section level1">
+<h1>Bioconductor packages</h1>
+<p>We can quickly access the dependencies and maintainers of Bioconductor’ packages:</p>
+<pre class="r"><code>views &lt;- &quot;https://bioconductor.org/packages/devel/bioc/VIEWS&quot;
+dcf &lt;- read.dcf(url(views), c(&quot;Package&quot;, &quot;Maintainer&quot;, &quot;dependencyCount&quot;, 
+                  &quot;Depends&quot;, &quot;Imports&quot;))
+tbl &lt;- as_tibble(dcf) %&gt;%
+   mutate(
+     Maintainer = gsub(&quot;[[:space:]]+&quot;, &quot; &quot;, Maintainer),
+     dependencyCount = as.integer(dependencyCount),
+     Core = grepl(&quot;Bioconductor Package Maintainer&quot;, Maintainer),
+     Maintainer = stringr::str_split(Maintainer, &quot;,\\s*|( and )&quot;),
+     Depend = stringr::str_split(Depends, &quot;,\\s+&quot;), 
+     Import = stringr::str_split(Imports, &quot;,\\s+&quot;),
+     )</code></pre>
+<p>This is a modified code from Martin Morgan</p>
+<hr />
+<p>The content:</p>
+<pre><code>## # A tibble: 6 x 8
+##   Package  Maintainer dependencyCount Depends   Imports Core  Depend Import
+##   &lt;chr&gt;    &lt;list&gt;               &lt;int&gt; &lt;chr&gt;     &lt;chr&gt;   &lt;lgl&gt; &lt;list&gt; &lt;list&gt;
+## 1 a4       &lt;chr [2]&gt;              131 a4Base, … &lt;NA&gt;    FALSE &lt;chr … &lt;chr …
+## 2 a4Base   &lt;chr [2]&gt;               56 &quot;methods… &lt;NA&gt;    FALSE &lt;chr … &lt;chr …
+## 3 a4Class… &lt;chr [2]&gt;              122 &quot;methods… a4Core  FALSE &lt;chr … &lt;chr …
+## 4 a4Core   &lt;chr [2]&gt;               15 methods,… &lt;NA&gt;    FALSE &lt;chr … &lt;chr …
+## 5 a4Prepr… &lt;chr [2]&gt;               26 methods,… &lt;NA&gt;    FALSE &lt;chr … &lt;chr …
+## 6 a4Repor… &lt;chr [2]&gt;               30 methods,… xtable… FALSE &lt;chr … &lt;chr …</code></pre>
+<p>As you can see the Maintainers field is a list and also the Depends and Import.</p>
+<p>Now we are ready for some plots:</p>
+<pre class="r"><code>maintainers %&gt;% 
+  set_size() %&gt;% 
+  arrange(-size) %&gt;% 
+  select(-probability) %&gt;%
+  ggplot() +
+  geom_histogram(aes(size)) + 
+  scale_y_log10() +
+  theme_minimal() +
+  labs(title = &quot;Maintainers by package&quot;)</code></pre>
+<p><img src="/post/2019-06-06-advanced-use-of-baseset_files/figure-html/maintainers1-1.svg" width="672" /></p>
+<hr />
+<pre class="r"><code>maintainers %&gt;% 
+  filter_element(!grepl(&quot;Bioconductor Package Maintainer&quot;, 
+                        as.character(elements))) %&gt;% 
+  element_size() %&gt;% 
+  arrange(-size) %&gt;% 
+  select(-probability) %&gt;%
+  ggplot() +
+  geom_histogram(aes(size)) + 
+  scale_y_log10() +
+  theme_minimal() +
+  labs(title = &quot;Packages maintained by person&quot;)</code></pre>
+<p><img src="/post/2019-06-06-advanced-use-of-baseset_files/figure-html/maintainers2-1.svg" width="672" /></p>
+<hr />
+<p>We can have a look at the packages maintained by Bioconductor:</p>
+<pre class="r"><code>Bioconductor_packages &lt;- maintainers %&gt;% 
+  filter_element(grepl(&quot;Bioconductor&quot;, 
+                       elements)) %&gt;% 
+  droplevels() %&gt;% 
+  pull_set(sets)
+Bioconductor_packages</code></pre>
+<pre><code>##  [1] annotate             AnnotationDbi        AnnotationFilter    
+##  [4] AnnotationForge      AnnotationHub        AnnotationHubData   
+##  [7] Biobase              BiocCaseStudies      BiocCheck           
+## [10] BiocGenerics         BiocParallel         BiocStyle           
+## [13] BiocVersion          biocViews            bioDist             
+## [16] Category             chipseq              CoCiteStats         
+## [19] DynDoc               ensemblVEP           ExperimentHub       
+## [22] ExperimentHubData    genefilter           GeneMeta            
+## [25] geneplotter          GenomeInfoDb         GenomicAlignments   
+## [28] GenomicFeatures      GenomicFiles         GenomicRanges       
+## [31] GOstats              gpls                 graph               
+## [34] GSEABase             HCABrowser           hypergraph          
+## [37] Icens                IRanges              KEGGREST            
+## [40] LoomExperiment       pkgDepTools          ppiStats            
+## [43] RBGL                 RGalaxy              Rhtslib             
+## [46] Rsamtools            S4Vectors            ShortRead           
+## [49] SummarizedExperiment zlibbioc            
+## 50 Levels: annotate AnnotationDbi AnnotationFilter ... zlibbioc</code></pre>
+<p>And we can see which are installed by default or recommended at the <a href="https://cran.r-project.org/doc/FAQ/R-FAQ.html#Which-add_002don-packages-exist-for-R_003f">FAQs</a>:
+in total 29.</p>
+<hr />
+<div id="dependencies" class="section level2">
+<h2>Dependencies</h2>
+<p>Now let’s work on the dependencies.
+First some clean up of the package names:</p>
+<pre class="r"><code>l &lt;- apply(tbl[, c(&quot;Depend&quot;, &quot;Import&quot;)], 1, function(x){
+  y &lt;- unlist(x, use.names = FALSE)
+  y &lt;- gsub(&quot; ?\\(.*&quot;, &quot;&quot;, y)
+  y &lt;- y[!grepl(&quot;\\)&quot;, y)]
+  y &lt;- y[y != &quot;&quot;]
+  unique(y[!is.na(y)])
+})
+names(l) &lt;- tbl[, &quot;Package&quot;, drop = TRUE]</code></pre>
+<hr />
+<p>Now we are ready to transform to a TidySet:</p>
+<pre class="r"><code>packages &lt;- tidySet(l) %&gt;% 
+  filter_element(elements != &quot;R&quot;) %&gt;% 
+  mutate_element(Origin = case_when(
+    elements  %in%  rcore ~ &quot;R core&quot;,
+    elements  %in% Bioconductor_packages ~ &quot;Bioconductor Core&quot;,
+    elements  %in% name_sets(maintainers) ~  &quot;Bioconductor&quot;,
+    TRUE ~ &quot;Other&quot;)) %&gt;% 
+    activate(&quot;sets&quot;) %&gt;% 
+    mutate(Type = case_when(
+    sets  %in% rcore ~ &quot;R core&quot;,
+    sets  %in% Bioconductor_packages ~ &quot;Bioconductor Core&quot;,
+    sets  %in% name_sets(maintainers) ~  &quot;Bioconductor&quot;,
+    TRUE ~ &quot;Other&quot;))
+
+sets(packages) &lt;- inner_join(sets(packages),
+                             tbl[, c(&quot;Package&quot;, &quot;dependencyCount&quot;)], 
+                             by = c(&quot;sets&quot; = &quot;Package&quot;))
+is_nested(packages)</code></pre>
+<pre><code>## [1] TRUE</code></pre>
+</div>
+<div id="in-this-case-we-can-see-that-some-packages-appear-as-dependencies-of-others.." class="section level2">
+<h2>In this case we can see that some packages appear as dependencies of others..</h2>
+<p>We can plot some</p>
+<pre class="r"><code>packages %&gt;% 
+  set_size() %&gt;% 
+  arrange(-size) %&gt;% 
+  select(-probability) %&gt;%
+  ggplot() +
+  geom_histogram(aes(size), bins = 50) +
+  scale_y_log10() +
+  theme_minimal() +
+  labs(title = &quot;Packages dependencies&quot;)</code></pre>
+<p><img src="/post/2019-06-06-advanced-use-of-baseset_files/figure-html/dependensies1-1.svg" width="672" /></p>
+<hr />
+<pre class="r"><code>p &lt;- packages %&gt;% 
+  element_size() %&gt;% 
+  arrange(-size) %&gt;% 
+  select(-probability) %&gt;% 
+  left_join(elements(packages), by = c(&quot;element&quot; = &quot;elements&quot;))
+p %&gt;% 
+  ggplot() +
+  geom_histogram(aes(size)) + 
+  scale_y_log10() +
+  theme_minimal() +
+  labs(title = &quot;Packages depended&quot;)</code></pre>
+<p><img src="/post/2019-06-06-advanced-use-of-baseset_files/figure-html/dependensies2-1.svg" width="672" /></p>
+<pre class="r"><code>p %&gt;% 
+  ggplot(aes(Origin, size)) +
+  geom_violin() +
+  geom_point(position = position_jitter()) +
+  theme_minimal() +
+  scale_y_log10()</code></pre>
+<p><img src="/post/2019-06-06-advanced-use-of-baseset_files/figure-html/dependensies4-1.svg" width="672" /></p>
+<pre class="r"><code>table(p$Origin)</code></pre>
+<pre><code>## 
+##      Bioconductor Bioconductor Core             Other            R core 
+##               434                40              1154                27</code></pre>
+<hr />
+<p>Thanks!</p>
+</div>
+</div>
