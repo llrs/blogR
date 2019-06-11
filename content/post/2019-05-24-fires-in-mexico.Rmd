@@ -75,6 +75,6 @@ gganimation <- m +
          y = element_blank(), 
          caption = "Source: CONAFOR / Elaboracion: @4drian.bautista & @Lluís_Rev")
 
-animate(gganimation, fps = 25, duration = 20, width = 960, height = 540)
+animate(gganimation, fps = 25, duration = 20)
 ```
 
