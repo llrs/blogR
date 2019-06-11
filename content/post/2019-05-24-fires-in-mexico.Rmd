@@ -17,7 +17,7 @@ editor_options:
   chunk_output_type: console
 ---
 
-# Evolucion de los incendios forestales en México
+## Evolucion de los incendios forestales en México
 
 I saw a map on twitter and I wanted to see if I could change a bit and improve it:
 
@@ -41,7 +41,7 @@ plottable <- readRDS(here("static", "fires-mexico", "fires_mexico.RDS"))
 head(plottable)
 ```
 
-# Plot
+## Plot
 
 My main objective was to remove the points moving above the country from year to year.
 The problem is that the aesthetic was grouped ad the very definition by group.
@@ -60,7 +60,7 @@ m <- ggplot() +
 m
 ```
 
-# Animation
+## Animation
 
 Now that we have the plot and the fires we can animate it by each year:
 
