@@ -1,0 +1,20 @@
+---
+title: Posting and titles
+author: Lluís Revilla Sancho
+date: '2019-06-11'
+slug: posting-titles
+categories:
+  - r
+tags:
+  - blogdown
+image:
+  caption: ''
+  focal_point: ''
+---
+
+
+If you want a post to appear on blogdown do not use titles of form `# My title`.
+
+But you can use second order titles with `## My title` and it will be correctly parsed.
+
+Short and fast!
