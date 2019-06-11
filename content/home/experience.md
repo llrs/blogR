@@ -53,7 +53,7 @@ date_format = "January 2006"
   date_start = "2013-09-01"
   date_end = "2014-06-22"
   description = """
-  Learned about differential gene expression analysis.
+  As a visiting Erasmus student I did an internship where I learned about differential gene expression analysis.
   Implemented [topGO](https://bioconductor.org/packages/topGO) into the analysis pipeline.
   Analyzed Pichia pastoris
   """
