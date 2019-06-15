@@ -2,6 +2,6 @@
 .RData
 .Rproj.user
 blogdown
-public
+public/
 themes/hugo-academic/exampleSite/
 static/fires-mexico/*.xlsx
