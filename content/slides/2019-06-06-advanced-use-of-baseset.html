@@ -2,7 +2,7 @@
 title: "Advanced use of BaseSet"
 author: 'Lluís Revilla Sancho'
 subtitle: "Exploring Bioconductor packages"
-date: "2019-06-10"
+date: "2019-06-15"
 slug: BaseSet-advanced
 twitter: "@Lluis_Rev"
 categories:
@@ -21,8 +21,8 @@ editor_options:
 
 
 
-<div id="bioconductor-packages" class="section level1">
-<h1>Bioconductor packages</h1>
+<div id="bioconductor-packages" class="section level2">
+<h2>Bioconductor packages</h2>
 <p>We can quickly access the dependencies and maintainers of Bioconductor’ packages:</p>
 <pre class="r"><code>views &lt;- &quot;https://bioconductor.org/packages/devel/bioc/VIEWS&quot;
 dcf &lt;- read.dcf(url(views), c(&quot;Package&quot;, &quot;Maintainer&quot;, &quot;dependencyCount&quot;, 
@@ -49,6 +49,23 @@ tbl &lt;- as_tibble(dcf) %&gt;%
 ## 5 a4Prepr… &lt;chr [2]&gt;               26 methods,… &lt;NA&gt;    FALSE &lt;chr … &lt;chr …
 ## 6 a4Repor… &lt;chr [2]&gt;               30 methods,… xtable… FALSE &lt;chr … &lt;chr …</code></pre>
 <p>As you can see the Maintainers field is a list and also the Depends and Import.</p>
+<hr />
+</div>
+<div id="maintainers" class="section level2">
+<h2>Maintainers</h2>
+<p>Now we have several sets each package with the dependencies and each package and the maintainers. We must tidy them:</p>
+<pre class="r"><code>prepare &lt;- unnest(tbl[, c(&quot;Maintainer&quot;, &quot;Package&quot;)])
+colnames(prepare) &lt;- c(&quot;sets&quot;, &quot;elements&quot;)
+maintainers &lt;- tidySet(prepare)
+is_nested(maintainers)
+## [1] FALSE</code></pre>
+<p>We can see with <code>nElements(maintainers)</code> that it has less than 1322 maintainers. Because some appear duplicated:</p>
+<pre class="r"><code>grep(&quot;Carey&quot;, name_elements(maintainers), value = TRUE)
+## [1] &quot;Jacob Carey &lt;jcarey15@jhu.edu&gt;&quot;          
+## [2] &quot;V. Carey &lt;stvjc@channing.harvard.edu&gt;&quot;   
+## [3] &quot;Vince Carey &lt;stvjc@channing.harvard.edu&gt;&quot;
+## [4] &quot;VJ Carey &lt;stvjc@channing.harvard.edu&gt;&quot;</code></pre>
+<hr />
 <p>Now we are ready for some plots:</p>
 <pre class="r"><code>maintainers %&gt;% 
   set_size() %&gt;% 
@@ -59,7 +76,7 @@ tbl &lt;- as_tibble(dcf) %&gt;%
   scale_y_log10() +
   theme_minimal() +
   labs(title = &quot;Maintainers by package&quot;)</code></pre>
-<p><img src="/post/2019-06-06-advanced-use-of-baseset_files/figure-html/maintainers1-1.svg" width="672" /></p>
+<p><img src="/slides/2019-06-06-advanced-use-of-baseset_files/figure-html/maintainers1-1.svg" width="672" /></p>
 <hr />
 <pre class="r"><code>maintainers %&gt;% 
   filter_element(!grepl(&quot;Bioconductor Package Maintainer&quot;, 
@@ -72,7 +89,7 @@ tbl &lt;- as_tibble(dcf) %&gt;%
   scale_y_log10() +
   theme_minimal() +
   labs(title = &quot;Packages maintained by person&quot;)</code></pre>
-<p><img src="/post/2019-06-06-advanced-use-of-baseset_files/figure-html/maintainers2-1.svg" width="672" /></p>
+<p><img src="/slides/2019-06-06-advanced-use-of-baseset_files/figure-html/maintainers2-1.svg" width="672" /></p>
 <hr />
 <p>We can have a look at the packages maintained by Bioconductor:</p>
 <pre class="r"><code>Bioconductor_packages &lt;- maintainers %&gt;% 
@@ -80,8 +97,8 @@ tbl &lt;- as_tibble(dcf) %&gt;%
                        elements)) %&gt;% 
   droplevels() %&gt;% 
   pull_set(sets)
-Bioconductor_packages</code></pre>
-<pre><code>##  [1] annotate             AnnotationDbi        AnnotationFilter    
+Bioconductor_packages
+##  [1] annotate             AnnotationDbi        AnnotationFilter    
 ##  [4] AnnotationForge      AnnotationHub        AnnotationHubData   
 ##  [7] Biobase              BiocCaseStudies      BiocCheck           
 ## [10] BiocGenerics         BiocParallel         BiocStyle           
@@ -102,6 +119,7 @@ Bioconductor_packages</code></pre>
 <p>And we can see which are installed by default or recommended at the <a href="https://cran.r-project.org/doc/FAQ/R-FAQ.html#Which-add_002don-packages-exist-for-R_003f">FAQs</a>:
 in total 29.</p>
 <hr />
+</div>
 <div id="dependencies" class="section level2">
 <h2>Dependencies</h2>
 <p>Now let’s work on the dependencies.
@@ -133,11 +151,10 @@ names(l) &lt;- tbl[, &quot;Package&quot;, drop = TRUE]</code></pre>
 sets(packages) &lt;- inner_join(sets(packages),
                              tbl[, c(&quot;Package&quot;, &quot;dependencyCount&quot;)], 
                              by = c(&quot;sets&quot; = &quot;Package&quot;))
-is_nested(packages)</code></pre>
-<pre><code>## [1] TRUE</code></pre>
-</div>
-<div id="in-this-case-we-can-see-that-some-packages-appear-as-dependencies-of-others.." class="section level2">
-<h2>In this case we can see that some packages appear as dependencies of others..</h2>
+is_nested(packages)
+## [1] TRUE</code></pre>
+<p>In this case we can see that some packages appear as dependencies of others..</p>
+<hr />
 <p>We can plot some</p>
 <pre class="r"><code>packages %&gt;% 
   set_size() %&gt;% 
@@ -148,7 +165,7 @@ is_nested(packages)</code></pre>
   scale_y_log10() +
   theme_minimal() +
   labs(title = &quot;Packages dependencies&quot;)</code></pre>
-<p><img src="/post/2019-06-06-advanced-use-of-baseset_files/figure-html/dependensies1-1.svg" width="672" /></p>
+<p><img src="/slides/2019-06-06-advanced-use-of-baseset_files/figure-html/dependensies1-1.svg" width="672" /></p>
 <hr />
 <pre class="r"><code>p &lt;- packages %&gt;% 
   element_size() %&gt;% 
@@ -161,19 +178,18 @@ p %&gt;%
   scale_y_log10() +
   theme_minimal() +
   labs(title = &quot;Packages depended&quot;)</code></pre>
-<p><img src="/post/2019-06-06-advanced-use-of-baseset_files/figure-html/dependensies2-1.svg" width="672" /></p>
+<p><img src="/slides/2019-06-06-advanced-use-of-baseset_files/figure-html/dependensies2-1.svg" width="672" /></p>
 <pre class="r"><code>p %&gt;% 
   ggplot(aes(Origin, size)) +
   geom_violin() +
   geom_point(position = position_jitter()) +
   theme_minimal() +
   scale_y_log10()</code></pre>
-<p><img src="/post/2019-06-06-advanced-use-of-baseset_files/figure-html/dependensies4-1.svg" width="672" /></p>
-<pre class="r"><code>table(p$Origin)</code></pre>
-<pre><code>## 
+<p><img src="/slides/2019-06-06-advanced-use-of-baseset_files/figure-html/dependensies4-1.svg" width="672" /></p>
+<pre class="r"><code>table(p$Origin)
+## 
 ##      Bioconductor Bioconductor Core             Other            R core 
-##               434                40              1154                27</code></pre>
+##               435                40              1155                27</code></pre>
 <hr />
 <p>Thanks!</p>
-</div>
 </div>

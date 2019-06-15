@@ -20,12 +20,12 @@ editor_options:
 ---
 
 ```{r setup, include=FALSE}
-knitr::opts_chunk$set(echo = TRUE)
+knitr::opts_chunk$set(echo = TRUE, collapse = TRUE)
 library("tidyverse")
 library("BaseSet")
 ```
 
-# Bioconductor packages
+## Bioconductor packages
 
 We can quickly access the dependencies and maintainers of Bioconductor' packages:
 
@@ -57,6 +57,7 @@ head(tbl)
 As you can see the Maintainers field is a list and also the Depends and Import.
 
 ---
+
 ## Maintainers
 Now we have several sets each package with the dependencies and each package and the maintainers. We must tidy them:
 ```{r maintainers}
@@ -72,6 +73,7 @@ grep("Carey", name_elements(maintainers), value = TRUE)
 ```
 
 ---
+
 Now we are ready for some plots:
 ```{r maintainers1, message=FALSE, warning=FALSE, fig.height=4, dev='svg'}
 maintainers %>% 
@@ -168,6 +170,7 @@ is_nested(packages)
 ```
 
 In this case we can see that some packages appear as dependencies of others..
+
 ---
 
 We can plot some
