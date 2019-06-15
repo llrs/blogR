@@ -59,6 +59,7 @@ As you can see the Maintainers field is a list and also the Depends and Import.
 ---
 
 ## Maintainers
+
 Now we have several sets each package with the dependencies and each package and the maintainers. We must tidy them:
 ```{r maintainers}
 prepare <- unnest(tbl[, c("Maintainer", "Package")])
@@ -66,6 +67,7 @@ colnames(prepare) <- c("sets", "elements")
 maintainers <- tidySet(prepare)
 is_nested(maintainers)
 ```
+
 We can see with `nElements(maintainers)` that it has less than `r nElements(maintainers)` maintainers. Because some appear duplicated:
 
 ```{r carey}
@@ -75,6 +77,7 @@ grep("Carey", name_elements(maintainers), value = TRUE)
 ---
 
 Now we are ready for some plots:
+
 ```{r maintainers1, message=FALSE, warning=FALSE, fig.height=4, dev='svg'}
 maintainers %>% 
   set_size() %>% 
@@ -107,6 +110,7 @@ maintainers %>%
 ---
 
 We can have a look at the packages maintained by Bioconductor:
+
 ```{r Bioc_packages}
 Bioconductor_packages <- maintainers %>% 
   filter_element(grepl("Bioconductor", 
@@ -133,6 +137,7 @@ in total `r length(rcore)`.
 
 Now let's work on the dependencies.
 First some clean up of the package names:
+
 ```{r dependencies}
 l <- apply(tbl[, c("Depend", "Import")], 1, function(x){
   y <- unlist(x, use.names = FALSE)
