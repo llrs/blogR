@@ -18,10 +18,10 @@
 #   url = "#projects"
 #   weight = 30
 
-[[main]]
-  name = "Slides"
-  url = "#slides"
-  weight = 40
+# [[main]]
+#   name = "Slides"
+#   url = "#slides"
+#   weight = 40
 
 # [[main]]
 #   name = "Publications"
@@ -33,10 +33,10 @@
 #   url = "/tutorial/"
 #   weight = 50
 
-[[main]]
-  name = "Software"
-  url = "#software"
-  weight = 50
+# [[main]]
+#   name = "Software"
+#   url = "#software"
+#   weight = 50
 
 # [[main]]
 #   name = "Contact"
