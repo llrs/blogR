@@ -3,8 +3,10 @@ title: PhD selection
 author: Lluís Revilla Sancho
 date: '2019-04-14'
 slug: phd-selection
-categories: []
-tags: []
+categories:
+  - r
+description: "Simulation of selection in academia for PhDs"
+tags: [r]
 image:
   caption: ''
   focal_point: ''
@@ -23,6 +25,10 @@ I will base this simulation on three principles:
 
 Those that are normally distributed will be simulated using the rbeta function, 
 but I will create a symmetric distribution. Assuming that the maximum of the variables will be either 1 or -1, and the average will be 0.
+
+```{r setup, include = FALSE}
+knitr::opts_chunk$set(collapse = TRUE)
+```
 
 ```{r}
 library("tidyverse")

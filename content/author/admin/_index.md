@@ -14,7 +14,8 @@ role = "Bioinformatician"
 # Organizations/Affiliations
 #   Separate multiple entries with a comma, using the form: `[ {name="Org1", url=""}, {name="Org2", url=""} ]`.
 organizations = [ { name = "Universitat de Barcelona",  url = "https://www.ub.edu/web/ub/en/index.html?" },
-                  { name = "CIBEREHD", url = "https://www.ciberehd.org/en" }
+                  { name = "CIBEREHD", url = "https://www.ciberehd.org/en" },
+                  { name = "RSGSpain", url = "http://www.rsg-spain.iscbsc.org/" }
                 ]
 
 # Short bio (displayed in user profile at end of posts)
@@ -25,9 +26,8 @@ email = "lluis.revilla+llrs@gmail.com"
 
 # List (academic) interests or hobbies
 interests = [
-  "Functional Enrichment",
-  "Data Integration",
-  "Information Retrieval"
+  "Functional enrichment",
+  "Data integration"
 ]
 
 # Organizational groups that you belong to (for People widget)
@@ -89,4 +89,4 @@ user_groups = ["Researchers", "Visitors"]
 
 +++
 
-I am a bioinformatician doing my PhD at the [IBD](https://ibd-bcn.org) lab of Dr. Julià Panès under the supervision of Azucena Salas. My research interests include functional enrichment, transcriptomics, data integration and analysis outside comparisons. I have produced some pieces of software mainly in Bioconductor. 
+I am a bioinformatician doing my PhD at the [IBD](https://ibd-bcn.org) lab of Dr. Julià Panès under the supervision of Azucena Salas. My research interests include functional enrichment, transcriptomics, data integration and analysis outside comparisons. I created some packages deposited in Bioconductor and contributed to other packages on CRAN, Bioconductor and GitHub. 

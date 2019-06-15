@@ -22,14 +22,15 @@ editor_options:
 I saw a map on twitter and I wanted to see if I could change a bit and improve it:
 
 ```{r tweet, echo=FALSE}
-blogdown::shortcode('tweet', '852205086956818432')
+knitr::opts_chunk$set(collapse = TRUE)
+blogdown::shortcode('tweet', '1129429109212213248')
 ```
 
 I wanted to make so that the fires change the size with time to appear and disappear instead of moving around Mexico. 
 
 
 I got the [code from Andrian](https://github.com/bautista-adrian/Incendios_Mx/blob/master/Incendios.R), I ran the code and stored it:
-```{r setup}
+```{r setup, collapse=TRUE}
 library("here")
 library("ggplot2")
 library("gganimate")
@@ -75,6 +76,5 @@ gganimation <- m +
          y = element_blank(), 
          caption = "Source: CONAFOR / Elaboracion: @4drian.bautista & @Lluís_Rev")
 
-animate(gganimation, fps = 25, duration = 20)
+animate(gganimation, fps = 25, duration = 10)
 ```
-

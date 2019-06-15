@@ -22,25 +22,25 @@ editor_options:
 <div id="evolucion-de-los-incendios-forestales-en-mexico" class="section level2">
 <h2>Evolucion de los incendios forestales en México</h2>
 <p>I saw a map on twitter and I wanted to see if I could change a bit and improve it:</p>
-{{% tweet "852205086956818432" %}}
+{{% tweet "1129429109212213248" %}}
 <p>I wanted to make so that the fires change the size with time to appear and disappear instead of moving around Mexico.</p>
 <p>I got the <a href="https://github.com/bautista-adrian/Incendios_Mx/blob/master/Incendios.R">code from Andrian</a>, I ran the code and stored it:</p>
-<pre class="r"><code>library(&quot;here&quot;)</code></pre>
-<pre><code>## here() starts at /home/lluis/Documents/Projects/blogR</code></pre>
-<pre class="r"><code>library(&quot;ggplot2&quot;)</code></pre>
-<pre><code>## Registered S3 methods overwritten by &#39;ggplot2&#39;:
+<pre class="r"><code>library(&quot;here&quot;)
+## here() starts at /home/lluis/Documents/Projects/blogR
+library(&quot;ggplot2&quot;)
+## Registered S3 methods overwritten by &#39;ggplot2&#39;:
 ##   method         from 
 ##   [.quosures     rlang
 ##   c.quosures     rlang
-##   print.quosures rlang</code></pre>
-<pre class="r"><code>library(&quot;gganimate&quot;)
+##   print.quosures rlang
+library(&quot;gganimate&quot;)
 library(&quot;ggthemes&quot;)
 # Maps from mexico
 # devtools::install_github(&#39;diegovalle/mxmaps&#39;)
 library(&quot;mxmaps&quot;)
 plottable &lt;- readRDS(here(&quot;static&quot;, &quot;fires-mexico&quot;, &quot;fires_mexico.RDS&quot;))
-head(plottable)</code></pre>
-<pre><code>##   Grados_Lon Minutos_Lon Segundos_Lon Grados_Lat Minutos_Lat Segundos_Lat
+head(plottable)
+##   Grados_Lon Minutos_Lon Segundos_Lon Grados_Lat Minutos_Lat Segundos_Lat
 ## 1        102           8         36.7         21          58         30.0
 ## 2        102          12         42.9         22          51         27.4
 ## 3        102          38         32.1         22           1         46.5
@@ -69,9 +69,9 @@ m &lt;- ggplot() +
   theme(plot.subtitle = element_text(size = 32, color = &quot;grey&quot;)) +
   scale_size_discrete()  +
   theme_map()  +
-  coord_map()</code></pre>
-<pre><code>## Warning: Using size for a discrete variable is not advised.</code></pre>
-<pre class="r"><code>m</code></pre>
+  coord_map()
+## Warning: Using size for a discrete variable is not advised.
+m</code></pre>
 <p><img src="/post/2019-05-24-fires-in-mexico_files/figure-html/map-1.png" width="672" /></p>
 </div>
 <div id="animation" class="section level2">
@@ -87,6 +87,6 @@ m &lt;- ggplot() +
          y = element_blank(), 
          caption = &quot;Source: CONAFOR / Elaboracion: @4drian.bautista &amp; @Lluís_Rev&quot;)
 
-animate(gganimation, fps = 25, duration = 20)</code></pre>
+animate(gganimation, fps = 25, duration = 10)</code></pre>
 <p><img src="/post/2019-05-24-fires-in-mexico_files/figure-html/animation-1.gif" /><!-- --></p>
 </div>
