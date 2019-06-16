@@ -1,69 +1,100 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="" xml:lang="">
+  <head>
+    <title>Advanced use of BaseSet</title>
+    <meta charset="utf-8" />
+    <meta name="author" content="Lluís Revilla Sancho" />
+    <meta name="date" content="2019-06-16" />
+    <link href="libs/remark-css-0.0.1/default.css" rel="stylesheet" />
+    <link href="libs/remark-css-0.0.1/default-fonts.css" rel="stylesheet" />
+  </head>
+  <body>
+    <textarea id="source">
+class: center, middle, inverse, title-slide
+
+# Advanced use of BaseSet
+## Exploring Bioconductor packages
+### Lluís Revilla Sancho
+### 2019-06-16
+
 ---
-title: "Advanced use of BaseSet"
-author: 'Lluís Revilla Sancho'
-subtitle: "Exploring Bioconductor packages"
-date: "2019-06-16"
-slug: BaseSet-advanced
-twitter: "@Lluis_Rev"
-tags: [r]
-output:
-  xaringan::moon_reader:
-    nature:
-      highlightLines: true
-      countIncrementalSlides: true
-editor_options: 
-  chunk_output_type: console
----
 
 
 
-<div id="bioconductor-packages" class="section level2">
-<h2>Bioconductor packages</h2>
-<p>We can quickly access the dependencies and maintainers of Bioconductor’ packages:</p>
-<pre class="r"><code>views &lt;- &quot;https://bioconductor.org/packages/devel/bioc/VIEWS&quot;
-dcf &lt;- read.dcf(url(views), c(&quot;Package&quot;, &quot;Maintainer&quot;, &quot;dependencyCount&quot;, 
-                  &quot;Depends&quot;, &quot;Imports&quot;))
+
+## Bioconductor packages
+
+We can quickly access the dependencies and maintainers of Bioconductor' packages:
+
+
+```r
+views &lt;- "https://bioconductor.org/packages/devel/bioc/VIEWS"
+dcf &lt;- read.dcf(url(views), c("Package", "Maintainer", "dependencyCount", 
+                  "Depends", "Imports"))
 tbl &lt;- as_tibble(dcf) %&gt;%
    mutate(
-     Maintainer = gsub(&quot;[[:space:]]+&quot;, &quot; &quot;, Maintainer),
+     Maintainer = gsub("[[:space:]]+", " ", Maintainer),
      dependencyCount = as.integer(dependencyCount),
-     Core = grepl(&quot;Bioconductor Package Maintainer&quot;, Maintainer),
-     Maintainer = stringr::str_split(Maintainer, &quot;,\\s*|( and )&quot;),
-     Depend = stringr::str_split(Depends, &quot;,\\s+&quot;), 
-     Import = stringr::str_split(Imports, &quot;,\\s+&quot;),
-     )</code></pre>
-<p>This is a modified code from Martin Morgan</p>
-<hr />
-<p>The content:</p>
-<pre><code>## # A tibble: 6 x 8
+     Core = grepl("Bioconductor Package Maintainer", Maintainer),
+     Maintainer = stringr::str_split(Maintainer, ",\\s*|( and )"),
+     Depend = stringr::str_split(Depends, ",\\s+"), 
+     Import = stringr::str_split(Imports, ",\\s+"),
+     )
+```
+
+This is a modified code from Martin Morgan
+
+---
+
+The content:
+
+
+```
+## # A tibble: 6 x 8
 ##   Package  Maintainer dependencyCount Depends   Imports Core  Depend Import
 ##   &lt;chr&gt;    &lt;list&gt;               &lt;int&gt; &lt;chr&gt;     &lt;chr&gt;   &lt;lgl&gt; &lt;list&gt; &lt;list&gt;
 ## 1 a4       &lt;chr [2]&gt;              131 a4Base, … &lt;NA&gt;    FALSE &lt;chr … &lt;chr …
-## 2 a4Base   &lt;chr [2]&gt;               56 &quot;methods… &lt;NA&gt;    FALSE &lt;chr … &lt;chr …
-## 3 a4Class… &lt;chr [2]&gt;              122 &quot;methods… a4Core  FALSE &lt;chr … &lt;chr …
+## 2 a4Base   &lt;chr [2]&gt;               56 "methods… &lt;NA&gt;    FALSE &lt;chr … &lt;chr …
+## 3 a4Class… &lt;chr [2]&gt;              122 "methods… a4Core  FALSE &lt;chr … &lt;chr …
 ## 4 a4Core   &lt;chr [2]&gt;               15 methods,… &lt;NA&gt;    FALSE &lt;chr … &lt;chr …
 ## 5 a4Prepr… &lt;chr [2]&gt;               26 methods,… &lt;NA&gt;    FALSE &lt;chr … &lt;chr …
-## 6 a4Repor… &lt;chr [2]&gt;               30 methods,… xtable… FALSE &lt;chr … &lt;chr …</code></pre>
-<p>As you can see the Maintainers field is a list and also the Depends and Import.</p>
-<hr />
-</div>
-<div id="maintainers" class="section level2">
-<h2>Maintainers</h2>
-<p>Now we have several sets each package with the dependencies and each package and the maintainers. We must tidy them:</p>
-<pre class="r"><code>prepare &lt;- unnest(tbl[, c(&quot;Maintainer&quot;, &quot;Package&quot;)])
-colnames(prepare) &lt;- c(&quot;sets&quot;, &quot;elements&quot;)
+## 6 a4Repor… &lt;chr [2]&gt;               30 methods,… xtable… FALSE &lt;chr … &lt;chr …
+```
+
+As you can see the Maintainers field is a list and also the Depends and Import.
+
+---
+
+## Maintainers
+
+Now we have several sets each package with the dependencies and each package and the maintainers. We must tidy them:
+
+```r
+prepare &lt;- unnest(tbl[, c("Maintainer", "Package")])
+colnames(prepare) &lt;- c("sets", "elements")
 maintainers &lt;- tidySet(prepare)
 is_nested(maintainers)
-## [1] FALSE</code></pre>
-<p>We can see with <code>nElements(maintainers)</code> that it has less than 1322 maintainers. Because some appear duplicated:</p>
-<pre class="r"><code>grep(&quot;Carey&quot;, name_elements(maintainers), value = TRUE)
-## [1] &quot;Jacob Carey &lt;jcarey15@jhu.edu&gt;&quot;          
-## [2] &quot;V. Carey &lt;stvjc@channing.harvard.edu&gt;&quot;   
-## [3] &quot;Vince Carey &lt;stvjc@channing.harvard.edu&gt;&quot;
-## [4] &quot;VJ Carey &lt;stvjc@channing.harvard.edu&gt;&quot;</code></pre>
-<hr />
-<p>Now we are ready for some plots:</p>
-<pre class="r"><code>maintainers %&gt;% 
+## [1] FALSE
+```
+
+We can see with `nElements(maintainers)` that it has less than 1322 maintainers. Because some appear duplicated:
+
+
+```r
+grep("Carey", name_elements(maintainers), value = TRUE)
+## [1] "Jacob Carey &lt;jcarey15@jhu.edu&gt;"          
+## [2] "V. Carey &lt;stvjc@channing.harvard.edu&gt;"   
+## [3] "Vince Carey &lt;stvjc@channing.harvard.edu&gt;"
+## [4] "VJ Carey &lt;stvjc@channing.harvard.edu&gt;"
+```
+
+---
+
+Now we are ready for some plots:
+
+
+```r
+maintainers %&gt;% 
   set_size() %&gt;% 
   arrange(-size) %&gt;% 
   select(-probability) %&gt;%
@@ -71,11 +102,18 @@ is_nested(maintainers)
   geom_histogram(aes(size)) + 
   scale_y_log10() +
   theme_minimal() +
-  labs(title = &quot;Maintainers by package&quot;)</code></pre>
-<p><img src="/slides/2019-06-06-advanced-use-of-baseset_files/figure-html/maintainers1-1.svg" width="672" /></p>
-<hr />
-<pre class="r"><code>maintainers %&gt;% 
-  filter_element(!grepl(&quot;Bioconductor Package Maintainer&quot;, 
+  labs(title = "Maintainers by package")
+```
+
+![](2019-06-06-advanced-use-of-baseset_files/figure-html/maintainers1-1.svg)&lt;!-- --&gt;
+
+---
+
+
+
+```r
+maintainers %&gt;% 
+  filter_element(!grepl("Bioconductor Package Maintainer", 
                         as.character(elements))) %&gt;% 
   element_size() %&gt;% 
   arrange(-size) %&gt;% 
@@ -84,12 +122,19 @@ is_nested(maintainers)
   geom_histogram(aes(size)) + 
   scale_y_log10() +
   theme_minimal() +
-  labs(title = &quot;Packages maintained by person&quot;)</code></pre>
-<p><img src="/slides/2019-06-06-advanced-use-of-baseset_files/figure-html/maintainers2-1.svg" width="672" /></p>
-<hr />
-<p>We can have a look at the packages maintained by Bioconductor:</p>
-<pre class="r"><code>Bioconductor_packages &lt;- maintainers %&gt;% 
-  filter_element(grepl(&quot;Bioconductor&quot;, 
+  labs(title = "Packages maintained by person")
+```
+
+![](2019-06-06-advanced-use-of-baseset_files/figure-html/maintainers2-1.svg)&lt;!-- --&gt;
+
+---
+
+We can have a look at the packages maintained by Bioconductor:
+
+
+```r
+Bioconductor_packages &lt;- maintainers %&gt;% 
+  filter_element(grepl("Bioconductor", 
                        elements)) %&gt;% 
   droplevels() %&gt;% 
   pull_set(sets)
@@ -111,48 +156,69 @@ Bioconductor_packages
 ## [43] RBGL                 RGalaxy              Rhtslib             
 ## [46] Rsamtools            S4Vectors            ShortRead           
 ## [49] SummarizedExperiment zlibbioc            
-## 50 Levels: annotate AnnotationDbi AnnotationFilter ... zlibbioc</code></pre>
-<p>And we can see which are installed by default or recommended at the <a href="https://cran.r-project.org/doc/FAQ/R-FAQ.html#Which-add_002don-packages-exist-for-R_003f">FAQs</a>:
-in total 29.</p>
-<hr />
-</div>
-<div id="dependencies" class="section level2">
-<h2>Dependencies</h2>
-<p>Now let’s work on the dependencies.
-First some clean up of the package names:</p>
-<pre class="r"><code>l &lt;- apply(tbl[, c(&quot;Depend&quot;, &quot;Import&quot;)], 1, function(x){
+## 50 Levels: annotate AnnotationDbi AnnotationFilter ... zlibbioc
+```
+
+
+
+And we can see which are installed by default or recommended at the [FAQs](https://cran.r-project.org/doc/FAQ/R-FAQ.html#Which-add_002don-packages-exist-for-R_003f):
+in total 29.
+
+---
+
+## Dependencies
+
+Now let's work on the dependencies.
+First some clean up of the package names:
+
+
+```r
+l &lt;- apply(tbl[, c("Depend", "Import")], 1, function(x){
   y &lt;- unlist(x, use.names = FALSE)
-  y &lt;- gsub(&quot; ?\\(.*&quot;, &quot;&quot;, y)
-  y &lt;- y[!grepl(&quot;\\)&quot;, y)]
-  y &lt;- y[y != &quot;&quot;]
+  y &lt;- gsub(" ?\\(.*", "", y)
+  y &lt;- y[!grepl("\\)", y)]
+  y &lt;- y[y != ""]
   unique(y[!is.na(y)])
 })
-names(l) &lt;- tbl[, &quot;Package&quot;, drop = TRUE]</code></pre>
-<hr />
-<p>Now we are ready to transform to a TidySet:</p>
-<pre class="r"><code>packages &lt;- tidySet(l) %&gt;% 
-  filter_element(elements != &quot;R&quot;) %&gt;% 
+names(l) &lt;- tbl[, "Package", drop = TRUE]
+```
+
+---
+
+Now we are ready to transform to a TidySet:
+
+
+```r
+packages &lt;- tidySet(l) %&gt;% 
+  filter_element(elements != "R") %&gt;% 
   mutate_element(Origin = case_when(
-    elements  %in%  rcore ~ &quot;R core&quot;,
-    elements  %in% Bioconductor_packages ~ &quot;Bioconductor Core&quot;,
-    elements  %in% name_sets(maintainers) ~  &quot;Bioconductor&quot;,
-    TRUE ~ &quot;Other&quot;)) %&gt;% 
-    activate(&quot;sets&quot;) %&gt;% 
+    elements  %in%  rcore ~ "R core",
+    elements  %in% Bioconductor_packages ~ "Bioconductor Core",
+    elements  %in% name_sets(maintainers) ~  "Bioconductor",
+    TRUE ~ "Other")) %&gt;% 
+    activate("sets") %&gt;% 
     mutate(Type = case_when(
-    sets  %in% rcore ~ &quot;R core&quot;,
-    sets  %in% Bioconductor_packages ~ &quot;Bioconductor Core&quot;,
-    sets  %in% name_sets(maintainers) ~  &quot;Bioconductor&quot;,
-    TRUE ~ &quot;Other&quot;))
+    sets  %in% rcore ~ "R core",
+    sets  %in% Bioconductor_packages ~ "Bioconductor Core",
+    sets  %in% name_sets(maintainers) ~  "Bioconductor",
+    TRUE ~ "Other"))
 
 sets(packages) &lt;- inner_join(sets(packages),
-                             tbl[, c(&quot;Package&quot;, &quot;dependencyCount&quot;)], 
-                             by = c(&quot;sets&quot; = &quot;Package&quot;))
+                             tbl[, c("Package", "dependencyCount")], 
+                             by = c("sets" = "Package"))
 is_nested(packages)
-## [1] TRUE</code></pre>
-<p>In this case we can see that some packages appear as dependencies of others..</p>
-<hr />
-<p>We can plot some</p>
-<pre class="r"><code>packages %&gt;% 
+## [1] TRUE
+```
+
+In this case we can see that some packages appear as dependencies of others..
+
+---
+
+We can plot some
+
+
+```r
+packages %&gt;% 
   set_size() %&gt;% 
   arrange(-size) %&gt;% 
   select(-probability) %&gt;%
@@ -160,32 +226,140 @@ is_nested(packages)
   geom_histogram(aes(size), bins = 50) +
   scale_y_log10() +
   theme_minimal() +
-  labs(title = &quot;Packages dependencies&quot;)</code></pre>
-<p><img src="/slides/2019-06-06-advanced-use-of-baseset_files/figure-html/dependensies1-1.svg" width="672" /></p>
-<hr />
-<pre class="r"><code>p &lt;- packages %&gt;% 
+  labs(title = "Packages dependencies")
+```
+
+![](2019-06-06-advanced-use-of-baseset_files/figure-html/dependensies1-1.svg)&lt;!-- --&gt;
+
+---
+
+
+```r
+p &lt;- packages %&gt;% 
   element_size() %&gt;% 
   arrange(-size) %&gt;% 
   select(-probability) %&gt;% 
-  left_join(elements(packages), by = c(&quot;element&quot; = &quot;elements&quot;))
+  left_join(elements(packages), by = c("element" = "elements"))
 p %&gt;% 
   ggplot() +
   geom_histogram(aes(size)) + 
   scale_y_log10() +
   theme_minimal() +
-  labs(title = &quot;Packages depended&quot;)</code></pre>
-<p><img src="/slides/2019-06-06-advanced-use-of-baseset_files/figure-html/dependensies2-1.svg" width="672" /></p>
-<pre class="r"><code>p %&gt;% 
+  labs(title = "Packages depended")
+```
+
+![](2019-06-06-advanced-use-of-baseset_files/figure-html/dependensies2-1.svg)&lt;!-- --&gt;
+
+
+
+```r
+p %&gt;% 
   ggplot(aes(Origin, size)) +
   geom_violin() +
   geom_point(position = position_jitter()) +
   theme_minimal() +
-  scale_y_log10()</code></pre>
-<p><img src="/slides/2019-06-06-advanced-use-of-baseset_files/figure-html/dependensies4-1.svg" width="672" /></p>
-<pre class="r"><code>table(p$Origin)
+  scale_y_log10()
+```
+
+![](2019-06-06-advanced-use-of-baseset_files/figure-html/dependensies4-1.svg)&lt;!-- --&gt;
+
+```r
+table(p$Origin)
 ## 
 ##      Bioconductor Bioconductor Core             Other            R core 
-##               435                40              1155                27</code></pre>
-<hr />
-<p>Thanks!</p>
-</div>
+##               435                40              1155                27
+```
+ 
+---
+
+Thanks!
+    </textarea>
+<style data-target="print-only">@media screen {.remark-slide-container{display:block;}.remark-slide-scaler{box-shadow:none;}}</style>
+<script src="https://remarkjs.com/downloads/remark-latest.min.js"></script>
+<script>var slideshow = remark.create({
+"highlightLines": true,
+"countIncrementalSlides": true
+});
+if (window.HTMLWidgets) slideshow.on('afterShowSlide', function (slide) {
+  window.dispatchEvent(new Event('resize'));
+});
+(function(d) {
+  var s = d.createElement("style"), r = d.querySelector(".remark-slide-scaler");
+  if (!r) return;
+  s.type = "text/css"; s.innerHTML = "@page {size: " + r.style.width + " " + r.style.height +"; }";
+  d.head.appendChild(s);
+})(document);
+
+(function(d) {
+  var el = d.getElementsByClassName("remark-slides-area");
+  if (!el) return;
+  var slide, slides = slideshow.getSlides(), els = el[0].children;
+  for (var i = 1; i < slides.length; i++) {
+    slide = slides[i];
+    if (slide.properties.continued === "true" || slide.properties.count === "false") {
+      els[i - 1].className += ' has-continuation';
+    }
+  }
+  var s = d.createElement("style");
+  s.type = "text/css"; s.innerHTML = "@media print { .has-continuation { display: none; } }";
+  d.head.appendChild(s);
+})(document);
+// delete the temporary CSS (for displaying all slides initially) when the user
+// starts to view slides
+(function() {
+  var deleted = false;
+  slideshow.on('beforeShowSlide', function(slide) {
+    if (deleted) return;
+    var sheets = document.styleSheets, node;
+    for (var i = 0; i < sheets.length; i++) {
+      node = sheets[i].ownerNode;
+      if (node.dataset["target"] !== "print-only") continue;
+      node.parentNode.removeChild(node);
+    }
+    deleted = true;
+  });
+})();</script>
+
+<script>
+(function() {
+  var links = document.getElementsByTagName('a');
+  for (var i = 0; i < links.length; i++) {
+    if (/^(https?:)?\/\//.test(links[i].getAttribute('href'))) {
+      links[i].target = '_blank';
+    }
+  }
+})();
+</script>
+
+<script>
+slideshow._releaseMath = function(el) {
+  var i, text, code, codes = el.getElementsByTagName('code');
+  for (i = 0; i < codes.length;) {
+    code = codes[i];
+    if (code.parentNode.tagName !== 'PRE' && code.childElementCount === 0) {
+      text = code.textContent;
+      if (/^\\\((.|\s)+\\\)$/.test(text) || /^\\\[(.|\s)+\\\]$/.test(text) ||
+          /^\$\$(.|\s)+\$\$$/.test(text) ||
+          /^\\begin\{([^}]+)\}(.|\s)+\\end\{[^}]+\}$/.test(text)) {
+        code.outerHTML = code.innerHTML;  // remove <code></code>
+        continue;
+      }
+    }
+    i++;
+  }
+};
+slideshow._releaseMath(document);
+</script>
+<!-- dynamically load mathjax for compatibility with self-contained -->
+<script>
+(function () {
+  var script = document.createElement('script');
+  script.type = 'text/javascript';
+  script.src  = 'https://mathjax.rstudio.com/latest/MathJax.js?config=TeX-MML-AM_CHTML';
+  if (location.protocol !== 'file:' && /^https?:/.test(script.src))
+    script.src  = script.src.replace(/^https?:/, '');
+  document.getElementsByTagName('head')[0].appendChild(script);
+})();
+</script>
+  </body>
+</html>
