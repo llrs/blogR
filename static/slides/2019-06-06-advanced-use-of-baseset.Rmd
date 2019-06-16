@@ -28,8 +28,8 @@ We can quickly access the dependencies and maintainers of Bioconductor' packages
 
 ```{r download}
 views <- "https://bioconductor.org/packages/devel/bioc/VIEWS"
-dcf <- read.dcf(url(views), c("Package", "Maintainer", "dependencyCount", 
-                  "Depends", "Imports"))
+dcf <- read.dcf(url(views), c("Package", "Maintainer", 
+                  "dependencyCount", "Depends", "Imports"))
 tbl <- as_tibble(dcf) %>%
    mutate(
      Maintainer = gsub("[[:space:]]+", " ", Maintainer),
@@ -57,12 +57,11 @@ As you can see the Maintainers field is a list and also the Depends and Import.
 
 ## Maintainers
 
-Now we have several sets each package with the dependencies and each package and the maintainers. We must tidy them:
+For each package we can have several maintainers. We must indicate what are our sets and our elements:
 ```{r maintainers}
 prepare <- unnest(tbl[, c("Maintainer", "Package")])
 colnames(prepare) <- c("sets", "elements")
 maintainers <- tidySet(prepare)
-is_nested(maintainers)
 ```
 
 We can see with `nElements(maintainers)` that it has less than `r nElements(maintainers)` maintainers. Because some appear duplicated:
@@ -84,7 +83,8 @@ maintainers %>%
   geom_histogram(aes(size)) + 
   scale_y_log10() +
   theme_minimal() +
-  labs(title = "Maintainers by package")
+  labs(title = "Maintainers by package") +
+  coord_flip()
 ```
 
 ---
@@ -101,20 +101,21 @@ maintainers %>%
   geom_histogram(aes(size)) + 
   scale_y_log10() +
   theme_minimal() +
-  labs(title = "Packages maintained by person")
+  labs(title = "Packages maintained by person")  +
+  coord_flip()
 ```
 
 ---
 
+## Bioconductor packages
+
 We can have a look at the packages maintained by Bioconductor:
 
 ```{r Bioc_packages}
-Bioconductor_packages <- maintainers %>% 
-  filter_element(grepl("Bioconductor", 
-                       elements)) %>% 
+(Bioconductor_packages <- maintainers %>% 
+  filter_element(grepl("Bioconductor", elements)) %>% 
   droplevels() %>% 
-  pull_set(sets)
-Bioconductor_packages
+  pull_set(sets))
 ```
 
 ```{r rcore, include=FALSE}
@@ -144,6 +145,7 @@ l <- apply(tbl[, c("Depend", "Import")], 1, function(x){
   unique(y[!is.na(y)])
 })
 names(l) <- tbl[, "Package", drop = TRUE]
+head(l, 2)
 ```
 
 ---
@@ -171,17 +173,16 @@ sets(packages) <- inner_join(sets(packages),
 is_nested(packages)
 ```
 
-In this case we can see that some packages appear as dependencies of others..
+In this case we can see that some packages appear as dependencies of others as expected.
 
 ---
 
-We can plot some
+We can plot the direct dependencies:
 
 ```{r dependensies1, message=FALSE, warning=FALSE, fig.height=4, dev='svg'}
 packages %>% 
   set_size() %>% 
   arrange(-size) %>% 
-  select(-probability) %>%
   ggplot() +
   geom_histogram(aes(size), bins = 50) +
   scale_y_log10() +
@@ -195,7 +196,6 @@ packages %>%
 p <- packages %>% 
   element_size() %>% 
   arrange(-size) %>% 
-  select(-probability) %>% 
   left_join(elements(packages), by = c("element" = "elements"))
 p %>% 
   ggplot() +

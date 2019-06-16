@@ -29,8 +29,8 @@ We can quickly access the dependencies and maintainers of Bioconductor' packages
 
 ```r
 views &lt;- "https://bioconductor.org/packages/devel/bioc/VIEWS"
-dcf &lt;- read.dcf(url(views), c("Package", "Maintainer", "dependencyCount", 
-                  "Depends", "Imports"))
+dcf &lt;- read.dcf(url(views), c("Package", "Maintainer", 
+                  "dependencyCount", "Depends", "Imports"))
 tbl &lt;- as_tibble(dcf) %&gt;%
    mutate(
      Maintainer = gsub("[[:space:]]+", " ", Maintainer),
@@ -67,14 +67,12 @@ As you can see the Maintainers field is a list and also the Depends and Import.
 
 ## Maintainers
 
-Now we have several sets each package with the dependencies and each package and the maintainers. We must tidy them:
+For each package we can have several maintainers. We must indicate what are our sets and our elements:
 
 ```r
 prepare &lt;- unnest(tbl[, c("Maintainer", "Package")])
 colnames(prepare) &lt;- c("sets", "elements")
 maintainers &lt;- tidySet(prepare)
-is_nested(maintainers)
-## [1] FALSE
 ```
 
 We can see with `nElements(maintainers)` that it has less than 1322 maintainers. Because some appear duplicated:
@@ -102,7 +100,8 @@ maintainers %&gt;%
   geom_histogram(aes(size)) + 
   scale_y_log10() +
   theme_minimal() +
-  labs(title = "Maintainers by package")
+  labs(title = "Maintainers by package") +
+  coord_flip()
 ```
 
 ![](2019-06-06-advanced-use-of-baseset_files/figure-html/maintainers1-1.svg)&lt;!-- --&gt;
@@ -122,23 +121,24 @@ maintainers %&gt;%
   geom_histogram(aes(size)) + 
   scale_y_log10() +
   theme_minimal() +
-  labs(title = "Packages maintained by person")
+  labs(title = "Packages maintained by person")  +
+  coord_flip()
 ```
 
 ![](2019-06-06-advanced-use-of-baseset_files/figure-html/maintainers2-1.svg)&lt;!-- --&gt;
 
 ---
 
+## Bioconductor packages
+
 We can have a look at the packages maintained by Bioconductor:
 
 
 ```r
-Bioconductor_packages &lt;- maintainers %&gt;% 
-  filter_element(grepl("Bioconductor", 
-                       elements)) %&gt;% 
+(Bioconductor_packages &lt;- maintainers %&gt;% 
+  filter_element(grepl("Bioconductor", elements)) %&gt;% 
   droplevels() %&gt;% 
-  pull_set(sets)
-Bioconductor_packages
+  pull_set(sets))
 ##  [1] annotate             AnnotationDbi        AnnotationFilter    
 ##  [4] AnnotationForge      AnnotationHub        AnnotationHubData   
 ##  [7] Biobase              BiocCaseStudies      BiocCheck           
@@ -181,6 +181,15 @@ l &lt;- apply(tbl[, c("Depend", "Import")], 1, function(x){
   unique(y[!is.na(y)])
 })
 names(l) &lt;- tbl[, "Package", drop = TRUE]
+head(l, 2)
+## $a4
+## [1] "a4Base"      "a4Preproc"   "a4Classif"   "a4Core"      "a4Reporting"
+## 
+## $a4Base
+##  [1] "methods"       "graphics"      "grid"          "Biobase"      
+##  [5] "AnnotationDbi" "annaffy"       "mpm"           "genefilter"   
+##  [9] "limma"         "multtest"      "glmnet"        "a4Preproc"    
+## [13] "a4Core"        "gplots"
 ```
 
 ---
@@ -210,18 +219,17 @@ is_nested(packages)
 ## [1] TRUE
 ```
 
-In this case we can see that some packages appear as dependencies of others..
+In this case we can see that some packages appear as dependencies of others as expected.
 
 ---
 
-We can plot some
+We can plot the direct dependencies:
 
 
 ```r
 packages %&gt;% 
   set_size() %&gt;% 
   arrange(-size) %&gt;% 
-  select(-probability) %&gt;%
   ggplot() +
   geom_histogram(aes(size), bins = 50) +
   scale_y_log10() +
@@ -238,7 +246,6 @@ packages %&gt;%
 p &lt;- packages %&gt;% 
   element_size() %&gt;% 
   arrange(-size) %&gt;% 
-  select(-probability) %&gt;% 
   left_join(elements(packages), by = c("element" = "elements"))
 p %&gt;% 
   ggplot() +
