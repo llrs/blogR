@@ -3,7 +3,7 @@
   <head>
     <title>Advanced use of BaseSet</title>
     <meta charset="utf-8" />
-    <meta name="author" content="Lluís Revilla Sancho" />
+    <meta name="author" content="Lluís Revilla Sancho @Lluis_Rev" />
     <meta name="date" content="2019-06-16" />
     <link href="libs/remark-css-0.0.1/default.css" rel="stylesheet" />
     <link href="libs/remark-css-0.0.1/default-fonts.css" rel="stylesheet" />
@@ -14,7 +14,7 @@ class: center, middle, inverse, title-slide
 
 # Advanced use of BaseSet
 ## Exploring Bioconductor packages
-### Lluís Revilla Sancho
+### Lluís Revilla Sancho <span class="citation">@Lluis_Rev</span>
 ### 2019-06-16
 
 ---
@@ -100,14 +100,12 @@ maintainers %&gt;%
   geom_histogram(aes(size)) + 
   scale_y_log10() +
   theme_minimal() +
-  labs(title = "Maintainers by package") +
-  coord_flip()
+  labs(title = "Maintainers by package")
 ```
 
 ![](2019-06-06-advanced-use-of-baseset_files/figure-html/maintainers1-1.svg)&lt;!-- --&gt;
 
 ---
-
 
 
 ```r
@@ -121,8 +119,7 @@ maintainers %&gt;%
   geom_histogram(aes(size)) + 
   scale_y_log10() +
   theme_minimal() +
-  labs(title = "Packages maintained by person")  +
-  coord_flip()
+  labs(title = "Packages maintained by person") 
 ```
 
 ![](2019-06-06-advanced-use-of-baseset_files/figure-html/maintainers2-1.svg)&lt;!-- --&gt;

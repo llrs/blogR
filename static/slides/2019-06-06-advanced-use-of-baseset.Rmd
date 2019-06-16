@@ -1,10 +1,9 @@
 ---
 title: "Advanced use of BaseSet"
-author: 'Lluís Revilla Sancho'
+author: 'Lluís Revilla Sancho @Lluis_Rev'
 subtitle: "Exploring Bioconductor packages"
 date: "`r Sys.Date()`"
 slug: BaseSet-advanced
-twitter: "@Lluis_Rev"
 tags: [r]
 output:
   xaringan::moon_reader:
@@ -83,12 +82,10 @@ maintainers %>%
   geom_histogram(aes(size)) + 
   scale_y_log10() +
   theme_minimal() +
-  labs(title = "Maintainers by package") +
-  coord_flip()
+  labs(title = "Maintainers by package")
 ```
 
 ---
-
 
 ```{r maintainers2, message=FALSE, warning=FALSE, fig.height=4, dev='svg'}
 maintainers %>% 
@@ -101,8 +98,7 @@ maintainers %>%
   geom_histogram(aes(size)) + 
   scale_y_log10() +
   theme_minimal() +
-  labs(title = "Packages maintained by person")  +
-  coord_flip()
+  labs(title = "Packages maintained by person") 
 ```
 
 ---
