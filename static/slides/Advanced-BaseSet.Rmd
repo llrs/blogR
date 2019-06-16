@@ -21,6 +21,18 @@ library("tidyverse")
 library("BaseSet")
 ```
 
+## BaseSet
+
+A package to work with sets. 
+
+
+```{r show, eval=FALSE, include=TRUE}
+BiocManager::install("llrs/BaseSet")
+```
+
+
+----
+
 ## Bioconductor packages
 
 We can quickly access the dependencies and maintainers of Bioconductor' packages:
@@ -214,4 +226,19 @@ table(p$Origin)
  
 ---
 
-Thanks! 
+## Fuzzy sets
+
+The relationship between the element and the set is a probability: it can be or it can't be.
+
+```{r fuzzy1}
+
+Tcell
+
+```
+
+---
+
+## Thanks!!
+
+You can browse the package at 
+Many thanks! 
