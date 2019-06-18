@@ -230,10 +230,24 @@ table(p$Origin)
 
 The relationship between the element and the set is a probability: it can be or it can't be.
 
+For example from [https://docs.abcam.com/pdf/immunology/t_cells_the_usual_subsets.pdf](t_cells_the_usual_subsets.pdf)
+
 ```{r fuzzy1}
 
-Tcell
+signature <- list(Th1 = c("CD3" = 1, "CD4" = 1, "IL-12R" = 0.75, "CXCR3" = 0.2),
+                  Th2 = c("CD3" = 1, "CD4" = 1, "IL-4R" = 1, "CCR4" = 0.8, 
+                          "CRTH2" = 0.2),
+                  Th9 = c("CD3" = 1, "CD4" = 1, "IL-9" = 0.2, "IL-10" = 0.4),
+                  Th17 = c("CD3" = 1, "CD4" = 1, "IL-23R" = 0.9, "CCR6" = 0.2, 
+                           "IL-1R" = 0.8, "CD161" = 1),
+                  Tm = c("CCR7" = 0.5, "CD44" = 1, "CD62L" = 0.2, "CD3" = 0.57, 
+                         "IL-7R" = 0.89, "CD127" = 0.32, "IL-15R" = 0.83),
+                  NKT = c("NK1.1" = 1, "SLAMF1" = 0.9, "SLAMF6" = 0.7, 
+                          "PLZF" = 0.4)
+                  )
 
+cells <- tidySet(signature)
+set_size(cells)
 ```
 
 ---
