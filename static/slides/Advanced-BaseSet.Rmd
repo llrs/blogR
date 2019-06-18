@@ -25,13 +25,13 @@ library("BaseSet")
 
 A package to work with sets. 
 
-
 ```{r show, eval=FALSE, include=TRUE}
 BiocManager::install("llrs/BaseSet")
 ```
 
+- Works with the Tidyverse and Bioconductor
 
-----
+---
 
 ## Bioconductor packages
 
@@ -247,6 +247,13 @@ signature <- list(Th1 = c("CD3" = 1, "CD4" = 1, "IL-12R" = 0.75, "CXCR3" = 0.2),
                   )
 
 cells <- tidySet(signature)
+```
+
+---
+
+We can check that the most probable 
+
+```{r }
 set_size(cells)
 ```
 
