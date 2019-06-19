@@ -23,13 +23,17 @@ library("BaseSet")
 
 ## BaseSet
 
-A package to work with sets. 
+A [package](https://github.com/llrs/BaseSet) to work with sets. 
 
 ```{r show, eval=FALSE, include=TRUE}
 BiocManager::install("llrs/BaseSet")
 ```
 
-- Works with the Tidyverse and Bioconductor
+Some features:
+
+- Works with the tidyverse verbs
+- [Interacts easily](https://llrs.github.io/BaseSet_slides/) with existing *[GSEABase](https://bioconductor.org/packages/GSEABase* classes.
+- Enables to use probabilities in the association between elements and sets.
 
 ---
 
@@ -52,7 +56,7 @@ tbl <- as_tibble(dcf) %>%
      )
 ```
 
-This is a modified code from Martin Morgan
+Modified code from Martin Morgan
 
 ---
 
@@ -88,8 +92,6 @@ Now we are ready for some plots:
 ```{r maintainers1, message=FALSE, warning=FALSE, fig.height=4, dev='svg'}
 maintainers %>% 
   set_size() %>% 
-  arrange(-size) %>% 
-  select(-probability) %>%
   ggplot() +
   geom_histogram(aes(size)) + 
   scale_y_log10() +
@@ -104,8 +106,6 @@ maintainers %>%
   filter_element(!grepl("Bioconductor Package Maintainer", 
                         as.character(elements))) %>% 
   element_size() %>% 
-  arrange(-size) %>% 
-  select(-probability) %>%
   ggplot() +
   geom_histogram(aes(size)) + 
   scale_y_log10() +
@@ -190,7 +190,6 @@ We can plot the direct dependencies:
 ```{r dependensies1, message=FALSE, warning=FALSE, fig.height=4, dev='svg'}
 packages %>% 
   set_size() %>% 
-  arrange(-size) %>% 
   ggplot() +
   geom_histogram(aes(size), bins = 50) +
   scale_y_log10() +
@@ -203,7 +202,6 @@ packages %>%
 ```{r dependensies2, message=FALSE, warning=FALSE, fig.height=4, dev='svg'}
 p <- packages %>% 
   element_size() %>% 
-  arrange(-size) %>% 
   left_join(elements(packages), by = c("element" = "elements"))
 p %>% 
   ggplot() +
@@ -261,5 +259,5 @@ set_size(cells)
 
 ## Thanks!!
 
-You can browse the package at 
-Many thanks! 
+Thanks for all the feedback from Kayla Morall, Kevin Rue, Martin Morgan, Ludwig Geistlinger.
+And for your feedback.

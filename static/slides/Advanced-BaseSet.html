@@ -4,7 +4,7 @@
     <title>Advanced use of BaseSet</title>
     <meta charset="utf-8" />
     <meta name="author" content="Lluís Revilla Sancho @Lluis_Rev" />
-    <meta name="date" content="2019-06-18" />
+    <meta name="date" content="2019-06-19" />
     <link href="libs/remark-css-0.0.1/default.css" rel="stylesheet" />
     <link href="libs/remark-css-0.0.1/default-fonts.css" rel="stylesheet" />
   </head>
@@ -15,7 +15,7 @@ class: center, middle, inverse, title-slide
 # Advanced use of BaseSet
 ## Exploring Bioconductor packages
 ### Lluís Revilla Sancho <span class="citation">@Lluis_Rev</span>
-### 2019-06-18
+### 2019-06-19
 
 ---
 
@@ -24,14 +24,18 @@ class: center, middle, inverse, title-slide
 
 ## BaseSet
 
-A package to work with sets. 
+A [package](https://github.com/llrs/BaseSet) to work with sets. 
 
 
 ```r
 BiocManager::install("llrs/BaseSet")
 ```
 
-- Works with the Tidyverse and Bioconductor
+Some features:
+
+- Works with the tidyverse verbs
+- [Interacts easily](https://llrs.github.io/BaseSet_slides/) with existing *[GSEABase](https://bioconductor.org/packages/GSEABase* classes.
+- Enables to use probabilities in the association between elements and sets.
 
 ---
 
@@ -55,7 +59,7 @@ tbl &lt;- as_tibble(dcf) %&gt;%
      )
 ```
 
-This is a modified code from Martin Morgan
+Modified code from Martin Morgan
 
 ---
 
@@ -107,8 +111,6 @@ Now we are ready for some plots:
 ```r
 maintainers %&gt;% 
   set_size() %&gt;% 
-  arrange(-size) %&gt;% 
-  select(-probability) %&gt;%
   ggplot() +
   geom_histogram(aes(size)) + 
   scale_y_log10() +
@@ -126,8 +128,6 @@ maintainers %&gt;%
   filter_element(!grepl("Bioconductor Package Maintainer", 
                         as.character(elements))) %&gt;% 
   element_size() %&gt;% 
-  arrange(-size) %&gt;% 
-  select(-probability) %&gt;%
   ggplot() +
   geom_histogram(aes(size)) + 
   scale_y_log10() +
@@ -239,7 +239,6 @@ We can plot the direct dependencies:
 ```r
 packages %&gt;% 
   set_size() %&gt;% 
-  arrange(-size) %&gt;% 
   ggplot() +
   geom_histogram(aes(size), bins = 50) +
   scale_y_log10() +
@@ -255,7 +254,6 @@ packages %&gt;%
 ```r
 p &lt;- packages %&gt;% 
   element_size() %&gt;% 
-  arrange(-size) %&gt;% 
   left_join(elements(packages), by = c("element" = "elements"))
 p %&gt;% 
   ggplot() +
@@ -351,8 +349,8 @@ set_size(cells)
 
 ## Thanks!!
 
-You can browse the package at 
-Many thanks!
+Thanks for all the feedback from Kayla Morall, Kevin Rue, Martin Morgan, Ludwig Geistlinger.
+And for your feedback.
     </textarea>
 <style data-target="print-only">@media screen {.remark-slide-container{display:block;}.remark-slide-scaler{box-shadow:none;}}</style>
 <script src="https://remarkjs.com/downloads/remark-latest.min.js"></script>
