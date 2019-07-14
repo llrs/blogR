@@ -1,0 +1,192 @@
+---
+title: NSE in base R
+author: Lluís Revilla Sancho
+date: '2019-07-05'
+slug: NSE-base
+categories:
+  - r
+tags:
+  - r
+  - tidyverse
+  - base
+  - NSE
+image:
+  caption: ''
+  focal_point: ''
+---
+
+After some discussions on the internet (and some breaks I got in a pipe using [tidyr](https://cran.r-project.org/package=tidyr)) I'll decided to try to emulate [dplyr](https://cran.r-project.org/package=dplyr) and other tidyr functions with base functions.
+
+```{r setup, include = FALSE}
+knitr::opts_chunk$set(collapse = TRUE)
+```
+
+
+## Filter
+
+The most important tipical function is filter, which basically does subsetting:
+
+```{r filter1}
+library("dplyr")
+library("bench")
+mtcars_filter <- filter(mtcars, am == "1")
+mtcars_subset <- subset(mtcars, am == "1")
+all.equal(mtcars_filter, mtcars_subset)
+```
+
+The first different are the rownames that are changed. 
+So we can make a function to make the result equal:
+
+```{r filter2}
+filter_base <- function(x, ...) {
+  y <- subset(x, ...)
+  rownames(y) <- NULL
+  y
+}
+mtcars_subset <- filter_base(mtcars, am == "1")
+# From the previous subset
+all.equal(mtcars_filter, mtcars_subset)
+m <- mark(filter(mtcars, am == "1"), 
+          filter_base(mtcars, am == "1"),
+          iterations = 1000)
+plot(m) + ggplot2::theme_classic()
+```
+
+```{r filter3}
+mtcars_filter <- filter(mtcars, am == "1", mpg > 25)
+mtcars_subset <- filter_base(mtcars, am == "1", mpg > 25)
+all.equal(mtcars_filter, mtcars_subset)
+```
+The problem here is that we used a `,` to concatenate the different conditions.
+To concatenate a logical condition it is typical to use `&`. If we go this way:
+```{r filter4}
+mtcars_subset <- filter_base(mtcars, am == "1" & mpg > 25)
+# mtcars_filter is the same
+all.equal(mtcars_filter, mtcars_subset)
+
+m <- mark(filter(mtcars, am == "1", mpg > 25),
+          filter_base(mtcars, am == "1" & mpg > 25),
+          iterations = 1000)
+plot(m) + ggplot2::theme_classic()
+```
+
+So we've show what is the equivalent of filter for some easy cases.
+
+## Grouping
+
+One of the functions I use most when using dplyr is `group_by`. 
+But what is the equivalent of `group_by` on base? 
+I don't know, so let's explore what does it do to try to find it's equivalent. 
+Let's look into it:
+
+```{r group_by1}
+(mtcars_grouped <- group_by(mtcars, vs))
+class(mtcars_grouped)
+```
+
+First thing we note is that it converts it to a tibble. Second that it has a 
+`Groups: Species [3]` at the top of the printed result. To look what is this and where it comes from let's look at the structure with `str`:
+
+```{r group_by2}
+str(mtcars_grouped)
+``` 
+We can see that it has a new attribute named "groups":
+
+```{r group_by3}
+groups_dplyr <- attr(mtcars_grouped, "groups")
+groups_dplyr$vs
+groups_dplyr$.rows
+```
+This attribute is first a vector of the names of the group and a list of the indicies of each group.
+
+So what is the equivalent? I don't know, but we can store the names and indicies with:
+
+```{r group_by4}
+(groups_base <- split(seq_along(mtcars$vs), mtcars$vs))
+```
+
+Now let's try to complicate it more:
+
+```{r group_by5}
+mtcars_grouped <- group_by(mtcars, vs, am)
+group <- attr(mtcars_grouped, "group")
+```
+
+What would be our equivalent?
+
+```{r group_by6}
+(groups_base <- split(seq_along(mtcars$vs), as.factor(paste(mtcars$vs, mtcars$am))))
+```
+We create a "hash" of the two factors added to create the index of each combination.
+
+## Summarise
+
+The base function for summarise is `aggregate`, we'll look into it:
+
+```{r summarise1}
+mtcars_summarised <- mtcars %>% 
+  group_by(vs, am) %>% 
+  summarise(hp = mean(hp))
+
+mtcars_aggregated <- aggregate(hp ~ vs + am,
+                               data = mtcars, 
+                               FUN = mean, simplify = FALSE)
+mtcars_summarised
+mtcars_aggregated
+```
+
+We can see that we get the same result but with different order and class. 
+We need to order the data.frame and remove the rows in order to get them equal 
+(and get back to a `data.frame` in the case of `summarise`).
+
+```{r summarise2}
+mtcars_aggregated$hp <- unlist(mtcars_aggregated$hp) # To unlist the summary
+mtcars_aggregated <- mtcars_aggregated[order(mtcars_aggregated$hp, 
+                                             decreasing = TRUE), ]
+rownames(mtcars_aggregated) <- NULL
+mtcars_aggregated
+mtcars_summarised
+all.equal(mtcars_aggregated, mtcars_summarised)
+```
+
+Now we create some functions:
+
+```{r summarise3}
+# In just one long line to avoid calls to %>% 
+mtcars_summarise <- function(){ 
+  as.data.frame(summarise(group_by(mtcars, vs, am), hp = mean(hp)))
+}
+mtcars_summarise_usual <- function(){ 
+  mtcars %>% 
+    group_by(vs, am) %>% 
+    summarise(hp = mean(hp))
+}
+
+mtcars_aggregate <- function(){ 
+  mtcars_aggregated <- aggregate(hp ~ vs + am,
+                               data = mtcars, 
+                               FUN = mean)
+  mtcars_aggregated$hp <- unlist(mtcars_aggregated$hp) # To unlist the summary
+  mtcars_aggregated <- mtcars_aggregated[order(mtcars_aggregated$hp, 
+                                               decreasing = TRUE), ]
+  rownames(mtcars_aggregated) <- NULL
+  mtcars_aggregated
+}
+
+mtcars_aggregate_base <- function() {
+   aggregate(hp ~ vs + am,
+                               data = mtcars, 
+                               FUN = mean)
+}
+m <- mark(mtcars_aggregate(), 
+          mtcars_summarise(),
+          mtcars_summarise_usual(), 
+          mtcars_aggregate_base(),
+          iterations = 1000, check = FALSE)
+plot(m) + ggplot2::theme_classic()
+```
+
+
+## References
+
+After writing this I found this [other summary](https://tavareshugo.github.io/data_carpentry_extras/base-r_tidyverse_equivalents/base-r_tidyverse_equivalents.html) which covers the same
