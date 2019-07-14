@@ -1,0 +1,252 @@
+---
+title: NSE in base R
+author: Lluís Revilla Sancho
+date: '2019-07-05'
+slug: NSE-base
+categories:
+  - r
+tags:
+  - r
+  - tidyverse
+  - base
+  - NSE
+image:
+  caption: ''
+  focal_point: ''
+---
+
+
+
+<p>After some discussions on the internet (and some breaks I got in a pipe using <a href="https://cran.r-project.org/package=tidyr">tidyr</a>) I’ll decided to try to emulate <a href="https://cran.r-project.org/package=dplyr">dplyr</a> and other tidyr functions with base functions.</p>
+<div id="filter" class="section level2">
+<h2>Filter</h2>
+<p>The most important tipical function is filter, which basically does subsetting:</p>
+<pre class="r"><code>library(&quot;dplyr&quot;)
+## 
+## Attaching package: &#39;dplyr&#39;
+## The following objects are masked from &#39;package:stats&#39;:
+## 
+##     filter, lag
+## The following objects are masked from &#39;package:base&#39;:
+## 
+##     intersect, setdiff, setequal, union
+library(&quot;bench&quot;)
+mtcars_filter &lt;- filter(mtcars, am == &quot;1&quot;)
+mtcars_subset &lt;- subset(mtcars, am == &quot;1&quot;)
+all.equal(mtcars_filter, mtcars_subset)
+## [1] &quot;Attributes: &lt; Component \&quot;row.names\&quot;: Modes: numeric, character &gt;&quot;              
+## [2] &quot;Attributes: &lt; Component \&quot;row.names\&quot;: target is numeric, current is character &gt;&quot;</code></pre>
+<p>The first different are the rownames that are changed.
+So we can make a function to make the result equal:</p>
+<pre class="r"><code>filter_base &lt;- function(x, ...) {
+  y &lt;- subset(x, ...)
+  rownames(y) &lt;- NULL
+  y
+}
+mtcars_subset &lt;- filter_base(mtcars, am == &quot;1&quot;)
+# From the previous subset
+all.equal(mtcars_filter, mtcars_subset)
+## [1] TRUE
+m &lt;- mark(filter(mtcars, am == &quot;1&quot;), 
+          filter_base(mtcars, am == &quot;1&quot;),
+          iterations = 1000)
+plot(m) + ggplot2::theme_classic()
+## Loading required namespace: tidyr</code></pre>
+<p><img src="/post/2019-07-nse-in-base-r_files/figure-html/filter2-1.png" width="672" /></p>
+<pre class="r"><code>mtcars_filter &lt;- filter(mtcars, am == &quot;1&quot;, mpg &gt; 25)
+mtcars_subset &lt;- filter_base(mtcars, am == &quot;1&quot;, mpg &gt; 25)
+all.equal(mtcars_filter, mtcars_subset)
+## [1] &quot;names for target but not for current&quot;                                    
+## [2] &quot;Attributes: &lt; Component \&quot;row.names\&quot;: Numeric: lengths (6, 13) differ &gt;&quot;
+## [3] &quot;Length mismatch: comparison on first 0 components&quot;</code></pre>
+<p>The problem here is that we used a <code>,</code> to concatenate the different conditions.
+To concatenate a logical condition it is typical to use <code>&amp;</code>. If we go this way:</p>
+<pre class="r"><code>mtcars_subset &lt;- filter_base(mtcars, am == &quot;1&quot; &amp; mpg &gt; 25)
+# mtcars_filter is the same
+all.equal(mtcars_filter, mtcars_subset)
+## [1] TRUE
+
+m &lt;- mark(filter(mtcars, am == &quot;1&quot;, mpg &gt; 25),
+          filter_base(mtcars, am == &quot;1&quot; &amp; mpg &gt; 25),
+          iterations = 1000)
+plot(m) + ggplot2::theme_classic()</code></pre>
+<p><img src="/post/2019-07-nse-in-base-r_files/figure-html/filter4-1.png" width="672" /></p>
+<p>So we’ve show what is the equivalent of filter for some easy cases.</p>
+</div>
+<div id="grouping" class="section level2">
+<h2>Grouping</h2>
+<p>One of the functions I use most when using dplyr is <code>group_by</code>.
+But what is the equivalent of <code>group_by</code> on base?
+I don’t know, so let’s explore what does it do to try to find it’s equivalent.
+Let’s look into it:</p>
+<pre class="r"><code>(mtcars_grouped &lt;- group_by(mtcars, vs))
+## # A tibble: 32 x 11
+## # Groups:   vs [2]
+##      mpg   cyl  disp    hp  drat    wt  qsec    vs    am  gear  carb
+##  * &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt;
+##  1  21       6  160    110  3.9   2.62  16.5     0     1     4     4
+##  2  21       6  160    110  3.9   2.88  17.0     0     1     4     4
+##  3  22.8     4  108     93  3.85  2.32  18.6     1     1     4     1
+##  4  21.4     6  258    110  3.08  3.22  19.4     1     0     3     1
+##  5  18.7     8  360    175  3.15  3.44  17.0     0     0     3     2
+##  6  18.1     6  225    105  2.76  3.46  20.2     1     0     3     1
+##  7  14.3     8  360    245  3.21  3.57  15.8     0     0     3     4
+##  8  24.4     4  147.    62  3.69  3.19  20       1     0     4     2
+##  9  22.8     4  141.    95  3.92  3.15  22.9     1     0     4     2
+## 10  19.2     6  168.   123  3.92  3.44  18.3     1     0     4     4
+## # … with 22 more rows
+class(mtcars_grouped)
+## [1] &quot;grouped_df&quot; &quot;tbl_df&quot;     &quot;tbl&quot;        &quot;data.frame&quot;</code></pre>
+<p>First thing we note is that it converts it to a tibble. Second that it has a
+<code>Groups: Species [3]</code> at the top of the printed result. To look what is this and where it comes from let’s look at the structure with <code>str</code>:</p>
+<pre class="r"><code>str(mtcars_grouped)
+## Classes &#39;grouped_df&#39;, &#39;tbl_df&#39;, &#39;tbl&#39; and &#39;data.frame&#39;:  32 obs. of  11 variables:
+##  $ mpg : num  21 21 22.8 21.4 18.7 18.1 14.3 24.4 22.8 19.2 ...
+##  $ cyl : num  6 6 4 6 8 6 8 4 4 6 ...
+##  $ disp: num  160 160 108 258 360 ...
+##  $ hp  : num  110 110 93 110 175 105 245 62 95 123 ...
+##  $ drat: num  3.9 3.9 3.85 3.08 3.15 2.76 3.21 3.69 3.92 3.92 ...
+##  $ wt  : num  2.62 2.88 2.32 3.21 3.44 ...
+##  $ qsec: num  16.5 17 18.6 19.4 17 ...
+##  $ vs  : num  0 0 1 1 0 1 0 1 1 1 ...
+##  $ am  : num  1 1 1 0 0 0 0 0 0 0 ...
+##  $ gear: num  4 4 4 3 3 3 3 4 4 4 ...
+##  $ carb: num  4 4 1 1 2 1 4 2 2 4 ...
+##  - attr(*, &quot;groups&quot;)=Classes &#39;tbl_df&#39;, &#39;tbl&#39; and &#39;data.frame&#39;:   2 obs. of  2 variables:
+##   ..$ vs   : num  0 1
+##   ..$ .rows:List of 2
+##   .. ..$ : int  1 2 5 7 12 13 14 15 16 17 ...
+##   .. ..$ : int  3 4 6 8 9 10 11 18 19 20 ...
+##   ..- attr(*, &quot;.drop&quot;)= logi TRUE</code></pre>
+<p>We can see that it has a new attribute named “groups”:</p>
+<pre class="r"><code>groups_dplyr &lt;- attr(mtcars_grouped, &quot;groups&quot;)
+groups_dplyr$vs
+## [1] 0 1
+groups_dplyr$.rows
+## [[1]]
+##  [1]  1  2  5  7 12 13 14 15 16 17 22 23 24 25 27 29 30 31
+## 
+## [[2]]
+##  [1]  3  4  6  8  9 10 11 18 19 20 21 26 28 32</code></pre>
+<p>This attribute is first a vector of the names of the group and a list of the indicies of each group.</p>
+<p>So what is the equivalent? I don’t know, but we can store the names and indicies with:</p>
+<pre class="r"><code>(groups_base &lt;- split(seq_along(mtcars$vs), mtcars$vs))
+## $`0`
+##  [1]  1  2  5  7 12 13 14 15 16 17 22 23 24 25 27 29 30 31
+## 
+## $`1`
+##  [1]  3  4  6  8  9 10 11 18 19 20 21 26 28 32</code></pre>
+<p>Now let’s try to complicate it more:</p>
+<pre class="r"><code>mtcars_grouped &lt;- group_by(mtcars, vs, am)
+group &lt;- attr(mtcars_grouped, &quot;group&quot;)</code></pre>
+<p>What would be our equivalent?</p>
+<pre class="r"><code>(groups_base &lt;- split(seq_along(mtcars$vs), as.factor(paste(mtcars$vs, mtcars$am))))
+## $`0 0`
+##  [1]  5  7 12 13 14 15 16 17 22 23 24 25
+## 
+## $`0 1`
+## [1]  1  2 27 29 30 31
+## 
+## $`1 0`
+## [1]  4  6  8  9 10 11 21
+## 
+## $`1 1`
+## [1]  3 18 19 20 26 28 32</code></pre>
+<p>We create a “hash” of the two factors added to create the index of each combination.</p>
+</div>
+<div id="summarise" class="section level2">
+<h2>Summarise</h2>
+<p>The base function for summarise is <code>aggregate</code>, we’ll look into it:</p>
+<pre class="r"><code>mtcars_summarised &lt;- mtcars %&gt;% 
+  group_by(vs, am) %&gt;% 
+  summarise(hp = mean(hp))
+
+mtcars_aggregated &lt;- aggregate(hp ~ vs + am,
+                               data = mtcars, 
+                               FUN = mean, simplify = FALSE)
+mtcars_summarised
+## # A tibble: 4 x 3
+## # Groups:   vs [2]
+##      vs    am    hp
+##   &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt;
+## 1     0     0 194. 
+## 2     0     1 181. 
+## 3     1     0 102. 
+## 4     1     1  80.6
+mtcars_aggregated
+##   vs am       hp
+## 1  0  0 194.1667
+## 2  1  0 102.1429
+## 3  0  1 180.8333
+## 4  1  1 80.57143</code></pre>
+<p>We can see that we get the same result but with different order and class.
+We need to order the data.frame and remove the rows in order to get them equal
+(and get back to a <code>data.frame</code> in the case of <code>summarise</code>).</p>
+<pre class="r"><code>mtcars_aggregated$hp &lt;- unlist(mtcars_aggregated$hp) # To unlist the summary
+mtcars_aggregated &lt;- mtcars_aggregated[order(mtcars_aggregated$hp, 
+                                             decreasing = TRUE), ]
+rownames(mtcars_aggregated) &lt;- NULL
+mtcars_aggregated
+##   vs am        hp
+## 1  0  0 194.16667
+## 2  0  1 180.83333
+## 3  1  0 102.14286
+## 4  1  1  80.57143
+mtcars_summarised
+## # A tibble: 4 x 3
+## # Groups:   vs [2]
+##      vs    am    hp
+##   &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt;
+## 1     0     0 194. 
+## 2     0     1 181. 
+## 3     1     0 102. 
+## 4     1     1  80.6
+all.equal(mtcars_aggregated, mtcars_summarised)
+## [1] &quot;Attributes: &lt; Names: 1 string mismatch &gt;&quot;                                              
+## [2] &quot;Attributes: &lt; Length mismatch: comparison on first 2 components &gt;&quot;                     
+## [3] &quot;Attributes: &lt; Component \&quot;class\&quot;: Lengths (1, 4) differ (string compare on first 1) &gt;&quot;
+## [4] &quot;Attributes: &lt; Component \&quot;class\&quot;: 1 string mismatch &gt;&quot;                                
+## [5] &quot;Attributes: &lt; Component 2: Modes: numeric, list &gt;&quot;                                     
+## [6] &quot;Attributes: &lt; Component 2: Lengths: 4, 2 &gt;&quot;                                            
+## [7] &quot;Attributes: &lt; Component 2: names for current but not for target &gt;&quot;                     
+## [8] &quot;Attributes: &lt; Component 2: Attributes: &lt; target is NULL, current is list &gt; &gt;&quot;          
+## [9] &quot;Attributes: &lt; Component 2: target is numeric, current is tbl_df &gt;&quot;</code></pre>
+<p>Now we create some functions:</p>
+<pre class="r"><code># In just one long line to avoid calls to %&gt;% 
+mtcars_summarise &lt;- function(){ 
+  as.data.frame(summarise(group_by(mtcars, vs, am), hp = mean(hp)))
+}
+mtcars_summarise_usual &lt;- function(){ 
+  mtcars %&gt;% 
+    group_by(vs, am) %&gt;% 
+    summarise(hp = mean(hp))
+}
+
+mtcars_aggregate &lt;- function(){ 
+  mtcars_aggregated &lt;- aggregate(hp ~ vs + am,
+                               data = mtcars, 
+                               FUN = mean)
+  mtcars_aggregated$hp &lt;- unlist(mtcars_aggregated$hp) # To unlist the summary
+  mtcars_aggregated &lt;- mtcars_aggregated[order(mtcars_aggregated$hp, 
+                                               decreasing = TRUE), ]
+  rownames(mtcars_aggregated) &lt;- NULL
+  mtcars_aggregated
+}
+
+mtcars_aggregate_base &lt;- function() {
+   aggregate(hp ~ vs + am,
+                               data = mtcars, 
+                               FUN = mean)
+}
+m &lt;- mark(mtcars_aggregate(), 
+          mtcars_summarise(),
+          mtcars_summarise_usual(), 
+          mtcars_aggregate_base(),
+          iterations = 1000, check = FALSE)
+plot(m) + ggplot2::theme_classic()</code></pre>
+<p><img src="/post/2019-07-nse-in-base-r_files/figure-html/summarise3-1.png" width="672" /></p>
+</div>
+<div id="references" class="section level2">
+<h2>References</h2>
+<p>After writing this I found this <a href="https://tavareshugo.github.io/data_carpentry_extras/base-r_tidyverse_equivalents/base-r_tidyverse_equivalents.html">other summary</a> which covers the same</p>
+</div>
