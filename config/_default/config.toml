@@ -89,3 +89,6 @@ enableEmoji = true
 # Your details.
 name = "Lluís Revilla Sancho"
 role = "Bioinformatician"
+
+[permalinks]
+    post = "/:year/:month/:day/:slug/"

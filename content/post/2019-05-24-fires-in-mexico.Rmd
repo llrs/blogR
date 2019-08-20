@@ -67,7 +67,7 @@ Now that we have the plot and the fires we can animate it by each year:
 
 ```{r animation}
 gganimation <- m +
-  transition_states(Año, transition_length = 12, state_length = 1, wrap = FALSE) +
+  transition_states(Año, transition_length = 11, state_length = 1, wrap = FALSE) +
     enter_fade() + 
     exit_fade() + 
     labs(title = "Incendios forestales registrados en México",

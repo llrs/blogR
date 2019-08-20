@@ -1,0 +1,23 @@
+---
+title: Tidy data and tidyverse
+author: Lluís Revilla Sancho
+date: '2019-07-14'
+slug: tidy-work
+categories:
+  - r
+tags:
+  - r
+  - tidyverse
+image:
+  caption: ''
+  focal_point: ''
+---
+
+
+I am surprised how often two things get conflated in around the tidyverse.
+
+The tidy data principles is about having in each row a data point, where each variable has its own column.
+
+This has nothing to do with using quoted or unquoted syntax (The non standard evaluation). The tidyverse decided to go this way to ease the path for its users. It seems that it creates some confusions, not because it is not nice or easier, but because the constant change on recomendations about how to work around quoting and unquoting variables, and to decide when me as a user can use unquoted variables and when it should I quote them. That's why the new `{{` operator of rlang will simplify. 
+
+However, NSE, can create some friction when a user works outside the tidyverse associated packages as the details on how to use are now clearer but 

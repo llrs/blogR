@@ -1,0 +1,150 @@
+---
+title: Twitter bot
+author: Lluís Revilla Sancho
+date: '2019-08-13'
+slug: twitter-bot
+categories:
+  - r
+tags:
+  - twitter
+image:
+  caption: ''
+  focal_point: ''
+editor_options: 
+  chunk_output_type: console
+---
+
+
+I was talking with a friend about social networks when he mentioned that it 
+wasn't worth his time to invest on podcasts. 
+He said that I looked up his twitter account, that that's more useful for him. 
+This reminded me that I haven't used these wonderful tools about twitter nor had I the motivation for analizing time serie data.
+
+This blogpost is my attempt to find how this user uses some kind of automated mechanism to publish.
+
+
+```{r include=FALSE}
+user <- "josemariasiota"
+```
+
+```{r}
+library("rtweet")
+user_tweets <- get_timeline(user, n = 180000, type = "mixed", 
+                            include_rts = TRUE)
+```
+
+Now that we have the tweets we can look if he is a bot:
+```{r}
+library("tweetbotornot") # from mkearney/tweetbotornot
+# you might need to install this specific version of textfeatures:
+# devtools::install_version('textfeatures', version='0.2.0')
+botornot(user_tweets)
+```
+It gives a very high probability.
+
+We can visualize them with:
+```{r}
+library("ggplot2")
+ts_plot(user_tweets, "weeks") +
+  theme_bw() +
+  labs(title = "Tweets by @josemariasiota",
+       subtitle = "Grouped by week", x = NULL, y = "tweets")
+```
+
+We can group the tweets by the source of them, if interactive or using some other service:
+
+```{r count}
+library("dplyr")
+count(user_tweets, source, sort = TRUE)
+user <- user_tweets %>% 
+  mutate(source = case_when(
+    grepl(" for | on | Web ", source) ~ "direct",
+    TRUE ~ source
+  ))
+
+user %>% 
+  count(source, sort = TRUE)
+
+
+user <- user %>% 
+  mutate(reply = case_when(
+    is.na(reply_to_status_id) ~  "content?",
+    TRUE ~ "reply"))
+user %>% 
+  count(reply, source, sort = TRUE)
+library("stringr")
+user <- user %>% 
+  mutate(link = str_extract(text, "https?://.+\\b"),
+         n_link = str_count(text, "https?://"),
+         n_users = str_count(text, "@[:alnum:]+\\b"),
+         n_hashtags = str_count(text, "#[:alnum:]+\\b"),
+         via = str_count(text, "\\bvia\\b"))
+user %>% count(n_link, reply, sort = TRUE)
+
+user %>% 
+  group_by(lang, source) %>% 
+  summarise(n = n(), n_link = sum(n_link), n_users = sum(n_users), n_hashtags = sum(n_hashtags)) %>% 
+  arrange(-n) %>% 
+  ggplot() +
+  geom_point(aes(lang, source, size = n)) +
+  theme_bw()
+```
+
+We can see that depending on the service there are some languages that are not used.
+
+We can visualize the tweets as they happen with:
+```{r}
+user %>% 
+  mutate(hms = hms::as_hms(created_at),
+         d = as.Date(created_at)) %>% 
+  ggplot(aes(d, hms, col = source, shape = reply)) +
+  geom_point() +
+  theme_bw() +
+  labs(y = "Hour", x = "Date", title = "Tweets") +
+  scale_x_date(date_breaks = "1 year", date_labels = "%Y", 
+               expand = c(0.01, 0)) +
+  scale_y_time(labels = function(x) strftime(x, "%H"),
+               breaks = hms::hms(seq(0, 24, 1)*60*60), expand = c(0.01, 0))
+```
+
+We can clearly see a change on the end of 2016, I will focus on that point forward.
+
+A package that got my attention on twitter was [`anomalize`](https://cran.r-project.org/package=anomalize) which search for anomalies on time series of data. I hope that using this algorithm it will find when the data is not automated
+
+```{r}
+library("anomalize")
+```
+
+The excelent guide at their [website](https://business-science.github.io/anomalize/) is easy to understand and follow
+
+
+```{r}
+user <- user %>% 
+  filter(created_at > as.Date("2016-11-01")) %>% 
+  arrange(created_at) %>% 
+  time_decompose(created_at, method = "stl", merge = TRUE, message = TRUE) 
+user %>% 
+  filter(created_at > as.Date("2016-11-01")) %>% 
+  anomalize(remainder, method = "iqr") %>%
+  time_recompose() %>%
+  # Anomaly Visualization
+  plot_anomalies(time_recomposed = TRUE, ncol = 3, alpha_dots = 0.25) +
+  labs(title = "User anomalies", 
+       subtitle = "STL + IQR Methods", 
+       x = "Time") 
+user %>% 
+  filter(created_at > as.Date("2016-11-01")) %>% 
+  anomalize(remainder, method = "iqr") %>%
+  plot_anomaly_decomposition() +
+  labs(title = "Decomposition of Anomalized Lubridate Downloads")
+```
+
+We can clearly see some tendencies on the tweeting so it is automated, since then. We can further check it with:
+
+
+```{r}
+user %>% 
+  filter(created_at > as.Date("2016-11-01")) %>% 
+  botornot()
+```
+

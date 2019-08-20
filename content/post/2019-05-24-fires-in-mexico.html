@@ -28,11 +28,6 @@ editor_options:
 <pre class="r"><code>library(&quot;here&quot;)
 ## here() starts at /home/lluis/Documents/Projects/blogR
 library(&quot;ggplot2&quot;)
-## Registered S3 methods overwritten by &#39;ggplot2&#39;:
-##   method         from 
-##   [.quosures     rlang
-##   c.quosures     rlang
-##   print.quosures rlang
 library(&quot;gganimate&quot;)
 library(&quot;ggthemes&quot;)
 # Maps from mexico
@@ -78,7 +73,7 @@ m</code></pre>
 <h2>Animation</h2>
 <p>Now that we have the plot and the fires we can animate it by each year:</p>
 <pre class="r"><code>gganimation &lt;- m +
-  transition_states(Año, transition_length = 12, state_length = 1, wrap = FALSE) +
+  transition_states(Año, transition_length = 11, state_length = 1, wrap = FALSE) +
     enter_fade() + 
     exit_fade() + 
     labs(title = &quot;Incendios forestales registrados en México&quot;,
