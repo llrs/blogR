@@ -19,7 +19,7 @@ editor_options:
 <p>I was talking with a friend about social networks when he mentioned that it
 wasn’t worth his time to invest on podcasts.
 He said that I looked up his twitter account, that that’s more useful for him.
-This reminded me that I haven’t used these wonderful tools about twitter nor had I the motivation for analizing time serie data.</p>
+This reminded me that I haven’t used these wonderful tools about twitter nor had I the motivation for analyzing time serie data.</p>
 <p>This blogpost is my attempt to find how this user uses some kind of automated mechanism to publish.</p>
 <pre class="r"><code>library(&quot;rtweet&quot;)
 user_tweets &lt;- get_timeline(user, n = 180000, type = &quot;mixed&quot;, 
@@ -55,17 +55,17 @@ ts_plot(user_tweets, &quot;weeks&quot;) +
 <pre><code>## # A tibble: 11 x 2
 ##    source                   n
 ##    &lt;chr&gt;                &lt;int&gt;
-##  1 dlvr.it               1244
-##  2 twitterfeed           1183
-##  3 Twitter Web Client     673
+##  1 dlvr.it               1248
+##  2 twitterfeed           1178
+##  3 Twitter Web Client     672
 ##  4 Twitter for iPhone      58
 ##  5 Hootsuite               13
 ##  6 Twitter for Websites    12
 ##  7 Camera on iOS            6
-##  8 erased40502              1
-##  9 LinkedIn                 1
-## 10 Podcasts on iOS          1
-## 11 Twitter Web App          1</code></pre>
+##  8 Twitter Web App          2
+##  9 erased40502              1
+## 10 LinkedIn                 1
+## 11 Podcasts on iOS          1</code></pre>
 <pre class="r"><code>user &lt;- user_tweets %&gt;% 
   mutate(source = case_when(
     grepl(&quot; for | on | Web &quot;, source) ~ &quot;direct&quot;,
@@ -77,8 +77,8 @@ user %&gt;%
 <pre><code>## # A tibble: 6 x 2
 ##   source          n
 ##   &lt;chr&gt;       &lt;int&gt;
-## 1 dlvr.it      1244
-## 2 twitterfeed  1183
+## 1 dlvr.it      1248
+## 2 twitterfeed  1178
 ## 3 direct        751
 ## 4 Hootsuite      13
 ## 5 erased40502     1
@@ -92,10 +92,10 @@ user %&gt;%
 <pre><code>## # A tibble: 7 x 3
 ##   reply    source          n
 ##   &lt;chr&gt;    &lt;chr&gt;       &lt;int&gt;
-## 1 content? dlvr.it      1244
-## 2 content? twitterfeed  1183
-## 3 content? direct        645
-## 4 reply    direct        106
+## 1 content? dlvr.it      1248
+## 2 content? twitterfeed  1178
+## 3 content? direct        647
+## 4 reply    direct        104
 ## 5 content? Hootsuite      13
 ## 6 content? erased40502     1
 ## 7 content? LinkedIn        1</code></pre>
@@ -110,11 +110,11 @@ user %&gt;% count(n_link, reply, sort = TRUE)</code></pre>
 <pre><code>## # A tibble: 7 x 3
 ##   n_link reply        n
 ##    &lt;int&gt; &lt;chr&gt;    &lt;int&gt;
-## 1      1 content?  2635
-## 2      2 content?   431
-## 3      0 reply       86
+## 1      1 content?  2633
+## 2      2 content?   434
+## 3      0 reply       85
 ## 4      0 content?    17
-## 5      1 reply       17
+## 5      1 reply       16
 ## 6      3 content?     4
 ## 7      2 reply        3</code></pre>
 <pre class="r"><code>user %&gt;% 
@@ -142,7 +142,7 @@ user %&gt;% count(n_link, reply, sort = TRUE)</code></pre>
 <p>We can clearly see a change on the end of 2016, I will focus on that point forward.</p>
 <p>A package that got my attention on twitter was <a href="https://cran.r-project.org/package=anomalize"><code>anomalize</code></a> which search for anomalies on time series of data. I hope that using this algorithm it will find when the data is not automated</p>
 <pre class="r"><code>library(&quot;anomalize&quot;)</code></pre>
-<p>The excelent guide at their <a href="https://business-science.github.io/anomalize/">website</a> is easy to understand and follow</p>
+<p>The excellent guide at their <a href="https://business-science.github.io/anomalize/">website</a> is easy to understand and follow</p>
 <pre class="r"><code>user &lt;- user %&gt;% 
   filter(created_at &gt; as.Date(&quot;2016-11-01&quot;)) %&gt;% 
   arrange(created_at) %&gt;% 

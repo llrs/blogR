@@ -20,7 +20,7 @@ I will base this simulation on three principles:
 
 1. There are some variables that are normally distributed.
 2. There are some variables that are uniform distributed.
-3. There are some varaiables that are not randomly distributed.
+3. There are some variables that are not randomly distributed.
 
 
 Those that are normally distributed will be simulated using the rbeta function, 
@@ -50,7 +50,7 @@ simulation %>%
   ggplot() +
   geom_point(aes(inteligence, grades, col = sex))
 ```
-Now we supose that the grades are based on the inteligence
+Now we suppose that the grades are based on the intelligence
 ```{r}
 simulation %>% 
   ggplot() +

@@ -14,7 +14,7 @@ image:
 
 Many has been said about the relation of PCA and MDS. For instance [this](https://stats.stackexchange.com/a/14017/105234), or [this other one](https://stats.stackexchange.com/a/60759/105234) on the practical point of view, however it has been different. In R we have on base (really stats package) three functions: `prcomp`, `princomp` and `cmdscale`
 
-We will compare the outpot of the three of them on this dataset:
+We will compare the output of the three of them on this dataset:
 ```{r mock_up}
 set.seed(547913)
 x <- runif(100)

@@ -18,7 +18,7 @@ editor_options:
 I was talking with a friend about social networks when he mentioned that it 
 wasn't worth his time to invest on podcasts. 
 He said that I looked up his twitter account, that that's more useful for him. 
-This reminded me that I haven't used these wonderful tools about twitter nor had I the motivation for analizing time serie data.
+This reminded me that I haven't used these wonderful tools about twitter nor had I the motivation for analyzing time serie data.
 
 This blogpost is my attempt to find how this user uses some kind of automated mechanism to publish.
 
@@ -115,7 +115,7 @@ A package that got my attention on twitter was [`anomalize`](https://cran.r-proj
 library("anomalize")
 ```
 
-The excelent guide at their [website](https://business-science.github.io/anomalize/) is easy to understand and follow
+The excellent guide at their [website](https://business-science.github.io/anomalize/) is easy to understand and follow
 
 
 ```{r}

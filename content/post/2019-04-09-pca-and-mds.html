@@ -15,7 +15,7 @@ image:
 
 
 <p>Many has been said about the relation of PCA and MDS. For instance <a href="https://stats.stackexchange.com/a/14017/105234">this</a>, or <a href="https://stats.stackexchange.com/a/60759/105234">this other one</a> on the practical point of view, however it has been different. In R we have on base (really stats package) three functions: <code>prcomp</code>, <code>princomp</code> and <code>cmdscale</code></p>
-<p>We will compare the outpot of the three of them on this dataset:</p>
+<p>We will compare the output of the three of them on this dataset:</p>
 <pre class="r"><code>set.seed(547913)
 x &lt;- runif(100)
 M &lt;- matrix(x, ncol = 10, nrow = 10)</code></pre>
@@ -58,7 +58,7 @@ M &lt;- matrix(x, ncol = 10, nrow = 10)</code></pre>
 ##     class(r) &lt;- &quot;prcomp&quot;
 ##     r
 ## }
-## &lt;bytecode: 0x55db7551b0c8&gt;
+## &lt;bytecode: 0x55926ab76578&gt;
 ## &lt;environment: namespace:stats&gt;</code></pre>
 <pre class="r"><code>M_prcomp &lt;- prcomp(M)
 plot(M_prcomp$rotation)</code></pre>
@@ -153,7 +153,7 @@ plot(M_prcomp$rotation)</code></pre>
 ##     class(edc) &lt;- &quot;princomp&quot;
 ##     edc
 ## }
-## &lt;bytecode: 0x55db73ff4468&gt;
+## &lt;bytecode: 0x559269652478&gt;
 ## &lt;environment: namespace:stats&gt;</code></pre>
 <pre class="r"><code>M_princomp &lt;- princomp(M)
 plot(M_princomp$scores)</code></pre>
@@ -245,7 +245,7 @@ plot(M_princomp$scores)</code></pre>
 ##     }
 ##     else points
 ## }
-## &lt;bytecode: 0x55db752e9130&gt;
+## &lt;bytecode: 0x55926a9395b8&gt;
 ## &lt;environment: namespace:stats&gt;</code></pre>
 <pre class="r"><code>M_dist &lt;- as.dist(M)
 M_cmdscale &lt;- cmdscale(M_dist)

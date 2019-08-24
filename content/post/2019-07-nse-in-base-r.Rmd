@@ -24,7 +24,7 @@ knitr::opts_chunk$set(collapse = TRUE)
 
 ## Filter
 
-The most important tipical function is filter, which basically does subsetting:
+The most important typical function is filter, which basically does subsetting:
 
 ```{r filter1}
 library("dplyr")
@@ -97,9 +97,9 @@ groups_dplyr <- attr(mtcars_grouped, "groups")
 groups_dplyr$vs
 groups_dplyr$.rows
 ```
-This attribute is first a vector of the names of the group and a list of the indicies of each group.
+This attribute is first a vector of the names of the group and a list of the indices of each group.
 
-So what is the equivalent? I don't know, but we can store the names and indicies with:
+So what is the equivalent? I don't know, but we can store the names and indices with:
 
 ```{r group_by4}
 (groups_base <- split(seq_along(mtcars$vs), mtcars$vs))
