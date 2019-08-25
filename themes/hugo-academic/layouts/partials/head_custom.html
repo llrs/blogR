@@ -1,0 +1,20 @@
+{{ if eq .URL "/" }}
+<title>{{ .Site.Title }}</title>
+<meta property="og:title" content="{{ .Site.Title }}">
+<meta property="og:type" content="website">
+<meta property="description" content="{{ .Site.Params.description }}">
+<meta property="og:description" content="{{ .Site.Params.description }}">
+{{ else }}
+<title>{{ .Title }}{{ with .Params.subtitle }} - {{ . }} {{ end }} - {{ .Site.Title }}</title>
+<meta property="og:title" content="{{ .Title }} - {{ .Site.Title }}">
+<meta property="og:type" content="article">
+
+{{ $defaultDescription := printf "Article posted by %s, on %s" .Params.author (.Date.Format "2006 January 2nd") }}
+<meta property="description" content="{{ .Description | default $defaultDescription }}">
+<meta property="og:description" content="{{ .Description | default $defaultDescription }}">
+{{ end }}
+
+<meta name="twitter:creator" content="{{ .Site.Params.twitterAuthor }}">
+<meta name="twitter:site" content="{{ .Site.Params.twitterSite }}">
+
+<link href="//cdn.bootcss.com/styles/github.min.css" rel="stylesheet">
