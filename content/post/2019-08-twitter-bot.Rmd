@@ -3,6 +3,7 @@ title: Twitter bot
 author: Lluís Revilla Sancho
 date: '2019-08-13'
 slug: twitter-bot
+description: Analyzing a user looking for patterns and to know if it is handled by a bot.
 categories:
   - r
 tags:
