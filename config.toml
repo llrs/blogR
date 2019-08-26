@@ -47,6 +47,9 @@ preserveTaxonomyNames = true
   section = [ "HTML", "RSS" ]
   taxonomy = [ "HTML", "RSS" ]
 
+[permalinks]
+  post = "/:year/:month/:slug/"
+
 # Configure BlackFriday Markdown rendering.
 #   See: https://gohugo.io/getting-started/configuration/#configure-blackfriday
 [blackfriday]
