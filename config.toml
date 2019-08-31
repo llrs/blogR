@@ -46,6 +46,7 @@ preserveTaxonomyNames = true
   home = [ "HTML", "CSS", "RSS", "JSON" ]
   section = [ "HTML", "RSS" ]
   taxonomy = [ "HTML", "RSS" ]
+  taxonomyTerm = [ "HTML", "RSS" ]
 
 [permalinks]
   post = "/:year/:month/:slug/"
@@ -96,6 +97,7 @@ enableEmoji = true
   description = "A bioinformatician blog"
   twitterAuthor = "@Lluis_Rev"
   twitterSite = "b101nfo.blogspot.com"
+  color_theme = "default"
 
 # AUTHOR SETUP
 # Your details.
