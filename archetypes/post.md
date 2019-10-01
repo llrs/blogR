@@ -37,18 +37,15 @@ categories = []
   # Focal point (optional)
   # Options: Smart, Center, TopLeft, Top, TopRight, Left, Right, BottomLeft, Bottom, BottomRight
   focal_point = ""
+  
+[editor_options]
+  chunk_output_type = "console"
+
 +++
 
-
-## Add to YAML:
-
+```{r setup}
+knitr::opts_chunk$set(collapse = TRUE)
 ```
-editor_options: 
-  chunk_output_type: console
-```
-
-jojojojo
-
 
 
 ```{r bibsetup, echo=FALSE, message=FALSE, warning=FALSE}
