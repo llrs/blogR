@@ -65,6 +65,7 @@ mtcars_subset <- filter_base(mtcars, am == "1" & mpg > 25)
 all.equal(mtcars_filter, mtcars_subset)
 
 m <- mark(filter(mtcars, am == "1", mpg > 25),
+          filter(mtcars, am == "1" & mpg > 25),
           filter_base(mtcars, am == "1" & mpg > 25),
           iterations = 1000)
 plot(m) + ggplot2::theme_classic()

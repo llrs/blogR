@@ -1,5 +1,5 @@
 ---
-title: Consumption of fuel by our car
+title: Consumption of gasoline by our car
 author: Lluís Revilla Sancho
 date: '2019-09-15'
 slug: oil
@@ -7,15 +7,15 @@ categories:
   - r
 tags:
   - r
-  - oil
+  - gasoline
 authors: []
 description: ''
-featured: no
+featured: yes
 image:
   caption: ''
   focal_point: ''
-subtitle: ''
-summary: ''
+subtitle: 'Does our car burns more gasoline now than on the first year?'
+summary: 'Analysis of the consumption of a family car over 4 years of refills'
 editor_options: 
   chunk_output_type: console
 ---
@@ -25,31 +25,35 @@ editor_options:
 For years my dad has been taking the notes of the gas stations and annotating 
 the km done by the car until that moment and the km since last stop to refill.
 
-Now, he suspects that the car is not as efficient as it was so he want to check the oil consumption.
+Now, he suspects that the car is not as efficient as it was so he want to check the gasoline consumption.
 
 
 ## The data
 
+```{r setup}
+knitr::opts_chunk$set(collapse = TRUE)
+```
 
-I manually had to annotate the data, but I uploaded here:
+
+I had to manually annotate the data, but I uploaded here:
 
 ```{r load}
 library("here")
-g <- read.csv(here("content", "gasolina.csv"))
+raw_data <- read.csv(here("static", "gasolina.csv"))
 ```
 
 It is tidy but real data; some errors, missing values are present.
 I start with a visualization:
 
-```{r}
+```{r clean}
 library("ggplot2")
 library("dplyr")
 library("lubridate")
-g_clean <- g %>% 
+clean_data <- raw_data %>% 
   mutate(Date = dmy(Date)) %>% 
   arrange(Date)
 
-ggplot(g_clean) +
+ggplot(clean_data) +
   geom_point(aes(Date, total_km, size = L)) +
   theme_bw()
 ```
@@ -59,7 +63,7 @@ Also we can see that there are some unit with more than 15000 Liters on the tank
 We can check for other inconsistences.
 
 ```{r summary}
-summary(g_clean)
+summary(clean_data)
 ```
 
 We can see on the summary that there is a data point at the the 2020. 
@@ -70,35 +74,36 @@ We need to check the manual, but this came as a suprise to my father.
 
 ## Data cleaning
 
-Checking the originally data (make bakups or store the original data), 
+Checking the originally data (make bakups or store the original data!), 
 I found that instead of 19349 Liters it has been 19.49 L and the other outliers are also my mistake typing.
 
 ```{r corrections}
-g_clean$L[g_clean$L > 100] <- 19.49
-g_clean$Date[g_clean$Date > "2020/01/01"] <- "2018/01/21"
-g_clean$Last_km[g_clean$Last_km > 1000] <- 597.6
-g_clean$total_km[g_clean$total_km < 20000 & 
-                   year(g_clean$Date) < 2018 & 
-                   year(g_clean$Date) > 2016 &
-                   !is.na(g_clean$total_km)] <- 39065
-g_clean$total_km[g_clean$total_km < 7000 & 
-                   year(g_clean$Date) >= 2016 &
-                   !is.na(g_clean$total_km)] <- 16977
+clean_data$L[clean_data$L > 100] <- 19.49
+clean_data$Date[clean_data$Date > "2020/01/01"] <- "2018/01/21"
+clean_data$Last_km[clean_data$Last_km > 1000] <- 597.6
+clean_data$total_km[clean_data$total_km < 20000 & 
+                   year(clean_data$Date) < 2018 & 
+                   year(clean_data$Date) > 2016 &
+                   !is.na(clean_data$total_km)] <- 39065
+clean_data$total_km[clean_data$total_km < 7000 & 
+                   year(clean_data$Date) >= 2016 &
+                   !is.na(clean_data$total_km)] <- 16977
 # A duplicate with a wrong date
-g_clean <- g_clean[g_clean$Date != "2019/03/26", ]
-g_clean$Date[g_clean$Date == "2019/06/26" & 
-                   g_clean$total_km < 60000] <- "2019/03/26"
-g_clean$total_km[g_clean$Date == "2016/06/26"] <- 18450
-g_clean$total_km[g_clean$Date == "2016/06/26"] <- 18450
-g_clean <- arrange(g_clean, Date)
+clean_data <- clean_data[clean_data$Date != "2019/03/26", ]
+clean_data$Date[clean_data$Date == "2019/06/26" & 
+                   clean_data$total_km < 60000] <- "2019/03/26"
+clean_data$total_km[clean_data$Date == "2016/06/26"] <- 18450
+clean_data$total_km[clean_data$Date == "2016/06/26"] <- 18450
+clean_data <- arrange(clean_data, Date)
 ```
 
 After this manual curration we can check the plot again
 
 ```{r replot}
-ggplot(g_clean) +
+ggplot(clean_data) +
   geom_point(aes(Date, total_km, size = L)) +
-  theme_bw()
+  theme_bw()  +
+  labs(y = "Km accumulated")
 ```
 
 Now the plot is much better.
@@ -110,7 +115,7 @@ Now the plot is much better.
 Now that the data has been corrected to the best of my hability we can start comparing liters and km:
 
 ```{r calc1}
-g_clean2 <- g_clean %>% 
+cleaner_data <- clean_data %>% 
   mutate(
     Last_km = round(Last_km),
     total_l = cumsum(coalesce(L, 0)),
@@ -123,34 +128,44 @@ Now we want to model the data, we will use [broom]():
 
 ```{r model}
 library("broom")
-model <- lm(total_km ~ total_l, data = filter(g_clean2, !is.na(total_km)))
+model <- lm(total_km ~ total_l, 
+            data = filter(cleaner_data, !is.na(total_km)))
 
 tidy(model)
 glance(model)
 ```
 
-Note that with 0 L we cannot have traveled. 
-As in this case the first date has already some km done, we allow the intercept.
-Otherwise, we could set up a linear model without interception. 
-
 This means that every `r tidy(model)[2, 2, drop = TRUE]` km the car spends 1L, 
 and it seems quite consistent over the years, but we missed around `r round(tidy(model)[1, 2, drop = TRUE])` L before we started collecting data:
 
 ```{r plot2}
-g_clean2 %>% 
+cleaner_data %>% 
   filter(!is.na(total_km)) %>% 
   ggplot(aes(total_l, total_km)) +
   geom_smooth(method = lm, col = "red") +
   geom_point() +
-  theme_bw()
+  theme_bw() +
+  labs(x = "L accumulated", y = "Km accumulated")
 ```
+
+Note that with 0 L we cannot have traveled. 
+So, to get the real consumption we need to set it to 0:
+
+```{r model0}
+model0 <- lm(total_km ~ 0 +total_l, 
+             data = filter(cleaner_data, !is.na(total_km)))
+
+tidy(model0)
+```
+
+Which results in a more efficient motor with close to 19km for each liter.
 
 Now we can look if there are some years that it was worse.
 To do so we look at the residuals and the distribution of them:
 
 ```{r residuals}
 augment(model) %>% 
-  cbind(filter(g_clean2, !is.na(total_km))[ ,-c(3, 6)]) %>% 
+  cbind(filter(cleaner_data, !is.na(total_km))[ ,-c(3, 6)]) %>% 
   ggplot() +
   geom_point(aes(Date, .resid)) +
   geom_smooth(aes(Date, .resid), method = "glm") +
@@ -163,7 +178,7 @@ But let's check it :
 
 ```{r}
 augment(model) %>% 
-  cbind(filter(g_clean2, !is.na(total_km))[ ,-c(3, 6)]) %>% 
+  cbind(filter(cleaner_data, !is.na(total_km))[ ,-c(3, 6)]) %>% 
   lm(.resid ~ Date, data = .) %>% 
   glance()
 ```
@@ -173,42 +188,43 @@ As we can see above we can't say there is a linear tread to increased consumptio
 ### Refills
 
 Another interesting question is how many refills did we miss. 
+We can first see how many km did it make with the last refill:
 
 ```{r refills1}
-library("ggbeeswarm")
-g_clean2 %>% 
+cleaner_data %>% 
   ggplot() +
-  geom_beeswarm(aes("Refills", Last_km)) +
-  labs(x = element_blank()) +
+  geom_histogram(aes(Last_km)) +
   theme_bw()
 
-g_clean2 %>% 
+central_km <- cleaner_data %>% 
   summarise(median = median(Last_km, na.rm = TRUE),
             mean = round(mean(Last_km, na.rm = TRUE)))
-max(g_clean2$total_km, na.rm = TRUE)/c(541, 534)
+central_km
+# Then we can divide the total
+max(cleaner_data$total_km, na.rm = TRUE)/central_km[1, ]
 ```
 
-We can round this to 123 refills. 
-So apparently  we missed `r 123-106` refills. 
+We can round this to `r res = round(mean(max(cleaner_data$total_km, na.rm = TRUE)/simplify2array(central_km)));res` refills. 
+So apparently  we missed `r res-nrow(cleaner_data)` refills. 
 Or did I miss something here?
 
 Let's check how many refills are already missing from the data we have:
 
 
 ```{r refills}
-g_clean3 <- g_clean2 %>% 
+cleaner_data %>% 
   mutate(
     cum_km = cumsum(coalesce(Last_km, 0)),
     km_at_last_refill = total_km - Last_km,
     diff = total_km - km_at_last_refill[-1],
     diff = if_else(is.na(diff), 0, diff),
     refills_missed = round(abs(diff)/median(Last_km, na.rm = TRUE))
-)
-sum(g_clean3$refills_missed)
+  ) %>% 
+  summarise(total = sum(refills_missed))
 ```
 
 To that amount we need to add the first 8171 km that we don't have information of the refills.
-But those are around `r round(8171/531)-1`, plus the one we already have come close to those 17 we estimated.
+But those are around `r round(8171/541)-1`, plus the one we already have come close to those 17 we estimated.
 The difference is because there have been some smaller refills. 
 
 ### Long and short distances
@@ -219,7 +235,7 @@ We can see if we can extract if there are some anomalies on the serie:
 
 ```{r anomalize}
 library("anomalize")
-g_clean2 %>% 
+cleaner_data %>% 
   filter(!is.na(total_km)) %>% 
   as_tibble() %>% 
   time_decompose(total_km, method = "stl") %>% 
@@ -229,23 +245,23 @@ g_clean2 %>%
   labs(title = "Refill Anomalies", subtitle = "STL + IQR Methods") 
 ```
 
-
+We can further explore if there is any anomaly:
 ```{r}
-g_clean2 %>% 
+cleaner_data %>% 
   filter(!is.na(total_km)) %>% 
   time_frequency(period = "auto")
-g_clean2 %>% 
+cleaner_data %>% 
   filter(!is.na(total_km)) %>% 
   time_trend(period = "auto")
 
-al <- g_clean2 %>% 
+al <- cleaner_data %>% 
   filter(!is.na(total_l)) %>% 
   as_tibble() %>% 
   time_decompose(total_l, method = "stl", trend = "1 year", frequency = "1 months") %>% 
   anomalize(remainder, method = "iqr") %>% 
   plot_anomaly_decomposition() +
   labs(title = "total l")
-ak <- g_clean2 %>% 
+ak <- cleaner_data %>% 
   filter(!is.na(total_km)) %>% 
   as_tibble() %>% 
   time_decompose(total_km, method = "stl", trend = "1 year", frequency = "1 months") %>% 
@@ -253,7 +269,7 @@ ak <- g_clean2 %>%
   plot_anomaly_decomposition() +
   labs(title = "total km")
 
-ar <- g_clean2 %>%
+ar <- cleaner_data %>%
   filter(!is.na(ratio)) %>% 
   as_tibble() %>% 
   time_decompose(ratio, method = "stl") %>% 
@@ -263,6 +279,14 @@ ar <- g_clean2 %>%
 library("patchwork")
 al + ak + plot_annotation(title = "Anomalies")
 ```
+
+## Conclusions
+
+We can say that the car doesn't need more gasoline for the same distance. 
+
+Usually there is a refill for every 550 km.
+
+There aren't notable anomalies, so the car makes the same trips usually.
 
 
 ```{r bibsetup, echo=FALSE, message=FALSE, warning=FALSE}
