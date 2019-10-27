@@ -43,10 +43,12 @@ categories = []
 
 +++
 
-```{r setup}
+```{r setup, include = FALSE}
 knitr::opts_chunk$set(collapse = TRUE)
 ```
 
+
+### References
 
 ```{r bibsetup, echo=FALSE, message=FALSE, warning=FALSE}
 ## Load knitcitations with a clean bibliography
@@ -55,11 +57,9 @@ cleanbib()
 cite_options(hyperlink = 'to.doc', citation_format = 'text', style = 'html')
 pi <- sessioninfo::package_info()
 packages <- c(pi$package[pi$attached], 'knitcitations')
-l <- sapply(, function(x){citation(x)[1]}, simplify = FALSE)
+l <- sapply(packages, function(x){citation(x)[1]}, simplify = FALSE)
 bib <- c(l, 'blogdown' = citation('blogdown')[2])
 ```
-
-### References
 
 ```{r results = 'asis', echo = FALSE, cache = FALSE}
 bibliography(style = 'html')
@@ -71,6 +71,6 @@ bibliography(style = 'html')
 ```{r reproducibility, echo = FALSE}
 ## Reproducibility info
 options(width = 120)
-session_info()
+sessioninfo::session_info()
 ```
 <details>
