@@ -1,0 +1,130 @@
+---
+title: Barrios ricos y pobres
+author: Lluís Revilla Sancho
+date: '2019-10-27'
+slug: barrios-ricos-pobres
+categories:
+  - r
+tags:
+  - news
+authors: []
+description: ''
+editor_options:
+  chunk_output_type: console
+featured: no
+image:
+  caption: ''
+  focal_point: ''
+subtitle: ''
+summary: ''
+---
+
+```{r setup, include = FALSE}
+knitr::opts_chunk$set(collapse = TRUE)
+```
+
+Me sorprendió la información sobre los barrios y la correlación que apareció en una [notícia](https://www.elconfidencial.com/economia/2019-10-21/recuperacion-beneficia-barrios-ricos-pobres-clase-media_2289888/). Así que aquí rehago los graficos a partir de los datos descargados de la notícia:
+
+```{r reading}
+eco <- read.csv(here::here("static", "data-dLHsB.csv"), check.names = FALSE)
+```
+
+## Primer gráfico
+
+Con los datos descargados he reproducio la primera gráfica, con la única excepción que no he usado el IPC.
+En vez del IPC he puesto la mediana del incremento.
+
+ 1. En primer lugar porque el IPC varia cada año, y aquí estamos mirando el cambio en 4 años.
+ 2. En segundo lugar, porque el gráfico se usa para enseñar que las rentas más bajas no progresan tanto como las más altas. Y creo que para comparar el progreso en los diferentes percentiles hay que mirar la mediana:
+
+
+```{r grafic1}
+library("ggplot2")
+library("scales")
+library("plotly")
+p1 <- ggplot(data = eco) +
+  geom_violin(aes(Grupo, `Variación 2013-2017 (%)`, col = Grupo)) +
+  geom_jitter(aes(Grupo, `Variación 2013-2017 (%)`, col = Grupo,
+                  text = paste("Barrio:", Nombre, "\nMunicipio:", Municipio))) +
+  geom_abline(intercept = median(eco$`Variación 2013-2017 (%)`), slope = 0, 
+              col = "red") +
+  scale_color_viridis_d() +
+  guides(col = FALSE) +
+  theme_minimal() 
+ggplotly(p1, tooltip = c("text", "x", "y"), layerData = 3)
+```
+
+Tanto el grupo más pobre como los más ricos estan por encima de la mediana mayoritariamente.
+
+## Segundo gráfico
+
+El segundo gráfico parece indicar una correlación positiva. Ahora bien, cuando lo reproducimos, podemos ver que hay mucha incerteza 
+
+```{r grafic2}
+p2 <- eco %>% 
+  ggplot(aes(`Renta bruta media 2013 (euros)`, `Variación 2013-2017 (%)`)) +
+  geom_point(aes(text = paste("Barrio:", Nombre, "\nMunicipio:", Municipio))) +
+  geom_smooth(method = "lm") +
+  guides(col = FALSE) +
+  scale_x_continuous(labels = dollar_format(suffix = "€", prefix = ""), 
+                    breaks = c(12000, 20000, 50000, 100000)) +
+  # from https://stackoverflow.com/a/32265122/2886003
+  theme_bw()
+
+ggplotly(p2)
+```
+
+Podemos ver que la correlación no és muy buena, tal y como confirma el test:
+
+```{r cor}
+cor.test(eco[, 6], eco[, 4])
+```
+
+Sobretodo está el barrio de La Moraleja que induce a error:
+
+
+```{r lmds}
+eco %>% 
+  lm(`Variación 2013-2017 (%)` ~ `Renta bruta media 2013 (euros)`, data = .) %>% 
+  broom::tidy()
+eco %>% 
+  filter(Nombre != "28109-La Moraleja") %>% 
+  lm(`Variación 2013-2017 (%)` ~ `Renta bruta media 2013 (euros)`, data = .) %>% 
+  broom::tidy()
+```
+
+Como se puede ver al remover La Moraleja, esta tendencia és superior. 
+En resumen no veo tan claro que solo los barrios ricos hayan augmentado su renta media.
+
+
+
+### References
+
+```{r bibsetup, echo=FALSE, message=FALSE, warning=FALSE}
+## Load knitcitations with a clean bibliography
+library('knitcitations')
+cleanbib()
+cite_options(hyperlink = 'to.doc', citation_format = 'text', style = 'html')
+pi <- sessioninfo::package_info()
+packages <- c(pi$package[pi$attached], 'knitcitations')
+bib <- c("BiocManager" = citation("BiocManager"), 
+         'ggplot2' = citation('ggplot2'),
+         'plotly' = citation('plotly'),
+         'scales' = citation('scales'),
+         'blogdown' = citation('blogdown')[2]
+         )
+```
+
+```{r results = 'asis', echo = FALSE, cache = FALSE}
+bibliography(, style = 'html')
+```
+
+### Reproducibility
+
+<details>
+```{r reproducibility, echo = FALSE}
+## Reproducibility info
+options(width = 120)
+sessioninfo::session_info()
+```
+<details>
