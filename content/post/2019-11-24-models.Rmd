@@ -1,0 +1,131 @@
+---
+title: Models
+author: Lluís Revilla Sancho
+date: '2019-11-24'
+slug: models
+categories:
+  - r
+tags:
+  - limma
+authors: []
+description: ''
+editor_options:
+  chunk_output_type: console
+featured: no
+image:
+  caption: ''
+  focal_point: ''
+subtitle: ''
+summary: ''
+---
+
+```{r setup, include = FALSE}
+knitr::opts_chunk$set(collapse = TRUE)
+```
+
+## Introduction
+
+I have learned a lot about linear models through carefully reading [limma's vignette](http://bioconductor.org/packages/release/bioc/manuals/limma/man/limma.pdf). 
+However from time to time I find that I cannnot do the model of the effects as I wish to compare the samples as I need.
+Here I describe some pitfalls I stumbled on and how to overcome them:
+
+## Complex comparisons problems
+
+One of the main problems I have is having multiple factors that can be two options which result in several comparisons.
+The researcher usually wants to know the differences between all the combinations which leads to a complex design as such:
+
+```{r model0}
+type <- c("A", "A", "A", "B", "B", "B", "A", "B", "A", "B")
+origin <- c("O", "P", "O", "P", "O", "P", "O", "P", "O", "O")
+groups <- as.factor(paste(type, origin, sep = "_"))
+m <- model.matrix(~0 + groups, data = groups)
+colnames(m) <- levels(groups)
+m
+```
+
+Here we build a design factor where each colum is the combination of the two factors we have type and origin.
+This model includes the interaction effect between the two variables type and group.
+The idea is now to compare between the samples A_O and A_P and A_O and B_O and so on. 
+
+We can build our contrast and perform our comparisons:
+
+```{r limma}
+library("limma")
+contr <- makeContrasts(O_vs_P = A_O+ B_O - A_P-B_P,
+              A_vs_P = A_O+A_P-B_O-B_P,
+              A__O_vs_P = A_O - A_P,
+              B__O_vs_P = B_O - B_P,
+              levels = colnames(m))
+contr
+```
+
+We can see which samples do we pick in each comparison with:
+
+```{r pick}
+pick <- m %*% contr
+pick
+```
+
+And we could continue to analys our expression data with this contrasts. 
+But we would get an incorrect result whatever our data is. 
+The problem is that we didn't realize that we have some coefficients estimated with a single sample.
+
+We can easily see it with:
+
+```{r check}
+colSums(m)
+unic_coef <- colSums(m)
+```
+
+This mean that we cannot use this combination in a comparison
+The solution is to remove those coefficients from the model matrix and add a interception:
+
+```{r clean_design}
+m1 <- m[, unic_coef != 1]
+m1 <- cbind(Intercept = 1, m1)
+```
+
+Now we can compare less but with accurate results:
+
+```{r contr2}
+contr <- makeContrasts(O_vs_P = A_O+ B_O - B_P,
+              A_vs_P = A_O-B_O-B_P,
+              B__O_vs_P = B_O - B_P,
+              levels = colnames(m1))
+contr
+```
+
+This models takes into account all samples to estimate the "natural" variation of the genes, while comparing only those samples that are interesting to the researcher.
+
+## Conclusions
+
+Check how many samples do you have for each coefficient, or combination of factors you want to compare. 
+You should have at least two samples per combination. 
+If you have some samples that you sequenced that do not belong to any group, create the intercept group, this way you will still use them but not directly in a comparisons.
+
+### References
+
+```{r bibsetup, echo=FALSE, message=FALSE, warning=FALSE}
+## Load knitcitations with a clean bibliography
+library('knitcitations')
+cleanbib()
+cite_options(hyperlink = 'to.doc', citation_format = 'text', style = 'html')
+pi <- sessioninfo::package_info()
+packages <- c(pi$package[pi$attached], 'knitcitations')
+l <- sapply(packages, function(x){citation(x)[1]}, simplify = FALSE)
+bib <- c(l, 'blogdown' = citation('blogdown')[2])
+```
+
+```{r results = 'asis', echo = FALSE, cache = FALSE}
+bibliography(style = 'html')
+```
+
+### Reproducibility
+
+<details>
+```{r reproducibility, echo = FALSE}
+## Reproducibility info
+options(width = 120)
+sessioninfo::session_info()
+```
+<details>

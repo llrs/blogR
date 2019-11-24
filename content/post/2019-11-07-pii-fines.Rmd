@@ -1,0 +1,181 @@
+---
+title: PII fines
+author: Lluís Revilla Sancho
+date: '2019-11-07'
+slug: pii-fines
+categories:
+  - civio
+  - r
+tags:
+  - r
+authors: []
+description: ''
+editor_options:
+  chunk_output_type: console
+featured: no
+image:
+  caption: ''
+  focal_point: ''
+subtitle: ''
+summary: ''
+---
+
+```{r setup, include = FALSE}
+knitr::opts_chunk$set(collapse = TRUE)
+```
+
+
+
+From some time I've been following a company that uses data to explain some data.
+
+I want to use some of the data they published from [Civio](https://datos.civio.es/dataset/multas-de-proteccion-de-datos/) to see if I learn more about personal identifiable information fines.
+
+
+```{r}
+fines <- read.csv("~/Downloads/multas-aepd.csv", stringsAsFactors = FALSE)
+fines$date <- as.Date(fines$date)
+```
+
+
+
+```{r}
+library("ggplot2")
+library("scales")
+library("forcats")
+
+ggplot(fines) +
+  geom_point(aes(date, amount, col = fct_relevel(sanction_type, c("Leve", "Grave", "Muy grave")))) +
+  scale_y_continuous(labels = dollar_format(suffix = "€", prefix = "")) +
+  # from https://stackoverflow.com/a/32265122/2886003
+  theme_bw() +
+  scale_color_manual(values = c("Leve" = "orange", "Grave" = "orangered", "Muy grave" = "red")) +
+  labs(x = "Year", y = "Amount", col = "Sanction type")
+```
+
+
+```{r}
+library("lubridate")
+library("dplyr")
+fines %>% 
+  mutate(month = month(date),
+         year = year(date),
+         date2 = as.character(paste0(year(date), "-", month(date), "-", 1))) %>% 
+  group_by(date2) %>% 
+  count(sector) %>% 
+  mutate(date3 = ymd(date2)) %>%
+  ggplot() +
+  geom_col(aes(date3, n, fill = sector)) +
+  labs(x = element_blank(), y = "Fines") +
+  scale_x_date(date_breaks = "1 month", date_labels =  "%Y-%m", expand = c(0, 0)) +
+  scale_y_continuous(expand = c(0, 0), breaks = seq(0, 120, by = 10)) +
+  theme_bw() +
+  theme(axis.text.x = element_text(angle = 45, hjust = 1))
+```
+
+
+```{r}
+library("dplyr")
+ggplot(fines) +
+  geom_histogram(aes(amount, fill = fct_relevel(sanction_type, c("Leve", "Grave", "Muy grave")))) +
+  scale_fill_manual(values = c("Leve" = "orange", "Grave" = "orangered", "Muy grave" = "red")) +
+  scale_x_log10(labels = dollar_format(suffix = "€", prefix = "")) +
+  # from https://stackoverflow.com/a/32265122/2886003
+  labs(x = "Amount", fill = "Sanction type", y = "Fines") +
+  theme_bw()  +
+  facet_wrap(~fct_relevel(sanction_type, c("Leve", "Grave", "Muy grave")), scales = "free")
+  
+ggplot(fines) +
+  geom_histogram(aes(amount, fill = sector)) +
+  scale_fill_viridis_d() +
+  scale_x_log10(labels = dollar_format(suffix = "€", prefix = "")) +
+  # from https://stackoverflow.com/a/32265122/2886003
+  labs(x = "Amount", fill = "Sector", y = "Fines") +
+  theme_bw()  +
+  facet_wrap(~fct_relevel(sanction_type, c("Leve", "Grave", "Muy grave")), scales = "free")
+
+
+fines %>% 
+  filter(amount < 200000) %>% 
+  ggplot() +
+  geom_point(aes(date, amount, col = fct_relevel(sanction_type, c("Leve", "Grave", "Muy grave")))) +
+  scale_y_continuous(labels = dollar_format(suffix = "€", prefix = "")) +
+  # from https://stackoverflow.com/a/32265122/2886003
+  theme_bw() +
+  scale_color_manual(values = c("Leve" = "orange", "Grave" = "orangered", "Muy grave" = "red")) +
+  labs(x = "Year", y = "Amount", col = "Sanction type")
+
+ggplot(fines) +
+  geom_point(aes(date, amount, col = fct_relevel(sanction_type, c("Leve", "Grave", "Muy grave")))) +
+  scale_y_continuous(labels = dollar_format(suffix = "€", prefix = ""), 
+                     breaks = c(1000, 4000, 10000, 20000, 40000,
+                                50000, 500000, 1000000)) +
+  coord_trans(y = "log10") +
+  # from https://stackoverflow.com/a/32265122/2886003
+  theme_bw() +
+  scale_color_manual(values = c("Leve" = "orange", "Grave" = "orangered", "Muy grave" = "red")) +
+  labs(x = "Year", y = "Amount", col = "Sanction type")
+```
+
+
+What sectors are more fined?
+```{r}
+fines_sector <- fines %>% 
+  group_by(sector) %>% 
+  count(sort = TRUE) %>% 
+  ungroup() %>% 
+  mutate(sector = if_else(sector == "", "Unknown/unclassified", sector))
+fines_sector %>% 
+  ggplot() + 
+  geom_col(aes(fct_reorder(sector, -n), n, fill = fct_reorder(sector, -n))) +
+  guides(fill = FALSE) +
+  labs(x = "Sector", y = "Fines") + 
+  # coord_trans(y = "log10") +
+  theme_bw() +
+  theme(axis.text.x = element_text(angle = 45, hjust = 1))
+```
+
+
+
+We can see that there is a white space between 2017 and 2018
+
+```{r}
+fines %>% 
+  count(name, sort = TRUE) %>% 
+  arrange(-n) %>% 
+  ggplot() + 
+  geom_col(aes(fct_reorder(name, -n), n)) +
+  labs(x = "Name", y = "Fines") + 
+  scale_y_continuous(expand = c(0, 5)) +
+  # coord_trans(y = "log10") +
+  theme_bw() +
+  theme(axis.text.x = element_blank(), axis.line.x = element_blank(), 
+        axis.ticks.x = element_blank(),
+        panel.grid.major.x = element_blank())
+```
+
+### References
+
+```{r bibsetup, echo=FALSE, message=FALSE, warning=FALSE}
+## Load knitcitations with a clean bibliography
+library('knitcitations')
+cleanbib()
+cite_options(hyperlink = 'to.doc', citation_format = 'text', style = 'html')
+pi <- sessioninfo::package_info()
+packages <- c(pi$package[pi$attached], 'knitcitations')
+l <- sapply(packages, function(x){citation(x)[1]}, simplify = FALSE)
+bib <- c(l, 'blogdown' = citation('blogdown')[2])
+```
+
+```{r results = 'asis', echo = FALSE, cache = FALSE}
+bibliography(style = 'html')
+```
+
+### Reproducibility
+
+<details>
+```{r reproducibility, echo = FALSE}
+## Reproducibility info
+options(width = 120)
+sessioninfo::session_info()
+```
+<details>
