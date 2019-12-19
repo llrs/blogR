@@ -73,4 +73,4 @@ bibliography(style = 'html')
 options(width = 120)
 sessioninfo::session_info()
 ```
-<details>
+</details>
