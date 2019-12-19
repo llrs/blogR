@@ -1,0 +1,120 @@
+---
+title: Christmas tree
+author: Lluís Revilla Sancho
+date: '2019-12-18'
+slug: christmas-tree
+categories:
+  - r
+tags:
+  - r
+  - christmas
+  - plot
+authors: []
+description: ''
+editor_options:
+  chunk_output_type: console
+featured: no
+image:
+  caption: ''
+  focal_point: ''
+subtitle: ''
+summary: ''
+---
+
+```{r setup, include = FALSE}
+knitr::opts_chunk$set(collapse = TRUE)
+```
+
+So it is Christmas and I want a tree. I found this new package experimental [ggfx](https://github.com/thomasp85/ggfx) and I thought it would be nice to use it for the lights. 
+Then some time later I found (through twitter) this [other repo](https://github.com/r-link/christmas_tree_challenge) about building trees.
+
+So here I am building my own christmas tree!
+
+# The very basics
+
+We start with installations:
+
+```{r install, eval=FALSE}
+devtools::install_github('thomasp85/ggfx')
+```
+
+We'll build our tree with triangles:
+
+```{r triangle}
+library("ggplot2")
+ggplot(data.frame(x = c(-5, 5, 0), y = c(0, 0, 5))) +
+  geom_polygon(aes(x, y), fill = "green") +
+  theme_void()
+```
+
+To make it easier we use some functions for the triangles:
+
+```{r tree_function}
+iso_triangle <- function(wide, height, xvertix, yvertix) {
+  y <- c(rep(yvertix-height, 2), yvertix)
+  x <- c(xvertix+wide/2, xvertix-wide/2, xvertix)
+  data.frame(x, y)
+}
+
+square <- function(length, x_bottom_right, y_bottom_right) {
+  x <- rep(c(x_bottom_right-length, x_bottom_right), 2)
+  y <- rep(c(y_bottom_right, y_bottom_right+length), each = 2)
+  data.frame(x, y)[c(1, 3, 4, 2), ]
+}
+```
+
+And off to build a tree:
+
+```{r tree}
+tree <- ggplot() +
+  aes(x, y) +
+  geom_polygon(data = square(0.5, 0.25, 0.25), fill = "brown") +
+  geom_polygon(data = iso_triangle(10, 4, 0, 4.5), fill = "darkgreen") + 
+  geom_polygon(data = iso_triangle(9, 4, 0, 4.5), fill = "lightgreen") + 
+  geom_polygon(data = iso_triangle(8, 3, 0, 6), fill = "green") +
+  geom_polygon(data = iso_triangle(7, 3, 0, 6), fill = "darkgreen") +
+  geom_polygon(data = iso_triangle(6, 2.5, 0, 7), fill = "lightgreen") + 
+  geom_polygon(data = iso_triangle(5, 2.5, 0, 7), fill = "green") + 
+  geom_polygon(data = iso_triangle(4, 1.5, 0, 7.5), fill = "darkgreen") +
+  geom_polygon(data = iso_triangle(3, 1.5, 0, 7.5), fill = "lightgreen") +
+  geom_polygon(data = iso_triangle(2, 1.5, 0, 8), fill = "green")
+tree
+```
+
+The tree looks good enough, but if you disagree or want some more realistic trees see [this challenge](https://github.com/r-link/christmas_tree_challenge).
+Very funny to play with it (but I didn't manage to build my tree with it :/). 
+Anyway, now we have the tree and we need to turn them to a glowing tree!!
+
+# Decorating the tree
+
+Now it is time to decorate and turn on the lights with the help of ggfx:
+
+```{r decorating}
+library("ggfx")
+tree + 
+  with_blur(geom_point(data =data.frame(x = 0, y = 8), size = 3, col = "yellow"), sigma = 2, stack = TRUE) + 
+  with_blur(geom_point(data =data.frame(x = c(2, -3), y = c(1.5, 1)), size = 3, col = "darkgreen"), sigma = 2, stack = TRUE) + 
+  with_blur(geom_point(data =data.frame(x = c(2, -3), y = 2.5+c(1, 1.2)), size = 3, col = "purple"), sigma = 2, stack = TRUE) + 
+  with_blur(geom_point(data =data.frame(x = -5, y = 0.5), size = 3, col = "red"), sigma = 2, stack = TRUE) + 
+  with_blur(geom_point(data =data.frame(x = 5, y = 0.5), size = 3, col = "orange"), sigma = 2, stack = TRUE) + 
+  with_blur(geom_point(data =data.frame(x = -2.5, y = 4), size = 3, col = "red"), sigma = 2, stack = TRUE) + 
+  with_blur(geom_point(data =data.frame(x = 3, y = 3.5), size = 3, col = "black"), sigma = 2, stack = TRUE) + 
+  with_blur(geom_point(data =data.frame(x = c(-1, 1.25), y = c(5, 5.5)), size = 3, col = "orange"), sigma = 2, stack = TRUE) + 
+  theme_void() +
+  theme(plot.background = element_rect(fill = "black")) +
+  NULL
+```
+
+And now we have our Christmas tree decorated!
+
+Happy Christmas!!
+
+### Reproducibility
+
+<details>
+```{r reproducibility, echo = FALSE}
+## Reproducibility info
+options(width = 120)
+sessioninfo::session_info()
+```
+<details>
