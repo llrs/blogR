@@ -1,0 +1,72 @@
+---
+title: Fast correlations
+author: Lluís Revilla Sancho
+date: '2020-01-08'
+slug: fast-correlations
+categories:
+  - r
+tags:
+  - r
+authors: []
+description: ''
+editor_options:
+  chunk_output_type: console
+featured: no
+image:
+  caption: ''
+  focal_point: ''
+subtitle: ''
+summary: ''
+draft: true
+---
+
+```{r setup, include = FALSE}
+knitr::opts_chunk$set(collapse = TRUE)
+```
+
+
+## Correlations
+
+One of the few methods that are commonly done are correlations. 
+There are several implementations and variants. 
+I will look at some I found and compare slightly.
+
+
+## Implementations
+
+```{r eval = FALSE}
+stats::cor
+WGCNA::cor # 104 dependencies
+miRcomb::cor
+coop::pcor # see the vignette for more references
+HiClimR::fastCor
+```
+
+
+
+### References
+
+```{r bibsetup, echo=FALSE, message=FALSE, warning=FALSE}
+## Load knitcitations with a clean bibliography
+library('knitcitations')
+cleanbib()
+cite_options(hyperlink = 'to.doc', citation_format = 'text', style = 'html')
+pi <- sessioninfo::package_info()
+packages <- c(pi$package[pi$attached], 'knitcitations')
+l <- sapply(packages, function(x){citation(x)[1]}, simplify = FALSE)
+bib <- c(l, 'blogdown' = citation('blogdown')[2])
+```
+
+```{r results = 'asis', echo = FALSE, cache = FALSE}
+bibliography(style = 'html')
+```
+
+### Reproducibility
+
+<details>
+```{r reproducibility, echo = FALSE}
+## Reproducibility info
+options(width = 120)
+sessioninfo::session_info()
+```
+</details>
