@@ -1,0 +1,108 @@
+---
+title: Debugging only when needed
+author: Lluís Revilla Sancho
+date: '2020-01-25'
+slug: debugging-conditional
+categories:
+  - r
+tags:
+  - r
+  - debug
+authors: []
+description: ''
+editor_options:
+  chunk_output_type: console
+featured: no
+image:
+  caption: ''
+  focal_point: ''
+subtitle: ''
+summary: ''
+---
+
+```{r setup, include = FALSE}
+knitr::opts_chunk$set(collapse = TRUE)
+```
+
+One of the worst thing I experienced is having a bug in a nested call of functions.
+If it is not simple the problems comes to isolate when and why does it occur.
+Here I explore something that I found once on twitter but haven't find explained in Advanced R or other blogs.
+
+
+# Function stack
+
+A simple function to debug is this one: 
+
+```{r func}
+myfunction1 <- function(x, y) {
+  if (sum(x > 0) >= 5) {
+    x + y
+  } else {
+    x - y
+  }
+}
+```
+
+We can use it:
+
+```{r work}
+myfunction1(runif(10), 5)
+myfunction1(runif(4), 5)
+```
+
+However if our input has a NA we'll get an error:
+
+```{r errorf, error=TRUE}
+x <- runif(10)
+x[5] <- NA
+myfunction1(x, 5)
+```
+
+The problem is easy to find but lets assume it is not.
+The missing value where TRUE/FALSE needed indicates that we get a NA.
+So to find where we can use `browser` *and* the expression argument as this:
+
+```{r debugging, eval=FALSE}
+myfunction2 <-  function(x, y) {
+  browser(expr = any(is.na(x)))
+  if (sum(x > 0) >= 5) {
+    x + y
+  } else {
+    x - y
+  }
+}
+myfunction2(x, 5)
+```
+
+Which lead us to this:
+
+![debug with expr](/post/2020-01-debugging-only-when-needed_files/Screenshot from 2020-01-25 13-21-03.png)
+
+If we use other input we can use the function as usual without triggering the debug:
+
+```{r include=FALSE}
+myfunction2 <-  function(x, y) {
+  browser(expr = any(is.na(x)))
+  if (sum(x > 0) >= 5) {
+    x + y
+  } else {
+    x - y
+  }
+}
+```
+
+```{r debug2}
+myfunction2(runif(6), 5)
+```
+
+So if you are developing a package or functions and find an error on some calculation and you don't want to press next or skip a loop just use the `expr` argument of browser to just jump into the problematic call. 
+
+### Reproducibility
+
+<details>
+```{r reproducibility, echo = FALSE}
+## Reproducibility info
+options(width = 120)
+sessioninfo::session_info()
+```
+</details>
