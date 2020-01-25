@@ -1,0 +1,220 @@
+---
+title: CRAN dependencies
+author: Lluís Revilla Sancho
+date: '2020-01-25'
+slug: cran-dependencies
+categories:
+  - r
+tags:
+  - r
+  - CRAN
+authors: []
+description: ''
+editor_options:
+  chunk_output_type: console
+featured: no
+image:
+  caption: ''
+  focal_point: ''
+subtitle: ''
+summary: ''
+---
+
+
+
+<div id="new-policy-in-cran" class="section level1">
+<h1>New policy in CRAN</h1>
+<p>With the new policy of a maximum of 20 packages in Imports.
+Let’s see how many dependencies has each package on CRAN and Bioconductor:</p>
+</div>
+<div id="cran" class="section level1">
+<h1>CRAN</h1>
+<pre class="r"><code>ap &lt;- available.packages()
+dp &lt;- tools::package_dependencies(rownames(ap), db = ap, which = &quot;Imports&quot;, 
+                                  recursive = FALSE)
+dp_n &lt;- lengths(dp)
+tb_dp &lt;- sort(table(dp_n), decreasing = TRUE)
+barplot(tb_dp)</code></pre>
+<p><img src="/post/2020-01-cran-dependencies_files/figure-html/cran-1.png" width="672" /></p>
+<p>Most of the packages has 0 dependencies and just 173 has 20 dependencies or more:</p>
+<pre class="r"><code>names(dp_n)[dp_n &gt;= 20]
+##   [1] &quot;AdhereR&quot;             &quot;AFM&quot;                 &quot;amt&quot;                
+##   [4] &quot;antaresViz&quot;          &quot;bea.R&quot;               &quot;BETS&quot;               
+##   [7] &quot;bibliometrix&quot;        &quot;blkbox&quot;              &quot;blorr&quot;              
+##  [10] &quot;bootnet&quot;             &quot;BrailleR&quot;            &quot;brms&quot;               
+##  [13] &quot;chillR&quot;              &quot;CNVScope&quot;            &quot;codebook&quot;           
+##  [16] &quot;codemetar&quot;           &quot;concurve&quot;            &quot;corporaexplorer&quot;    
+##  [19] &quot;cSEM&quot;                &quot;ctmm&quot;                &quot;ctsem&quot;              
+##  [22] &quot;dartR&quot;               &quot;detrendr&quot;            &quot;devtools&quot;           
+##  [25] &quot;dextergui&quot;           &quot;diceR&quot;               &quot;dipsaus&quot;            
+##  [28] &quot;distill&quot;             &quot;DLMtool&quot;             &quot;dlookr&quot;             
+##  [31] &quot;dynwrap&quot;             &quot;ebirdst&quot;             &quot;ecd&quot;                
+##  [34] &quot;EcoGenetics&quot;         &quot;ecospat&quot;             &quot;EdSurvey&quot;           
+##  [37] &quot;EGAnet&quot;              &quot;elementR&quot;            &quot;emuR&quot;               
+##  [40] &quot;enviGCMS&quot;            &quot;eSDM&quot;                &quot;fdm2id&quot;             
+##  [43] &quot;FedData&quot;             &quot;finalfit&quot;            &quot;forestmangr&quot;        
+##  [46] &quot;genBaRcode&quot;          &quot;genBart&quot;             &quot;geoviz&quot;             
+##  [49] &quot;ggiraphExtra&quot;        &quot;ggquickeda&quot;          &quot;ggstatsplot&quot;        
+##  [52] &quot;GJRM&quot;                &quot;GmAMisc&quot;             &quot;golem&quot;              
+##  [55] &quot;graph4lg&quot;            &quot;healthcareai&quot;        &quot;highcharter&quot;        
+##  [58] &quot;hmi&quot;                 &quot;hybridEnsemble&quot;      &quot;iCellR&quot;             
+##  [61] &quot;inlmisc&quot;             &quot;IntClust&quot;            &quot;IOHanalyzer&quot;        
+##  [64] &quot;ITNr&quot;                &quot;jmv&quot;                 &quot;jsmodule&quot;           
+##  [67] &quot;JWileymisc&quot;          &quot;KarsTS&quot;              &quot;lilikoi&quot;            
+##  [70] &quot;mafs&quot;                &quot;mcp&quot;                 &quot;memapp&quot;             
+##  [73] &quot;metacoder&quot;           &quot;MetaIntegrator&quot;      &quot;metamicrobiomeR&quot;    
+##  [76] &quot;metan&quot;               &quot;metR&quot;                &quot;missCompare&quot;        
+##  [79] &quot;mlflow&quot;              &quot;momentuHMM&quot;          &quot;moveVis&quot;            
+##  [82] &quot;MXM&quot;                 &quot;myTAI&quot;               &quot;NACHO&quot;              
+##  [85] &quot;ncappc&quot;              &quot;NetworkChange&quot;       &quot;nlmixr&quot;             
+##  [88] &quot;nlrx&quot;                &quot;oceanis&quot;             &quot;olsrr&quot;              
+##  [91] &quot;oncrawlR&quot;            &quot;openair&quot;             &quot;optiSel&quot;            
+##  [94] &quot;pak&quot;                 &quot;Patterns&quot;            &quot;phenofit&quot;           
+##  [97] &quot;pkgdown&quot;             &quot;Plasmode&quot;            &quot;plethem&quot;            
+## [100] &quot;PLMIX&quot;               &quot;plotKML&quot;             &quot;plotly&quot;             
+## [103] &quot;PopGenReport&quot;        &quot;predictoR&quot;           &quot;processR&quot;           
+## [106] &quot;psychmeta&quot;           &quot;psychNET&quot;            &quot;psychonetrics&quot;      
+## [109] &quot;PWFSLSmoke&quot;          &quot;qdap&quot;                &quot;qgraph&quot;             
+## [112] &quot;quanteda&quot;            &quot;rabhit&quot;              &quot;RaceID&quot;             
+## [115] &quot;radiant.data&quot;        &quot;radiant.model&quot;       &quot;radix&quot;              
+## [118] &quot;RAM&quot;                 &quot;raptr&quot;               &quot;RclusTool&quot;          
+## [121] &quot;regressoR&quot;           &quot;reproducible&quot;        &quot;rhub&quot;               
+## [124] &quot;robustSingleCell&quot;    &quot;RPANDA&quot;              &quot;RRphylo&quot;            
+## [127] &quot;RSDA&quot;                &quot;rSymbiota&quot;           &quot;RxODE&quot;              
+## [130] &quot;saotd&quot;               &quot;SCORPIUS&quot;            &quot;sdcMicro&quot;           
+## [133] &quot;SDMtune&quot;             &quot;sen2r&quot;               &quot;Seurat&quot;             
+## [136] &quot;SGP&quot;                 &quot;shazam&quot;              &quot;ShinyItemAnalysis&quot;  
+## [139] &quot;shinyloadtest&quot;       &quot;sigQC&quot;               &quot;sismonr&quot;            
+## [142] &quot;skpr&quot;                &quot;smartdata&quot;           &quot;smartR&quot;             
+## [145] &quot;SpaDES.core&quot;         &quot;spant&quot;               &quot;sparklyr&quot;           
+## [148] &quot;spatialEco&quot;          &quot;sptemExp&quot;            &quot;stacomiR&quot;           
+## [151] &quot;statVisual&quot;          &quot;steemr&quot;              &quot;stplanr&quot;            
+## [154] &quot;SubgrPlots&quot;          &quot;SWMPrExtension&quot;      &quot;taxize&quot;             
+## [157] &quot;teachingApps&quot;        &quot;TestDimorph&quot;         &quot;tidymodels&quot;         
+## [160] &quot;tidyverse&quot;           &quot;treespace&quot;           &quot;trelliscopejs&quot;      
+## [163] &quot;uavRmp&quot;              &quot;ubiquity&quot;            &quot;userfriendlyscience&quot;
+## [166] &quot;visvow&quot;              &quot;vmsbase&quot;             &quot;wilson&quot;             
+## [169] &quot;windfarmGA&quot;          &quot;wiseR&quot;               &quot;Wrapped&quot;            
+## [172] &quot;xROI&quot;                &quot;zooaRchGUI&quot;</code></pre>
+</div>
+<div id="bioconductor" class="section level1">
+<h1>Bioconductor</h1>
+<p>The interesting part is discovering how to add the repository.
+The trick is to make us of <code>BiocManager::repositories()</code>:</p>
+<pre class="r"><code>BioC_software &lt;- BiocManager::repositories()[&quot;BioCsoft&quot;]
+bp &lt;- available.packages(contriburl = contrib.url(BioC_software))
+dp_BioC &lt;- tools::package_dependencies(rownames(bp), db = bp, which = &quot;Imports&quot;, 
+                                  recursive = FALSE)
+dp_BioC_n &lt;- lengths(dp_BioC)
+tb_dp_BioC &lt;- sort(table(dp_BioC_n), decreasing = TRUE)
+barplot(tb_dp_BioC)</code></pre>
+<p><img src="/post/2020-01-cran-dependencies_files/figure-html/BioC-1.png" width="672" /></p>
+<p>It seems that software packages on Bioconductor tend to have more dependencies than on CRAN.
+If this policy would be implemented on Bioconductor it would affect 175 packages:</p>
+<pre class="r"><code>names(dp_BioC_n)[dp_BioC_n &gt;= 20]
+##   [1] &quot;abseqR&quot;                &quot;adductomicsR&quot;          &quot;ALPS&quot;                 
+##   [4] &quot;AMARETTO&quot;              &quot;amplican&quot;              &quot;AneuFinder&quot;           
+##   [7] &quot;animalcules&quot;           &quot;appreci8R&quot;             &quot;ArrayExpressHTS&quot;      
+##  [10] &quot;arrayQualityMetrics&quot;   &quot;artMS&quot;                 &quot;ASpediaFI&quot;            
+##  [13] &quot;ATACseqQC&quot;             &quot;BASiCS&quot;                &quot;BatchQC&quot;              
+##  [16] &quot;bigPint&quot;               &quot;bioCancer&quot;             &quot;BiocOncoTK&quot;           
+##  [19] &quot;BiocPkgTools&quot;          &quot;biovizBase&quot;            &quot;biscuiteer&quot;           
+##  [22] &quot;BPRMeth&quot;               &quot;bsseq&quot;                 &quot;BUSpaRse&quot;             
+##  [25] &quot;CAGEr&quot;                 &quot;CATALYST&quot;              &quot;celda&quot;                
+##  [28] &quot;CEMiTool&quot;              &quot;ChAMP&quot;                 &quot;chimeraviz&quot;           
+##  [31] &quot;chipenrich&quot;            &quot;ChIPpeakAnno&quot;          &quot;ChIPQC&quot;               
+##  [34] &quot;ChIPseeker&quot;            &quot;chromVAR&quot;              &quot;cicero&quot;               
+##  [37] &quot;circRNAprofiler&quot;       &quot;clusterExperiment&quot;     &quot;CNEr&quot;                 
+##  [40] &quot;CNVPanelizer&quot;          &quot;CNVRanger&quot;             &quot;cola&quot;                 
+##  [43] &quot;COMPASS&quot;               &quot;CONFESS&quot;               &quot;consensusDE&quot;          
+##  [46] &quot;contiBAIT&quot;             &quot;crlmm&quot;                 &quot;crossmeta&quot;            
+##  [49] &quot;CytoML&quot;                &quot;DaMiRseq&quot;              &quot;DAPAR&quot;                
+##  [52] &quot;debrowser&quot;             &quot;deco&quot;                  &quot;decompTumor2Sig&quot;      
+##  [55] &quot;DEGreport&quot;             &quot;DEP&quot;                   &quot;DepecheR&quot;             
+##  [58] &quot;destiny&quot;               &quot;DEsubs&quot;                &quot;DiffBind&quot;             
+##  [61] &quot;diffcyt&quot;               &quot;diffHic&quot;               &quot;diffloop&quot;             
+##  [64] &quot;DiscoRhythm&quot;           &quot;dmrseq&quot;                &quot;Doscheda&quot;             
+##  [67] &quot;easyRNASeq&quot;            &quot;EGSEA&quot;                 &quot;ELMER&quot;                
+##  [70] &quot;ENmix&quot;                 &quot;EnrichmentBrowser&quot;     &quot;enrichplot&quot;           
+##  [73] &quot;enrichTF&quot;              &quot;esATAC&quot;                &quot;EventPointer&quot;         
+##  [76] &quot;fcoex&quot;                 &quot;FindMyFriends&quot;         &quot;flowSpy&quot;              
+##  [79] &quot;flowWorkspace&quot;         &quot;GAPGOM&quot;                &quot;GENESIS&quot;              
+##  [82] &quot;genomation&quot;            &quot;GenomicInteractions&quot;   &quot;GenVisR&quot;              
+##  [85] &quot;ggbio&quot;                 &quot;GGtools&quot;               &quot;GladiaTOX&quot;            
+##  [88] &quot;gQTLstats&quot;             &quot;HiCBricks&quot;             &quot;HiLDA&quot;                
+##  [91] &quot;icetea&quot;                &quot;ideal&quot;                 &quot;IMAS&quot;                 
+##  [94] &quot;ImmuneSpaceR&quot;          &quot;infercnv&quot;              &quot;iSEE&quot;                 
+##  [97] &quot;IsoformSwitchAnalyzeR&quot; &quot;isomiRs&quot;               &quot;KnowSeq&quot;              
+## [100] &quot;Linnorm&quot;               &quot;Maaslin2&quot;              &quot;MACPET&quot;               
+## [103] &quot;MADSEQ&quot;                &quot;MEAL&quot;                  &quot;metagene&quot;             
+## [106] &quot;methyAnalysis&quot;         &quot;methylKit&quot;             &quot;methyvim&quot;             
+## [109] &quot;MIGSA&quot;                 &quot;minfi&quot;                 &quot;miRLAB&quot;               
+## [112] &quot;miRSM&quot;                 &quot;MMAPPR2&quot;               &quot;mnem&quot;                 
+## [115] &quot;MOFA&quot;                  &quot;monocle&quot;               &quot;motifbreakR&quot;          
+## [118] &quot;MSstats&quot;               &quot;muscat&quot;                &quot;nethet&quot;               
+## [121] &quot;ngsReports&quot;            &quot;OMICsPCA&quot;              &quot;openCyto&quot;             
+## [124] &quot;openPrimeR&quot;            &quot;OUTRIDER&quot;              &quot;PathoStat&quot;            
+## [127] &quot;PathwaySplice&quot;         &quot;pcaExplorer&quot;           &quot;perturbatr&quot;           
+## [130] &quot;phantasus&quot;             &quot;phemd&quot;                 &quot;PhenStat&quot;             
+## [133] &quot;PhyloProfile&quot;          &quot;plotGrouper&quot;           &quot;PrecisionTrialDrawer&quot; 
+## [136] &quot;primirTSS&quot;             &quot;proBatch&quot;              &quot;profileplyr&quot;          
+## [139] &quot;pRoloc&quot;                &quot;Prostar&quot;               &quot;psichomics&quot;           
+## [142] &quot;PureCN&quot;                &quot;qPLEXanalyzer&quot;         &quot;QuasR&quot;                
+## [145] &quot;RCAS&quot;                  &quot;rCGH&quot;                  &quot;REMP&quot;                 
+## [148] &quot;Repitools&quot;             &quot;rexposome&quot;             &quot;RITAN&quot;                
+## [151] &quot;RNAmodR&quot;               &quot;RNASeqR&quot;               &quot;RTCGAToolbox&quot;         
+## [154] &quot;SC3&quot;                   &quot;scone&quot;                 &quot;scPipe&quot;               
+## [157] &quot;scruff&quot;                &quot;scTensor&quot;              &quot;seqplots&quot;             
+## [160] &quot;SIAMCAT&quot;               &quot;signatureSearch&quot;       &quot;singleCellTK&quot;         
+## [163] &quot;SMITE&quot;                 &quot;SNPhood&quot;               &quot;sojourner&quot;            
+## [166] &quot;SpatialCPie&quot;           &quot;TCGAbiolinks&quot;          &quot;TCGAbiolinksGUI&quot;      
+## [169] &quot;TFBSTools&quot;             &quot;TPP&quot;                   &quot;trena&quot;                
+## [172] &quot;TRONCO&quot;                &quot;Ularcirc&quot;              &quot;VariantFiltering&quot;     
+## [175] &quot;ViSEAGO&quot;</code></pre>
+<div id="reproducibility" class="section level3">
+<h3>Reproducibility</h3>
+<details>
+<pre><code>## ─ Session info ───────────────────────────────────────────────────────────────────────────────────────────────────────
+##  setting  value                       
+##  version  R version 3.6.1 (2019-07-05)
+##  os       Ubuntu 19.10                
+##  system   x86_64, linux-gnu           
+##  ui       X11                         
+##  language (EN)                        
+##  collate  en_US.UTF-8                 
+##  ctype    en_US.UTF-8                 
+##  tz       Europe/Madrid               
+##  date     2020-01-25                  
+## 
+## ─ Packages ───────────────────────────────────────────────────────────────────────────────────────────────────────────
+##  package     * version date       lib source        
+##  assertthat    0.2.1   2019-03-21 [1] CRAN (R 3.6.0)
+##  BiocManager   1.30.10 2019-11-16 [1] CRAN (R 3.6.1)
+##  blogdown      0.17    2019-11-13 [1] CRAN (R 3.6.1)
+##  bookdown      0.16    2019-11-22 [1] CRAN (R 3.6.1)
+##  cli           2.0.1   2020-01-08 [1] CRAN (R 3.6.1)
+##  crayon        1.3.4   2017-09-16 [1] CRAN (R 3.6.0)
+##  digest        0.6.23  2019-11-23 [1] CRAN (R 3.6.1)
+##  evaluate      0.14    2019-05-28 [1] CRAN (R 3.6.0)
+##  fansi         0.4.1   2020-01-08 [1] CRAN (R 3.6.1)
+##  glue          1.3.1   2019-03-12 [1] CRAN (R 3.6.0)
+##  htmltools     0.4.0   2019-10-04 [1] CRAN (R 3.6.1)
+##  knitr         1.27    2020-01-16 [1] CRAN (R 3.6.1)
+##  magrittr      1.5     2014-11-22 [1] CRAN (R 3.6.0)
+##  Rcpp          1.0.3   2019-11-08 [1] CRAN (R 3.6.1)
+##  rlang         0.4.3   2020-01-24 [1] CRAN (R 3.6.1)
+##  rmarkdown     2.0     2019-12-12 [1] CRAN (R 3.6.1)
+##  sessioninfo   1.1.1   2018-11-05 [1] CRAN (R 3.6.0)
+##  stringi       1.4.5   2020-01-11 [1] CRAN (R 3.6.1)
+##  stringr       1.4.0   2019-02-10 [1] CRAN (R 3.6.0)
+##  withr         2.1.2   2018-03-15 [1] CRAN (R 3.6.0)
+##  xfun          0.12    2020-01-13 [1] CRAN (R 3.6.1)
+##  yaml          2.2.0   2018-07-25 [1] CRAN (R 3.6.0)
+## 
+## [1] /home/lluis/R/x86_64-pc-linux-gnu-library/3.6
+## [2] /usr/local/lib/R/site-library
+## [3] /usr/lib/R/site-library
+## [4] /usr/lib/R/library</code></pre>
+</details>
+</div>
+</div>

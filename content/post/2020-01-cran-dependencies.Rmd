@@ -1,0 +1,80 @@
+---
+title: CRAN dependencies
+author: Lluís Revilla Sancho
+date: '2020-01-25'
+slug: cran-dependencies
+categories:
+  - r
+tags:
+  - r
+  - CRAN
+authors: []
+description: ''
+editor_options:
+  chunk_output_type: console
+featured: no
+image:
+  caption: ''
+  focal_point: ''
+subtitle: ''
+summary: ''
+---
+
+```{r setup, include = FALSE}
+knitr::opts_chunk$set(collapse = TRUE)
+```
+
+# New policy in CRAN
+
+With the new policy of a maximum of 20 packages in Imports. 
+Let's see how many dependencies has each package on CRAN and Bioconductor:
+
+# CRAN
+
+```{r cran}
+ap <- available.packages()
+dp <- tools::package_dependencies(rownames(ap), db = ap, which = "Imports", 
+                                  recursive = FALSE)
+dp_n <- lengths(dp)
+tb_dp <- sort(table(dp_n), decreasing = TRUE)
+barplot(tb_dp)
+```
+
+
+Most of the packages has 0 dependencies and just `r sum(dp_n >= 20)` has 20 dependencies or more:
+
+```{r names}
+names(dp_n)[dp_n >= 20]
+```
+
+# Bioconductor
+
+The interesting part is discovering how to add the repository. 
+The trick is to make us of `BiocManager::repositories()`:
+
+```{r BioC}
+BioC_software <- BiocManager::repositories()["BioCsoft"]
+bp <- available.packages(contriburl = contrib.url(BioC_software))
+dp_BioC <- tools::package_dependencies(rownames(bp), db = bp, which = "Imports", 
+                                  recursive = FALSE)
+dp_BioC_n <- lengths(dp_BioC)
+tb_dp_BioC <- sort(table(dp_BioC_n), decreasing = TRUE)
+barplot(tb_dp_BioC)
+```
+
+It seems that software packages on Bioconductor tend to have more dependencies than on CRAN. 
+If this policy would be implemented on Bioconductor it would affect `r sum(dp_BioC_n >= 20)` packages:
+
+```{r names2}
+names(dp_BioC_n)[dp_BioC_n >= 20]
+```
+
+### Reproducibility
+
+<details>
+```{r reproducibility, echo = FALSE}
+## Reproducibility info
+options(width = 120)
+sessioninfo::session_info()
+```
+</details>
