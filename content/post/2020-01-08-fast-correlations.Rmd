@@ -28,21 +28,98 @@ knitr::opts_chunk$set(collapse = TRUE)
 ## Correlations
 
 One of the few methods that are commonly done are correlations. 
-There are several implementations and variants. 
-I will look at some I found and compare slightly.
-
+I found several implementations of Pearson correlations, 
+and I was curious to know if which is the fastest one.
 
 ## Implementations
 
+So far the implementations I found are:
+
 ```{r eval = FALSE}
 stats::cor
-WGCNA::cor # 104 dependencies
+WGCNA::cor
 miRcomb::cor
-coop::pcor # see the vignette for more references
+coop::pcor
 HiClimR::fastCor
 ```
 
+Most of them are on CRAN and one is at github.
 
+# Dependencies
+
+If we are only interested on the correlation most of the dependencies that a package would bring aren't rellevant.
+So how many dependencies have each of those packages?
+
+```{r dep}
+ip <- installed.packages()
+dp <- tools::package_dependencies(c("stats", "WGCNA", "miRcomb", "coop", "HiClimR"), 
+                            db = ip, which = "Imports")
+sort(lengths(dp), decreasing = TRUE)
+```
+
+
+# Speed
+
+```{r bench}
+library("bench")
+x <- runif(50)
+y <- runif(50)
+stats_cor <- function() {
+  stats::cor(x, y, method = "pearson")
+}
+
+WGCNA_cor <- function() {
+  WGCNA::cor(x, y, method = "pearson")[1, 1]
+}
+
+coop_cor <- function() {
+  coop::pcor(x, y)
+}
+HiClimR_cor <- function() {
+  HiClimR::fastCor(matrix(c(x, y), nrow = 50, ncol = 2), upperTri = FALSE, verbose = FALSE)[2, 1]
+}
+
+bm <- mark(stats_cor(), WGCNA_cor(), coop_cor(), HiClimR_cor(), iterations = 10000)
+bm
+```
+
+```{r plot}
+plot(bm) + ggplot2::theme_bw()
+```
+
+So we can see that for this basic comparison stats is king followed by coop, WGCNA, and HiClimR.
+
+It might be that these other functions are optimized for matrices so lets see it again
+
+
+```{r mat}
+x <- matrix(runif(100), ncol = 10, nrow = 10)
+y <- matrix(runif(100), ncol = 10, nrow = 10)
+stats_cor2 <- function() {
+  stats::cor(x, x, method = "pearson")
+}
+
+WGCNA_cor2 <- function() {
+  WGCNA::cor(x, x, method = "pearson")
+}
+
+coop_cor2 <- function() {
+  coop::pcor(x)
+}
+HiClimR_cor2 <- function() {
+  HiClimR::fastCor(x, upperTri = FALSE, verbose = FALSE)
+}
+
+bm2 <- mark(stats_cor2(), WGCNA_cor2(), coop_cor2(), HiClimR_cor2(), iterations = 10000)
+bm2
+```
+
+
+```{r plot2}
+plot(bm2) + ggplot2::theme_bw()
+```
+
+Here we can see that coop takes the lead and stats is the second fastest followed by WGCNA and HiClimR.
 
 ### References
 
