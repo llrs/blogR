@@ -1,0 +1,88 @@
+---
+title: R weekly new editor
+author: Lluís Revilla Sancho
+date: '2020-02-13'
+slug: r-weekly-new-editor
+categories:
+  - r
+tags:
+  - r
+  - community
+  - Rweekly
+  - GitHub
+  - twitter
+authors: []
+description: ''
+editor_options:
+  chunk_output_type: console
+featured: no
+image:
+  caption: ''
+  focal_point: ''
+subtitle: ''
+summary: 'Checking who can be Rweekly.org editor with R'
+---
+
+```{r setup, include = FALSE}
+knitr::opts_chunk$set(collapse = TRUE)
+```
+
+[Rweekly](https://rweekly.org) is looking for [new editors](https://docs.google.com/forms/d/e/1FAIpQLSet2Tq_mWWOVsKWxGOSoUg8DzCPlW2-nxIFOSkkRvlUFxQFLw/viewform). But they need to have submitted "at least 6 PRs on R Weekly". If you submitted something through [the webpage](https://rweekly.org/submit) you also can apply. But I'll look at how many people has submitted pull requests (PR) through GitHub at the repo rweekly/rewekly. 
+
+# GH
+
+So the GH package is good for this, but we need to know the API of Github. After a quick search I found the end point of the API:
+
+```{r}
+library("gh")
+PR <- gh("GET /search/issues?q=repo:rweekly/rweekly.org+is:pr+is:merged&per_page=100") # Copied from https://developer.github.com/v3/pulls/
+PR$total_count
+```
+
+We know that there have been 552, we'll need `r ceiling(PR$total_count/100)` calls to the appy, because it only return 30 values on each call. 
+
+This time we'll use copy and paste for a quick solution:
+
+```{r pr_calls}
+PR2 <- gh("GET /search/issues?q=repo:rweekly/rweekly.org+is:pr+is:merged&per_page=100&page=2")
+PR3 <- gh("GET /search/issues?q=repo:rweekly/rweekly.org+is:pr+is:merged&per_page=100&page=3")
+PR4 <- gh("GET /search/issues?q=repo:rweekly/rweekly.org+is:pr+is:merged&per_page=100&page=4")
+PR5 <- gh("GET /search/issues?q=repo:rweekly/rweekly.org+is:pr+is:merged&per_page=100&page=5")
+PR6 <- gh("GET /search/issues?q=repo:rweekly/rweekly.org+is:pr+is:merged&per_page=100&page=6")
+```
+Now that we have the data we need to retrive the user names:
+
+```{r users}
+data <- list(PR, PR2, PR3, PR4, PR5, PR6)
+
+users <- lapply(data, function(x) {
+  vapply(x$items, function(y) {y$user$login}, character(1L))
+})
+users <- sort(unlist(users))
+```
+
+We know now that `r length(unique(users))` has contributed through PR.
+Which of them are done by at the same people? 
+
+```{r barplot}
+ts <- sort(table(users), decreasing = TRUE)
+par(mar=c(8,3,3,0))
+barplot(ts, las = 2, border = "gray",
+        main = "Contributors to Rweekly.org")
+```
+
+So we have `r sum(ts >=6)` contributors which are ellegible, less if we remove the current editors:
+
+```{r ellegible_users}
+names(ts)[ts >= 6]
+```
+
+### Reproducibility
+
+<details>
+```{r reproducibility, echo = FALSE}
+## Reproducibility info
+options(width = 120)
+sessioninfo::session_info()
+```
+</details>
