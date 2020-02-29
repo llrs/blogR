@@ -1,0 +1,117 @@
+---
+title: R weekly new editor
+author: Lluís Revilla Sancho
+date: '2020-02-13'
+slug: r-weekly-new-editor
+categories:
+  - r
+tags:
+  - r
+  - community
+  - Rweekly
+  - GitHub
+  - twitter
+authors: []
+description: ''
+editor_options:
+  chunk_output_type: console
+featured: no
+image:
+  caption: ''
+  focal_point: ''
+subtitle: ''
+summary: 'Checking who can be Rweekly.org editor with R'
+---
+
+
+
+<p><a href="https://rweekly.org">Rweekly</a> is looking for <a href="https://docs.google.com/forms/d/e/1FAIpQLSet2Tq_mWWOVsKWxGOSoUg8DzCPlW2-nxIFOSkkRvlUFxQFLw/viewform">new editors</a>. But they need to have submitted “at least 6 PRs on R Weekly”. If you submitted something through <a href="https://rweekly.org/submit">the webpage</a> you also can apply. But I’ll look at how many people has submitted pull requests (PR) through GitHub at the repo rweekly/rewekly.</p>
+<div id="gh" class="section level1">
+<h1>GH</h1>
+<p>So the GH package is good for this, but we need to know the API of Github. After a quick search I found the end point of the API:</p>
+<pre class="r"><code>library(&quot;gh&quot;)
+PR &lt;- gh(&quot;GET /search/issues?q=repo:rweekly/rweekly.org+is:pr+is:merged&amp;per_page=100&quot;) # Copied from https://developer.github.com/v3/pulls/
+PR$total_count
+## [1] 552</code></pre>
+<p>We know that there have been 552, we’ll need 6 calls to the appy, because it only return 30 values on each call.</p>
+<p>This time we’ll use copy and paste for a quick solution:</p>
+<pre class="r"><code>PR2 &lt;- gh(&quot;GET /search/issues?q=repo:rweekly/rweekly.org+is:pr+is:merged&amp;per_page=100&amp;page=2&quot;)
+PR3 &lt;- gh(&quot;GET /search/issues?q=repo:rweekly/rweekly.org+is:pr+is:merged&amp;per_page=100&amp;page=3&quot;)
+PR4 &lt;- gh(&quot;GET /search/issues?q=repo:rweekly/rweekly.org+is:pr+is:merged&amp;per_page=100&amp;page=4&quot;)
+PR5 &lt;- gh(&quot;GET /search/issues?q=repo:rweekly/rweekly.org+is:pr+is:merged&amp;per_page=100&amp;page=5&quot;)
+PR6 &lt;- gh(&quot;GET /search/issues?q=repo:rweekly/rweekly.org+is:pr+is:merged&amp;per_page=100&amp;page=6&quot;)</code></pre>
+<p>Now that we have the data we need to retrive the user names:</p>
+<pre class="r"><code>data &lt;- list(PR, PR2, PR3, PR4, PR5, PR6)
+
+users &lt;- lapply(data, function(x) {
+  vapply(x$items, function(y) {y$user$login}, character(1L))
+})
+users &lt;- sort(unlist(users))</code></pre>
+<p>We know now that 150 has contributed through PR.
+Which of them are done by at the same people?</p>
+<pre class="r"><code>ts &lt;- sort(table(users), decreasing = TRUE)
+par(mar=c(8,3,3,0))
+barplot(ts, las = 2, border = &quot;gray&quot;,
+        main = &quot;Contributors to Rweekly.org&quot;)</code></pre>
+<p><img src="/post/2020-02-13-r-weekly-new-editor_files/figure-html/barplot-1.png" width="672" /></p>
+<p>So we have 31 contributors which are ellegible, less if we remove the current editors:</p>
+<pre class="r"><code>names(ts)[ts &gt;= 6]
+##  [1] &quot;HenrikBengtsson&quot; &quot;Ryo-N7&quot;          &quot;jonmcalder&quot;      &quot;amrrs&quot;          
+##  [5] &quot;tbs08&quot;           &quot;ColinFay&quot;        &quot;lgellis&quot;         &quot;maelle&quot;         
+##  [9] &quot;martinctc&quot;       &quot;mcdussault&quot;      &quot;malcolmbarrett&quot;  &quot;moldach&quot;        
+## [13] &quot;echasnovski&quot;     &quot;mailund&quot;         &quot;suzanbaert&quot;      &quot;jwijffels&quot;      
+## [17] &quot;RaoOfPhysics&quot;    &quot;rpodcast&quot;        &quot;seabbs&quot;          &quot;seasmith&quot;       
+## [21] &quot;tomroh&quot;          &quot;eddelbuettel&quot;    &quot;EmilHvitfeldt&quot;   &quot;katiejolly&quot;     
+## [25] &quot;privefl&quot;         &quot;deanmarchiori&quot;   &quot;DougVegas&quot;       &quot;eokodie&quot;        
+## [29] &quot;lorenzwalthert&quot;  &quot;mkmiecik14&quot;      &quot;rstub&quot;</code></pre>
+<div id="reproducibility" class="section level3">
+<h3>Reproducibility</h3>
+<details>
+<pre><code>## ─ Session info ───────────────────────────────────────────────────────────────────────────────────────────────────────
+##  setting  value                       
+##  version  R version 3.6.1 (2019-07-05)
+##  os       Ubuntu 19.10                
+##  system   x86_64, linux-gnu           
+##  ui       X11                         
+##  language (EN)                        
+##  collate  en_US.UTF-8                 
+##  ctype    en_US.UTF-8                 
+##  tz       Europe/Madrid               
+##  date     2020-02-29                  
+## 
+## ─ Packages ───────────────────────────────────────────────────────────────────────────────────────────────────────────
+##  package     * version date       lib source        
+##  assertthat    0.2.1   2019-03-21 [1] CRAN (R 3.6.0)
+##  blogdown      0.17    2019-11-13 [1] CRAN (R 3.6.1)
+##  bookdown      0.16    2019-11-22 [1] CRAN (R 3.6.1)
+##  cli           2.0.1   2020-01-08 [1] CRAN (R 3.6.1)
+##  crayon        1.3.4   2017-09-16 [1] CRAN (R 3.6.0)
+##  curl          4.3     2019-12-02 [1] CRAN (R 3.6.1)
+##  digest        0.6.23  2019-11-23 [1] CRAN (R 3.6.1)
+##  evaluate      0.14    2019-05-28 [1] CRAN (R 3.6.0)
+##  fansi         0.4.1   2020-01-08 [1] CRAN (R 3.6.1)
+##  gh          * 1.0.1   2017-07-16 [1] CRAN (R 3.6.0)
+##  glue          1.3.1   2019-03-12 [1] CRAN (R 3.6.0)
+##  htmltools     0.4.0   2019-10-04 [1] CRAN (R 3.6.1)
+##  httr          1.4.1   2019-08-05 [1] CRAN (R 3.6.0)
+##  jsonlite      1.6     2018-12-07 [1] CRAN (R 3.6.0)
+##  knitr         1.27    2020-01-16 [1] CRAN (R 3.6.1)
+##  magrittr      1.5     2014-11-22 [1] CRAN (R 3.6.0)
+##  R6            2.4.1   2019-11-12 [1] CRAN (R 3.6.1)
+##  Rcpp          1.0.3   2019-11-08 [1] CRAN (R 3.6.1)
+##  rlang         0.4.4   2020-01-28 [1] CRAN (R 3.6.1)
+##  rmarkdown     2.0     2019-12-12 [1] CRAN (R 3.6.1)
+##  sessioninfo   1.1.1   2018-11-05 [1] CRAN (R 3.6.0)
+##  stringi       1.4.5   2020-01-11 [1] CRAN (R 3.6.1)
+##  stringr       1.4.0   2019-02-10 [1] CRAN (R 3.6.0)
+##  withr         2.1.2   2018-03-15 [1] CRAN (R 3.6.0)
+##  xfun          0.12    2020-01-13 [1] CRAN (R 3.6.1)
+##  yaml          2.2.0   2018-07-25 [1] CRAN (R 3.6.0)
+## 
+## [1] /home/lluis/R/x86_64-pc-linux-gnu-library/3.6
+## [2] /usr/local/lib/R/site-library
+## [3] /usr/lib/R/site-library
+## [4] /usr/lib/R/library</code></pre>
+</details>
+</div>
+</div>
