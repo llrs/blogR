@@ -39,7 +39,7 @@ PR <- gh("GET /search/issues?q=repo:rweekly/rweekly.org+is:pr+is:merged&per_page
 PR$total_count
 ```
 
-We know that there have been 552, we'll need `r ceiling(PR$total_count/100)` calls to the appy, because it only return 30 values on each call. 
+We know that there have been 552, we'll need `r ceiling(PR$total_count/100)` calls to the appy, because it returns 100 values on each call. 
 
 This time we'll use copy and paste for a quick solution:
 
@@ -50,6 +50,7 @@ PR4 <- gh("GET /search/issues?q=repo:rweekly/rweekly.org+is:pr+is:merged&per_pag
 PR5 <- gh("GET /search/issues?q=repo:rweekly/rweekly.org+is:pr+is:merged&per_page=100&page=5")
 PR6 <- gh("GET /search/issues?q=repo:rweekly/rweekly.org+is:pr+is:merged&per_page=100&page=6")
 ```
+
 Now that we have the data we need to retrive the user names:
 
 ```{r users}
@@ -66,9 +67,8 @@ Which of them are done by at the same people?
 
 ```{r barplot}
 ts <- sort(table(users), decreasing = TRUE)
-par(mar=c(8,3,3,0))
-barplot(ts, las = 2, border = "gray",
-        main = "Contributors to Rweekly.org")
+par(mar = c(8,3,3,0))
+barplot(ts, las = 2, border = "gray", main = "Contributors to Rweekly.org")
 ```
 
 So we have `r sum(ts >=6)` contributors which are ellegible, less if we remove the current editors:
@@ -81,7 +81,6 @@ names(ts)[ts >= 6]
 
 <details>
 ```{r reproducibility, echo = FALSE}
-## Reproducibility info
 options(width = 120)
 sessioninfo::session_info()
 ```
