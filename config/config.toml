@@ -9,11 +9,11 @@ title = "B101nfo"
 
 # The URL of your site.
 # End your URL with a `/` trailing slash, e.g. `https://example.com/`.
-baseurl = "http://llrs.dev/"
+baseurl = "https://llrs.dev/"
 
 # Enter a copyright notice to display in the site footer.
 # To display a copyright symbol, type `&copy;`.
-# copyright = ""
+copyright = "If it is code you can copy and reuse (MIT) if it is text, please cite and reuse CC-BY {year}."
 
 # Enable analytics by entering your Google Analytics tracking ID
 googleAnalytics = ""
@@ -31,8 +31,6 @@ theme = "hugo-academic"
 # Get last modified date for content from Git?
 enableGitInfo = false
 
-editable = true
-
 # Default language to use (if you setup multilingual support)
 defaultContentLanguage = "en"
 hasCJKLanguage = false  # Set `true` for Chinese/Japanese/Korean languages.
@@ -43,6 +41,7 @@ enableEmoji = true
 footnotereturnlinkcontents = "<sup>^</sup>"
 ignoreFiles = ["\\.ipynb$", ".ipynb_checkpoints$", "\\.Rmd$", "\\.Rmarkdown$", "_files$", "_cache$"]
 preserveTaxonomyNames = true
+
 
 [outputs]
   home = [ "HTML", "RSS", "JSON",  "WebAppManifest"]
@@ -55,6 +54,10 @@ preserveTaxonomyNames = true
 [outputFormats.WebAppManifest]
   mediaType = "application/manifest+json"
   rel = "manifest"
+
+
+[permalinks]
+  post = "/:year/:month/:slug/"
 
 # Configure BlackFriday Markdown rendering.
 #   See: https://gohugo.io/getting-started/configuration/#configure-blackfriday
@@ -73,13 +76,9 @@ preserveTaxonomyNames = true
 [taxonomies]
   tag = "tags"
   category = "categories"
-  publication_type = "publication_types"
-  author = "authors"
-
 
 relativeURLs = true
 enableEmoji = true
-
 
 # To be able to edit posts direclty
 [params]
@@ -94,15 +93,30 @@ enableEmoji = true
   telegram = ""
   twitter = "Lluis_Rev"
 
-  highlightjsVersion = "9.12.0"
-  highlightjsCDN = "//cdnjs.cloudflare.com/ajax/libs"
-  highlightjsLang = ["r", "yaml"]
+  highlightjsVersion = "9.11.0"
+  highlightjsCDN = "//cdn.bootcss.com"
+  highlightjsLang = ["r", "yaml", "python"]
   highlightjsTheme = "github"
+  MathJaxCDN = "//cdn.bootcss.com"
+  MathJaxVersion = "2.7.1"
+
+  description = "A bioinformatician blog"
+  twitterAuthor = "@Lluis_Rev"
+  twitterSite = "b101nfo.blogspot.com"
+  color_theme = "default"
 
 # AUTHOR SETUP
 # Your details.
 name = "Lluís Revilla Sancho"
 role = "Bioinformatician"
 
-[permalinks]
-    post = "/:year/:month/:day/:slug/"
+[markup]
+  defaultMarkdownHandler = "goldmark"
+  [markup.goldmark]
+    [markup.goldmark.renderer]
+      unsafe = true  # Enable user to embed HTML snippets in Markdown content.
+  [markup.highlight]
+    codeFences = false  # Disable Hugo's code highlighter as it conflicts with Academic's highligher.
+  [markup.tableOfContents]
+    startLevel = 2
+    endLevel = 3
