@@ -32,8 +32,8 @@ summary: 'Checking who can be Rweekly.org editor with R'
 <pre class="r"><code>library(&quot;gh&quot;)
 PR &lt;- gh(&quot;GET /search/issues?q=repo:rweekly/rweekly.org+is:pr+is:merged&amp;per_page=100&quot;) # Copied from https://developer.github.com/v3/pulls/
 PR$total_count
-## [1] 552</code></pre>
-<p>We know that there have been 552, we’ll need 6 calls to the appy, because it only return 30 values on each call.</p>
+## [1] 555</code></pre>
+<p>We know that there have been 552, we’ll need 6 calls to the appy, because it returns 100 values on each call.</p>
 <p>This time we’ll use copy and paste for a quick solution:</p>
 <pre class="r"><code>PR2 &lt;- gh(&quot;GET /search/issues?q=repo:rweekly/rweekly.org+is:pr+is:merged&amp;per_page=100&amp;page=2&quot;)
 PR3 &lt;- gh(&quot;GET /search/issues?q=repo:rweekly/rweekly.org+is:pr+is:merged&amp;per_page=100&amp;page=3&quot;)
@@ -47,12 +47,11 @@ users &lt;- lapply(data, function(x) {
   vapply(x$items, function(y) {y$user$login}, character(1L))
 })
 users &lt;- sort(unlist(users))</code></pre>
-<p>We know now that 150 has contributed through PR.
+<p>We know now that 151 has contributed through PR.
 Which of them are done by at the same people?</p>
 <pre class="r"><code>ts &lt;- sort(table(users), decreasing = TRUE)
-par(mar=c(8,3,3,0))
-barplot(ts, las = 2, border = &quot;gray&quot;,
-        main = &quot;Contributors to Rweekly.org&quot;)</code></pre>
+par(mar = c(8,3,3,0))
+barplot(ts, las = 2, border = &quot;gray&quot;, main = &quot;Contributors to Rweekly.org&quot;)</code></pre>
 <p><img src="/post/2020-02-13-r-weekly-new-editor_files/figure-html/barplot-1.png" width="672" /></p>
 <p>So we have 31 contributors which are ellegible, less if we remove the current editors:</p>
 <pre class="r"><code>names(ts)[ts &gt;= 6]
@@ -77,36 +76,36 @@ barplot(ts, las = 2, border = &quot;gray&quot;,
 ##  collate  en_US.UTF-8                 
 ##  ctype    en_US.UTF-8                 
 ##  tz       Europe/Madrid               
-##  date     2020-02-29                  
+##  date     2020-03-15                  
 ## 
 ## ─ Packages ───────────────────────────────────────────────────────────────────────────────────────────────────────────
 ##  package     * version date       lib source        
 ##  assertthat    0.2.1   2019-03-21 [1] CRAN (R 3.6.0)
-##  blogdown      0.17    2019-11-13 [1] CRAN (R 3.6.1)
-##  bookdown      0.16    2019-11-22 [1] CRAN (R 3.6.1)
-##  cli           2.0.1   2020-01-08 [1] CRAN (R 3.6.1)
+##  blogdown      0.18    2020-03-04 [1] CRAN (R 3.6.1)
+##  bookdown      0.18    2020-03-05 [1] CRAN (R 3.6.1)
+##  cli           2.0.2   2020-02-28 [1] CRAN (R 3.6.1)
 ##  crayon        1.3.4   2017-09-16 [1] CRAN (R 3.6.0)
 ##  curl          4.3     2019-12-02 [1] CRAN (R 3.6.1)
-##  digest        0.6.23  2019-11-23 [1] CRAN (R 3.6.1)
+##  digest        0.6.25  2020-02-23 [1] CRAN (R 3.6.1)
 ##  evaluate      0.14    2019-05-28 [1] CRAN (R 3.6.0)
 ##  fansi         0.4.1   2020-01-08 [1] CRAN (R 3.6.1)
-##  gh          * 1.0.1   2017-07-16 [1] CRAN (R 3.6.0)
-##  glue          1.3.1   2019-03-12 [1] CRAN (R 3.6.0)
+##  gh          * 1.1.0   2020-01-24 [1] CRAN (R 3.6.1)
+##  glue          1.3.2   2020-03-12 [1] CRAN (R 3.6.1)
 ##  htmltools     0.4.0   2019-10-04 [1] CRAN (R 3.6.1)
 ##  httr          1.4.1   2019-08-05 [1] CRAN (R 3.6.0)
-##  jsonlite      1.6     2018-12-07 [1] CRAN (R 3.6.0)
-##  knitr         1.27    2020-01-16 [1] CRAN (R 3.6.1)
+##  jsonlite      1.6.1   2020-02-02 [1] CRAN (R 3.6.1)
+##  knitr         1.28    2020-02-06 [1] CRAN (R 3.6.1)
 ##  magrittr      1.5     2014-11-22 [1] CRAN (R 3.6.0)
 ##  R6            2.4.1   2019-11-12 [1] CRAN (R 3.6.1)
 ##  Rcpp          1.0.3   2019-11-08 [1] CRAN (R 3.6.1)
-##  rlang         0.4.4   2020-01-28 [1] CRAN (R 3.6.1)
-##  rmarkdown     2.0     2019-12-12 [1] CRAN (R 3.6.1)
+##  rlang         0.4.5   2020-03-01 [1] CRAN (R 3.6.1)
+##  rmarkdown     2.1     2020-01-20 [1] CRAN (R 3.6.1)
 ##  sessioninfo   1.1.1   2018-11-05 [1] CRAN (R 3.6.0)
-##  stringi       1.4.5   2020-01-11 [1] CRAN (R 3.6.1)
+##  stringi       1.4.6   2020-02-17 [1] CRAN (R 3.6.1)
 ##  stringr       1.4.0   2019-02-10 [1] CRAN (R 3.6.0)
 ##  withr         2.1.2   2018-03-15 [1] CRAN (R 3.6.0)
 ##  xfun          0.12    2020-01-13 [1] CRAN (R 3.6.1)
-##  yaml          2.2.0   2018-07-25 [1] CRAN (R 3.6.0)
+##  yaml          2.2.1   2020-02-01 [1] CRAN (R 3.6.1)
 ## 
 ## [1] /home/lluis/R/x86_64-pc-linux-gnu-library/3.6
 ## [2] /usr/local/lib/R/site-library
