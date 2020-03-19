@@ -1,0 +1,135 @@
+---
+title: Covid-19
+author: Lluís Revilla Sancho
+date: '2020-03-15'
+slug: covid-19
+categories:
+  - news
+tags:
+  - disease
+  - analysis
+  - COVID19
+authors: []
+description: ''
+editor_options:
+  chunk_output_type: console
+featured: no
+image:
+  caption: ''
+  focal_point: ''
+subtitle: ''
+summary: 'Several important numbers about the COVID19 and the impact on the Spanish healthcare'
+---
+
+```{r setup, include = FALSE}
+knitr::opts_chunk$set(collapse = TRUE)
+```
+
+
+## Introduction
+
+I have seen several analysis and simulations of the spread.
+In this entry I want to use the number of beds in hospitals, the disease duration, and the infection rate to find when will the healthcare system collapse in Spain. 
+I'll try to link to the resoures of the assuptions I take, or where I find the numeric values I use.
+
+## Important numbers
+
+The **reproductive number** is the number of people that get the virus from a person with the virus. 
+This is highly variable and is influenced by government decisons (lock down, travel bans, ...) and social behavior (See slide 11 from [this deck](slides)). Many dataset are linked in this thread [of Civio](civio).
+
+[slides]: https://drive.google.com/file/d/14tGJF9tdv4osPhY1-fswLcSlWZJ9zx45/view
+[civio]: https://comunidad.civio.es/t/datos-en-abierto-y-reutilizables-sobre-evolucion-casos-covid-19/399
+[oriolmitja]: https://twitter.com/oriolmitja/status/1238008116257730560
+[tomaspueyo]: https://medium.com/@tomaspueyo/coronavirus-act-today-or-people-will-die-f4d3d9cd99ca
+[webminar]: https://www.isglobal.org/event/-/asset_publisher/nVsLg5I1q6UT/content/coronavirus-myths-and-truths
+[network]: http://networksciencebook.com/chapter/10#epidemic
+
+ - Before any major measure in Spain was ~2.6 [Source](oriolmitja)
+ - After major measures ? (too soon to say, we'll need to wait a week)
+
+In order to know how many time are people ill and how much time they might need to spend at the hospital we need to know the **disease duration**: 
+
+ - ~20 days until death (healthy <60 years woman) [Source](https://twitter.com/mraffatellu/status/1239175358185746436)
+ - 37 days and still testing positive of SARS-CoV-2 [Source](https://twitter.com/Birdyword/status/1239071257510854657)
+ - Person released without symptoms and after a month tested again positive [Source](https://twitter.com/RVAwonk/status/1238797268871983105)
+
+The saturation of the hospitals can be measured by the capacity they have. Ventilators, oxygen, doctors those numbers affect at the peace the doctors can attend patients, generally the number of **beds** is used: 
+
+ - 315/100000 habitants [Source 1](https://twitter.com/dr_xeo/status/1239135981380435969)
+ 
+The Covid **severity**, from a widely circulated and verifyed [source](tomaspueyo):
+
+ - 20% of infected need hospitalization (mild cases)
+ - 5% of infected are critically ill (severe cases)
+ 
+Also we can check the difference in symptoms on the population at South Corea and Italy, via [this tweet](https://twitter.com/markwby/status/1238867143363567616) that lead to [this article](https://medium.com/@andreasbackhausab/coronavirus-why-its-so-deadly-in-italy-c4200a15a7bf).
+Also the [case of Iceland](https://twitter.com/passantino/status/1240513400343388160)
+ 
+Some of them will not recover despite any treatments by the doctors, this is the **letality rate**. 
+I've taken the numbers from a [webminar](webminar) of the lead epidemiologist of Hospital Clínic which was done the 5th of March.
+ 
+ - Globally of 2-2.5% on China 0.7% outside 
+ - By age 
+   - Below 40 years old 0.2% 
+   - 50-60 years old 1.3%
+   - 60-70 years old 3.6%
+   - 70-80 years old 8%
+   - Above 80 years old 14.8%
+   
+Also compare with the information [here](https://twitter.com/hancocktom/status/1239706670546268161), which takes it from [this document](https://www.imperial.ac.uk/media/imperial-college/medicine/sph/ide/gida-fellowships/Imperial-College-COVID19-NPI-modelling-16-03-2020.pdf) used for GB decision mak
+ing.
+
+Time from infection to disease, *incubation time*:
+
+ - 5-7 days [Source webminar](webminar)
+ 
+High risk groups are people that are more exposed to get the virus or have other **comorbodities** such as previous respiratory diseases or other major disease afecting the immune system (like cancer, HIV...) :
+
+ - Comorbidities ?, we'll use [MorbiditySpainR](https://github.com/rOpenSpain/MorbiditySpainR) to find it out.
+ 
+As seen on the death rate, the age at the moment of the infection is important. 
+Generally Italy and Spain has a **population age** older than China:
+
+ - ? We'll use the data on INE [thanks to INEbaseR](https://github.com/oddworldng/INEbaseR)
+
+
+## Modelling 
+
+One example of such analysis is this tweet:
+
+<blockquote class="twitter-tweet"><p lang="es" dir="ltr">Acabamos de evaluar la predicción del efecto de las políticas de restricción de movilidad. Equipo <a href="https://twitter.com/jtmatamalas?ref_src=twsrc%5Etfw">@jtmatamalas</a> <a href="https://twitter.com/SergioGomezJ?ref_src=twsrc%5Etfw">@SergioGomezJ</a> <a href="https://twitter.com/stinomat?ref_src=twsrc%5Etfw">@stinomat</a> <a href="https://twitter.com/urv?ref_src=twsrc%5Etfw">@urv</a> y <a href="https://twitter.com/gomezgardenes?ref_src=twsrc%5Etfw">@gomezgardenes</a> <a href="https://twitter.com/claragranell?ref_src=twsrc%5Etfw">@claragranell</a> <a href="https://twitter.com/sorianopanos?ref_src=twsrc%5Etfw">@sorianopanos</a> <a href="https://twitter.com/wlcota?ref_src=twsrc%5Etfw">@wlcota</a> <a href="https://twitter.com/unizar?ref_src=twsrc%5Etfw">@unizar</a>. Restricción de movilidad total, excepto servicios esenciales, necesaria YA. <a href="https://t.co/YaWqXHw7Qv">pic.twitter.com/YaWqXHw7Qv</a></p>&mdash; Alex Arenas (@_AlexArenas) <a href="https://twitter.com/_AlexArenas/status/1239691646482161664?ref_src=twsrc%5Etfw">March 16, 2020</a></blockquote> <script async src="https://platform.twitter.com/widgets.js" charset="utf-8"></script> 
+
+
+We could use models based on [chapter 10](network) of the book Network Science of Albert-Lázló Barábasi, and from [slide 28](slides).
+
+But follwing this advice I won't: 
+
+<blockquote class="twitter-tweet"><p lang="en" dir="ltr">To my colleagues, who are highly accomplished geniuses in a variety of fields: now is not the time to start an independent public health or infectious disease modeling practice if you have no expertise in these areas.<br><br>Please get an expert to check your work. Don&#39;t just post.</p>&mdash; Michael Hoffman (@michaelhoffman) <a href="https://twitter.com/michaelhoffman/status/1240338198376714241?ref_src=twsrc%5Etfw">March 18, 2020</a></blockquote> <script async src="https://platform.twitter.com/widgets.js" charset="utf-8"></script> 
+
+
+### References
+
+```{r bibsetup, echo=FALSE, message=FALSE, warning=FALSE}
+## Load knitcitations with a clean bibliography
+library('knitcitations')
+cleanbib()
+cite_options(hyperlink = 'to.doc', citation_format = 'text', style = 'html')
+pi <- sessioninfo::package_info()
+packages <- c(pi$package[pi$attached], 'knitcitations')
+l <- sapply(packages, function(x){citation(x)[1]}, simplify = FALSE)
+bib <- c(l, 'blogdown' = citation('blogdown')[2])
+```
+
+```{r results = 'asis', echo = FALSE, cache = FALSE}
+bibliography(style = 'html')
+```
+
+### Reproducibility
+
+<details>
+```{r reproducibility, echo = FALSE}
+## Reproducibility info
+options(width = 120)
+sessioninfo::session_info()
+```
+</details>
