@@ -12,14 +12,8 @@ title = "B101nfo"
 baseurl = "https://llrs.dev/"
 
 # Enter a copyright notice to display in the site footer.
-# To display a copyright symbol, type `&copy;`.
+# To display a copyright symbol, type `&copy;`. For current year, type `{year}`.
 copyright = "If it is code you can copy and reuse (MIT) if it is text, please cite and reuse CC-BY {year}."
-
-# Enable analytics by entering your Google Analytics tracking ID
-googleAnalytics = ""
-
-# Enable comments by entering your Disqus shortname
-disqusShortname = ""
 
 ############################
 ## Advanced options below ##
@@ -35,7 +29,9 @@ enableGitInfo = false
 defaultContentLanguage = "en"
 hasCJKLanguage = false  # Set `true` for Chinese/Japanese/Korean languages.
 defaultContentLanguageInSubdir = false
+removePathAccents = true  # Workaround for https://github.com/gohugoio/hugo/issues/5687
 
+summaryLength = 30  # Listing summary length in words. Also, see `abstract_length` in `params.toml`.
 paginate = 10  # Number of items per page in paginated lists.
 enableEmoji = true
 footnotereturnlinkcontents = "<sup>^</sup>"
@@ -46,7 +42,6 @@ preserveTaxonomyNames = true
 [outputs]
   home = [ "HTML", "RSS", "JSON",  "WebAppManifest"]
   section = [ "HTML", "RSS" ]
-  taxonomy = [ "HTML", "RSS" ]
 
 [mediaTypes."application/manifest+json"]
   suffixes = ["webmanifest"]
@@ -76,9 +71,8 @@ preserveTaxonomyNames = true
 [taxonomies]
   tag = "tags"
   category = "categories"
-
-relativeURLs = true
-enableEmoji = true
+  publication_type = "publication_types"
+  author = "authors"
 
 # To be able to edit posts direclty
 [params]

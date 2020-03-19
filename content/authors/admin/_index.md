@@ -1,10 +1,23 @@
 ---
 title: Biography
 summary: "Authors of the publications on this website."
+name: Lluís Revilla Sancho
 authors:
 - admin
+superuser: true
+role: Bioinformatician
+organizations:
+- name: Universitat de Barcelona
+  url: https://www.ub.edu/web/ub/en/index.html?
+- name: CIBEREHD
+  url: https://www.ciberehd.org/en
+- name: RSGSpain
+  url: http://www.rsg-spain.iscbsc.org/
 bio: Bioinformatician with interests in functional enrichment, data integration and
   transcriptomics.
+interests:
+- Functional enrichment
+- Data integration
 education:
   courses:
   - course: MSc in Bioinformatics for Health Science
@@ -14,18 +27,6 @@ education:
     institution: Universitat Autònoma de Barcelona
     year: 2015
 email: lluis.revilla+llrs@gmail.com
-interests:
-- Functional enrichment
-- Data integration
-name: Lluís Revilla Sancho
-organizations:
-- name: Universitat de Barcelona
-  url: https://www.ub.edu/web/ub/en/index.html?
-- name: CIBEREHD
-  url: https://www.ciberehd.org/en
-- name: RSGSpain
-  url: http://www.rsg-spain.iscbsc.org/
-role: Bioinformatician
 social:
 - icon: envelope
   icon_pack: fas
@@ -42,7 +43,6 @@ social:
 - icon: orcid
   icon_pack: ai
   link: https://orcid.org/0000-0001-9747-2570
-superuser: true
 user_groups:
 - Researchers
 ---
