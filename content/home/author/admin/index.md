@@ -1,4 +1,6 @@
 ---
+title: "Authors"
+summary: "Authors of the publications on this website."
 authors:
 - admin
 bio: Bioinformatician with interests in functional enrichment, data integration and

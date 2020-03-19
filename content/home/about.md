@@ -4,4 +4,5 @@ author: admin
 title: Biography
 weight: 10
 widget: about
+headless: true
 ---

@@ -22,4 +22,5 @@ subtitle: ""
 title: Recent & Upcoming Talks
 weight: 70
 widget: pages
+headless: true
 ---

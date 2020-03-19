@@ -13,4 +13,5 @@ subtitle: ""
 title: Skills
 weight: 30
 widget: featurette
+headless: true
 ---

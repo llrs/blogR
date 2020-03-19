@@ -107,6 +107,8 @@ But follwing this advice I won't:
 <blockquote class="twitter-tweet"><p lang="en" dir="ltr">To my colleagues, who are highly accomplished geniuses in a variety of fields: now is not the time to start an independent public health or infectious disease modeling practice if you have no expertise in these areas.<br><br>Please get an expert to check your work. Don&#39;t just post.</p>&mdash; Michael Hoffman (@michaelhoffman) <a href="https://twitter.com/michaelhoffman/status/1240338198376714241?ref_src=twsrc%5Etfw">March 18, 2020</a></blockquote> <script async src="https://platform.twitter.com/widgets.js" charset="utf-8"></script> 
 
 
+However, here I leave a [link](https://twitter.com/datadista/status/1240668992655810560) to the UCI bed currently on use from DATADISTA.
+
 ### References
 
 ```{r bibsetup, echo=FALSE, message=FALSE, warning=FALSE}

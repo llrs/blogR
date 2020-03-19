@@ -5,8 +5,10 @@ menu:
   software:
     name: Software
     weight: 1
-title: software
+title: "Software"
 toc: true
 type: docs
+summary: "R software"  # Add a page description.
+type: "software"  # Page type is a Widget Page
 ---
 

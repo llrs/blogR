@@ -8,6 +8,8 @@ menu:
 title: Overview
 toc: true
 type: docs
+summary: "Overview"  # Add a page description.
+type: "tutorial"  # Page type is a Widget Page
 ---
 
 This feature can be used for publishing content such as:

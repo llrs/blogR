@@ -20,4 +20,5 @@ subtitle: ""
 title: Recent Posts
 weight: 10
 widget: pages
+headless: true
 ---

@@ -32,4 +32,5 @@ subtitle: ""
 title: Experience
 weight: 40
 widget: experience
+headless: true
 ---
