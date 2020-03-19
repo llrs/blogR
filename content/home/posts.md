@@ -1,5 +1,5 @@
 ---
-active: true
+active: false
 advanced:
   css_class: ""
   css_style: ""
@@ -19,6 +19,6 @@ design:
 subtitle: ""
 title: Recent Posts
 weight: 10
-widget: pages
+widget: post
 headless: true
 ---
