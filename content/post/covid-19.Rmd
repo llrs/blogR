@@ -109,23 +109,6 @@ But follwing this advice I won't:
 
 However, here I leave a [link](https://twitter.com/datadista/status/1240668992655810560) to the UCI bed currently on use from DATADISTA.
 
-### References
-
-```{r bibsetup, echo=FALSE, message=FALSE, warning=FALSE}
-## Load knitcitations with a clean bibliography
-library('knitcitations')
-cleanbib()
-cite_options(hyperlink = 'to.doc', citation_format = 'text', style = 'html')
-pi <- sessioninfo::package_info()
-packages <- c(pi$package[pi$attached], 'knitcitations')
-l <- sapply(packages, function(x){citation(x)[1]}, simplify = FALSE)
-bib <- c(l, 'blogdown' = citation('blogdown')[2])
-```
-
-```{r results = 'asis', echo = FALSE, cache = FALSE}
-bibliography(style = 'html')
-```
-
 ### Reproducibility
 
 <details>
