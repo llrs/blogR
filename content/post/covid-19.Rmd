@@ -35,7 +35,7 @@ I'll try to link to the resoures of the assuptions I take, or where I find the n
 ## Important numbers
 
 The **reproductive number** is the number of people that get the virus from a person with the virus. 
-This is highly variable and is influenced by government decisons (lock down, travel bans, ...) and social behavior (See slide 11 from [this deck](slides)). Many dataset are linked in this thread [of Civio](civio).
+This is highly variable and is influenced by government decisons (lock down, travel bans, ...) and social behavior (See slide 11 from [this deck][slides]). Many dataset are linked in this thread [of Civio][civio].
 
 [slides]: https://drive.google.com/file/d/14tGJF9tdv4osPhY1-fswLcSlWZJ9zx45/view
 [civio]: https://comunidad.civio.es/t/datos-en-abierto-y-reutilizables-sobre-evolucion-casos-covid-19/399
@@ -44,7 +44,7 @@ This is highly variable and is influenced by government decisons (lock down, tra
 [webminar]: https://www.isglobal.org/event/-/asset_publisher/nVsLg5I1q6UT/content/coronavirus-myths-and-truths
 [network]: http://networksciencebook.com/chapter/10#epidemic
 
- - Before any major measure in Spain was ~2.6 [Source](oriolmitja)
+ - Before any major measure in Spain was ~2.6 [Source][oriolmitja]
  - After major measures ? (too soon to say, we'll need to wait a week)
 
 In order to know how many time are people ill and how much time they might need to spend at the hospital we need to know the **disease duration**: 
@@ -55,9 +55,9 @@ In order to know how many time are people ill and how much time they might need 
 
 The saturation of the hospitals can be measured by the capacity they have. Ventilators, oxygen, doctors those numbers affect at the peace the doctors can attend patients, generally the number of **beds** is used: 
 
- - 315/100000 habitants [Source 1](https://twitter.com/dr_xeo/status/1239135981380435969)
+ - 315/100000 habitants [Source](https://twitter.com/dr_xeo/status/1239135981380435969)
  
-The Covid **severity**, from a widely circulated and verifyed [source](tomaspueyo):
+The Covid **severity**, from a widely circulated and verifyed [source][tomaspueyo]:
 
  - 20% of infected need hospitalization (mild cases)
  - 5% of infected are critically ill (severe cases)
@@ -66,7 +66,7 @@ Also we can check the difference in symptoms on the population at South Corea an
 Also the [case of Iceland](https://twitter.com/passantino/status/1240513400343388160)
  
 Some of them will not recover despite any treatments by the doctors, this is the **letality rate**. 
-I've taken the numbers from a [webminar](webminar) of the lead epidemiologist of Hospital Clínic which was done the 5th of March.
+I've taken the numbers from a [webminar][webminar] of the lead epidemiologist of Hospital Clínic which was done the 5th of March.
  
  - Globally of 2-2.5% on China 0.7% outside 
  - By age 
@@ -79,9 +79,9 @@ I've taken the numbers from a [webminar](webminar) of the lead epidemiologist of
 Also compare with the information [here](https://twitter.com/hancocktom/status/1239706670546268161), which takes it from [this document](https://www.imperial.ac.uk/media/imperial-college/medicine/sph/ide/gida-fellowships/Imperial-College-COVID19-NPI-modelling-16-03-2020.pdf) used for GB decision mak
 ing.
 
-Time from infection to disease, *incubation time*:
+Time from infection to disease, **incubation time**:
 
- - 5-7 days [Source webminar](webminar)
+ - 5-7 days [Source: webminar][webminar]
  
 High risk groups are people that are more exposed to get the virus or have other **comorbodities** such as previous respiratory diseases or other major disease afecting the immune system (like cancer, HIV...) :
 
@@ -100,7 +100,7 @@ One example of such analysis is this tweet:
 <blockquote class="twitter-tweet"><p lang="es" dir="ltr">Acabamos de evaluar la predicción del efecto de las políticas de restricción de movilidad. Equipo <a href="https://twitter.com/jtmatamalas?ref_src=twsrc%5Etfw">@jtmatamalas</a> <a href="https://twitter.com/SergioGomezJ?ref_src=twsrc%5Etfw">@SergioGomezJ</a> <a href="https://twitter.com/stinomat?ref_src=twsrc%5Etfw">@stinomat</a> <a href="https://twitter.com/urv?ref_src=twsrc%5Etfw">@urv</a> y <a href="https://twitter.com/gomezgardenes?ref_src=twsrc%5Etfw">@gomezgardenes</a> <a href="https://twitter.com/claragranell?ref_src=twsrc%5Etfw">@claragranell</a> <a href="https://twitter.com/sorianopanos?ref_src=twsrc%5Etfw">@sorianopanos</a> <a href="https://twitter.com/wlcota?ref_src=twsrc%5Etfw">@wlcota</a> <a href="https://twitter.com/unizar?ref_src=twsrc%5Etfw">@unizar</a>. Restricción de movilidad total, excepto servicios esenciales, necesaria YA. <a href="https://t.co/YaWqXHw7Qv">pic.twitter.com/YaWqXHw7Qv</a></p>&mdash; Alex Arenas (@_AlexArenas) <a href="https://twitter.com/_AlexArenas/status/1239691646482161664?ref_src=twsrc%5Etfw">March 16, 2020</a></blockquote> <script async src="https://platform.twitter.com/widgets.js" charset="utf-8"></script> 
 
 
-We could use models based on [chapter 10](network) of the book Network Science of Albert-Lázló Barábasi, and from [slide 28](slides).
+We could use models based on [chapter 10][network] of the book Network Science of Albert-Lázló Barábasi, and from [slide 28][slides].
 
 But follwing this advice I won't: 
 
