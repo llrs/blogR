@@ -19,4 +19,5 @@ title: Featured Publications
 weight: 80
 widget: featured
 headless: true
+link_to_archive: true 
 ---

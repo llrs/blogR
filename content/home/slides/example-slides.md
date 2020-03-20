@@ -2,6 +2,7 @@
 slides:
   theme: black
 title: Slides
+active: false
 ---
 
 # Welcome to Slides
