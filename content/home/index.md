@@ -1,9 +1,8 @@
 ---
 active: false
 subtitle: ""
-title: Gallery
+title: About
 weight: 66
-widget: custom
+widget: widget_page
 ---
 
-{{< gallery >}}
