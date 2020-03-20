@@ -86,7 +86,8 @@ phone = ""
 
 # Address
 # For country_code, use the 2-letter ISO code (see https://en.wikipedia.org/wiki/ISO_3166-1_alpha-2 )
-address = {street = "", city = "", region = "", postcode = "", country = "", country_code = ""}
+# address = {street = "", city = "", region = "", postcode = "", country = "", country_code = ""}
+address = {street = "450 Serra Mall", city = "Stanford", region = "CA", postcode = "94305", country = "United States", country_code = "US"}
 
 coordinates = {latitude = "37.4275", longitude = "-122.1697"}
 
@@ -130,7 +131,7 @@ date_format = "Jan 2, 2006"
 time_format = "3:04 PM"
 
 # Address format (choose from the [address_formats] list below or add you own to the list).
-address_format = "cu"
+address_format = "en-us"
 
 ############################
 ## Advanced
