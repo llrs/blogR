@@ -5,6 +5,5 @@ type: "post"  # Page type is a Widget Page
 header:
   caption: ""
   image: ""
-title: Posts
 view: 2
 ---
