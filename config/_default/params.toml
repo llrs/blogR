@@ -81,18 +81,16 @@ edit_page = {repo_url = "https://github.com/llrs/llrs.dev", content_dir = "", re
 ############################
 
 # Enter contact details (optional). To hide a field, clear it to "".
-email = ""
+email = "lluis.revilla+blog@gmail.com"
 phone = ""
 
 # Address
 # For country_code, use the 2-letter ISO code (see https://en.wikipedia.org/wiki/ISO_3166-1_alpha-2 )
 address = {street = "450 Serra Mall", city = "Stanford", region = "CA", postcode = "94305", country = "United States", country_code = "US"}
 
+coordinates = {latitude = "37.4275", longitude = "-122.1697"}
+
 address_format = "en-us"
-[address_formats]
-  en-us = {order = ['street', 'city', 'region', 'postcode'], delimiters = [', ', ', ', ' ', '']}
-  en-gb = {order = ['street', 'city', 'region', 'postcode'], delimiters = [', ', ', ', ', ', '']}
-  zh = {order = ['postcode', 'region', 'city', 'street'], delimiters = [' ', ' ', ' ', '']}
 
 # Office hours
 # A list of your office hours. To remove, set to an empty list `[]`.
