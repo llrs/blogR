@@ -8,7 +8,7 @@ active = true  # Activate this widget? true/false
 weight = 60  # Order that this section will appear.
 
 title = "Recent Posts"
-subtitle = ""
+subtitle = "Mainly entries about R and with code. Other content might be on my blog at [b101nfo](https://b101nfo.blogspot.com)"
 
 [content]
   # Page type to display. E.g. post, talk, or publication.

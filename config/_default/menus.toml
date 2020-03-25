@@ -4,12 +4,12 @@
 #   The weight parameter defines the order that the links will appear in.
 
 [[main]]
-  name = "Authors"
-  url = "authors"
+  name = "Home"
+  url = "#about" # change to authors if you want to show all authors
   weight = 10
 
 [[main]]
-  name = "Posts"
+  name = "Blog"
   url = "post"
   weight = 20
 
