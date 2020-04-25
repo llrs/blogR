@@ -1,0 +1,127 @@
+---
+title: R quarantine house
+author: Lluís Revilla Sancho
+date: '2020-04-25'
+slug: r-quarantine-house
+categories: [r]
+tags:
+  - r
+  - twitter
+authors: []
+description: 'Checking quarantine environments'
+editor_options:
+  chunk_output_type: console
+featured: no
+image:
+  caption: ''
+  focal_point: ''
+subtitle: ''
+summary: 'Checking quarantine environments'
+---
+
+```{r setup, include = FALSE}
+knitr::opts_chunk$set(collapse = TRUE)
+```
+
+
+So I found this funny tweet  
+
+<blockquote class="twitter-tweet" data-partner="tweetdeck"><p lang="en" dir="ltr">What&#39;s your R quarantine house? I&#39;m definitely 5 <a href="https://t.co/h7aiijOqK0">pic.twitter.com/h7aiijOqK0</a></p>&mdash; Jacqueline Nolis (@skyetetra) <a href="https://twitter.com/skyetetra/status/1253774850356768768?ref_src=twsrc%5Etfw">April 24, 2020</a></blockquote>
+<script async src="https://platform.twitter.com/widgets.js" charset="utf-8"></script>
+
+And [Tyler Morgan made the "joke"](https://twitter.com/tylermorganwall/status/1253778147423727621) to check the dependencies. So, let's check them:
+
+## List libraries
+
+First we set up the original choices:
+
+```{r quarantine}
+env1 <- c("ggplot2", "dplyr", "data.table", "purrr")
+env2 <- c("forecats", "glue", "jsonlite", "rmarkdown")
+env3 <- c("shiny", "rayshader", "stringr", "tidytext")
+env4 <- c("devtools", "xml2", "tidyr", "tibble")
+env5 <- c("reticulate", "keras", "plumber", "usethis")
+env6 <- c("blogdown", "brickr", "lubridate", "igraph")
+quarantines <- list(env1 = env1, env2 = env2, 
+                    env3 = env3, env4 = env4, 
+                    env5 = env5, env6 = env6)
+```
+
+## Dependencies
+
+All of them are on CRAN (and I don't have them installed on my computer) so let's retrieve the available packages from CRAN. Then we can check how many unique packages are needed for each one:
+
+```{r depen}
+library("tools")
+ap <- available.packages()
+unique_dep <- function(sets, db) {
+  pd <- package_dependencies(packages = sets, recursive = TRUE, db = db)
+  unique(unlist(pd))
+}
+
+uniq_p <- lapply(quarantines, unique_dep, db = ap)
+sort(lengths(uniq_p))
+```
+
+So the environment with more dependencies is the third and the second is the one with least dependencies.
+
+## Similarity of the environments
+
+We've seen that the number of package is quite different. But how many of them is shared?
+A little time ago I wrote a package aimed to this: [{`BioCor`}](https://bioconductor.org/packages/BioCor) you can install it from Bioconductor. I'll use it now:
+
+```{r BioCor}
+library("BioCor")
+similarity <- mpathSim(names(uniq_p), inverseList(uniq_p), method = NULL)
+similarity
+```
+
+The closer to 1 it means that they share more dependencies, so the most different are the environment 1 and the environment 2
+We can see that the most similar packages are the environment 1 and environment 6 and 
+that the environment 6 is the one with higher similarity to the other sets.
+
+## Which quarantine environment has some of the others?
+
+So some of these environments call other packages from the other environments as dependencies.
+We can now look for how many of them:
+
+```{r inside}
+inside_calls <- lapply(uniq_p, function(x, y) {
+  # Look how many packages of each set is on the dependencies of this set
+  vapply(y, function(z, x) { 
+    sum(z %in% x)
+  }, x = x, numeric(1L))
+}, y = quarantines)
+# Simplify and name for easier understanding
+inside <- simplify2array(inside_calls)
+names(dimnames(inside)) <- list("Package of", "Inside of")
+inside
+colSums(inside)
+```
+
+We can see that environment 6 has more packages from the other environments.
+
+## Chances of survival:
+
+Someone mentioned that the `{survival}` package wasn't on any environment. 
+But it might be on the dependencies:
+
+```{r survival}
+vapply(uniq_p, function(x){"survival" %in% x},  logical(1L))
+```
+
+No, it seems like we won't survive well with this environments :)
+
+## Conclusions
+
+Environment 6 is the one with more packages from the other environments, but if you want to have more packages use the second one. What you can do with these packages on a quarantine is harder to say :D
+
+### Reproducibility
+
+<details>
+```{r reproducibility, echo = FALSE}
+## Reproducibility info
+options(width = 120)
+sessioninfo::session_info()
+```
+</details>
