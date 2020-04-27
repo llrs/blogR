@@ -96,7 +96,7 @@ inside_calls <- lapply(uniq_p, function(x, y) {
 inside <- simplify2array(inside_calls)
 names(dimnames(inside)) <- list("Package of", "Inside of")
 inside
-colSums(inside)
+colSums(inside)-diag(inside) # To avoid counting self-dependencies
 ```
 
 We can see that environment 6 has more packages from the other environments.

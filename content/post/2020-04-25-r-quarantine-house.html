@@ -99,9 +99,9 @@ inside
 ##       env4    1    0    1    2    1    2
 ##       env5    0    0    1    1    1    0
 ##       env6    0    0    0    0    0    0
-colSums(inside)
+colSums(inside)-diag(inside) # To avoid counting self-dependencies
 ## env1 env2 env3 env4 env5 env6 
-##    3    3    8    8    5   10</code></pre>
+##    2    1    6    6    4   10</code></pre>
 <p>We can see that environment 6 has more packages from the other environments.</p>
 </div>
 <div id="chances-of-survival" class="section level2">
@@ -129,7 +129,7 @@ But it might be on the dependencies:</p>
 ##  collate  en_US.UTF-8                 
 ##  ctype    en_US.UTF-8                 
 ##  tz       Europe/Madrid               
-##  date     2020-04-25                  
+##  date     2020-04-27                  
 ## 
 ## ─ Packages ───────────────────────────────────────────────────────────────────────────────────────────────────────────
 ##  package       * version  date       lib source        
