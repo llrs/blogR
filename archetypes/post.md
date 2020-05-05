@@ -44,7 +44,8 @@ categories = []
 +++
 
 ```{r setup, include = FALSE}
-knitr::opts_chunk$set(collapse = TRUE)
+knitr::opts_chunk$set(collapse = TRUE, 
+                      linenos=table) # To add line numbers
 ```
 
 
