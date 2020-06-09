@@ -107,6 +107,8 @@ df <- m %>%
          created = as.Date(created),
          closed = as.Date(closed),
          approved = vapply(labels, function(x){"3a. accepted" %in% x}, logical(1L)),
+         # TODO: For the package try to look to the url submitted:
+         # str_extract(issues[[1]]$body, "https?://github.com/.+/(.+)")
          package = removeWords(title, stopwords("english")),
          package = gsub(x = package, pattern = "https?://github.com/.*/", replacement = ""),
          package = str_remove_all(package, pattern = "[:punct:]"),
@@ -157,7 +159,10 @@ releases <- data.frame(release = paste0("3.", 3:11),
 
 
 df2 <- df %>% 
-  mutate(time_opened = if_else(is.na(closed), as.Date(today()), closed)-created) %>% 
+  mutate(time_opened = if_else(is.na(closed), as.Date(today()), closed)-created,
+         Approved = case_when(approved ~ "Yes",
+                              !approved & !is.na(closed) ~ "No",
+                              TRUE ~ NA_character_)) %>% 
   arrange(id) %>% 
   mutate(i = 1:n())
 
@@ -166,8 +171,6 @@ scale_data <- scale_x_date(expand = expansion(add = 10),
 theme_set(theme_minimal())
 df2 %>% 
   filter(time_opened != 0) %>% 
-  mutate(approved = if_else(approved, "Yes", "No")) %>% 
-  ggplot() + 
   geom_linerange(aes(y = id, xmin = created, xmax = closed), col = "grey") + 
   geom_point(aes(y = id, created), col = "brown", size = 1) + 
   geom_point(aes(y = id, closed, col = approved, shape = approved), size = 1) + 
@@ -571,13 +574,13 @@ m[lengths(m) == 0] <- NA
 m <- unlist(m, FALSE, FALSE)
 m <- as.difftime(m, units = "days")
 df3 <- df2 %>% 
-  mutate(release = r, margin = m)
+  mutate(release = r, margin = m,
+         devel = release == "3.11" & approved & margin < 30)
 
 df3 %>% 
   ggplot() +
   geom_histogram(aes(margin), bins = 40) +
   geom_vline(xintercept = 30) +
-
   scale_y_continuous(expand = expansion(add = c(0, 5))) +
   scale_x_continuous(expand = expansion())  + 
   labs(title = "Days till next release", y = "Issues", x = "Days")
@@ -615,6 +618,7 @@ df3 %>%
   geom_vline(xintercept = 30) +
   geom_hline(yintercept = latest_submission*c(1:4), col = "darkgrey") +
   geom_point(aes(margin, time_opened, col = Approved, shape = Approved)) +
+  geom_point(data = ~filter(.x, devel), aes(margin, time_opened), col = "grey") +
   ggplot2::annotate(geom = "rect", xmin = 0, ymin = latest_submission,
             xmax = max(df3$margin, na.rm = TRUE), ymax = max(df3$time_opened) + 10, 
             fill = "orange", alpha = 0.25) +
