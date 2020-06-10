@@ -57,48 +57,44 @@ check when do they happen, by who, when are they closed...
 
 ```{r clean}
 clean_issue <- function(x) {
-   list(id = as.numeric(x$number), user = x$user$login, title = x$title, 
-     n_comments = x$comments, 
-     created = x$created_at, closed = x$closed_at, 
-     assignee = vapply(x$assignees, getElement, name = "login", character(1L)),
-     labels = vapply(x$labels, getElement, name = "name", character(1L)))
+  # Omit pull request I want Package submissions
+  if ("pull_request" %in% names(x)) {
+    return(NA)
+  }
+  repos <- str_extract_all(x$body, "https?://github.com/.+/.+")
+  repos <- repos[[1]]
+  repos <- str_remove(repos, "https?://github.com/")
+  pkg_repo <- unlist(str_extract_all(repos, "^[:alnum:]+"), FALSE, FALSE)
+  p <- str_remove(unlist(str_extract_all(repos, "/.*$"), FALSE, FALSE), "^/")
+  p <- gsub("\\.$", "", p)
+  
+  list(id = as.numeric(x$number), user = x$user$login, title = x$title, 
+       n_comments = x$comments, 
+       created = x$created_at, closed = x$closed_at, 
+       repos = repos,
+       pkg_repo = pkg_repo, 
+       package = p,
+       assignee = vapply(x$assignees, getElement, name = "login", character(1L)),
+       labels = vapply(x$labels, getElement, name = "name", character(1L)))
  }
 ```
 
 In order to know which package each issue submit to Bioconductor we need to remove some common words of the title.
 
 ```{r tidy_issues}
-l <- lapply(issues, clean_issue)
-m <- t(simplify2array(l))
-m <- as.data.frame(m)
 library("tidyverse")
 library("lubridate")
-library("tm")
+l <- lapply(issues, clean_issue)
+l <- l[lengths(l) == 11] # Expect to delete at least 4 issues
+m <- t(simplify2array(l))
+m <- as.data.frame(m)
 m$created <- unlist(m$created, recursive = FALSE, use.names = FALSE)
 # If it is not closed leave it empty
 replace <- lengths(m$closed) != 0
 unlisted_closed <- unlist(m$closed, recursive = FALSE, use.names = FALSE)
 m$closed <- NA
 m$closed[replace] <- unlisted_closed
-stop_words <- c("package", "submission", "data", "based", "R", "differential", 
-                "an", "A", "An", "Bioconductor", "inactive", "Submission", 
-                "expression", "Package", "Analysis", "New", "new", "analysis", 
-                "gene", "adjust", "contribution", "RNAseq", "RNA-seq", "hidden", 
-                "factors", "using", "method", "variability", "studies", 
-                "Submit", "submit", "Contribution", "quality", "depth", 
-                "Submitting", "Testing", "Data", "Bayesian", "workflow", 
-                "bioconductor", "control", "meta", "methylation", "big", 
-                "cancer", "cell", "complex", "disease", "expect", "Batch", 
-                "tool", "Update", "algorithm", "exploratory", "investigation", 
-                "submitting", "annotation", "assessment", "RNASeq", "RNA", 
-                "SPB", "Cell", "Network", "bilevel", "correction", 
-                "classification", "inactive", "resubmission", "Resubmission")
 
-# To find those stop words basically I keep adding words and check the 
-# result several times with
-# u <- strsplit(df$package, split = "\\s")
-# sum(lengths(u) != 1)
-# head(sort(table(unlist(u[lengths(u) != 1])), decreasing = TRUE), 15)
 df <- m %>% 
   mutate(id = as.numeric(id),
          title = str_squish(as.character(title)),
@@ -107,16 +103,21 @@ df <- m %>%
          created = as.Date(created),
          closed = as.Date(closed),
          approved = vapply(labels, function(x){"3a. accepted" %in% x}, logical(1L)),
-         # TODO: For the package try to look to the url submitted:
-         # str_extract(issues[[1]]$body, "https?://github.com/.+/(.+)")
-         package = removeWords(title, stopwords("english")),
-         package = gsub(x = package, pattern = "https?://github.com/.*/", replacement = ""),
-         package = str_remove_all(package, pattern = "[:punct:]"),
-         package = removeWords(package, stop_words),
-         package = str_squish(package))
+         n_reviewers = lengths(assignee),
+         n_packages = lengths(repos),
+         n_labels = lengths(labels),
+         package = ifelse(package == "NA", NA, package),
+         pkg_repo = ifelse(pkg_repo == "NULL", NA, pkg_repo),
+         Approved = case_when(approved ~ "Yes",
+                              !approved & !is.na(closed) ~ "No",
+                              TRUE ~ "Ongoing"),
+         time_opened = if_else(is.na(closed), as.Date(today()), closed)-created,
+  ) %>% 
+  arrange(id) %>% 
+  mutate(i = 1:n())
 ```
 
-We can further include those approved because they are on bioconductor but do not have the [approved label](https://github.com/Bioconductor/Contributions/labels/3a.%20accepted).
+We can further include those approved because they are on bioconductor but do not have the [approved label](https://github.com/Bioconductor/Contributions/labels/3a.%20accepted) (Sometimes they get accepted but they forget to change labels on the issue). 
 We need to be cautious also because there are `r df %>% count(package, sort = TRUE) %>% filter(package != "", n != 1) %>% nrow()` packages that have been submitted several times.
 
 ```{r check_available}
@@ -151,26 +152,19 @@ Using also the CRAN repository we could find which packages where submitted to B
 
 ```{r warning=FALSE}
 # If not closed add the closing time of today
-releases <- data.frame(release = paste0("3.", 3:11),
+releases <- data.frame(release = paste0("3.", 3:12),
            date = as.Date(c("2016/04/04", "2016/10/18", "2017/04/25", 
                             "2017/10/31", "2018/05/01", "2018/10/31", 
-                            "2019/05/03", "2019/10/30", "2020/04/28"), format = "%Y/%m/%d"),
+                            "2019/05/03", "2019/10/30", "2020/04/28",
+                            "2020/10/01"), format = "%Y/%m/%d"),
            stringsAsFactors = FALSE)
-
-
-df2 <- df %>% 
-  mutate(time_opened = if_else(is.na(closed), as.Date(today()), closed)-created,
-         Approved = case_when(approved ~ "Yes",
-                              !approved & !is.na(closed) ~ "No",
-                              TRUE ~ NA_character_)) %>% 
-  arrange(id) %>% 
-  mutate(i = 1:n())
 
 scale_data <- scale_x_date(expand = expansion(add = 10), 
                limits = as.Date(c("2016-06-01", "2020-06-10"), "%Y-%m-%d"))
 theme_set(theme_minimal())
-df2 %>% 
+df %>% 
   filter(time_opened != 0) %>% 
+  ggplot() +
   geom_linerange(aes(y = id, xmin = created, xmax = closed), col = "grey") + 
   geom_point(aes(y = id, created), col = "brown", size = 1) + 
   geom_point(aes(y = id, closed, col = approved, shape = approved), size = 1) + 
@@ -195,7 +189,7 @@ What we miss is about the authors submitting the packages and about the packages
 One of the core strength of R is the open community. There have been `r length(unique(df$user))` different users submitting a package.
 
 ```{r users_submitting}
-usr_diff_pkg <- df2 %>% 
+usr_diff_pkg <- df %>% 
   filter(!is.na(closed)) %>% 
   group_by(user) %>% 
   distinct(package) %>% 
@@ -206,7 +200,6 @@ usr_diff_pkg %>%
   count(n) %>% 
   ggplot() +
   geom_col(aes(n, nn)) +
-
   labs(y = "Contributors", x = "Packages", 
        title = "Number of packages submitted by a contributor") +
   scale_y_continuous(expand = expansion(add = c(0, 10))) +
@@ -217,7 +210,7 @@ usr_diff_pkg %>%
 We can clearly see that most of the submissions are the first submission of the author, and quickly it falls close to 0.
 
 ```{r users_ratio}
-usr_ratio <- df2 %>% 
+usr_ratio <- df %>% 
   filter(!is.na(closed)) %>% 
   group_by(user) %>% 
   summarise(ratio = sum(approved)/n()) %>% 
@@ -226,7 +219,6 @@ usr_ratio <- df2 %>%
 usr_ratio %>% 
   ggplot() +
   geom_bar(aes(ratio)) +
-
   labs(title = "User success submitting packages",
        x = "Success ratio", y = "Users")
 ```
@@ -239,7 +231,6 @@ usr_success <- usr_diff_pkg %>%
 
 ggplot(usr_success) +
   geom_count(aes(n, ratio)) +
- 
   labs(x = "Packages", y = "Approval success ratio", size = "Users",
        title = "Submitting more packages increaes approval rate") +
   scale_x_continuous(expand = expansion(add = 0.25), breaks = 1:14) +
@@ -249,17 +240,17 @@ ggplot(usr_success) +
 If users submit more packages they usually get them approved.
 
 ```{r submissions}
-df2 %>% 
+df %>% 
   mutate(year = year(created)) %>% 
   group_by(year) %>% 
   summarise(n = n(), ratio = sum(approved)/n) %>% 
   ungroup() %>% 
   ggplot() +
   geom_col(aes(year, n, fill = ratio)) + 
-
   labs(title = "Yearly submissions and approval", 
        y = "Issues", x = element_blank(), 
-       fill = "Approval ratio")
+       fill = "Approval ratio") +
+  scale_fill_continuous(low = "white", high = "darkgreen", limits = c(0, 1))
 ```
 
 Around 50% of the ~400 packages submitted are approved. 
@@ -272,38 +263,27 @@ If your package fits Bioconductor you will get assigned a reviewer.
 Many submissions (~33%) do not get a reviewer assigned and the package is not included on Bioconductor's repository, most (~90%) of the cases this happens the same day of the submission. 
 But once they get one reviewer ~82% of them are approved.
 
-```{r include=FALSE}
-reviewers <- df2 %>% 
-  mutate(Reviewers = lengths(assignee))
-  
-reviewers %>% 
-  mutate(Approved = case_when(approved ~ "Yes",
-                              !approved & !is.na(closed) ~ "No",
-                              TRUE ~ NA_character_)) %>% 
-  group_by(Reviewers) %>% 
+```{r reviewers include=FALSE}
+df %>% 
+  group_by(n_reviewers) %>% 
   count(Approved) %>% 
   ungroup() %>% 
-  mutate(ratio = n/sum(n))
+  mutate(ratio = n/sum(n)) %>% 
+  arrange(-ratio, n)
 
-reviewers %>% 
-  mutate(Approved = case_when(approved ~ "Yes",
-                              !approved & !is.na(closed) ~ "No",
-                              TRUE ~ NA_character_)) %>% 
-  filter(Reviewers == 0) %>% 
+df %>% 
+  filter(n_reviewers == 0) %>% 
   group_by(time_opened) %>% 
   count(Approved) %>% 
   ungroup() %>% 
   mutate(ratio = n/sum(n)) %>% 
   arrange(-ratio)
 
-reviewers %>% 
-  mutate(Approved = case_when(approved ~ "Yes",
-                              !approved & !is.na(closed) ~ "No",
-                              TRUE ~ NA_character_)) %>% 
-  group_by(Reviewers) %>% 
+df %>% 
+  group_by(n_reviewers) %>% 
   count(Approved) %>% 
   ungroup() %>% 
-  filter(Reviewers != 0) %>% 
+  filter(n_reviewers != 0) %>% 
   mutate(ratio = n/sum(n)) %>% 
   group_by(Approved) %>% 
   summarise(fr = sum(ratio))
@@ -312,8 +292,9 @@ reviewers %>%
 There are 9 usual reviewers:
 
 ```{r reviewers_frequency}
-normal_reviews <- reviewers %>% 
-  filter(Reviewers == 1) %>% 
+normal_reviews <- df %>% 
+  filter(n_reviewers == 1, n_labels >= 1, n_comments > 1,
+         !is.na(closed)) %>% 
   mutate(Reviewer = unlist(assignee))
 
 top_reviewers <- normal_reviews %>% 
@@ -330,7 +311,6 @@ normal_reviews %>%
   ungroup() %>% 
   ggplot() +
   geom_line(aes(year, share, col = Reviewer)) +
-
   scale_y_continuous(labels = scales::percent) +
   labs(x = element_blank(), y = element_blank(),
        title = "Share of issues reviewed")
@@ -341,9 +321,6 @@ Probably you might get assigned the project leader Martin Morgan, but you can wo
 ```{r reviewer_comments}
 normal_reviews %>% 
   group_by(Reviewer) %>% 
-  mutate(Approved = case_when(approved ~ "Yes",
-                              !approved & !is.na(closed) ~ "No",
-                              TRUE ~ NA_character_)) %>% 
   count(Approved) %>% 
   mutate(ratio = n/sum(n), total = sum(n),
          Reviewer = fct_reorder(Reviewer, ratio)) %>% 
@@ -353,7 +330,6 @@ normal_reviews %>%
   geom_point(aes(total, ratio, col = Reviewer)) + 
   scale_y_continuous(labels = scales::percent, limits = c(0, 1), 
                      expand = expansion(mult = 0, add = 0)) +
-
   labs(x = "Issues handled", y = "Approval ratio",
        title = "Reviewers approval Ratio")
 ```
@@ -367,12 +343,8 @@ breaks <- function(limits) {
   seq(from = 0, to = floor(limits[2]), by = 100)
 }
 
-
 normal_reviews %>% 
-  filter(Reviewer  %in% top_reviewers, !is.na(closed)) %>% 
-  mutate(Approved = case_when(approved ~ "Yes",
-                              !approved & !is.na(closed) ~ "No",
-                              TRUE ~ NA_character_)) %>% 
+  filter(Reviewer  %in% top_reviewers) %>% 
   ggplot() +
   ggbeeswarm::geom_quasirandom(aes(Reviewer, time_opened, 
                                    col = Approved, shape = Approved), 
@@ -383,16 +355,12 @@ normal_reviews %>%
 # Focusing a bit
 
 normal_reviews %>% 
-  filter(Reviewer  %in% top_reviewers, !is.na(closed)) %>% 
-  mutate(Approved = case_when(approved ~ "Yes",
-                              !approved & !is.na(closed) ~ "No",
-                              TRUE ~ NA_character_)) %>% 
+  filter(Reviewer  %in% top_reviewers) %>% 
   ggplot() +
   ggbeeswarm::geom_quasirandom(aes(Reviewer, time_opened, 
                                    col = Approved, shape = Approved)) +
   coord_cartesian(ylim = c(0, 150)) +
   scale_y_continuous(expand = expansion(mult = 0, add = 0)) +
-
   labs(y = "Days open", title = "Time open by reviewers", 
        subtitle = "A zoom")
 ```
@@ -401,47 +369,40 @@ Usually more time reviewing do not mean closing the issue without being accepted
 
 ```{r reviewer_time_diff}
 reviewer_time <- normal_reviews %>% 
-  filter(Reviewer  %in% top_reviewers, !is.na(closed)) %>% 
-  mutate(Approved = case_when(approved ~ "Yes",
-                              !approved & !is.na(closed) ~ "No",
-                              TRUE ~ NA_character_)) %>% 
+  filter(Reviewer  %in% top_reviewers) %>% 
   group_by(Reviewer) %>% 
   summarise(m = median(time_opened), me = mean(time_opened), n = n()) %>% 
   ungroup() %>% 
   arrange(m)
            
 normal_reviews %>% 
-  filter(Reviewer  %in% top_reviewers, !is.na(closed)) %>% 
-  mutate(Approved = case_when(approved ~ "Yes",
-                              !approved & !is.na(closed) ~ "No",
-                              TRUE ~ NA_character_)) %>% 
+  filter(Reviewer  %in% top_reviewers) %>% 
   group_by(Reviewer, Approved) %>% 
-  summarise(m = median(time_opened), me = mean(time_opened)) %>% 
+  summarise(m = median(time_opened), me = mean(time_opened), n = n()) %>% 
   ungroup() %>% 
   mutate(Reviewer = fct_relevel(Reviewer, reviewer_time$Reviewer)) %>% 
   ggplot() +
   geom_point(data = reviewer_time, aes(fct_relevel(Reviewer, Reviewer), 
                                        m, size = n)) +
-  geom_point(aes(Reviewer, m, col = Approved, shape = Approved)) +
+  geom_point(aes(Reviewer, m, col = Approved, shape = Approved, size = n)) +
   labs(x = element_blank(), y = "Days (median)", 
-       title = "Reviewers speed to close", size = "All issues") +
+       title = "Reviewers speed to close", 
+       subtitle = "In black all reviews together",
+       size = "Reviews") +
   scale_y_continuous(limits = c(0, 90), expand = expansion(add = c(1, 0)), 
                      breaks = seq(from = 0, to = 90, by = 20)) +
+  scale_shape_manual(values = c(15, 17)) +
   scale_x_discrete(expand = expansion(add = 0.1))
 ```
 
-Correction! Some reviewers are more likely to close the issue if it stay longer. 
-Maybe they prefer to suggest modifications and a later second submission. 
+Correction! Some reviewers have the issues not approved closed later. They might wait longer to close the issues without approving them, or maybe they prefer to suggest modifications and a later second submission. 
 Others close way faster than they accept the packages. 
 
 They might accept faster packages but it is because they provide faster feedback with more comments?
 
 ```{r reviewers_comments}
 normal_reviews %>% 
-  filter(Reviewer  %in% top_reviewers, !is.na(closed)) %>% 
-  mutate(Approved = case_when(approved ~ "Yes",
-                              !approved & !is.na(closed) ~ "No",
-                              TRUE ~ NA_character_)) %>% 
+  filter(Reviewer  %in% top_reviewers) %>% 
   ggplot() +
   ggbeeswarm::geom_quasirandom(aes(Reviewer, n_comments, 
                                    col = Approved, shape = Approved), 
@@ -450,36 +411,32 @@ normal_reviews %>%
   labs(y = "Comments", title = "Comments on the issue", x = element_blank())
 ```
 
-Many of the comments I suspect are automatic messages from the bot about building and receiving commits.
+Many of the comments I suspect are automatic messages from the bot about building and receiving commits. But apparently there isn't a difference between them.
 
 ```{r reviewer_comment_diff}
 reviewer_comments <- normal_reviews %>% 
-  filter(Reviewer  %in% top_reviewers, !is.na(closed)) %>% 
-  mutate(Approved = case_when(approved ~ "Yes",
-                              !approved & !is.na(closed) ~ "No",
-                              TRUE ~ NA_character_)) %>% 
+  filter(Reviewer  %in% top_reviewers) %>% 
   group_by(Reviewer) %>% 
   summarise(m = median(n_comments), me = mean(n_comments), n = n()) %>% 
   ungroup() %>% 
   arrange(m)
            
 normal_reviews %>% 
-  filter(Reviewer  %in% top_reviewers, !is.na(closed)) %>% 
-  mutate(Approved = case_when(approved ~ "Yes",
-                              !approved & !is.na(closed) ~ "No",
-                              TRUE ~ NA_character_)) %>% 
+  filter(Reviewer  %in% top_reviewers) %>% 
   group_by(Reviewer, Approved) %>% 
-  summarise(m = median(n_comments), me = mean(n_comments)) %>% 
+  summarise(m = median(n_comments), me = mean(n_comments), n = n()) %>% 
   ungroup() %>% 
   mutate(Reviewer = fct_relevel(Reviewer, reviewer_comments$Reviewer)) %>% 
   ggplot() +
   geom_point(data = reviewer_comments, aes(fct_relevel(Reviewer, Reviewer), 
                                        m, size = n)) +
-  geom_point(aes(Reviewer, m, col = Approved, shape = Approved)) +
+  geom_point(aes(Reviewer, m, col = Approved, fill = Approved, shape = Approved, size = n)) +
   labs(x = element_blank(), y = "Comments (median)", 
-       title = "Comments on the issues", size = "All issues") +
+       title = "Comments on the issues", subtitle = "In black all reviews together",
+         size = "Reviews") +
   scale_y_continuous(limits = c(0, 90), expand = expansion(add = c(1, 0)), 
                      breaks = seq(from = 0, to = 90, by = 20)) +
+  scale_shape_manual(values = c(15, 17)) +
   scale_x_discrete(expand = expansion(add = 0.1))
 ```
 
@@ -487,32 +444,23 @@ Here almost all the reviewers have more comments on approved packages. Even if t
 
 ```{r acceptance_comments, include = FALSE}
 normal_reviews %>% 
-  mutate(Approved = case_when(approved ~ "Yes",
-                              !approved & !is.na(closed) ~ "No",
-                              TRUE ~ NA_character_)) %>% 
   group_by(Approved) %>% 
-  summarise(m = median(n_comments), me = mean(n_comments))
+  summarise(median = median(n_comments), mean = mean(n_comments))
 ```
 
 Taking both information together we can see the pattern for all the reviwers:
 
 ```{r reviewers_comments_time}
 normal_reviews %>% 
-  filter(Reviewer  %in% top_reviewers, !is.na(closed)) %>% 
-  mutate(Approved = case_when(approved ~ "Yes",
-                              !approved & !is.na(closed) ~ "No",
-                              TRUE ~ NA_character_)) %>% 
+  filter(Reviewer  %in% top_reviewers) %>% 
   ggplot() +
   geom_point(aes(time_opened, n_comments, col = Approved, shape = Approved), 
              size = 0.75) +
   scale_x_continuous(breaks = breaks) +
   scale_y_continuous(breaks = breaks) +
   facet_wrap(~Reviewer, scales = "free") +
-  theme_minimal()  +
-  theme(strip.background = title_facet) +
   labs(x = "Days opened", y = "Comments", 
        main = "Comments", title = "Comments and open days per reviewer")
-  
 ```
 
 Most of the not approved issues have less comments and usually remain less days open.
@@ -522,36 +470,21 @@ Most of the not approved issues have less comments and usually remain less days 
 Most of the issues though are handled quite fast, and it seems like there isn't a rush to publish:
 
 ```{r submission_rate}
-df2 %>% 
+df %>% 
   mutate(md  = as.numeric(format(created, "%j")),
          year = year(created)) %>% 
   group_by(md) %>% 
-  count() %>% 
+  summarise(n = median(n())) %>% 
   ungroup() %>% 
   ggplot() + 
   geom_point(aes(md, n)) + 
-
-  labs(title = "Submissions", 
+  labs(title = "Median daily submissions", 
        x = "Day of year", y = "Issues opened") +
-  # theme(axis.text.x = element_blank(), axis.ticks.x = element_blank()) +
   scale_x_continuous(expand = expansion(add = 5))
-
-df2 %>% 
-  mutate(md  = as.numeric(format(created, "%j")),
-         year = year(created)) %>% 
-  group_by(md, year) %>% 
-  count() %>% 
-  ungroup() %>% 
-  ggplot() + 
-  geom_point(aes(md, n, col = year)) + 
-  labs(title = "Submissions", 
-       x = "Day of year", y = "Issues opened") +
-  scale_x_continuous(expand = expansion(add = 5)) +
-  scale_y_continuous(limits = c(0, 8), expand = expansion(add = c(0, 0.5)))
 ```
 
 So most days there is a new package submission and on the best day there are 8. 
-There doesn't seem to be a big seasonality neither. 
+There doesn't seem to be a seasonality neither. 
 
 
 Using the dates of new [Bioconductor release](https://bioconductor.org/about/release-announcements/) we can check if there is some rush to submit packages closer to the new release:
@@ -565,7 +498,7 @@ release_attempt <- function(x, release = releases) {
     "margin" = abs(diff_time[pre_release][pick]), stringsAsFactors = FALSE)
 }
 
-ra <- lapply(df2$created, release_attempt)
+ra <- lapply(df$created, release_attempt)
 r <- lapply(ra, function(x){x$release})
 r[lengths(r) == 0] <- NA
 r <- unlist(r, FALSE, FALSE)
@@ -573,11 +506,10 @@ m <- lapply(ra, function(x){x$margin})
 m[lengths(m) == 0] <- NA
 m <- unlist(m, FALSE, FALSE)
 m <- as.difftime(m, units = "days")
-df3 <- df2 %>% 
+df2 <- df %>% 
   mutate(release = r, margin = m,
          devel = release == "3.11" & approved & margin < 30)
-
-df3 %>% 
+df2 %>% 
   ggplot() +
   geom_histogram(aes(margin), bins = 40) +
   geom_vline(xintercept = 30) +
@@ -590,29 +522,20 @@ The vertical line indicates the usual time the submissions are no longer accepte
 So it seems like people submit close to the date but much consistently around the period as previously seen. 
 
 ```{r margin_submission_accepted, include=FALSE}
-df3 %>% 
+df2 %>% 
   filter(margin < 30) %>% 
-    mutate(Approved = case_when(approved ~ "Yes",
-                              !approved & !is.na(closed) ~ "No",
-                              TRUE ~ NA_character_)) %>% 
   count(Approved)
-df3 %>% 
+df2 %>% 
   filter(margin > 30) %>% 
-  mutate(Approved = case_when(approved ~ "Yes",
-                              !approved & !is.na(closed) ~ "No",
-                              TRUE ~ NA_character_)) %>% 
   count(Approved)
 ```
 
 Those that submit closer to the date of release have higher rates of not being included on Bioconductor.
 
 ```{r worst_scenario}
-latest_submission <- max(df3$margin, na.rm = TRUE)
+latest_submission <- max(df2$margin, na.rm = TRUE)
 
-df3 %>% 
-  mutate(Approved = case_when(approved ~ "Yes",
-                              !approved & !is.na(closed) ~ "No",
-                              TRUE ~ NA_character_)) %>% 
+df2 %>% 
   filter(!(time_opened == 0 & !approved)) %>% 
   ggplot() +
   geom_vline(xintercept = 30) +
@@ -620,15 +543,15 @@ df3 %>%
   geom_point(aes(margin, time_opened, col = Approved, shape = Approved)) +
   geom_point(data = ~filter(.x, devel), aes(margin, time_opened), col = "grey") +
   ggplot2::annotate(geom = "rect", xmin = 0, ymin = latest_submission,
-            xmax = max(df3$margin, na.rm = TRUE), ymax = max(df3$time_opened) + 10, 
+            xmax = max(df2$margin, na.rm = TRUE), ymax = max(df2$time_opened) + 10, 
             fill = "orange", alpha = 0.25) +
   ggplot2::annotate(geom = "rect", xmin = 0, ymin = 0,
-            xmax = 30, ymax = max(df3$time_opened) + 10, 
+            xmax = 30, ymax = max(df2$time_opened) + 10, 
             fill = "red", alpha = 0.25) +
   ggplot2::annotate(geom = "text", x = 100, y = 540, 
                     label = "Missed release") +
   ggplot2::annotate(geom = "text", x = 13, y = 700, 
-                    label = "Submitted right before the release", 
+                    label = "Submitted right before a release", 
                     angle = 90, hjust = 1, vjust = 1) +
   scale_x_continuous(expand = expansion(add = 1)) +
   scale_y_continuous(expand = expansion(add = 9)) +
@@ -641,27 +564,126 @@ df3 %>%
 Very few packages went to the worst scenario: submitted right before a deadline and then it wasn't accepted until many releases later. However there is a curious effect the closer the submission is to the release day the accepted packages have shorter (in time) reviews
 
 ```{r open_releases}
-df3 %>% 
-  mutate(Approved = case_when(
-    approved ~ "Yes",
-    !approved & !is.na(closed) ~ "No",
-    TRUE ~ NA_character_)) %>% 
+df2 %>% 
   ggplot() +
-  geom_point(aes(created, time_opened, col = Approved)) +
+  geom_point(aes(created, time_opened, col = Approved, shape = Approved)) +
   geom_vline(data = releases, aes(xintercept = date), alpha = 0.5, 
              col = "darkgreen") + # Release dates
-  geom_text(data = releases, aes(x = date, y = rep(600, 9),
+  geom_text(data = releases, aes(x = date, y = rep(600, 10),
            label = release), col = "darkgreen") + # Release dates
   scale_y_continuous(expand = expansion(add = 6)) +
-  scale_color_viridis_d(na.value = "grey") +
+  scale_color_viridis_d() +
   scale_data +
-  labs(x = element_blank(), y = "Days open") 
+  labs(x = element_blank(), y = "Days open", 
+       title = "Time open") 
 ```
 
 There doesn't seem to be a rush toward the release date, although several packages open the issue when there is less than 30 days for the release (the usual time that the submission queue is on hold)
   
 
 I expected to see longer review time for the issues submitted closer to the release but we don't see it. However we see that less time is spend on the submissions right after the previous release. 
+
+## Pitfalls
+
+We have seen mostly the path to success, but in order to improve the process we must look what lead to having the packages not approved.
+
+We can check if packages
+
+```{r pkg_source}
+df2 %>% 
+  filter(Approved != "Ongoing",
+         n_packages == 1) %>% 
+  group_by(same_submitter = ifelse(pkg_repo != user, "No", "Yes")) %>% 
+  count(Approved) %>% 
+  mutate(ratio = n/sum(n), total = sum(n), pos = paste0(n, collapse = "/")) %>% 
+  ggplot() +
+  geom_col(aes(fct_relevel(same_submitter, c("Yes", "No")), n, fill = Approved)) +
+  geom_text(aes(fct_relevel(same_submitter, c("Yes", "No")), total*1.05, label = pos)) +
+  labs(x = "Repository belongs to submitter", y = "Submissions",
+       title = "Success if repository belongs to the submitter")
+```
+
+When the user that submits the package is the owner of the repository then it is more likely that the package is accepted.
+
+```{r}
+df2 %>% 
+  filter(Approved == "No") %>% 
+  ggplot() + 
+  geom_histogram(aes(time_opened), bins = 50) +
+  labs(x = "Days open", y = "Issues", 
+       title = "Most not approved packages get closed the same day") 
+```
+
+```{r repo_links}
+rejected <- df2 %>% 
+  filter(Approved == "No")
+rejected %>% 
+  count(n_packages) %>% 
+  filter(n_packages != 1)
+rejected %>%
+  filter(n_packages == 1) %>% 
+  count(package, sort = TRUE) %>% 
+  head()
+
+rejected %>%
+  filter(n_packages == 1) %>% 
+  mutate(ending = str_extract(package, "\\..+$")) %>% 
+  select(id, package, ending) %>% 
+  filter(!is.na(ending)) %>% 
+  count(ending, sort = TRUE) %>% 
+  head()
+  count(package, sort = TRUE) %>% 
+  head()
+```
+
+It is equally probable to not provide a link or to provide two. However many times the template is used as is and the link to the name of the repository remains "yourpackagename". 
+
+```{r comments}
+rejected %>% 
+  count(n_comments, sort = TRUE) %>% 
+  head()
+```
+
+Most of the rejected submissions is done automatically by the "[bioc-issue-bot](https://github.com/bioc-issue-bot)", with a brief message.
+
+
+```{r ending}
+rejected %>% 
+  filter(n_packages == 1) %>% 
+  mutate(ending = str_extract(package, "\\..+$")) %>% 
+  select(id, repos, package, ending) %>% 
+  filter(!is.na(ending)) %>% 
+  count(ending, sort = TRUE) %>% 
+  head()
+```
+
+There are some other time when the user provides a link to a compressed file, or it ends incorrectly formatted.
+
+
+```{r labels}
+rejected %>% 
+  count(n_labels)
+```
+
+Usually this means they do not get assigned a reviewer or built on the Bioconductor server.
+
+```{r}
+ups <- rejected %>% 
+  filter(n_labels > 1) %>% 
+  select(i, id, labels) %>% 
+  unnest(labels) %>% 
+  pivot_wider(names_from = labels, values_from = id) %>% 
+  mutate(across(where(is.numeric), function(x){!is.na(x)})) %>%
+  mutate(across(where(is.logical), as.integer))
+ups <- ups[, -1]
+ups <- as.data.frame(ups)
+colnames(ups) <- make.names(colnames(ups))
+library("UpSetR")
+upset(ups, sets = colnames(ups), order.by = "freq", decreasing = TRUE, 
+      nintersects = 10)
+```
+
+If the review starts the next halting point is an error on the build process.
 
 ### Reproducibility
 
