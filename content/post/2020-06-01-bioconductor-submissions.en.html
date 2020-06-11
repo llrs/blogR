@@ -1,0 +1,379 @@
+---
+title: Bioconductor submissions
+author: Lluís Revilla Sancho
+date: '2020-06-01'
+slug: bioconductor-submissions
+categories:
+  - r
+  - Bioconductor
+tags:
+  - r
+  - Bioconductor
+authors: []
+description: ''
+editor_options:
+  chunk_output_type: console
+featured: no
+output:
+  code_folding: hide
+image:
+  caption: ''
+  focal_point: ''
+subtitle: ''
+summary: 'Exploring the submission process to Bioconductor. What happens, how long does it take, what are the common problems and solutions...'
+---
+
+
+
+<p>The other day I was curious about how many submissions are on Bioconductor and how do they work, is there any pattern toward the release cycle or not?</p>
+<p>There are 1500 issues, so we’ll need to look for 15 queries.</p>
+<p>Once we got all the issues, it’s time to tidy and extract the interesting information,
+check when do they happen, by who, when are they closed…</p>
+<p>We can further include those approved because they are on bioconductor but do not have the <a href="https://github.com/Bioconductor/Contributions/labels/3a.%20accepted">approved label</a> (Sometimes they get accepted but they forget to change labels on the issue).
+We need to be cautious also because there are 153 packages that have been submitted several times.</p>
+<p>I omitted packages that appear several times as some of them are due to being on the old tracker.
+Using also the CRAN repository we could find which packages where submitted to Bioconductor but end up on CRAN. But as I expect a low number of these I won’t check them.</p>
+<div id="exploring-the-data" class="section level2">
+<h2>Exploring the data</h2>
+<p><img src="/post/2020-06-01-bioconductor-submissions.en_files/figure-html/unnamed-chunk-1-1.png" width="672" /></p>
+<p>On this plot we can see almost everything, date of creation, time opened, when was closed, in which release is included if accepted and the rate of submissions to Bioconductor.
+What we miss is about the authors submitting the packages and about the packages themselfs.</p>
+</div>
+<div id="submitting-authors" class="section level2">
+<h2>Submitting authors</h2>
+<p>One of the core strength of R is the open community. There have been 761 different users submitting a package.</p>
+<p><img src="/post/2020-06-01-bioconductor-submissions.en_files/figure-html/users_submitting-1.png" width="672" /></p>
+<p>We can clearly see that most of the submissions are the first submission of the author, and quickly it falls close to 0.</p>
+<p><img src="/post/2020-06-01-bioconductor-submissions.en_files/figure-html/users_ratio-1.png" width="672" /></p>
+<p>Most of the users get their submission included at Bioconductor at the first try. Few need two submissions and some do not get their package included on Bioconductor.</p>
+<p><img src="/post/2020-06-01-bioconductor-submissions.en_files/figure-html/users-1.png" width="672" /></p>
+<p>If users submit more packages they usually get them approved.</p>
+<p><img src="/post/2020-06-01-bioconductor-submissions.en_files/figure-html/submissions-1.png" width="672" /></p>
+<p>Around 50% of the ~400 packages submitted are approved.</p>
+<p>So if you have a package that fits Bioconductor you’ll get fairly well on the submission process. But I always recommend the lengthy pages for developers about the <a href="https://bioconductor.org/developers/package-submission/">submission process</a> and the <a href="https://bioconductor.org/developers/package-guidelines/">packages guidelinines and requirements</a>. As my experience most of the reasons for not accepting a packages is not following the guidelines.</p>
+</div>
+<div id="reviewers" class="section level1">
+<h1>Reviewers</h1>
+<p>If your package fits Bioconductor you will get assigned a reviewer.
+Many submissions (~33%) do not get a reviewer assigned and the package is not included on Bioconductor’s repository, most (~90%) of the cases this happens the same day of the submission.
+But once they get one reviewer ~82% of them are approved.</p>
+<p>There are 9 usual reviewers:</p>
+<p><img src="/post/2020-06-01-bioconductor-submissions.en_files/figure-html/reviewers_frequency-1.png" width="672" /></p>
+<p>Probably you might get assigned the project leader Martin Morgan, but you can work with any other reviewer: mtmorgan, lshep, LiNk-NY, dvantwisk, vobencha, hpages, nturaga, Liubuntu, Kayla-Morrell.</p>
+<p><img src="/post/2020-06-01-bioconductor-submissions.en_files/figure-html/reviewer_comments-1.png" width="672" /></p>
+<p>The reviews are fairly done by all the members. We can see that all of them approves more than 70% of the packages assigned.</p>
+<p>Most of the reviewers take few days until the issue is closed.</p>
+<p><img src="/post/2020-06-01-bioconductor-submissions.en_files/figure-html/reviewers_time-1.png" width="672" /><img src="/post/2020-06-01-bioconductor-submissions.en_files/figure-html/reviewers_time-2.png" width="672" /></p>
+<p>Usually more time reviewing do not mean closing the issue without being accepted.</p>
+<p><img src="/post/2020-06-01-bioconductor-submissions.en_files/figure-html/reviewer_time_diff-1.png" width="672" /></p>
+<p>Correction! Some reviewers close later submissions that are not approved. They might wait longer to close the issues without approving them, or maybe they prefer to suggest modifications and a second submission of the same package.
+Others close way faster than they accept the packages. In general you can expect more than 40 days review.</p>
+<p>They might accept faster packages but it is because they provide faster feedback with more comments?</p>
+<p><img src="/post/2020-06-01-bioconductor-submissions.en_files/figure-html/reviewers_comments-1.png" width="672" /></p>
+<p>Many of the comments I suspect are automatic messages from the bot about building and receiving commits. But apparently there isn’t a difference between them.</p>
+<p><img src="/post/2020-06-01-bioconductor-submissions.en_files/figure-html/reviewer_comment_diff-1.png" width="672" /></p>
+<p>Here almost all the reviewers have more comments on approved packages. Even if this is due to automatic messages it seems like responding and giving feedback to the reviewers as the authors address the points provided by the reviewer increases acceptance. Usually more than 20 comments on the issue will be enough but the more feedback, the better.</p>
+<p>Taking both information together we can see the pattern for all the reviewers:</p>
+<p><img src="/post/2020-06-01-bioconductor-submissions.en_files/figure-html/reviewers_comments_time-1.png" width="672" /></p>
+<p>Most of the not approved issues have less comments and usually remain less days open.</p>
+<div id="rushing" class="section level2">
+<h2>Rushing?</h2>
+<p>Most of the issues are handled quite fast, and it seems like there isn’t a rush to publish:</p>
+<p><img src="/post/2020-06-01-bioconductor-submissions.en_files/figure-html/submission_rate-1.png" width="672" /></p>
+<p>So most days there is a new package submission and on the best day there are 8.
+There doesn’t seem to be a seasonality neither.</p>
+<p>Using the dates of new <a href="https://bioconductor.org/about/release-announcements/">Bioconductor release</a> we can check if there is some rush to submit packages closer to the new release:</p>
+<p><img src="/post/2020-06-01-bioconductor-submissions.en_files/figure-html/margin_submission-1.png" width="672" /></p>
+<p>The vertical line indicates the usual time the submissions are no longer accepted (around 30 days before the release day).
+So it seems like people submit close to the date but much consistently around the period as previously seen.</p>
+<p>Those that submit closer to the date of release have higher rates of not being included on Bioconductor.</p>
+<p><img src="/post/2020-06-01-bioconductor-submissions.en_files/figure-html/worst_scenario-1.png" width="672" /></p>
+<p>Very few packages went to the worst scenario: submitted right before a deadline and then it wasn’t accepted until many releases later. However there is a curious effect the closer the submission is to the release day the accepted packages have shorter (in time) reviews</p>
+<p><img src="/post/2020-06-01-bioconductor-submissions.en_files/figure-html/open_releases-1.png" width="672" /></p>
+<p>There doesn’t seem to be a rush toward the release date, although several packages open the issue when there is less than 30 days for the release (the usual time that the submission queue is on hold)</p>
+<p>I expected to see longer review time for the issues submitted closer to the release but we don’t see it. However we see that less time is spend on the submissions right after the previous release.</p>
+</div>
+<div id="pitfalls" class="section level2">
+<h2>Pitfalls</h2>
+<p>We have seen mostly the path to success, but in order to improve the process we must look what lead to having the packages not approved.</p>
+<p>We can check if packages</p>
+<p><img src="/post/2020-06-01-bioconductor-submissions.en_files/figure-html/pkg_source-1.png" width="672" /></p>
+<p>When the user that submits the package is the owner of the repository then it is more likely that the package is accepted.</p>
+<p><img src="/post/2020-06-01-bioconductor-submissions.en_files/figure-html/time_rejected-1.png" width="672" /></p>
+<p>Most packages are closed fast but some review are longer than a year! Those closed fast are automatically done by the bot due to several reasons.</p>
+<table>
+<caption>(#tab:repo_links)Issues with more than one package</caption>
+<thead>
+<tr class="header">
+<th align="center">Number of packages</th>
+<th align="center">Times</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td align="center">0</td>
+<td align="center">15</td>
+</tr>
+<tr class="even">
+<td align="center">2</td>
+<td align="center">15</td>
+</tr>
+<tr class="odd">
+<td align="center">3</td>
+<td align="center">1</td>
+</tr>
+</tbody>
+</table>
+<table>
+<caption>(#tab:repo_links)Issues with more than one package</caption>
+<thead>
+<tr class="header">
+<th align="center">Name</th>
+<th align="center">Packages</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td align="center">yourpackagename</td>
+<td align="center">88</td>
+</tr>
+<tr class="even">
+<td align="center">Trumpet</td>
+<td align="center">13</td>
+</tr>
+<tr class="odd">
+<td align="center">ASpli</td>
+<td align="center">7</td>
+</tr>
+<tr class="even">
+<td align="center">BioMedR</td>
+<td align="center">7</td>
+</tr>
+<tr class="odd">
+<td align="center">SVAPLSseq</td>
+<td align="center">6</td>
+</tr>
+<tr class="even">
+<td align="center">PoTRA</td>
+<td align="center">6</td>
+</tr>
+</tbody>
+</table>
+<p>It is equally probable to not provide a link or to provide two. However many times the template is used as is and the link to the name of the repository remains “yourpackagename”.</p>
+<table>
+<thead>
+<tr class="header">
+<th align="center">Comments</th>
+<th align="center">Issues</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td align="center">1</td>
+<td align="center">393</td>
+</tr>
+<tr class="even">
+<td align="center">2</td>
+<td align="center">43</td>
+</tr>
+<tr class="odd">
+<td align="center">3</td>
+<td align="center">26</td>
+</tr>
+<tr class="even">
+<td align="center">4</td>
+<td align="center">13</td>
+</tr>
+<tr class="odd">
+<td align="center">6</td>
+<td align="center">12</td>
+</tr>
+<tr class="even">
+<td align="center">5</td>
+<td align="center">10</td>
+</tr>
+</tbody>
+</table>
+<p>Most of the rejected submissions is done automatically by the “<a href="https://github.com/bioc-issue-bot">bioc-issue-bot</a>”, with a brief message.</p>
+<table>
+<caption><span id="tab:ending">Table 1: </span>Ending of rejected issues</caption>
+<thead>
+<tr class="header">
+<th align="center">Ending</th>
+<th align="center">Number of issues</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td align="center">.git</td>
+<td align="center">29</td>
+</tr>
+<tr class="even">
+<td align="center">.R</td>
+<td align="center">4</td>
+</tr>
+<tr class="odd">
+<td align="center">.0.99.0</td>
+<td align="center">2</td>
+</tr>
+<tr class="even">
+<td align="center">.data.oma.All.Jan2020</td>
+<td align="center">2</td>
+</tr>
+<tr class="odd">
+<td align="center">.0</td>
+<td align="center">1</td>
+</tr>
+<tr class="even">
+<td align="center">.2</td>
+<td align="center">1</td>
+</tr>
+</tbody>
+</table>
+<p>There are some other time when the user provides a link to a compressed file, or it ends incorrectly formatted.</p>
+<table>
+<caption><span id="tab:labels">Table 2: </span>Labels of rejected packages</caption>
+<thead>
+<tr class="header">
+<th align="center">Number of labels</th>
+<th align="center">Number of issues</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td align="center">0</td>
+<td align="center">429</td>
+</tr>
+<tr class="even">
+<td align="center">1</td>
+<td align="center">83</td>
+</tr>
+<tr class="odd">
+<td align="center">2</td>
+<td align="center">80</td>
+</tr>
+<tr class="even">
+<td align="center">3</td>
+<td align="center">51</td>
+</tr>
+<tr class="odd">
+<td align="center">4</td>
+<td align="center">5</td>
+</tr>
+<tr class="even">
+<td align="center">5</td>
+<td align="center">1</td>
+</tr>
+</tbody>
+</table>
+<p>Usually this means they do not get assigned a reviewer or built on the Bioconductor server.</p>
+<p><img src="/post/2020-06-01-bioconductor-submissions.en_files/figure-html/upset-1.png" width="672" /></p>
+<p>Looking at which labels go together, if the review starts the next halting point is an error on the build process.</p>
+</div>
+<div id="conclusion" class="section level2">
+<h2>Conclusion</h2>
+<p>Most of the packages submitted to Bioconductor are accepted.
+Those that are not accepted are usually due to submission formatting issues and catch up automatically by the bioc-issue-bot.
+Reviewers provide a lot of feedback that if followed leads to acceptance of the package.
+Some packages are submitted right before a release and miss it, while others undergo a long review and miss several releases.</p>
+<div id="reproducibility" class="section level3">
+<h3>Reproducibility</h3>
+<details>
+<pre><code>## ─ Session info ───────────────────────────────────────────────────────────────────────────────────────────────────────
+##  setting  value                       
+##  version  R version 3.6.3 (2020-02-29)
+##  os       Ubuntu 20.04 LTS            
+##  system   x86_64, linux-gnu           
+##  ui       X11                         
+##  language (EN)                        
+##  collate  en_US.UTF-8                 
+##  ctype    en_US.UTF-8                 
+##  tz       Europe/Madrid               
+##  date     2020-06-11                  
+## 
+## ─ Packages ───────────────────────────────────────────────────────────────────────────────────────────────────────────
+##  package     * version date       lib source        
+##  assertthat    0.2.1   2019-03-21 [1] CRAN (R 3.6.0)
+##  backports     1.1.7   2020-05-13 [1] CRAN (R 3.6.3)
+##  beeswarm      0.2.3   2016-04-25 [1] CRAN (R 3.6.0)
+##  BiocManager * 1.30.10 2019-11-16 [1] CRAN (R 3.6.1)
+##  blob          1.2.1   2020-01-20 [1] CRAN (R 3.6.1)
+##  blogdown      0.19    2020-05-22 [1] CRAN (R 3.6.3)
+##  bookdown      0.19    2020-05-15 [1] CRAN (R 3.6.3)
+##  broom         0.5.6   2020-04-20 [1] CRAN (R 3.6.1)
+##  cellranger    1.1.0   2016-07-27 [1] CRAN (R 3.6.0)
+##  cli           2.0.2   2020-02-28 [1] CRAN (R 3.6.1)
+##  colorspace    1.4-1   2019-03-18 [1] CRAN (R 3.6.0)
+##  crayon        1.3.4   2017-09-16 [1] CRAN (R 3.6.0)
+##  curl          4.3     2019-12-02 [1] CRAN (R 3.6.1)
+##  DBI           1.1.0   2019-12-15 [1] CRAN (R 3.6.1)
+##  dbplyr        1.4.4   2020-05-27 [1] CRAN (R 3.6.3)
+##  digest        0.6.25  2020-02-23 [1] CRAN (R 3.6.1)
+##  dplyr       * 1.0.0   2020-05-29 [1] CRAN (R 3.6.3)
+##  ellipsis      0.3.1   2020-05-15 [1] CRAN (R 3.6.3)
+##  evaluate      0.14    2019-05-28 [1] CRAN (R 3.6.0)
+##  fansi         0.4.1   2020-01-08 [1] CRAN (R 3.6.1)
+##  farver        2.0.3   2020-01-16 [1] CRAN (R 3.6.1)
+##  forcats     * 0.5.0   2020-03-01 [1] CRAN (R 3.6.1)
+##  fs            1.4.1   2020-04-04 [1] CRAN (R 3.6.1)
+##  generics      0.0.2   2018-11-29 [1] CRAN (R 3.6.0)
+##  ggbeeswarm    0.6.0   2017-08-07 [1] CRAN (R 3.6.0)
+##  ggplot2     * 3.3.1   2020-05-28 [1] CRAN (R 3.6.3)
+##  gh          * 1.1.0   2020-01-24 [1] CRAN (R 3.6.1)
+##  glue          1.4.1   2020-05-13 [1] CRAN (R 3.6.3)
+##  gridExtra     2.3     2017-09-09 [1] CRAN (R 3.6.0)
+##  gtable        0.3.0   2019-03-25 [1] CRAN (R 3.6.0)
+##  haven         2.3.1   2020-06-01 [1] CRAN (R 3.6.3)
+##  highr         0.8     2019-03-20 [1] CRAN (R 3.6.0)
+##  hms           0.5.3   2020-01-08 [1] CRAN (R 3.6.1)
+##  htmltools     0.4.0   2019-10-04 [1] CRAN (R 3.6.1)
+##  httr          1.4.1   2019-08-05 [1] CRAN (R 3.6.0)
+##  jsonlite      1.6.1   2020-02-02 [1] CRAN (R 3.6.1)
+##  knitr         1.28    2020-02-06 [1] CRAN (R 3.6.1)
+##  labeling      0.3     2014-08-23 [1] CRAN (R 3.6.0)
+##  lattice       0.20-41 2020-04-02 [1] CRAN (R 3.6.1)
+##  lifecycle     0.2.0   2020-03-06 [1] CRAN (R 3.6.1)
+##  lubridate   * 1.7.8   2020-04-06 [1] CRAN (R 3.6.1)
+##  magrittr      1.5     2014-11-22 [1] CRAN (R 3.6.0)
+##  modelr        0.1.8   2020-05-19 [1] CRAN (R 3.6.3)
+##  munsell       0.5.0   2018-06-12 [1] CRAN (R 3.6.0)
+##  nlme          3.1-148 2020-05-24 [1] CRAN (R 3.6.3)
+##  pillar        1.4.4   2020-05-05 [1] CRAN (R 3.6.3)
+##  pkgconfig     2.0.3   2019-09-22 [1] CRAN (R 3.6.0)
+##  plyr          1.8.6   2020-03-03 [1] CRAN (R 3.6.1)
+##  purrr       * 0.3.4   2020-04-17 [1] CRAN (R 3.6.1)
+##  R6            2.4.1   2019-11-12 [1] CRAN (R 3.6.1)
+##  Rcpp          1.0.4.6 2020-04-09 [1] CRAN (R 3.6.3)
+##  readr       * 1.3.1   2018-12-21 [1] CRAN (R 3.6.0)
+##  readxl        1.3.1   2019-03-13 [1] CRAN (R 3.6.0)
+##  reprex        0.3.0   2019-05-16 [1] CRAN (R 3.6.0)
+##  rlang         0.4.6   2020-05-02 [1] CRAN (R 3.6.3)
+##  rmarkdown     2.2     2020-05-31 [1] CRAN (R 3.6.3)
+##  rstudioapi    0.11    2020-02-07 [1] CRAN (R 3.6.1)
+##  rvest         0.3.5   2019-11-08 [1] CRAN (R 3.6.1)
+##  scales        1.1.1   2020-05-11 [1] CRAN (R 3.6.3)
+##  sessioninfo   1.1.1   2018-11-05 [1] CRAN (R 3.6.0)
+##  stringi       1.4.6   2020-02-17 [1] CRAN (R 3.6.3)
+##  stringr     * 1.4.0   2019-02-10 [1] CRAN (R 3.6.0)
+##  tibble      * 3.0.1   2020-04-20 [1] CRAN (R 3.6.1)
+##  tidyr       * 1.1.0   2020-05-20 [1] CRAN (R 3.6.3)
+##  tidyselect    1.1.0   2020-05-11 [1] CRAN (R 3.6.3)
+##  tidyverse   * 1.3.0   2019-11-21 [1] CRAN (R 3.6.1)
+##  UpSetR      * 1.4.0   2019-05-22 [1] CRAN (R 3.6.0)
+##  utf8          1.1.4   2018-05-24 [1] CRAN (R 3.6.0)
+##  vctrs         0.3.1   2020-06-05 [1] CRAN (R 3.6.3)
+##  vipor         0.4.5   2017-03-22 [1] CRAN (R 3.6.0)
+##  viridisLite   0.3.0   2018-02-01 [1] CRAN (R 3.6.0)
+##  withr         2.2.0   2020-04-20 [1] CRAN (R 3.6.1)
+##  xfun          0.14    2020-05-20 [1] CRAN (R 3.6.3)
+##  xml2          1.3.2   2020-04-23 [1] CRAN (R 3.6.1)
+##  yaml          2.2.1   2020-02-01 [1] CRAN (R 3.6.1)
+## 
+## [1] /home/lluis/R/x86_64-pc-linux-gnu-library/3.6
+## [2] /usr/local/lib/R/site-library
+## [3] /usr/lib/R/site-library
+## [4] /usr/lib/R/library</code></pre>
+</details>
+</div>
+</div>
+</div>
