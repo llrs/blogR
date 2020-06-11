@@ -151,7 +151,7 @@ Using also the CRAN repository we could find which packages where submitted to B
 ## Exploring the data
 
 
-```{r warning=FALSE}
+```{r eda, warning=FALSE}
 # If not closed add the closing time of today
 releases <- data.frame(release = paste0("3.", 3:12),
            date = as.Date(c("2016/04/04", "2016/10/18", "2017/04/25", 
