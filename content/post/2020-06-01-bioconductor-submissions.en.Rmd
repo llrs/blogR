@@ -168,7 +168,7 @@ df %>%
            label = release)) + # Release dates
 
   labs(title = "Issues that are open at least a day", 
-       subtitle = "Green lines indicate Bioconductor releases.",
+       subtitle = "Vertical blue lines indicate Bioconductor releases.",
        x = element_blank(), y = element_blank(), 
        caption = "Author: @Lluis_Rev") +
   scale_data +
