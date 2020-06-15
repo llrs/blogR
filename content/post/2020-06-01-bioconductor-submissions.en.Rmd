@@ -1,7 +1,7 @@
 ---
 title: Bioconductor submissions
 author: Lluís Revilla Sancho
-date: '2020-06-01'
+date: 2020-06-15
 slug: bioconductor-submissions
 categories:
   - r
@@ -14,28 +14,28 @@ description: ''
 editor_options:
   chunk_output_type: console
 featured: no
-output:
-  code_folding: hide
+fig_width: 9 
+fig_height: 6 
 image:
   caption: ''
   focal_point: ''
 subtitle: ''
-summary: 'Exploring the submission process to Bioconductor. What happens, how long does it take, what are the common problems and solutions...'
+summary: 'Exploring the submission process to Bioconductor. What happens, how long does it take, what are the common problems and solutions for new contributors.'
 ---
 
 ```{r setup, include = FALSE}
 knitr::opts_chunk$set(collapse = TRUE, warning = FALSE, message = FALSE, error = FALSE,
-                      cache = FALSE, echo=FALSE)
+                      cache = FALSE, echo=FALSE, out.width="120%")
 ```
 
-The other day I was curious about how many submissions are on Bioconductor and how do they work, is there any pattern toward the release cycle or not?
+The other day I was curious about how many submissions are on Bioconductor and how do they work, is there any pattern toward the release cycle or not? 
+In this brief post I'll explore some data available from the [github repository](https://github.com/Bioconductor/Contributions/) where the submissions are done as issues. 
+I mostly focus on what happens when one submits a package so that it can help future submissions.
 
 ```{r gh}
 library("gh")
 PR <- gh("GET /search/issues?q=repo:Bioconductor/Contributions+is:issue") # Copied from https://developer.github.com/v3/pulls/
 ```
-
-There are `r PR$total_count` issues, so we'll need to look for `r round(PR$total_count/100)` queries.
 
 ```{r get_issues}
 page <- function(query, x){paste0(query, "&page=", x)}
@@ -52,8 +52,8 @@ get_issues <- function() {
 issues <- get_issues()
 ```
 
-Once we got all the issues, it's time to tidy and extract the interesting information, 
-check when do they happen, by who, when are they closed... 
+
+There are around `r PR$total_count` issues, I extract the interesting information: date of creation, who creates them, where is the linked package. when are they closed, labels at the moment, reviewers...
 
 ```{r clean}
 clean_issue <- function(x) {
@@ -118,8 +118,7 @@ n_dup <- count(df, package, sort = TRUE) %>%
   filter(package != "", n != 1) %>% nrow()
 ```
 
-We can further include those approved because they are on bioconductor but do not have the [approved label](https://github.com/Bioconductor/Contributions/labels/3a.%20accepted) (Sometimes they get accepted but they forget to change labels on the issue). 
-We need to be cautious also because there are `r n_dup` packages that have been submitted several times.
+We can further makr those approved because they are on bioconductor but do not have the [approved label](https://github.com/Bioconductor/Contributions/labels/3a.%20accepted) (Sometimes they get accepted but they forget to change labels on the issue). 
 
 ```{r check_available}
 library("BiocManager")
@@ -144,12 +143,12 @@ approved_packages_wo_label <- df %>%
 df$approved[df$package %in% approved_packages_wo_label] <- TRUE
 ```
 
-
-I omitted packages that appear several times as some of them are due to being on the old tracker.
+I didn't mark as accepted packages that were submitted several times (`r n_dup` packages have been submitted more than once). Some of them are due to being on the old tracker and were not approved on this repository.  
 Using also the CRAN repository we could find which packages where submitted to Bioconductor but end up on CRAN. But as I expect a low number of these I won't check them.
 
-## Exploring the data
+## Exploring the submissions
 
+First of all a general overview of the data available:
 
 ```{r eda, warning=FALSE}
 # If not closed add the closing time of today
@@ -164,11 +163,10 @@ scale_data <- scale_x_date(expand = expansion(add = 10),
                limits = as.Date(c("2016-06-01", "2020-06-10"), "%Y-%m-%d"))
 theme_set(theme_minimal())
 df %>% 
-  filter(time_opened != 0) %>% 
   ggplot() +
   geom_linerange(aes(y = id, xmin = created, xmax = closed), col = "grey") + 
-  geom_point(aes(y = id, created), col = "brown", size = 1) + 
-  geom_point(aes(y = id, closed, col = approved, shape = approved), size = 1) + 
+  geom_point(aes(y = id, created), col = "black", size = 1) + 
+  geom_point(aes(y = id, closed, col = Approved, shape = Approved), size = 1) + 
   geom_vline(xintercept = releases$date, col = "darkgreen") + # Releases dates
   geom_text(data = releases, aes(x = date, y = c(rep(1200, 5), rep(300, 5)),
            label = release)) + # Release dates
@@ -176,28 +174,28 @@ df %>%
   labs(title = "Issues that are open at least a day", 
        subtitle = "Green lines indicate Bioconductor releases.",
        x = element_blank(), y = element_blank(), 
-       col = "Approved", shape = "Approved",
        caption = "Author: @Lluis_Rev") +
   scale_data +
   scale_y_continuous(expand = expansion(add = 10))
 ```
 
 On this plot we can see almost everything, date of creation, time opened, when was closed, in which release is included if accepted and the rate of submissions to Bioconductor. 
-What we miss is about the authors submitting the packages and about the packages themselfs. 
+What we miss is about the authors submitting the packages and about the packages themselves. 
 
 ## Submitting authors
 
-One of the core strength of R is the open community. There have been `r length(unique(df$user))` different users submitting a package.
+One of the core strength of R is the open community. There have been `r length(unique(df$user))` different users submitting at least one package.
 
 ```{r users_submitting}
 usr_diff_pkg <- df %>% 
-  filter(!is.na(closed)) %>% 
+  filter(!is.na(closed) & n_packages == 1) %>% 
+  unnest(package) %>% 
   group_by(user) %>% 
   distinct(package) %>% 
-  count(sort = TRUE)
+  count(sort = TRUE) %>% 
+  ungroup()
 
 usr_diff_pkg %>% 
-  ungroup() %>% 
   count(n) %>% 
   ggplot() +
   geom_col(aes(n, nn)) +
@@ -208,23 +206,24 @@ usr_diff_pkg %>%
                      expand = expansion(add = 0.05))
 ```
 
-We can clearly see that most of the submissions are the first submission of the author, and quickly it falls close to 0.
+We can clearly see that most authors submit just one package but some submit a few more, with an outlier who have submitted more than 10 packages. 
 
 ```{r users_ratio}
 usr_ratio <- df %>% 
-  filter(!is.na(closed)) %>% 
+  filter(!is.na(closed) & n_packages == 1) %>% 
   group_by(user) %>% 
   summarise(ratio = sum(approved)/n()) %>% 
-  arrange(ratio)
+  arrange(ratio) %>% 
+  ungroup()
 
 usr_ratio %>% 
   ggplot() +
   geom_bar(aes(ratio)) +
-  labs(title = "User success submitting packages",
+  labs(title = "Authors success submitting packages",
        x = "Success ratio", y = "Users")
 ```
 
-Most of the users get their submission included at Bioconductor at the first try. Few need two submissions and some do not get their package included on Bioconductor.
+Most of the authors get their submission included at Bioconductor at the first try. Few need two submissions and some do not get their package included on Bioconductor. This can be because they withdraw the submission, or they decide to submit elsewhere or simply they do not go through the review.
 
 ```{r users}
 usr_success <- usr_diff_pkg %>% 
@@ -238,12 +237,73 @@ ggplot(usr_success) +
   theme(panel.grid.minor.x = element_blank())
 ```
 
-If users submit more packages they usually get them approved.
+If authors submit more packages they usually get them approved. Although we can also see some users that make several submissions. 
+
+```{r users_progression}
+# Date progression for users that submit more than once (the previous plot is the final snapshot)
+usr_diff_pkg2 <- rename(usr_diff_pkg, diff_pkg = n)
+
+usr_submission_pkg <- df %>% 
+  filter(!is.na(closed), n_packages == 1) %>% 
+  unnest(package) %>% 
+  filter(package != "yourpackagename") %>% 
+  group_by(user) %>% 
+  arrange(id) %>% 
+  mutate(n = n(),
+         user_submission = 1:n()) %>% 
+  filter(n != 1) %>% 
+  ungroup() %>% 
+  select(user, user_submission, created, package, Approved)
+
+usr_submission_pkg %>% 
+  group_by(user_submission, Approved) %>% 
+  count() %>% 
+  ungroup() %>% 
+  group_by(user_submission) %>% 
+  mutate(ratio = n/sum(n)) %>% 
+  ungroup() %>% 
+  filter(Approved == "Yes") %>% 
+  select(user_submission, ratio) %>% 
+  ggplot() + 
+  geom_path(aes(user_submission, ratio)) +
+  scale_x_continuous(breaks = 1:15) +
+  scale_y_continuous(limits = c(0, 1))  +
+  labs(title = "User submissions", y = "Approval ratio", 
+       x = "Number of submission") + 
+  theme(panel.grid.minor.x = element_blank())
+
+```
+
+Regardless if the package is submitted just once or several times. 
+More submissions do not make the package get accepted. Make sure that the submission is right on the first or second try. One big source of errors is not changing the template name of the repository for a link to your repository.
+
+```{r user_submission_progression}
+usr_submission_pkg %>% 
+  group_by(user) %>% 
+  mutate(max_submissions = max(user_submission)) %>% 
+  group_by(user_submission, max_submissions) %>% 
+  count(Approved) %>% 
+  mutate(ratio = n/sum(n),
+         ratio = if_else(Approved == "No", 1-ratio, ratio)) %>% 
+  filter(Approved == "Yes" | ratio == 0) %>% 
+  ggplot() +
+  geom_point(aes(max_submissions, user_submission, size = ratio, col = ratio)) +
+  scale_colour_binned(guide = guide_bins(show.limits = TRUE)) +
+  scale_size_binned(guide = guide_bins(show.limits = TRUE)) +
+  scale_x_continuous(breaks = 1:15) +
+  scale_y_continuous(breaks = 1:15) +
+  theme(panel.grid.minor.x = element_blank(),
+        panel.grid.minor.y = element_blank()) +
+  labs(title = "User submissions", y = "Submission", 
+       x = "Max number of submissions",
+       size = "Approval ratio", col = "Approval ratio")
+```
+
+We can see that some users that created 14 issues didn't have any package approved. 
 
 ```{r submissions}
 df %>% 
-  mutate(year = year(created)) %>% 
-  group_by(year) %>% 
+  group_by(year = year(created)) %>% 
   summarise(n = n(), ratio = sum(approved)/n) %>% 
   ungroup() %>% 
   ggplot() +
@@ -254,13 +314,16 @@ df %>%
   scale_fill_continuous(low = "white", high = "darkgreen", limits = c(0, 1))
 ```
 
-Around 50% of the ~400 packages submitted are approved. 
+Around 50% of the ~400 yearly packages submitted are approved. 
 
-So if you have a package that fits Bioconductor you'll get fairly well on the submission process. But I always recommend the lengthy pages for developers about the [submission process](https://bioconductor.org/developers/package-submission/) and the [packages guidelinines and requirements](https://bioconductor.org/developers/package-guidelines/). As my experience most of the reasons for not accepting a packages is not following the guidelines. 
+So if you have a package that fits Bioconductor you'll get fairly well on the submission process. 
+But I always recommend the lengthy pages for developers about the [submission process](https://bioconductor.org/developers/package-submission/) and the [packages guidelinines and requirements](https://bioconductor.org/developers/package-guidelines/). 
+Also make sure that you understand the expectations on what to fill of the template and what to expect after submitting: Don't post several issues for the same package if you haven't got any reply, but you can send a reminder on the issue and an email to the mailing list.
+Many times the reason for not accepting a package is because they do not follow the guidelines. 
 
 # Reviewers
 
-If your package fits Bioconductor you will get assigned a reviewer.
+If your package fits Bioconductor a bot will assign a reviewer to check the package.
 Many submissions (~33%) do not get a reviewer assigned and the package is not included on Bioconductor's repository, most (~90%) of the cases this happens the same day of the submission. 
 But once they get one reviewer ~82% of them are approved.
 
@@ -290,7 +353,7 @@ df %>%
   summarise(fr = sum(ratio))
 ```
 
-There are 9 usual reviewers:
+There core members of Bioconductor are 9 usual reviewers:
 
 ```{r reviewers_frequency}
 normal_reviews <- df %>% 
@@ -317,7 +380,7 @@ normal_reviews %>%
        title = "Share of issues reviewed")
 ```
 
-Probably you might get assigned the project leader Martin Morgan, but you can work with any other reviewer: `r paste(top_reviewers, collapse = ", ")`.
+Probably you might get assigned the project leader Martin Morgan, but you can work with any other reviewer, as the work load is quite distributed: `r paste(top_reviewers, collapse = ", ")`.
 
 ```{r reviewer_comments}
 normal_reviews %>% 
@@ -335,7 +398,7 @@ normal_reviews %>%
        title = "Reviewers approval Ratio")
 ```
 
-The reviews are fairly done by all the members. We can see that all of them approves more than 70% of the packages assigned. 
+The reviews are fairly done by all the members. We can see that all of them approves more than 75% of the packages assigned. 
 
 Most of the reviewers take few days until the issue is closed.
 
@@ -366,7 +429,7 @@ normal_reviews %>%
        subtitle = "A zoom")
 ```
 
-Usually more time reviewing do not mean closing the issue without being accepted. 
+Looking at these plots more time reviewing do not mean closing the issue without being accepted. 
 
 ```{r reviewer_time_diff}
 reviewer_time <- normal_reviews %>% 
@@ -381,31 +444,39 @@ global_medians_time <- normal_reviews %>%
   group_by(Approved) %>% 
   summarise(m = median(time_opened), me = mean(time_opened), n = n())
   
-normal_reviews %>% 
+reviewers_time_approved <- normal_reviews %>% 
   filter(Reviewer  %in% top_reviewers) %>% 
   group_by(Reviewer, Approved) %>% 
-  summarise(m = median(time_opened), me = mean(time_opened), n = n()) %>% 
+  summarise(m = median(time_opened), 
+            me = mean(time_opened), 
+            s = sd(time_opened),
+            n = n(),
+            sem = sqrt(pi/2)*s/sqrt(n)) %>% # https://stats.stackexchange.com/q/59838/105234
   ungroup() %>% 
-  mutate(Reviewer = fct_relevel(Reviewer, reviewer_time$Reviewer)) %>% 
+  mutate(Reviewer = fct_relevel(Reviewer, reviewer_time$Reviewer))
+
+reviewers_time_approved %>% 
   ggplot() +
   geom_hline(data = global_medians_time, 
              aes(yintercept = m, col = Approved), linetype = "dotted") +
   geom_point(data = reviewer_time, aes(fct_relevel(Reviewer, Reviewer), 
                                        m, size = n)) +
   geom_point(aes(Reviewer, m, col = Approved, shape = Approved, size = n)) +
+  geom_errorbar(aes(x = Reviewer, ymin = m-sem, ymax = m+sem, col = Approved), width = 0.2) +
   labs(x = element_blank(), y = "Days (median)", 
        title = "Reviewers speed to close", 
-       subtitle = "In black all reviews together",
+       subtitle = "In black all reviews together. Errorbars are the standard error of the median",
        size = "Reviews") +
-  scale_y_continuous(limits = c(0, 90), expand = expansion(add = c(1, 0)), 
-                     breaks = seq(from = 0, to = 90, by = 20)) +
+  scale_y_continuous(limits = c(0, 130), expand = expansion(add = c(1, 0)), 
+                     breaks = seq(from = 0, to = 130, by = 20)) +
   scale_shape_manual(values = c(15, 17)) +
-  scale_x_discrete(expand = expansion(add = 0.1)) +
-  theme_minimal()
+  scale_x_discrete(expand = expansion(add = 0.1))
 ```
 
-Correction! Some reviewers close later submissions that are not approved. They might wait longer to close the issues without approving them, or maybe they prefer to suggest modifications and a second submission of the same package. 
-Others close way faster than they accept the packages. In general you can expect more than 40 days review.
+Correction! If we divide by approved submissions, some reviewers close later submissions that are not approved. 
+They might wait longer to close the issues without approving them, or maybe they prefer to suggest modifications and a second submission of the same package. 
+Others close faster than they accept the packages but as you can see by the error bars it is quite variable. 
+In general you can expect more than 40 days review.
 
 They might accept faster packages but it is because they provide faster feedback with more comments?
 
@@ -434,35 +505,50 @@ global_medians_comments <- normal_reviews %>%
   filter(Reviewer  %in% top_reviewers) %>% 
   group_by(Approved) %>% 
   summarise(m = median(n_comments), me = mean(n_comments), n = n())
-
-normal_reviews %>% 
+reviewers_comment_approved <- normal_reviews %>% 
   filter(Reviewer  %in% top_reviewers) %>% 
   group_by(Reviewer, Approved) %>% 
-  summarise(m = median(n_comments), me = mean(n_comments), n = n()) %>% 
+  summarise(m = median(n_comments), 
+            me = mean(n_comments), 
+            s = sd(n_comments),
+            n = n(),
+            sem = sqrt(pi/2)*s/sqrt(n)) %>% 
   ungroup() %>% 
-  mutate(Reviewer = fct_relevel(Reviewer, reviewer_comments$Reviewer)) %>% 
+  mutate(Reviewer = fct_relevel(Reviewer, reviewer_comments$Reviewer))
+reviewers_comment_approved %>% 
   ggplot() +
   geom_hline(data = global_medians_comments, 
              aes(yintercept = m, col = Approved), linetype = "dotted") +
   geom_point(data = reviewer_comments, aes(fct_relevel(Reviewer, Reviewer), 
                                        m, size = n)) +
   geom_point(aes(Reviewer, m, col = Approved, fill = Approved, shape = Approved, size = n)) +
+  geom_errorbar(aes(x = Reviewer, ymin = m-sem, ymax = m+sem, col = Approved), width = 0.2) +
   labs(x = element_blank(), y = "Comments (median)", 
-       title = "Comments on the issues", subtitle = "In black all reviews together",
+       title = "Comments on the issues", 
+       subtitle = "In black all reviews together. Errorbars indicate standard error of the median. ",
          size = "Reviews") +
-  scale_y_continuous(limits = c(0, 60), expand = expansion(add = c(1, 0)), 
+  scale_y_continuous(limits = c(0, 70), expand = expansion(add = c(1, 0)), 
                      breaks = seq(from = 0, to = 70, by = 20)) +
   scale_shape_manual(values = c(15, 17)) + 
-  theme_minimal() +
   scale_x_discrete(expand = expansion(add = 0.1))
 ```
 
-Here almost all the reviewers have more comments on approved packages. Even if this is due to automatic messages it seems like responding and giving feedback to the reviewers as the authors address the points provided by the reviewer increases acceptance. Usually more than 20 comments on the issue will be enough but the more feedback, the better.
+Here almost all the reviewers have more comments on approved packages. 
+Also, there is less variability on the number of comments than on the time they are open.
+Answering doubts and giving feedback to the reviewers and contributors increases acceptance, even if this comment increase is due to automatic messages.
+
+Usually more than 20 comments on the issue will be enough but the more feedback, the better.
 
 ```{r acceptance_comments, include = FALSE}
 normal_reviews %>%  
   group_by(Approved) %>% 
-  summarise(median = median(n_comments), mean = mean(n_comments))
+  summarise(median = median(n_comments), mean = mean(n_comments),
+            s = sd(n_comments),
+            n = n(),
+            sem = sqrt(pi/2)*s/sqrt(n)) %>% 
+  ungroup() %>% 
+  select(Approved, median, sem) %>% 
+  knitr::kable(col.names = c("Approved", "Median comments", "Standard error of the median"), caption = "", align = "c")
 ```
 
 Taking both information together we can see the pattern for all the reviewers:
@@ -482,9 +568,43 @@ normal_reviews %>%
 
 Most of the not approved issues have less comments and usually remain less days open.
 
+
+```{r mix_reviews, eval=FALSE, include=FALSE}
+mix_reviews <- reviewers_time_approved %>% 
+  rename(median_time = m, sem_time = sem, sd_time = s) %>% 
+  select(-me) %>% 
+  inner_join(reviewers_comment_approved %>% rename(median_comments = m, sem_comments = sem, sd_comments = s))
+
+mix_reviews %>% 
+  group_by(Reviewer) %>% 
+  summarise(
+    time_diff = max(median_time)-min(median_time),
+    comments_diff = max(median_comments)-min(median_comments)) %>% 
+  arrange(time_diff, comments_diff)
+
+mix_reviews %>% 
+  ggplot() +
+  geom_point(aes(median_time, median_comments, col = Reviewer, shape = Approved, size = n)) +
+  geom_path(aes(median_time, median_comments, col = Reviewer)) +
+  # geom_errorbar(aes(y = median_comments, 
+  #                   xmin = median_time-sem_time, 
+  #                   xmax = median_time+sem_time, col = Reviewer), width = 1) +
+  # geom_errorbar(aes(x = median_time, 
+  #                   ymin = median_comments-sem_comments, 
+  #                   ymax = median_comments+sem_comments, col = Reviewer), width = 1)
+  labs(y = "Comments (median)", x = "Days (median)", 
+       title = "Reviewers differences")  +
+  scale_x_continuous(limits = c(0, 90), expand = expansion(add = c(1, 0)), 
+                     breaks = seq(from = 0, to = 130, by = 20)) +
+  scale_y_continuous(limits = c(1, 50))
+```
+
+
 ## Rushing?
 
-Most of the issues are handled quite fast, and it seems like there isn't a rush to publish:
+Reviewers take their time to accept or reject the packages. 
+But do contributors have some rush to get them accepted at the end of an academic year, before a Bioconductor release or before a publication?
+While I cannot check if there is an article accompanying the package, I can check other time trends.
 
 ```{r submission_rate}
 df %>% 
@@ -501,10 +621,9 @@ df %>%
 ```
 
 So most days there is a new package submission and on the best day there are 8. 
-There doesn't seem to be a seasonality neither. 
+There doesn't seem to be a seasonality towards the end of the course, maybe because the contributors are international and do not share the same schedule or holidays.  
 
-
-Using the dates of new [Bioconductor release](https://bioconductor.org/about/release-announcements/) we can check if there is some rush to submit packages closer to the new release:
+Using the dates of new [Bioconductor releases](https://bioconductor.org/about/release-announcements/) we can check if there is some rush to submit packages closer to the new release:
 
 ```{r margin_submission}
 release_attempt <- function(x, release = releases) {
@@ -536,7 +655,7 @@ df2 %>%
 ```
 
 The vertical line indicates the usual time the submissions are no longer accepted (around 30 days before the release day). 
-So it seems like people submit close to the date but much consistently around the period as previously seen. 
+So it seems like people submit close to the date but much consistently around the year as previously seen. 
 
 ```{r margin_submission_accepted, include=FALSE}
 df2 %>% 
@@ -584,7 +703,8 @@ df2 %>%
        subtitle = "In red the worse time to submit. Each horitzonal bar indicates a missed release")
 ```
 
-Very few packages went to the worst scenario: submitted right before a deadline and then it wasn't accepted until many releases later. However there is a curious effect the closer the submission is to the release day the accepted packages have shorter (in time) reviews
+Very few packages went to the worst scenario: submitted right before a deadline and then it wasn't accepted until many releases later. 
+However there is a curious effect, the closer the submission is to the release day, the shorter are the reviews of the accepted packages.
 
 ```{r open_releases}
 df2 %>% 
@@ -595,16 +715,15 @@ df2 %>%
   geom_text(data = releases, aes(x = date, y = rep(600, 10),
            label = release), col = "darkgreen") + # Release dates
   scale_y_continuous(expand = expansion(add = 6)) +
-  scale_color_viridis_d() +
   scale_data +
   labs(x = element_blank(), y = "Days open", 
        title = "Time open") 
 ```
 
-There doesn't seem to be a rush toward the release date, although several packages open the issue when there is less than 30 days for the release (the usual time that the submission queue is on hold)
-  
+Here we can observe this effect on the latest release.  
 
-I expected to see longer review time for the issues submitted closer to the release but we don't see it. However we see that less time is spend on the submissions right after the previous release. 
+I expected to see longer review time for the issues submitted closer to the release but we don't see it. 
+This indicates a sustained effort to review the submissions.  
 
 ## Pitfalls
 
@@ -623,10 +742,12 @@ df2 %>%
   geom_col(aes(fct_relevel(same_submitter, c("Yes", "No")), n, fill = Approved)) +
   geom_text(aes(fct_relevel(same_submitter, c("Yes", "No")), total*1.05, label = pos)) +
   labs(x = "Repository belongs to submitter", y = "Submissions",
-       title = "Success if repository belongs to the submitter")
+       title = "Success if repository belongs to the submitter",
+       subtitle = "The fraction indicates: Not approved/approved")
 ```
 
-When the user that submits the package is the owner of the repository then it is more likely that the package is accepted.
+When the user that submits the package is the owner of the repository then it is more likely that the package is accepted. 
+Probably because it is easier to manage the version control system that way.
 
 ```{r time_rejected}
 df2 %>% 
@@ -634,10 +755,12 @@ df2 %>%
   ggplot() + 
   geom_histogram(aes(time_opened), bins = 50) +
   labs(x = "Days open", y = "Issues", 
-       title = "Most not approved packages get closed the same day") 
+       title = "Most not approved packages are closed the same day") 
 ```
 
-Most packages are closed fast but some review are longer than a year! Those closed fast are automatically done by the bot due to several reasons.
+Most packages are closed fast but some review take longer than a year! 
+Those closed fast are automatically done by the bot due to several reasons. 
+Among these reasons:
 
 ```{r repo_links}
 rejected <- df2 %>% 
@@ -657,7 +780,8 @@ rejected %>%
                align = "c")
 ```
 
-It is equally probable to not provide a link or to provide two. However many times the template is used as is and the link to the name of the repository remains "yourpackagename". 
+It is equally probable to not provide a link or to provide two. 
+However many times the template is used as is and the link to the name of the repository remains "yourpackagename", which is detected by the bot and closed. 
 
 ```{r comments}
 rejected %>% 
@@ -667,8 +791,8 @@ rejected %>%
                align = "c")
 ```
 
-Most of the rejected submissions is done automatically by the "[bioc-issue-bot](https://github.com/bioc-issue-bot)", with a brief message.
-
+Most of the rejected submissions is done automatically by the "[bioc-issue-bot](https://github.com/bioc-issue-bot)", with a brief message. 
+But in general few messages are written before closing the submissions.
 
 ```{r ending}
 rejected %>% 
@@ -683,8 +807,7 @@ rejected %>%
                align = "c")
 ```
 
-There are some other time when the user provides a link to a compressed file, or it ends incorrectly formatted.
-
+Sometimes the user provides a link to a compressed file, or it ends incorrectly with .git as when the url need to clone a repository. 
 
 ```{r labels}
 rejected %>% 
@@ -694,6 +817,7 @@ rejected %>%
                align = "c")
 ```
 
+The bot automatically labels the issues to provide information about the build and check of the package and about the stage of the project.
 Usually this means they do not get assigned a reviewer or built on the Bioconductor server.
 
 ```{r upset}
@@ -708,18 +832,18 @@ ups <- ups[, -1]
 ups <- as.data.frame(ups)
 colnames(ups) <- make.names(colnames(ups))
 library("UpSetR")
-upset(ups, sets = colnames(ups), order.by = "freq", decreasing = TRUE, 
+upset(ups, order.by = "freq", decreasing = TRUE, 
       nintersects = 10)
 ```
 
-Looking at which labels go together, if the review starts the next halting point is an error on the build process.
+Looking at which labels go together, if the review starts the next halting point is an error on the build process, probably the issue is not fixed and the submission not approved. 
 
 ## Conclusion
 
 Most of the packages submitted to Bioconductor are accepted. 
-Those that are not accepted are usually due to submission formatting issues and catch up automatically by the bioc-issue-bot. 
-Reviewers provide a lot of feedback that if followed leads to acceptance of the package.
-Some packages are submitted right before a release and miss it, while others undergo a long review and miss several releases. 
+Those that are not accepted are usually due to submission formatting issues detected automatically by the bioc-issue-bot. 
+Reviewers provide a lot of feedback that if followed leads to acceptance of the package, when this feedback is ignored it leads to a rejection of the submission. 
+Some packages are submitted right before a release and miss it, while others undergo a long review and miss several releases, but if you want to have your package included on the next release, aim to submit 40 days before the release date (usually on the end of April and October). 
 
 ### Reproducibility
 
