@@ -1,26 +1,22 @@
 ---
 title: Bioconductor submissions
 author: Lluís Revilla Sancho
-date: 2020-06-15
-slug: bioconductor-submissions
+date: '2020-06-15'
 categories:
-  - r
   - Bioconductor
+  - r
 tags:
-  - r
   - Bioconductor
-authors: []
-description: ''
+  - r
+slug: bioconductor-submissions
 editor_options:
   chunk_output_type: console
-featured: no
-fig_width: 9 
-fig_height: 6 
+featured: yes
 image:
   caption: ''
   focal_point: ''
-subtitle: ''
-summary: 'Exploring the submission process to Bioconductor. What happens, how long does it take, what are the common problems and solutions for new contributors.'
+summary: Exploring the submission process to Bioconductor. What happens, how long
+  does it take, what are the common problems and solutions for new contributors.
 ---
 
 ```{r setup, include = FALSE}
@@ -37,7 +33,7 @@ library("gh")
 PR <- gh("GET /search/issues?q=repo:Bioconductor/Contributions+is:issue") # Copied from https://developer.github.com/v3/pulls/
 ```
 
-```{r get_issues}
+```{r get_issues, cache = TRUE}
 page <- function(query, x){paste0(query, "&page=", x)}
 get_issues <- function() {
   query <- "GET /repos/Bioconductor/Contributions/issues?state=all&per_page=100"
@@ -167,7 +163,7 @@ df %>%
   geom_linerange(aes(y = id, xmin = created, xmax = closed), col = "grey") + 
   geom_point(aes(y = id, created), col = "black", size = 1) + 
   geom_point(aes(y = id, closed, col = Approved, shape = Approved), size = 1) + 
-  geom_vline(xintercept = releases$date, col = "darkgreen") + # Releases dates
+  geom_vline(xintercept = releases$date, col = "#1a81c2") + # Releases dates
   geom_text(data = releases, aes(x = date, y = c(rep(1200, 5), rep(300, 5)),
            label = release)) + # Release dates
 
@@ -198,7 +194,7 @@ usr_diff_pkg <- df %>%
 usr_diff_pkg %>% 
   count(n) %>% 
   ggplot() +
-  geom_col(aes(n, nn)) +
+  geom_col(aes(n, nn), col = "#87b13f", fill = "#1a81c2") +
   labs(y = "Contributors", x = "Packages", 
        title = "Number of packages submitted by a contributor") +
   scale_y_continuous(expand = expansion(add = c(0, 10))) +
@@ -216,9 +212,12 @@ usr_ratio <- df %>%
   arrange(ratio) %>% 
   ungroup()
 
+col_bioc <- scale_color_gradient(low = "#87b13f", high = "#1a81c2")
+fill_bioc <- scale_color_gradient(low = "#87b13f", high = "#1a81c2")
 usr_ratio %>% 
   ggplot() +
-  geom_bar(aes(ratio)) +
+  geom_bar(aes(ratio, fill = ratio)) +
+  fill_bioc +
   labs(title = "Authors success submitting packages",
        x = "Success ratio", y = "Users")
 ```
@@ -230,9 +229,11 @@ usr_success <- usr_diff_pkg %>%
   inner_join(usr_ratio)
 
 ggplot(usr_success) +
-  geom_count(aes(n, ratio)) +
+  geom_count(aes(n, ratio, col = ratio)) +
+  col_bioc +
   labs(x = "Packages", y = "Approval success ratio", size = "Users",
-       title = "Submitting more packages increaes approval rate") +
+       title = "Submitting more packages increaes approval rate",
+       col = "Success ratio") +
   scale_x_continuous(expand = expansion(add = 0.25), breaks = 1:14) +
   theme(panel.grid.minor.x = element_blank())
 ```
@@ -265,11 +266,13 @@ usr_submission_pkg %>%
   filter(Approved == "Yes") %>% 
   select(user_submission, ratio) %>% 
   ggplot() + 
-  geom_path(aes(user_submission, ratio)) +
+  geom_path(aes(user_submission, ratio, col = ratio)) +
+  col_bioc +
   scale_x_continuous(breaks = 1:15) +
   scale_y_continuous(limits = c(0, 1))  +
   labs(title = "User submissions", y = "Approval ratio", 
-       x = "Number of submission") + 
+       x = "Number of submission") +
+  guides(col = FALSE) + 
   theme(panel.grid.minor.x = element_blank())
 
 ```
@@ -288,7 +291,8 @@ usr_submission_pkg %>%
   filter(Approved == "Yes" | ratio == 0) %>% 
   ggplot() +
   geom_point(aes(max_submissions, user_submission, size = ratio, col = ratio)) +
-  scale_colour_binned(guide = guide_bins(show.limits = TRUE)) +
+  scale_colour_binned(low = "#87b13f", high = "#1a81c2", 
+                      guide = guide_bins(show.limits = TRUE)) +
   scale_size_binned(guide = guide_bins(show.limits = TRUE)) +
   scale_x_continuous(breaks = 1:15) +
   scale_y_continuous(breaks = 1:15) +
@@ -311,7 +315,7 @@ df %>%
   labs(title = "Yearly submissions and approval", 
        y = "Issues", x = element_blank(), 
        fill = "Approval ratio") +
-  scale_fill_continuous(low = "white", high = "darkgreen", limits = c(0, 1))
+  scale_fill_continuous(low = "#87b13f", high = "#1a81c2", limits = c(0, 1))
 ```
 
 Around 50% of the ~400 yearly packages submitted are approved. 
@@ -548,7 +552,9 @@ normal_reviews %>%
             sem = sqrt(pi/2)*s/sqrt(n)) %>% 
   ungroup() %>% 
   select(Approved, median, sem) %>% 
-  knitr::kable(col.names = c("Approved", "Median comments", "Standard error of the median"), caption = "", align = "c")
+  knitr::kable(col.names = c("Approved", "Median comments", "Standard error of the median"),
+               caption = "Reviews comments", 
+               align = "c")
 ```
 
 Taking both information together we can see the pattern for all the reviewers:
@@ -559,11 +565,11 @@ normal_reviews %>%
   ggplot() +
   geom_point(aes(time_opened, n_comments, col = Approved, shape = Approved), 
              size = 0.75) +
-  scale_x_continuous(breaks = breaks) +
+  scale_x_continuous(breaks = breaks, guide = guide_axis(check.overlap = TRUE)) +
   scale_y_continuous(breaks = breaks) +
   facet_wrap(~Reviewer, scales = "free") +
   labs(x = "Days opened", y = "Comments", 
-       main = "Comments", title = "Comments and open days per reviewer")
+       title = "Comments and open days per reviewer")
 ```
 
 Most of the not approved issues have less comments and usually remain less days open.
@@ -614,7 +620,7 @@ df %>%
   summarise(n = median(n())) %>% 
   ungroup() %>% 
   ggplot() + 
-  geom_point(aes(md, n)) + 
+  geom_point(aes(md, n), col = "#1a81c2") + 
   labs(title = "Median daily submissions", 
        x = "Day of year", y = "Issues opened") +
   scale_x_continuous(expand = expansion(add = 5))
@@ -647,11 +653,14 @@ df2 <- df %>%
          devel = release == "3.11" & approved & margin < 30)
 df2 %>% 
   ggplot() +
-  geom_histogram(aes(margin), bins = 40) +
+  geom_histogram(aes(margin, fill = margin, col = margin), bins = 40) +
   geom_vline(xintercept = 30) +
+  fill_bioc +
+  col_bioc +
   scale_y_continuous(expand = expansion(add = c(0, 5))) +
   scale_x_continuous(expand = expansion())  + 
-  labs(title = "Days till next release", y = "Issues", x = "Days")
+  labs(title = "Days till next release", y = "Issues", x = "Days") +
+  guides(fill = FALSE, col = FALSE )
 ```
 
 The vertical line indicates the usual time the submissions are no longer accepted (around 30 days before the release day). 
@@ -713,7 +722,7 @@ df2 %>%
   geom_vline(data = releases, aes(xintercept = date), alpha = 0.5, 
              col = "darkgreen") + # Release dates
   geom_text(data = releases, aes(x = date, y = rep(600, 10),
-           label = release), col = "darkgreen") + # Release dates
+           label = release), col = "#1a81c2") + # Release dates
   scale_y_continuous(expand = expansion(add = 6)) +
   scale_data +
   labs(x = element_blank(), y = "Days open", 
@@ -754,6 +763,7 @@ df2 %>%
   filter(Approved == "No") %>% 
   ggplot() + 
   geom_histogram(aes(time_opened), bins = 50) +
+  fill_bioc +
   labs(x = "Days open", y = "Issues", 
        title = "Most not approved packages are closed the same day") 
 ```
@@ -762,7 +772,7 @@ Most packages are closed fast but some review take longer than a year!
 Those closed fast are automatically done by the bot due to several reasons. 
 Among these reasons:
 
-```{r repo_links}
+```{r repolink}
 rejected <- df2 %>% 
   filter(Approved == "No")
 rejected %>% 
@@ -771,14 +781,18 @@ rejected %>%
   knitr::kable(col.names = c("Number of packages", "Times"), 
                caption = "Issues with more than one package",
                align = "c")
+```
+
+```{r repolinks}
 rejected %>%
   filter(n_packages == 1) %>% 
   count(package, sort = TRUE) %>% 
   head() %>% 
   knitr::kable(col.names = c("Name", "Packages"), 
-               caption = "Issues with more than one package",
+               caption = "Multiple submission for the same package",
                align = "c")
 ```
+
 
 It is equally probable to not provide a link or to provide two. 
 However many times the template is used as is and the link to the name of the repository remains "yourpackagename", which is detected by the bot and closed. 
@@ -786,8 +800,9 @@ However many times the template is used as is and the link to the name of the re
 ```{r comments}
 rejected %>% 
   count(n_comments, sort = TRUE) %>% 
-  head() %>% 
-  knitr::kable(col.names = c("Comments", "Issues"), 
+  head(10) %>% 
+  knitr::kable(col.names = c("Comments", "Submissions"), 
+               caption = "Comments on not approved submissions", 
                align = "c")
 ```
 
