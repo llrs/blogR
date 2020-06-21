@@ -1,0 +1,199 @@
+---
+title: Social activities on GitHub
+author: Lluís Revilla Sancho
+date: '2020-06-21'
+slug: social-github
+categories:
+  - r
+tags:
+  - GitHub
+  - r
+  - API
+authors: []
+description: ''
+editor_options:
+  chunk_output_type: console
+featured: no
+image:
+  caption: ''
+  focal_point: ''
+subtitle: ''
+summary: 'Presenting the socialGH package to retrieve information from GitHub.'
+---
+
+
+
+<p>On my <a href="http://llrs.dev/post/2020/06/bioconductor-submission.html">last post</a> I explored the Bioconductor submissions using <a href="https://cran.r-project.org/package=gh"><code>{gh}</code></a> to retrieve some data.
+After some feedback from the Bioconductor community I realized I should download other kind of data to improve my analysis on the reviews.</p>
+<p>To make this I developed a new package to retrieve information from GitHub.</p>
+<div id="socialgh" class="section level2">
+<h2>socialGH</h2>
+<p>This package based on <a href="https://cran.r-project.org/package=gh"><code>{gh}</code></a>, allows to retrieve,
+comments, timeline, pull requests, issues, events, labels from different endpoints of the Github v3 API.</p>
+<pre class="r"><code>library(&quot;socialGH&quot;)
+library(&quot;tidyverse&quot;)
+## ── Attaching packages ─────────────────────────────────────────────────────────────── tidyverse 1.3.0 ──
+## ✓ ggplot2 3.3.1     ✓ purrr   0.3.4
+## ✓ tibble  3.0.1     ✓ dplyr   1.0.0
+## ✓ tidyr   1.1.0     ✓ stringr 1.4.0
+## ✓ readr   1.3.1     ✓ forcats 0.5.0
+## ── Conflicts ────────────────────────────────────────────────────────────────── tidyverse_conflicts() ──
+## x dplyr::filter() masks stats::filter()
+## x dplyr::lag()    masks stats::lag()
+issues_blog &lt;- get_issues(&quot;llrs/blogR&quot;)</code></pre>
+<p>With the issues we can see the labels, how many coments and many information:</p>
+<pre class="r"><code>dim(issues_blog)
+## [1] 33 15
+colnames(issues_blog)
+##  [1] &quot;assignees&quot;   &quot;assignee&quot;    &quot;label&quot;       &quot;state&quot;       &quot;locked&quot;     
+##  [6] &quot;milestone&quot;   &quot;n_comments&quot;  &quot;title&quot;       &quot;created&quot;     &quot;updated&quot;    
+## [11] &quot;association&quot; &quot;text&quot;        &quot;id&quot;          &quot;closer&quot;      &quot;poster&quot;
+# Labels used
+issues_blog %&gt;% 
+  pull(label) %&gt;% 
+  unlist(FALSE, FALSE) %&gt;% 
+  table()
+## .
+##  b101nfo.blogspot.com          Bioconductor                  CRAN 
+##                     1                     3                     2 
+##           help wanted               invalid               package 
+##                     1                     1                     1 
+##                  Post todo :spiral_notepad: 
+##                    23                     2
+count(issues_blog, state)
+##    state  n
+## 1 closed 18
+## 2   open 15
+count(issues_blog, n_comments)
+##   n_comments  n
+## 1          0 20
+## 2          1  8
+## 3          2  2
+## 4          3  3</code></pre>
+<p>However, it doesn’t retrieve each comment of an issue.</p>
+<pre class="r"><code># Issues with comments
+issues_blog %&gt;% 
+  filter(n_comments &gt; 0) %&gt;% 
+  pull(id)
+##  [1] 34 28 25 23 16 10  9  8  6  5  4  3  2
+
+comments &lt;- get_comments(&quot;llrs/blogR&quot;)
+dim(comments)
+## [1] 21  6
+colnames(comments)
+## [1] &quot;text&quot;        &quot;created&quot;     &quot;updated&quot;     &quot;association&quot; &quot;id&quot;         
+## [6] &quot;commenter&quot;
+count(comments, association)
+##   association  n
+## 1       OWNER 21</code></pre>
+<p>We can see that I was the only one writing on the issues and we already retrieved the text of the comments.</p>
+<p>We can also look for events on issues:</p>
+<pre class="r"><code>events &lt;- get_events(&quot;llrs/blogR&quot;, 23)
+count(events, event)
+##     event n
+## 1 labeled 1
+## 2  closed 1</code></pre>
+<p>On all the functions you can provide a number of the issue and you’ll retrieve the information just for that issue. If you don’t provide an issue it will search the whole repository:</p>
+<pre class="r"><code>events &lt;- get_events(&quot;llrs/blogR&quot;)
+count(events, event)
+##        event  n
+## 1   assigned  5
+## 2    labeled 35
+## 3     closed 18
+## 4 subscribed  2
+## 5  mentioned  2
+## 6  unlabeled  1
+## 7    renamed  3</code></pre>
+</div>
+<div id="learning" class="section level2">
+<h2>Learning</h2>
+<p>Developing this package I learned more about the <code>{gh}</code> package (In the previous blog I wrote manually the calls to different pages…). And learned that the different accept headers have influenced on the total information returned (and that you cannot pass several accept headers at the same time).</p>
+<div id="reproducibility" class="section level3">
+<h3>Reproducibility</h3>
+<details>
+<pre><code>## ─ Session info ───────────────────────────────────────────────────────────────────────────────────────────────────────
+##  setting  value                       
+##  version  R version 3.6.3 (2020-02-29)
+##  os       Ubuntu 20.04 LTS            
+##  system   x86_64, linux-gnu           
+##  ui       X11                         
+##  language (EN)                        
+##  collate  en_US.UTF-8                 
+##  ctype    en_US.UTF-8                 
+##  tz       Europe/Madrid               
+##  date     2020-06-21                  
+## 
+## ─ Packages ───────────────────────────────────────────────────────────────────────────────────────────────────────────
+##  package     * version    date       lib source        
+##  assertthat    0.2.1      2019-03-21 [1] CRAN (R 3.6.0)
+##  backports     1.1.8      2020-06-17 [1] CRAN (R 3.6.3)
+##  blob          1.2.1      2020-01-20 [1] CRAN (R 3.6.1)
+##  blogdown      0.19       2020-05-22 [1] CRAN (R 3.6.3)
+##  bookdown      0.19       2020-05-15 [1] CRAN (R 3.6.3)
+##  broom         0.5.6      2020-04-20 [1] CRAN (R 3.6.1)
+##  cellranger    1.1.0      2016-07-27 [1] CRAN (R 3.6.0)
+##  cli           2.0.2      2020-02-28 [1] CRAN (R 3.6.1)
+##  colorspace    1.4-1      2019-03-18 [1] CRAN (R 3.6.0)
+##  crayon        1.3.4      2017-09-16 [1] CRAN (R 3.6.0)
+##  curl          4.3        2019-12-02 [1] CRAN (R 3.6.1)
+##  DBI           1.1.0      2019-12-15 [1] CRAN (R 3.6.1)
+##  dbplyr        1.4.4      2020-05-27 [1] CRAN (R 3.6.3)
+##  digest        0.6.25     2020-02-23 [1] CRAN (R 3.6.1)
+##  dplyr       * 1.0.0      2020-05-29 [1] CRAN (R 3.6.3)
+##  ellipsis      0.3.1      2020-05-15 [1] CRAN (R 3.6.3)
+##  evaluate      0.14       2019-05-28 [1] CRAN (R 3.6.0)
+##  fansi         0.4.1      2020-01-08 [1] CRAN (R 3.6.1)
+##  forcats     * 0.5.0      2020-03-01 [1] CRAN (R 3.6.1)
+##  fs            1.4.1      2020-04-04 [1] CRAN (R 3.6.1)
+##  generics      0.0.2      2018-11-29 [1] CRAN (R 3.6.0)
+##  ggplot2     * 3.3.1      2020-05-28 [1] CRAN (R 3.6.3)
+##  gh            1.1.0      2020-01-24 [1] CRAN (R 3.6.1)
+##  glue          1.4.1      2020-05-13 [1] CRAN (R 3.6.3)
+##  gtable        0.3.0      2019-03-25 [1] CRAN (R 3.6.0)
+##  haven         2.3.1      2020-06-01 [1] CRAN (R 3.6.3)
+##  hms           0.5.3      2020-01-08 [1] CRAN (R 3.6.1)
+##  htmltools     0.5.0      2020-06-16 [1] CRAN (R 3.6.3)
+##  httr          1.4.1      2019-08-05 [1] CRAN (R 3.6.0)
+##  jsonlite      1.6.1      2020-02-02 [1] CRAN (R 3.6.1)
+##  knitr         1.28       2020-02-06 [1] CRAN (R 3.6.1)
+##  lattice       0.20-41    2020-04-02 [1] CRAN (R 3.6.1)
+##  lifecycle     0.2.0      2020-03-06 [1] CRAN (R 3.6.1)
+##  lubridate     1.7.9      2020-06-08 [1] CRAN (R 3.6.3)
+##  magrittr      1.5        2014-11-22 [1] CRAN (R 3.6.0)
+##  modelr        0.1.8      2020-05-19 [1] CRAN (R 3.6.3)
+##  munsell       0.5.0      2018-06-12 [1] CRAN (R 3.6.0)
+##  nlme          3.1-148    2020-05-24 [1] CRAN (R 3.6.3)
+##  pillar        1.4.4      2020-05-05 [1] CRAN (R 3.6.3)
+##  pkgconfig     2.0.3      2019-09-22 [1] CRAN (R 3.6.0)
+##  purrr       * 0.3.4      2020-04-17 [1] CRAN (R 3.6.1)
+##  R6            2.4.1      2019-11-12 [1] CRAN (R 3.6.1)
+##  Rcpp          1.0.4.6    2020-04-09 [1] CRAN (R 3.6.3)
+##  readr       * 1.3.1      2018-12-21 [1] CRAN (R 3.6.0)
+##  readxl        1.3.1      2019-03-13 [1] CRAN (R 3.6.0)
+##  reprex        0.3.0      2019-05-16 [1] CRAN (R 3.6.0)
+##  rlang         0.4.6      2020-05-02 [1] CRAN (R 3.6.3)
+##  rmarkdown     2.2        2020-05-31 [1] CRAN (R 3.6.3)
+##  rstudioapi    0.11       2020-02-07 [1] CRAN (R 3.6.1)
+##  rvest         0.3.5      2019-11-08 [1] CRAN (R 3.6.1)
+##  scales        1.1.1      2020-05-11 [1] CRAN (R 3.6.3)
+##  sessioninfo   1.1.1      2018-11-05 [1] CRAN (R 3.6.0)
+##  socialGH    * 0.0.0.9000 2020-06-21 [1] local         
+##  stringi       1.4.6      2020-02-17 [1] CRAN (R 3.6.3)
+##  stringr     * 1.4.0      2019-02-10 [1] CRAN (R 3.6.0)
+##  tibble      * 3.0.1      2020-04-20 [1] CRAN (R 3.6.1)
+##  tidyr       * 1.1.0      2020-05-20 [1] CRAN (R 3.6.3)
+##  tidyselect    1.1.0      2020-05-11 [1] CRAN (R 3.6.3)
+##  tidyverse   * 1.3.0      2019-11-21 [1] CRAN (R 3.6.1)
+##  vctrs         0.3.1      2020-06-05 [1] CRAN (R 3.6.3)
+##  withr         2.2.0      2020-04-20 [1] CRAN (R 3.6.1)
+##  xfun          0.14       2020-05-20 [1] CRAN (R 3.6.3)
+##  xml2          1.3.2      2020-04-23 [1] CRAN (R 3.6.1)
+##  yaml          2.2.1      2020-02-01 [1] CRAN (R 3.6.1)
+## 
+## [1] /home/lluis/R/x86_64-pc-linux-gnu-library/3.6
+## [2] /usr/local/lib/R/site-library
+## [3] /usr/lib/R/site-library
+## [4] /usr/lib/R/library</code></pre>
+</details>
+</div>
+</div>

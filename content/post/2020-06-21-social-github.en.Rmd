@@ -1,0 +1,99 @@
+---
+title: Social activities on GitHub
+author: Lluís Revilla Sancho
+date: '2020-06-21'
+slug: social-github
+categories:
+  - r
+tags:
+  - GitHub
+  - r
+  - API
+authors: []
+description: ''
+editor_options:
+  chunk_output_type: console
+featured: no
+image:
+  caption: ''
+  focal_point: ''
+subtitle: ''
+summary: 'Presenting the socialGH package to retrieve information from GitHub.'
+---
+
+```{r setup, include = FALSE}
+knitr::opts_chunk$set(collapse = TRUE)
+```
+
+On my [last post](http://llrs.dev/post/2020/06/bioconductor-submission.html) I explored the Bioconductor submissions using  [`{gh}`](https://cran.r-project.org/package=gh) to retrieve some data.
+After some feedback from the Bioconductor community I realized I should download other kind of data to improve my analysis on the reviews. 
+
+To make this I developed a new package to retrieve information from GitHub. 
+
+## socialGH
+
+This package based on [`{gh}`](https://cran.r-project.org/package=gh), allows to retrieve,
+comments, timeline, pull requests, issues, events, labels from different endpoints of the Github v3 API.
+
+```{r load, warning=FALSE}
+library("socialGH")
+library("tidyverse")
+issues_blog <- get_issues("llrs/blogR")
+```
+
+With the issues we can see the labels, how many coments and many information:
+
+```{r issues, warning=FALSE}
+dim(issues_blog)
+colnames(issues_blog)
+# Labels used
+issues_blog %>% 
+  pull(label) %>% 
+  unlist(FALSE, FALSE) %>% 
+  table()
+count(issues_blog, state)
+count(issues_blog, n_comments)
+```
+
+However, it doesn't retrieve each comment of an issue. 
+
+```{r comments}
+# Issues with comments
+issues_blog %>% 
+  filter(n_comments > 0) %>% 
+  pull(id)
+
+comments <- get_comments("llrs/blogR")
+dim(comments)
+colnames(comments)
+count(comments, association)
+```
+
+We can see that I was the only one writing on the issues and we already retrieved the text of the comments.
+
+We can also look for events on issues:
+```{r events}
+events <- get_events("llrs/blogR", 23)
+count(events, event)
+```
+
+On all the functions you can provide a number of the issue and you'll retrieve the information just for that issue. If you don't provide an issue it will search the whole repository:
+
+```{r events2}
+events <- get_events("llrs/blogR")
+count(events, event)
+```
+
+## Learning
+
+Developing this package I learned more about the `{gh}` package (In the previous blog I wrote manually the calls to different pages...). And learned that the different accept headers have influenced on the total information returned (and that you cannot pass several accept headers at the same time).  
+
+### Reproducibility
+
+<details>
+```{r reproducibility, echo = FALSE}
+## Reproducibility info
+options(width = 120)
+sessioninfo::session_info()
+```
+</details>
