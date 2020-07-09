@@ -1,0 +1,44 @@
+---
+title: 'Bioconductor submissions: reviews'
+author: Lluís Revilla Sancho
+date: '2020-07-09'
+slug: bioconductor-submissions-reviews
+categories:
+  - Bioconductor
+  - r
+tags:
+  - Bioconductor
+  - r
+authors: []
+description: ''
+editor_options:
+  chunk_output_type: console
+featured: no
+draft: true
+image:
+  caption: ''
+  focal_point: ''
+subtitle: ''
+summary: ''
+---
+
+```{r setup, include = FALSE}
+knitr::opts_chunk$set(collapse = TRUE)
+```
+
+First post  is on [Bioconductor submissions](https://llrs.dev/2020/06/bioconductor-submissions/) raised some questions comments but at the time I didn't have a good way to answer them:
+
+- issues get closed after they got assigned a reviewer and before the reviewer actually gets a chance to start the review.
+- issues assigned to multiple people or reviews that switched reviewers
+
+The common problem is that I didn't have the information available. To retrieve the information from github I developed a [new package](https://llrs.dev/2020/06/social-github/) which . 
+
+### Reproducibility
+
+<details>
+```{r reproducibility, echo = FALSE}
+## Reproducibility info
+options(width = 120)
+sessioninfo::session_info()
+```
+</details>
