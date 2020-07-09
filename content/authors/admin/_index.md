@@ -47,4 +47,7 @@ user_groups:
 - Researchers
 ---
 
-I am a bioinformatician doing my PhD at the [IBD](https://ibd-bcn.org) lab of Dr. Julià Panès under the supervision of Azucena Salas. My research interests include functional enrichment, transcriptomics, data integration and analysis outside comparisons. I created some packages deposited in Bioconductor and contributed to other packages on CRAN, Bioconductor and GitHub. 
+I am a bioinformatician doing my PhD at the [IBD](https://ibd-bcn.org) lab of Dr. Julià Panès under the joint supervision of Azucena Salas and Juanjo Lozano. 
+My research interests include functional enrichment, transcriptomics, data integration and analysis outside comparisons. 
+I created some packages deposited in Bioconductor and contributed to other packages on CRAN, Bioconductor and GitHub. 
+Outside work among other things like hiking, I enjoy jumping rope & diabolo as hobbies. 
