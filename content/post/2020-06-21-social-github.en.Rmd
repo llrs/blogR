@@ -32,18 +32,27 @@ To make this I developed a new package to retrieve information from GitHub.
 
 ## socialGH
 
-This package based on [`{gh}`](https://cran.r-project.org/package=gh), allows to retrieve,
-comments, timeline, pull requests, issues, events, labels from different endpoints of the Github v3 API.
+[This package](https://github.com/llrs/socialGH) based on [`{gh}`](https://cran.r-project.org/package=gh), allows to retrieve, data from Github.
+
+You can install it with 
+
+```r
+remotes::install_github("llrs/socialGH")
+```
+
+Basically pulls the data in list format and transforms it into a data.frame in order to be able to do analysis, filter it or analyze it.
 
 ```{r load, warning=FALSE}
 library("socialGH")
 library("tidyverse")
-issues_blog <- get_issues("llrs/blogR")
 ```
+
+It allows to selective download comments, pull requests, issues, events, labels and the timeline of an issue. 
 
 With the issues we can see the labels, how many coments and many information:
 
 ```{r issues, warning=FALSE}
+issues_blog <- get_issues("llrs/blogR")
 dim(issues_blog)
 colnames(issues_blog)
 # Labels used
@@ -84,9 +93,21 @@ events <- get_events("llrs/blogR")
 count(events, event)
 ```
 
+However it is better if we look to the timeline of an issue:, which downloads each comment of the issues.
+
+```{r timeline}
+gt <- get_timelines("llrs/blogR", 23)
+gt[, c("label", "event", "created", "association", "poster")]
+```
+
+With timeline we don't get the initial information of when the issue was created and we'll need to call `get_issue("llrs/blogR", 23)` to know that. 
+Here I did omit the text of the comment to make it readable, but we can see what has been happening and by who or who is affecting. 
+
 ## Learning
 
-Developing this package I learned more about the `{gh}` package (In the previous blog I wrote manually the calls to different pages...). And learned that the different accept headers have influenced on the total information returned (and that you cannot pass several accept headers at the same time).  
+Developing this package I learned more about the `{gh}` package (In the previous blog I wrote manually the calls to different pages, which later on I discovered it is automatically handled by `{gh}`). 
+And learned that the different accept headers have influenced on the total information returned (and that you cannot pass several accept headers at the same time).  
+Hope to learn more about the R community that is using Github as a way to help each other, improve packages and process. 
 
 ### Reproducibility
 

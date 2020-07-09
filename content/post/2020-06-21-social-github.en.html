@@ -28,22 +28,25 @@ After some feedback from the Bioconductor community I realized I should download
 <p>To make this I developed a new package to retrieve information from GitHub.</p>
 <div id="socialgh" class="section level2">
 <h2>socialGH</h2>
-<p>This package based on <a href="https://cran.r-project.org/package=gh"><code>{gh}</code></a>, allows to retrieve,
-comments, timeline, pull requests, issues, events, labels from different endpoints of the Github v3 API.</p>
+<p><a href="https://github.com/llrs/socialGH">This package</a> based on <a href="https://cran.r-project.org/package=gh"><code>{gh}</code></a>, allows to retrieve, data from Github.</p>
+<p>You can install it with</p>
+<pre class="r"><code>remotes::install_github(&quot;llrs/socialGH&quot;)</code></pre>
+<p>Basically pulls the data in list format and transforms it into a data.frame in order to be able to do analysis, filter it or analyze it.</p>
 <pre class="r"><code>library(&quot;socialGH&quot;)
 library(&quot;tidyverse&quot;)
-## ── Attaching packages ─────────────────────────────────────────────────────────────── tidyverse 1.3.0 ──
+## ── Attaching packages ───────────────────────────────────────────────────────────────── tidyverse 1.3.0 ──
 ## ✓ ggplot2 3.3.1     ✓ purrr   0.3.4
 ## ✓ tibble  3.0.1     ✓ dplyr   1.0.0
 ## ✓ tidyr   1.1.0     ✓ stringr 1.4.0
 ## ✓ readr   1.3.1     ✓ forcats 0.5.0
-## ── Conflicts ────────────────────────────────────────────────────────────────── tidyverse_conflicts() ──
+## ── Conflicts ──────────────────────────────────────────────────────────────────── tidyverse_conflicts() ──
 ## x dplyr::filter() masks stats::filter()
-## x dplyr::lag()    masks stats::lag()
-issues_blog &lt;- get_issues(&quot;llrs/blogR&quot;)</code></pre>
+## x dplyr::lag()    masks stats::lag()</code></pre>
+<p>It allows to selective download comments, pull requests, issues, events, labels and the timeline of an issue.</p>
 <p>With the issues we can see the labels, how many coments and many information:</p>
-<pre class="r"><code>dim(issues_blog)
-## [1] 33 15
+<pre class="r"><code>issues_blog &lt;- get_issues(&quot;llrs/blogR&quot;)
+dim(issues_blog)
+## [1] 34 15
 colnames(issues_blog)
 ##  [1] &quot;assignees&quot;   &quot;assignee&quot;    &quot;label&quot;       &quot;state&quot;       &quot;locked&quot;     
 ##  [6] &quot;milestone&quot;   &quot;n_comments&quot;  &quot;title&quot;       &quot;created&quot;     &quot;updated&quot;    
@@ -59,15 +62,15 @@ issues_blog %&gt;%
 ##           help wanted               invalid               package 
 ##                     1                     1                     1 
 ##                  Post todo :spiral_notepad: 
-##                    23                     2
+##                    23                     3
 count(issues_blog, state)
 ##    state  n
-## 1 closed 18
+## 1 closed 19
 ## 2   open 15
 count(issues_blog, n_comments)
 ##   n_comments  n
 ## 1          0 20
-## 2          1  8
+## 2          1  9
 ## 3          2  2
 ## 4          3  3</code></pre>
 <p>However, it doesn’t retrieve each comment of an issue.</p>
@@ -75,17 +78,17 @@ count(issues_blog, n_comments)
 issues_blog %&gt;% 
   filter(n_comments &gt; 0) %&gt;% 
   pull(id)
-##  [1] 34 28 25 23 16 10  9  8  6  5  4  3  2
+##  [1] 34 29 28 25 23 16 10  9  8  6  5  4  3  2
 
 comments &lt;- get_comments(&quot;llrs/blogR&quot;)
 dim(comments)
-## [1] 21  6
+## [1] 22  6
 colnames(comments)
 ## [1] &quot;text&quot;        &quot;created&quot;     &quot;updated&quot;     &quot;association&quot; &quot;id&quot;         
 ## [6] &quot;commenter&quot;
 count(comments, association)
 ##   association  n
-## 1       OWNER 21</code></pre>
+## 1       OWNER 22</code></pre>
 <p>We can see that I was the only one writing on the issues and we already retrieved the text of the comments.</p>
 <p>We can also look for events on issues:</p>
 <pre class="r"><code>events &lt;- get_events(&quot;llrs/blogR&quot;, 23)
@@ -97,17 +100,30 @@ count(events, event)
 <pre class="r"><code>events &lt;- get_events(&quot;llrs/blogR&quot;)
 count(events, event)
 ##        event  n
-## 1   assigned  5
-## 2    labeled 35
-## 3     closed 18
-## 4 subscribed  2
-## 5  mentioned  2
+## 1     closed 19
+## 2   assigned  6
+## 3 subscribed  3
+## 4  mentioned  3
+## 5    labeled 36
 ## 6  unlabeled  1
 ## 7    renamed  3</code></pre>
+<p>However it is better if we look to the timeline of an issue:, which downloads each comment of the issues.</p>
+<pre class="r"><code>gt &lt;- get_timelines(&quot;llrs/blogR&quot;, 23)
+gt[, c(&quot;label&quot;, &quot;event&quot;, &quot;created&quot;, &quot;association&quot;, &quot;poster&quot;)]
+##   label     event             created association            poster
+## 1  NULL commented 2020-02-14 00:39:47       OWNER llrs, User, FALSE
+## 2  NULL commented 2020-02-14 09:44:26       OWNER llrs, User, FALSE
+## 3  Post   labeled 2020-02-18 10:10:35        &lt;NA&gt;              NULL
+## 4  NULL commented 2020-02-29 17:58:51       OWNER llrs, User, FALSE
+## 5  NULL    closed 2020-02-29 17:58:51        &lt;NA&gt;              NULL</code></pre>
+<p>With timeline we don’t get the initial information of when the issue was created and we’ll need to call <code>get_issue("llrs/blogR", 23)</code> to know that.
+Here I did omit the text of the comment to make it readable, but we can see what has been happening and by who or who is affecting.</p>
 </div>
 <div id="learning" class="section level2">
 <h2>Learning</h2>
-<p>Developing this package I learned more about the <code>{gh}</code> package (In the previous blog I wrote manually the calls to different pages…). And learned that the different accept headers have influenced on the total information returned (and that you cannot pass several accept headers at the same time).</p>
+<p>Developing this package I learned more about the <code>{gh}</code> package (In the previous blog I wrote manually the calls to different pages, which later on I discovered it is automatically handled by <code>{gh}</code>).
+And learned that the different accept headers have influenced on the total information returned (and that you cannot pass several accept headers at the same time).<br />
+Hope to learn more about the R community that is using Github as a way to help each other, improve packages and process.</p>
 <div id="reproducibility" class="section level3">
 <h3>Reproducibility</h3>
 <details>
@@ -121,74 +137,74 @@ count(events, event)
 ##  collate  en_US.UTF-8                 
 ##  ctype    en_US.UTF-8                 
 ##  tz       Europe/Madrid               
-##  date     2020-06-21                  
+##  date     2020-07-09                  
 ## 
 ## ─ Packages ───────────────────────────────────────────────────────────────────────────────────────────────────────────
-##  package     * version    date       lib source        
-##  assertthat    0.2.1      2019-03-21 [1] CRAN (R 3.6.0)
-##  backports     1.1.8      2020-06-17 [1] CRAN (R 3.6.3)
-##  blob          1.2.1      2020-01-20 [1] CRAN (R 3.6.1)
-##  blogdown      0.19       2020-05-22 [1] CRAN (R 3.6.3)
-##  bookdown      0.19       2020-05-15 [1] CRAN (R 3.6.3)
-##  broom         0.5.6      2020-04-20 [1] CRAN (R 3.6.1)
-##  cellranger    1.1.0      2016-07-27 [1] CRAN (R 3.6.0)
-##  cli           2.0.2      2020-02-28 [1] CRAN (R 3.6.1)
-##  colorspace    1.4-1      2019-03-18 [1] CRAN (R 3.6.0)
-##  crayon        1.3.4      2017-09-16 [1] CRAN (R 3.6.0)
-##  curl          4.3        2019-12-02 [1] CRAN (R 3.6.1)
-##  DBI           1.1.0      2019-12-15 [1] CRAN (R 3.6.1)
-##  dbplyr        1.4.4      2020-05-27 [1] CRAN (R 3.6.3)
-##  digest        0.6.25     2020-02-23 [1] CRAN (R 3.6.1)
-##  dplyr       * 1.0.0      2020-05-29 [1] CRAN (R 3.6.3)
-##  ellipsis      0.3.1      2020-05-15 [1] CRAN (R 3.6.3)
-##  evaluate      0.14       2019-05-28 [1] CRAN (R 3.6.0)
-##  fansi         0.4.1      2020-01-08 [1] CRAN (R 3.6.1)
-##  forcats     * 0.5.0      2020-03-01 [1] CRAN (R 3.6.1)
-##  fs            1.4.1      2020-04-04 [1] CRAN (R 3.6.1)
-##  generics      0.0.2      2018-11-29 [1] CRAN (R 3.6.0)
-##  ggplot2     * 3.3.1      2020-05-28 [1] CRAN (R 3.6.3)
-##  gh            1.1.0      2020-01-24 [1] CRAN (R 3.6.1)
-##  glue          1.4.1      2020-05-13 [1] CRAN (R 3.6.3)
-##  gtable        0.3.0      2019-03-25 [1] CRAN (R 3.6.0)
-##  haven         2.3.1      2020-06-01 [1] CRAN (R 3.6.3)
-##  hms           0.5.3      2020-01-08 [1] CRAN (R 3.6.1)
-##  htmltools     0.5.0      2020-06-16 [1] CRAN (R 3.6.3)
-##  httr          1.4.1      2019-08-05 [1] CRAN (R 3.6.0)
-##  jsonlite      1.6.1      2020-02-02 [1] CRAN (R 3.6.1)
-##  knitr         1.28       2020-02-06 [1] CRAN (R 3.6.1)
-##  lattice       0.20-41    2020-04-02 [1] CRAN (R 3.6.1)
-##  lifecycle     0.2.0      2020-03-06 [1] CRAN (R 3.6.1)
-##  lubridate     1.7.9      2020-06-08 [1] CRAN (R 3.6.3)
-##  magrittr      1.5        2014-11-22 [1] CRAN (R 3.6.0)
-##  modelr        0.1.8      2020-05-19 [1] CRAN (R 3.6.3)
-##  munsell       0.5.0      2018-06-12 [1] CRAN (R 3.6.0)
-##  nlme          3.1-148    2020-05-24 [1] CRAN (R 3.6.3)
-##  pillar        1.4.4      2020-05-05 [1] CRAN (R 3.6.3)
-##  pkgconfig     2.0.3      2019-09-22 [1] CRAN (R 3.6.0)
-##  purrr       * 0.3.4      2020-04-17 [1] CRAN (R 3.6.1)
-##  R6            2.4.1      2019-11-12 [1] CRAN (R 3.6.1)
-##  Rcpp          1.0.4.6    2020-04-09 [1] CRAN (R 3.6.3)
-##  readr       * 1.3.1      2018-12-21 [1] CRAN (R 3.6.0)
-##  readxl        1.3.1      2019-03-13 [1] CRAN (R 3.6.0)
-##  reprex        0.3.0      2019-05-16 [1] CRAN (R 3.6.0)
-##  rlang         0.4.6      2020-05-02 [1] CRAN (R 3.6.3)
-##  rmarkdown     2.2        2020-05-31 [1] CRAN (R 3.6.3)
-##  rstudioapi    0.11       2020-02-07 [1] CRAN (R 3.6.1)
-##  rvest         0.3.5      2019-11-08 [1] CRAN (R 3.6.1)
-##  scales        1.1.1      2020-05-11 [1] CRAN (R 3.6.3)
-##  sessioninfo   1.1.1      2018-11-05 [1] CRAN (R 3.6.0)
-##  socialGH    * 0.0.0.9000 2020-06-21 [1] local         
-##  stringi       1.4.6      2020-02-17 [1] CRAN (R 3.6.3)
-##  stringr     * 1.4.0      2019-02-10 [1] CRAN (R 3.6.0)
-##  tibble      * 3.0.1      2020-04-20 [1] CRAN (R 3.6.1)
-##  tidyr       * 1.1.0      2020-05-20 [1] CRAN (R 3.6.3)
-##  tidyselect    1.1.0      2020-05-11 [1] CRAN (R 3.6.3)
-##  tidyverse   * 1.3.0      2019-11-21 [1] CRAN (R 3.6.1)
-##  vctrs         0.3.1      2020-06-05 [1] CRAN (R 3.6.3)
-##  withr         2.2.0      2020-04-20 [1] CRAN (R 3.6.1)
-##  xfun          0.14       2020-05-20 [1] CRAN (R 3.6.3)
-##  xml2          1.3.2      2020-04-23 [1] CRAN (R 3.6.1)
-##  yaml          2.2.1      2020-02-01 [1] CRAN (R 3.6.1)
+##  package     * version date       lib source        
+##  assertthat    0.2.1   2019-03-21 [1] CRAN (R 3.6.0)
+##  backports     1.1.8   2020-06-17 [1] CRAN (R 3.6.3)
+##  blob          1.2.1   2020-01-20 [1] CRAN (R 3.6.1)
+##  blogdown      0.19    2020-05-22 [1] CRAN (R 3.6.3)
+##  bookdown      0.19    2020-05-15 [1] CRAN (R 3.6.3)
+##  broom         0.5.6   2020-04-20 [1] CRAN (R 3.6.1)
+##  cellranger    1.1.0   2016-07-27 [1] CRAN (R 3.6.0)
+##  cli           2.0.2   2020-02-28 [1] CRAN (R 3.6.1)
+##  colorspace    1.4-1   2019-03-18 [1] CRAN (R 3.6.0)
+##  crayon        1.3.4   2017-09-16 [1] CRAN (R 3.6.0)
+##  curl          4.3     2019-12-02 [1] CRAN (R 3.6.1)
+##  DBI           1.1.0   2019-12-15 [1] CRAN (R 3.6.1)
+##  dbplyr        1.4.4   2020-05-27 [1] CRAN (R 3.6.3)
+##  digest        0.6.25  2020-02-23 [1] CRAN (R 3.6.1)
+##  dplyr       * 1.0.0   2020-05-29 [1] CRAN (R 3.6.3)
+##  ellipsis      0.3.1   2020-05-15 [1] CRAN (R 3.6.3)
+##  evaluate      0.14    2019-05-28 [1] CRAN (R 3.6.0)
+##  fansi         0.4.1   2020-01-08 [1] CRAN (R 3.6.1)
+##  forcats     * 0.5.0   2020-03-01 [1] CRAN (R 3.6.1)
+##  fs            1.4.1   2020-04-04 [1] CRAN (R 3.6.1)
+##  generics      0.0.2   2018-11-29 [1] CRAN (R 3.6.0)
+##  ggplot2     * 3.3.1   2020-05-28 [1] CRAN (R 3.6.3)
+##  gh            1.1.0   2020-01-24 [1] CRAN (R 3.6.1)
+##  glue          1.4.1   2020-05-13 [1] CRAN (R 3.6.3)
+##  gtable        0.3.0   2019-03-25 [1] CRAN (R 3.6.0)
+##  haven         2.3.1   2020-06-01 [1] CRAN (R 3.6.3)
+##  hms           0.5.3   2020-01-08 [1] CRAN (R 3.6.1)
+##  htmltools     0.5.0   2020-06-16 [1] CRAN (R 3.6.3)
+##  httr          1.4.1   2019-08-05 [1] CRAN (R 3.6.0)
+##  jsonlite      1.7.0   2020-06-25 [1] CRAN (R 3.6.3)
+##  knitr         1.28    2020-02-06 [1] CRAN (R 3.6.1)
+##  lattice       0.20-41 2020-04-02 [1] CRAN (R 3.6.1)
+##  lifecycle     0.2.0   2020-03-06 [1] CRAN (R 3.6.1)
+##  lubridate     1.7.9   2020-06-08 [1] CRAN (R 3.6.3)
+##  magrittr      1.5     2014-11-22 [1] CRAN (R 3.6.0)
+##  modelr        0.1.8   2020-05-19 [1] CRAN (R 3.6.3)
+##  munsell       0.5.0   2018-06-12 [1] CRAN (R 3.6.0)
+##  nlme          3.1-148 2020-05-24 [1] CRAN (R 3.6.3)
+##  pillar        1.4.4   2020-05-05 [1] CRAN (R 3.6.3)
+##  pkgconfig     2.0.3   2019-09-22 [1] CRAN (R 3.6.0)
+##  purrr       * 0.3.4   2020-04-17 [1] CRAN (R 3.6.1)
+##  R6            2.4.1   2019-11-12 [1] CRAN (R 3.6.1)
+##  Rcpp          1.0.4.6 2020-04-09 [1] CRAN (R 3.6.3)
+##  readr       * 1.3.1   2018-12-21 [1] CRAN (R 3.6.0)
+##  readxl        1.3.1   2019-03-13 [1] CRAN (R 3.6.0)
+##  reprex        0.3.0   2019-05-16 [1] CRAN (R 3.6.0)
+##  rlang         0.4.6   2020-05-02 [1] CRAN (R 3.6.3)
+##  rmarkdown     2.2     2020-05-31 [1] CRAN (R 3.6.3)
+##  rstudioapi    0.11    2020-02-07 [1] CRAN (R 3.6.1)
+##  rvest         0.3.5   2019-11-08 [1] CRAN (R 3.6.1)
+##  scales        1.1.1   2020-05-11 [1] CRAN (R 3.6.3)
+##  sessioninfo   1.1.1   2018-11-05 [1] CRAN (R 3.6.0)
+##  socialGH    * 0.0.1   2020-07-08 [1] local         
+##  stringi       1.4.6   2020-02-17 [1] CRAN (R 3.6.3)
+##  stringr     * 1.4.0   2019-02-10 [1] CRAN (R 3.6.0)
+##  tibble      * 3.0.1   2020-04-20 [1] CRAN (R 3.6.1)
+##  tidyr       * 1.1.0   2020-05-20 [1] CRAN (R 3.6.3)
+##  tidyselect    1.1.0   2020-05-11 [1] CRAN (R 3.6.3)
+##  tidyverse   * 1.3.0   2019-11-21 [1] CRAN (R 3.6.1)
+##  vctrs         0.3.1   2020-06-05 [1] CRAN (R 3.6.3)
+##  withr         2.2.0   2020-04-20 [1] CRAN (R 3.6.1)
+##  xfun          0.14    2020-05-20 [1] CRAN (R 3.6.3)
+##  xml2          1.3.2   2020-04-23 [1] CRAN (R 3.6.1)
+##  yaml          2.2.1   2020-02-01 [1] CRAN (R 3.6.1)
 ## 
 ## [1] /home/lluis/R/x86_64-pc-linux-gnu-library/3.6
 ## [2] /usr/local/lib/R/site-library
