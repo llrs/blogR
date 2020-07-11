@@ -114,7 +114,7 @@ n_dup <- count(df, package, sort = TRUE) %>%
   filter(package != "", n != 1) %>% nrow()
 ```
 
-We can further makr those approved because they are on bioconductor but do not have the [approved label](https://github.com/Bioconductor/Contributions/labels/3a.%20accepted) (Sometimes they get accepted but they forget to change labels on the issue). 
+We can further mark those approved because they are on bioconductor but do not have the [approved label](https://github.com/Bioconductor/Contributions/labels/3a.%20accepted) (Sometimes they get accepted but they forget to change labels on the issue). 
 
 ```{r check_available}
 library("BiocManager")
