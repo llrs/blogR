@@ -10,7 +10,7 @@ tags:
   - Bioconductor
   - r
 authors: []
-description: ''
+description: 'Looking in detail to Bioconductor sumbissions: interactions between bots, reviewers and the community.'
 editor_options:
   chunk_output_type: console
 featured: no
@@ -18,8 +18,8 @@ draft: true
 image:
   caption: ''
   focal_point: ''
-subtitle: ''
-summary: ''
+subtitle: 'The second part of Bioconductor submissions'
+summary: 'Looking in detail to Bioconductor sumbissions: interactions between bots, reviewers and the community.'
 ---
 
 ```{r setup, include = FALSE}
@@ -29,9 +29,76 @@ knitr::opts_chunk$set(collapse = TRUE)
 First post  is on [Bioconductor submissions](https://llrs.dev/2020/06/bioconductor-submissions/) raised some questions comments but at the time I didn't have a good way to answer them:
 
 - issues get closed after they got assigned a reviewer and before the reviewer actually gets a chance to start the review.
-- issues assigned to multiple people or reviews that switched reviewers
+- issues assigned to multiple people or issues that switched reviewers
 
-The common problem is that I didn't have the information available. To retrieve the information from github I developed a [new package](https://llrs.dev/2020/06/social-github/) which . 
+The common problem is that I didn't have the information available. 
+On the previous post I only gathered the information of the state of the issues at that moment. 
+This excluded label changes, reviewer changes, renaming the issues, who commented on the issues and many more things.
+To retrieve these information from github I developed a [new package](https://llrs.dev/2020/06/social-github/) which downloads it from [Github](https://github.com) to make the analysis possible.
+
+```{r}
+library("socialGH")
+repo <- "Bioconductor/Contributions"
+gi <- get_issues(repo)
+i <- unique(gi$id)
+gt <- lapply(i, get_timelines, repository = repo)
+gt2 <- do.call(rbind, gt)
+saveRDS(gt, "static/20200711_timelines_Bioconductor_contributions.RDS")
+```
+
+```{r}
+library("tidyverse")
+theme_set(theme_minimal())
+gi2 <- gi %>% 
+  select(-n_comments) %>% 
+  mutate(actor = poster, event = "created")
+
+g <- rbind(gi2[, colnames(gt2)], gt2)
+g2 <- g %>% 
+  arrange(id, created) %>% 
+  group_by(id) %>% 
+  mutate(event_n = 1:n(),
+         event = unlist(event, FALSE, FALSE),
+         state = ifelse(event_n == 1, "opened", state))
+```
+
+```{r}
+g2 %>% 
+  group_by(id) %>% 
+  filter(event_n == max(event_n)) %>% 
+  ungroup() %>% 
+  ggplot() +
+  geom_histogram(aes(event_n))
+g2 %>% 
+  ggplot() +
+  geom_point(aes(event_n, id, col = event))
+g2 %>% 
+  group_by(id) %>% 
+  summarise(open_time = max(created) - min(created),
+            n = max(event_n), id = unique(id)) %>% 
+  ungroup() %>% 
+  ggplot() +
+  geom_point(aes(n, open_time, col = id)) +
+  guides(col = FALSE)
+g2 %>% 
+  mutate(assigned = map(assignee, function(x) {
+    ifelse(!is.null(unlist(x, FALSE, FALSE)), 
+                  getElement(x, "user"), 
+                  NA_character_)
+  })
+           ) %>% 
+  group_by(id) %>% 
+  filter(any(!is.na(assigned))) %>% 
+  head()
+
+k <- g2 %>% mutate(k == map2(actor, poster, function(x, y) {
+  print(is(x))v
+  print(is(y))
+  nrow(x) == nrow(y)
+})) %>% pull(k)
+
+```
+
 
 ### Reproducibility
 
