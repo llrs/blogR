@@ -37,55 +37,47 @@ On the previous post I only gathered the information of the state of the issues 
 This excluded label changes, reviewer changes, renaming the issues, who commented on the issues and many more things.
 To retrieve these information from github I developed a [new package](https://llrs.dev/2020/06/social-github/) [`{socialGH}`](https://github.com/llrs/socialGH) which downloads it from [Github](https://github.com) to make the analysis possible.
 
-```{r reading}
+```{r reading, eval=FALSE}
 library("socialGH")
 repo <- "Bioconductor/Contributions"
 gi <- get_issues(repo)
 i <- unique(gi$id)
+# gt <- get_timelines(repo) there's a limit of 40000 so we cannot use it.
 gt <- lapply(i, get_timelines, repository = repo)
-saveRDS(gt, "static/2020083_timelines_Bioconductor_contributions.RDS")
-gt <- readRDS("static/2020083_timelines_Bioconductor_contributions.RDS")
 gt2 <- do.call(rbind, gt)
-```
-
-```{r prepare}
 library("tidyverse")
 theme_set(theme_minimal())
 gi2 <- gi %>% 
   select(-n_comments) %>% 
   mutate(actor = poster, event = "created")
-
-g <- rbind(gi2[, colnames(gt2)], gt2)
-g2 <- g %>% 
+column = intersect(colnames(gt2), colnames(gi2))
+g <- rbind(gi2[, colnames(gt2)], gt2) %>% 
   arrange(id, created) %>% 
   group_by(id) %>% 
   mutate(event_n = 1:n(),
          event = unlist(event, FALSE, FALSE),
          state = ifelse(event_n == 1, list("opened"), state))
-
-
-i <- filter(g, event %in% c("merged", "committed"))
-g2 <- filter(g2, !id %in% i$id) %>% 
+saveRDS(g, file = "static/20200818_github_data.RDS")
+i <- g %>% 
+  filter(event %in% c("merged", "committed")) %>% 
+  pull(id)
+g2 <- g %>% 
+  filter(!id %in% i) %>% 
   mutate(approved = any(vapply(label, 
                            function(x){"3a. accepted" %in% x}, logical(1L))),
          Approved = case_when(any(approved) ~ "Yes",
                               sum(event == "closed") >= sum(event == "reopen") ~ "No",
                               TRUE ~ "Ongoing"))
-saveRDS(g2, file = "static/202008_github_data.RDS")
-link_issue <- function(n) {
-  paste0("[",n, "](https://github.com/Bioconductor/Contributions/issues/", n, 
-         ")", collapse = ", ")
-}
-link_profile <- function(id) {
-  paste0("[", id, "](https://github.com/", id, ")", collapse = ", ")
-}
 ```
 
 Now that we have more data about the issues we can plot them similarly to what we did on the previous post:
 
 ```{r first_plot}
 # If not closed add the closing time of today
-g2 <- readRDS("static/202008_github_data.RDS")
+g2 <- readRDS(here::here("static", "20200818_github_data.RDS"))
+link_issue <- function(x) {
+  socialGH::link_issue("Bioconductor/Contributions", x)
+}
 library("tidyverse")
 theme_set(theme_minimal())
 releases <- data.frame(release = paste0("3.", 3:12),
@@ -116,9 +108,8 @@ g2 %>%
 
 We can see that sometimes the issues remained silent for several months and then had a high level of events, or a single one (closing).
 
-Compare to the pervious version it is surprising to see that one of the earliest issues still gets new events. 
-![](https://llrs.dev/post/2020-06-01-bioconductor-submissions.en_files/figure-html/eda-1.png)
-Apparently [issue 51](https://github.com/Bioconductor/Contributions) is being used to test the Bioconductor builder. 
+Compare to the previous version it is surprising to see that one of the earliest issues still gets new events to date. 
+Apparently [issue 51](https://github.com/Bioconductor/Contributions), and others, are being used to test the Bioconductor builder. 
 
 ```{r exclude_testing}
 g2 <- filter(g2, !id %in% c(1:5, 51, 587, 764, 1540, 1541))
@@ -126,23 +117,192 @@ g2 <- filter(g2, !id %in% c(1:5, 51, 587, 764, 1540, 1541))
 
 
 ```{r summarizing}
-by_issue <- g2 %>% 
-  summarize(open_time = difftime(max(created), min(created), units = unit),
-            n = max(event_n), 
-            id = unique(id),
-            slope = n/as.numeric(open_time))
-by_user
-by_reviewer
-by_event
+get_element <- function(x, name) {
+  if (!is.null(names(x))) {
+    getElement(x, name)
+  } else {
+    NA_character_
+  }
+} 
+trelative <- function(x) {
+  created <- x$created
+  event <- x$event
+  start <- created[event == "created"]
+  k <- event == "closed"
+  if (any(k)){
+    closing <- created[which.max(k)]
+  } else {
+    closing <- max(created)
+  }
+  
+  o <- difftime(created[!is.na(created)], start, units = "days")
+  as.numeric(o)
+}
+g2 %>%  
+  nest_by() %>% 
+  summarize(t = trelative(data), created = data$created) %>% 
+  inner_join(g2)
+g2 <- g2 %>% 
+  mutate(reviewer = vapply(assignee, get_element, name = "user", character(1)),
+         actor = vapply(actor, get_element, name = "user", character(1L)))
+full <- g2 %>%  
+  nest_by() %>% 
+  summarize(t = trelative(data), created = data$created) %>% 
+  inner_join(g2)
 ```
 
 
+```{r by_issue}
+by_issue <- g2 %>% 
+  group_by(id) %>% 
+  summarize(time_window = difftime(max(created), min(created), units = "days"),
+            events = n(), 
+            diff_users = n_distinct(actor),
+            diff_events = n_distinct(event),
+            Approved = unique(Approved),
+            approved = unique(approved),
+            assignments = sum(event %in% "assigned"),
+            reassigned = any(event %in% "unassigned"),
+            assigners = list(reviewer[event %in% "assigned"]),
+            unassigners = list(reviewer[event %in% "unassigned"]),
+            reviewers = list(setdiff(unlist(assigners, FALSE, FALSE), 
+                                    unlist(unassigners, FALSE, FALSE))),
+            reviewer_comments = sum(event == "commented" & actor %in% unlist(reviewer), na.rm = TRUE),
+            closers = list(actor[event == "closed"]),
+            openers = list(actor[event == "reopened"]),
+            closer = list(setdiff(unlist(closers, FALSE, FALSE), 
+                                    unlist(openers, FALSE, FALSE))),
+            labels_added = list(label[event == "labeled"]),
+            labels_removed = list(label[event == "unlabeled"]),
+            labels_final = list(setdiff(unlist(labels_added, FALSE, FALSE), 
+                                    unlist(labels_removed, FALSE, FALSE))),
+            check_labels = all(unlist(labels_final, FALSE, FALSE) %in%
+                                 label[event == "created"]),
+            submitter = actor[event == "created"]
+            
+) %>% 
+  mutate(n_reviewers = lengths(reviewers),
+         n_closers = lengths(closer))
+
+by_issue1 <- g2 %>% 
+  count(event) %>% 
+  filter(event != "created") %>% 
+  pivot_wider(values_from = n, names_from = event, values_fill = 0) %>% 
+  nest_by(.key = "event")
+by_issue2 <- g2 %>% 
+  count(actor) %>% 
+  pivot_wider(values_from = n, names_from = actor, values_fill = 0) %>% 
+  nest_by(.key = "actor")
+
+by_issue <- by_issue %>% 
+  inner_join(by_issue1) %>% 
+  inner_join(by_issue2)
+```
+
+
+```{r by_user}
+by_user <- g2 %>%
+  group_by(actor) %>% 
+  summarize(
+    actions = n(),
+    issues_participated = n_distinct(id),
+    issues = list(unique(id)),
+    events_participated = n_distinct(event),
+  ) %>% 
+  mutate(is_reviewer = actor %in% unlist(by_issue$reviewers, FALSE, FALSE))
+
+by_user1 <- g2 %>% 
+  group_by(actor) %>% 
+  count(event) %>% 
+  pivot_wider(values_from = n, names_from = event, values_fill = 0) %>% 
+  nest_by(.key = "event")
+by_user2 <- g2 %>% 
+  group_by(actor) %>% 
+  count(id) %>% 
+  pivot_wider(values_from = n, names_from = id, values_fill = 0) %>% 
+  nest_by(.key = "ids")
+
+by_user <- by_user %>% 
+  inner_join(by_user1) %>% 
+  inner_join(by_user2)
+library("ggrepel")
+by_user %>% 
+  filter(is_reviewer) %>%
+  ggplot() + 
+  geom_point(aes(actions, issues_participated)) +
+  geom_text_repel(aes(actions, issues_participated, label = actor)) +
+  scale_x_continuous(trans = "log10") +
+  scale_y_continuous(trans = "log10") +
+  labs(size = "Users", col = "Different events", x = "Events", y = "Issues",
+       title = "Reviewers involvement")
+by_user %>% 
+  filter(!is_reviewer & actor != "bioc-issue-bot" & !is.na(actor)) %>%
+  ggplot() + 
+  geom_count(aes(actions, issues_participated)) +
+  scale_color_viridis_d() + 
+  scale_x_continuous(trans = "log10") +
+  scale_y_continuous(trans = "log10") +
+  scale_radius(breaks = c(1, 10, 20, 30, 40)) +
+  geom_text_repel(aes(actions, issues_participated, label = actor), 
+                data = . %>% filter(issues_participated > 10 | actions > 100)) +
+  labs(size = "Users", col = "Different events", x = "Events", y = "Issues",
+       title = "Users involvement")
+```
+
+
+```{r by_event}
+by_event1 <- g2 %>% 
+  group_by(event) %>% 
+  count(actor) %>% 
+  pivot_wider(names_from = actor, values_from = n, values_fill = 0) %>% 
+  nest_by(.key = "actor")
+by_event2 <- g2 %>% 
+  group_by(event) %>% 
+  count(id) %>% 
+  pivot_wider(names_from = id, values_from = n, values_fill = 0) %>% 
+  nest_by(.key = "id") 
+
+by_event <- g2 %>% 
+  group_by(event) %>% 
+  summarize(
+    n = n(),
+    ids = list(unique(id)),
+    actors = list(unique(actor)),
+    diff_id = n_distinct(id),
+    diff_actor = n_distinct(actor))
+by_event <- by_event %>% 
+  inner_join(by_event1, by = "event") %>% 
+  inner_join(by_event2, by = "event")
+```
+
+```{r by_event_actor_id}
+by_actor_event_id <- g2 %>% 
+  group_by(event, actor, id) %>% 
+  count()
+```
+
 # Events
+
+We cab count how many users and issues have been involved with each event type:
+
+```{r}
+by_event %>% 
+  ggplot() + 
+  geom_text_repel(aes(diff_id, diff_actor, label = event)) +
+  scale_y_continuous(trans = "log10") +
+  scale_x_continuous(trans = "log10") +
+  labs(title = "Events", x = "Different issues", 
+       y = "Different users")
+```
+
+We can see that few issues are locked or comments deleted.
+There is an almost equal amount of labeling and unlabeling.
+There is a group of mentioning, commenting and subscribing too. 
 
 Looking a bit further on the issues we can look at the events that take place:
 
 ```{r second_plot}
-g2 %>% 
+full %>% 
   filter(event != "created") %>% 
   count(event) %>% 
   ungroup() %>% 
@@ -151,12 +311,13 @@ g2 %>%
   geom_tile(aes(id, fct_reorder(event, n, .fun = sum), col = n)) +
   scale_color_continuous(expand = expansion(), trans = "log10", 
                          high = "#132B43", low = "#56B1F7") +
-  # theme(axis.text.x = element_text(angle = 45, hjust = 1)) +
-  labs(y = element_blank(), x = "Issue", title = "Events per issue", col = "Times")
+  labs(y = element_blank(), x = "Issue", title = "Events per issue", 
+       col = "Times")
 ```
 
 We can see that most issues have few events which agrees with the previous findings that issues are handled fairly and expeditiously.
-The most common event are comments mentions and the rarest events are deleting comments, locking or referencing them. 
+
+The most common event are comments, mentions and the rarest events are deleting comments, locking or referencing them. 
 
 ```{r events_time}
 unit <- "days"
@@ -200,35 +361,16 @@ diff_time %>%
   theme(axis.text.x = element_text())
 ```
 
-Some submissions have events l
-Check that the opening and closing doesn't affect this...
+Some submissions have many events while others have few events but last longer.
+This is without looking at issues that were closed and later reopened. 
 We can see that in a short amount of days a lot of events can be triggered.
+This is mostly that for each version update there are at least two messages on the issue.
 
 ```{r assignments}
-get_element <- function(x, name) {
-  if (!is.null(names(x))) {
-    getElement(x, name)
-  } else {
-    NA_character_
-  }
-} 
-
-who <- g2 %>% 
-  mutate(reviewer = vapply(assignee, get_element, name = "user", character(1)),
-         actor = vapply(actor, get_element, name = "user", character(1L)),
-         assignments = sum(event %in% "assigned"),
-         reviewers = assignments - sum(event %in% "unassigned"))
-
-assignments <- who %>% 
-  filter(event %in% c("assigned", "unassigned", "commented", "created", "closed"))
-
-assignments %>% 
-  summarise(reasigned  = any(event %in% "unassigned"),
-            assignments = unique(assignments),
-            reviewers = unique(reviewers),
-            Approved = unique(Approved)) %>% 
+by_issue %>% 
   ggplot() +
-  geom_count(aes(reviewers, assignments, col = reasigned, shape = reasigned)) +
+  geom_point(aes(n_reviewers, assignments, col = reassigned, 
+                 shape = reassigned)) +
   labs(x = "Final reviewers", y = "Assigned", title = "Reviewers", 
        col = "Reassigned?", shape = "Reassigned?", size = "Submissions") +
   scale_color_brewer(labels = c("No", "Yes"), type = "qual") +
@@ -237,66 +379,85 @@ assignments %>%
 ```
 
 We can see that usually some adjustment to reviewers is made usually changing them but some times they are added to have more than 1 reviewer (41 submissions).
-Almost all the submitted packages without a reviewer (533 submissions) were rejected except for three: `r link_issue(81:83)` that were reviewed by `r link_profile(vobencha)` even if not officially assigned.
+Almost all the submitted packages without a reviewer (533 submissions) were rejected except for three: `r link_issue(81:83)` that were reviewed by `r link_profile("vobencha")` even if not officially assigned.
 Some of these were rejected because they didn't pass some automatic check and other after preliminary inspection.
 
-```{r time}
-trelative <- function(x) {
-  created <- x$created
-  event <- x$event
-  start <- created[event == "created"]
-  k <- event == "closed"
-  if (any(k)){
-    closing <- created[which.max(k)]
-  } else {
-    closing <- max(created)
-  }
+```{r}
+by_issue %>% 
+  mutate(n_openers = lengths(openers),
+         n_closers = lengths(closers)) %>% 
+  ggplot() +
+  geom_count(aes(n_closers, n_openers)) +
+  scale_radius(trans = "log10") +
+  facet_wrap(~Approved) +
+  labs(x = "Closed", y = "Opened", title = "Issues closings and reopenings", 
+       subtitle = "Approved?")
   
-  o <- difftime(created[!is.na(created)], start, units = "days")
-  as.numeric(o)
-}
-
-relative_time <- assignments %>%
-  nest_by() %>% 
-  summarize(t = trelative(data), created = data$created) %>% 
-  inner_join(assignments)
+by_issue %>% 
+  rowwise(id) %>% 
+  mutate(n_openers = n_distinct(openers),
+         n_closers = n_distinct(closers)) %>% 
+  ggplot() +
+  geom_count(aes(n_closers, n_openers)) +
+  scale_radius(trans = "log10") +
+  facet_wrap(~Approved) +
+  labs(x = "Closers", y = "Openers", title = "Issues closers and reopeners", 
+       subtitle = "Approved?")
 ```
 
+We can see that is common to close and reopen issues, but they are generally done by the same people (the reviewer or the original submitter)
+
 ```{r submission_acceptance, fig.cap="Submissions with a reviewer assigned that were closed by someone (not the submitter)."}
-revi <- relative_time %>% 
-  filter(reviewers == 1) %>% 
-  summarise(reviewer = last(reviewer[!is.na(reviewer)]),
-         reviewer_commented = any(event[actor %in% reviewer] == "commented"),
-         id = unique(id),
-         Approved = unique(Approved),
-         closer = last(actor[event == "closed"]),
-         creator = unique(actor[event == "created"])) 
+revi <- by_issue %>% 
+  filter(lengths(reviewers) != 0)
 
 reviwer_didnt_close <- revi %>% 
   filter(!is.na(closer),
-         closer != reviewer & Approved == "No") %>% 
+         closer %in% unlist(reviewers, FALSE, FALSE)) %>% 
   pull(id)
 
 author_closed <- revi %>% 
-  filter(!is.na(closer), closer == creator) %>% 
+  filter(!is.na(closer), submitter %in% closer) %>% 
   pull(id)
 
 revi_sum <- revi %>% 
-  filter(!id %in% author_closed) %>% 
+  filter(!id %in% author_closed,
+         n_reviewers == 1) %>% 
+  mutate(reviewer = unlist(reviewers, FALSE, FALSE),
+         reviewer_commented = ifelse(reviewer_comments != 0, "commented", "not commented")) %>% 
   group_by(reviewer, reviewer_commented, Approved) %>% 
   count() %>% 
   group_by(reviewer) %>% 
   mutate(perc = n/sum(n)) %>% 
   arrange(reviewer, reviewer_commented, Approved)
 
+revi %>% 
+  ggplot() +
+  geom_jitter(aes(as.factor(n_reviewers), reviewer_comments, 
+                  col = Approved, shape = Approved), height = 0) +
+  labs(x = "Reviewers", y = "Comments", title = "Comments from reviewers")
+```
+
+We can see here that reviews with more than one reviewer do not lead to more comments from the reviewers. 
+
+```{r}
+revi %>% 
+  mutate(comments = unlist(map(event, pull, commented), FALSE, FALSE)) %>% 
+  ggplot() +
+  geom_jitter(aes(comments, reviewer_comments, 
+                  col = Approved, shape = Approved), height = 0) +
+  labs(y = "Reviewer's comments", x = "Comments", title = "Comments from reviewers")
+```
+
+
+```{r submission_acceptance2}
 ord_rev <- revi_sum %>% 
   summarise(total = sum(n)) %>% 
   arrange(-total) %>% 
   pull(reviewer) %>% .[1:8]
 
 r <- revi_sum %>% 
-  mutate(reviewer_commented = ifelse(reviewer_commented, "commented", "not commented"),
-         Approved = ifelse(Approved == "Yes", "Approved", "Rejected"),
+  mutate(Approved = ifelse(Approved == "Yes", "Approved", "Rejected"),
          reviewer = as.factor(reviewer)) %>% 
   filter(reviewer %in% ord_rev) %>% 
   mutate(reviewer = fct_drop(reviewer)) %>% 
@@ -340,7 +501,7 @@ However there is also at least a 5% of submissions that are closed despite the c
 Usually this has to be with unresponsiveness from the submitter:
 
 ```{r events_days}
-relative_time %>% 
+full %>% 
   ggplot() +
   geom_line(aes(t, event_n, col = id, group = id)) +
   facet_wrap(~Approved) +
@@ -352,18 +513,12 @@ We can see that on the approved packages there are usually more events on the sa
 So make sure to follow the advice of the reviewers and the bot and make all the errors and warnings disappear. 
 
 ```{r events_user_distribution}
-who_what <- who %>% 
-  group_by(id) %>% 
-  summarise(diff_events = n_distinct(event), 
-         diff_actors = n_distinct(actor),
-         events = n())
-
-ggplot(who_what) +
+ggplot(by_issue) +
   geom_bar(aes(as.factor(diff_events))) +
   labs(y = "Issues", x = element_blank(), 
        title = "Different events in the issue")
-ggplot(who_what) +
-  geom_bar(aes(as.factor(diff_actors))) +
+ggplot(by_issue) +
+  geom_bar(aes(as.factor(diff_users))) +
   labs(y = "Issues", x = element_blank(), 
        title = "Different users involved in the issue")
 ```
@@ -372,12 +527,13 @@ While most issues have at least 8 different events they usually have 4 users inv
 Presumably the creator of the issue, bioc-issue-bot, a reviewer and someone else. 
 
 ```{r actor_event_types}
-who_what %>% 
-  mutate(diff_actors = factor(diff_actors, levels = 1:13)) %>% 
+by_issue %>% 
+  mutate(diff_actors = factor(diff_users, levels = 1:13)) %>% 
   ggplot() +
   geom_count(aes(diff_actors, as.factor(diff_events))) +
-  labs(x = "Users", y = "Events", title = "Users involved and type of events",
-       size = "Issues") +
+  labs(x = "Users", y = "Events", title = "Users involved and different events",
+       size = "Issues") + 
+  scale_radius() +
   scale_x_discrete(drop = FALSE) 
 ```
 
@@ -385,31 +541,35 @@ The more users involved, more different type of events are triggered.
 Presumably more people get subscribed or is mentioned. 
 
 ```{r actors_events}
-who_what %>% 
-  mutate(diff_actors = factor(diff_actors, levels = 1:13)) %>% 
+by_issue %>% 
+  mutate(diff_actors = factor(diff_users, levels = 1:13)) %>% 
   group_by(diff_actors) %>% 
-  count(events) %>% 
+  count(events, Approved) %>% 
   ggplot() +
-  geom_jitter(aes(as.factor(diff_actors), events, size = n), 
+  geom_jitter(aes(as.factor(diff_actors), events, size = n,
+                  col = Approved, shape = Approved), 
              height = 0) +
   labs(x = "Users", y = "Events", size = "Issues",
        title = "Users involved on the issues and events") +
   scale_x_discrete(drop = FALSE) + 
   scale_size(breaks = c(seq(0, 300, by = 50)))
-# TODO color by approved? Or somthing like that
 ```
 
 As expected the more users are involved in an issue more events are produced.
+We can also see the submissions that are closed by the bioc-issue-bot with few comments and users.
 
 # Who does each action ?
 
-We can look now at who performs what, we know there are `r n_distinct(who$actor)` participants:
+We can look now at who performs what, we know there are `r nrow(by_user)` participants:
 
 ```{r who}
-who %>% 
-  group_by(event, actor, .add = FALSE) %>% 
-  count(sort = TRUE) %>% 
-  filter(n > 30) %>% 
+by_user %>%
+  arrange(-actions) %>% 
+  top_n(50, actions) %>% 
+  select(actor, event) %>% 
+  unnest(event) %>% 
+  pivot_longer(names_to = "event", cols = created:unlabeled, values_to = "n") %>% 
+  filter(n != 0) %>% 
   ggplot() + 
   geom_tile(aes(fct_reorder2(event, -n, actor), 
                 fct_reorder(actor, n, .fun = sum), 
@@ -424,7 +584,8 @@ bioc-issue-bot is an special user that makes lots of comments and assigning revi
 
 
 ```{r}
-comments <- who %>% 
+comments <- full %>% 
+  ungroup() %>% 
   mutate(n = sum(event %in% "assigned"),
          reasigned  = any(event %in% "unassigned"),
          reviewers = n - sum(event %in% "unassigned"),
@@ -444,7 +605,7 @@ comments %>%
   labs(title = "Comments", x = "Authors", y = "Reviewer", size = "Issues")
 ```
 
-Comments by users, usually only the author, the reviewer comment, frequently mtmorgan also suggests. 
+Comments by users (excluding the bot), usually only the author, the reviewer comment, frequently mtmorgan also suggests. 
 
 ```{r}
 comments %>% 
@@ -469,7 +630,8 @@ It is a bot that performs and report automatic checks on the submissions (The co
 Let's explore what does and what does it report
 
 ```{r bioc_bot_plot}
-bioc_bot <- who %>% 
+bioc_bot <- full %>% 
+  ungroup() %>% 
   filter(actor == "bioc-issue-bot" & event == "commented") %>% 
   mutate(reason = case_when(
     startsWith(text, "Hi @") ~ "Received",
@@ -531,9 +693,31 @@ More or less the Bioc-issue-bot posts the same number of comments along issues.
 bm <- bioc_bot %>% 
   group_by(id) %>% 
   count(reason) %>% 
-  mutate(total = sum(n)
-            )
+  mutate(total = sum(n))
+bm2 <- bioc_bot %>% 
+  group_by(Approved) %>% 
+  count(reason) %>% 
+  mutate(total = sum(n))
 build_related <- c("Build result", "Building", "Valid push", "Received")
+
+bm2 %>% 
+  ggplot() +
+  geom_point(aes(Approved, reason, size = n)) +
+  labs(x = "Approved", y = "Build related comments",
+       title = "bioc-issue-bot", size = "Issues") +
+  scale_radius() 
+bm2 %>% 
+  mutate(n = n/sum(n)) %>% 
+  select(-total) %>% 
+  pivot_wider(values_from = n, names_from = Approved,
+            values_fill = 0) %>% 
+  ggplot() +
+  geom_abline(slope = 1, intercept = 0) +
+  geom_text_repel(aes(No, Yes, label = reason)) +
+  labs(x = "Not approved", y = "Approved", 
+       title = "Diferences of comments from bioc-issue-bot") +
+  scale_color_continuous()
+
 build_bot <- bm %>% 
   filter(reason %in% build_related) %>% 
   summarise(total = unique(total),
