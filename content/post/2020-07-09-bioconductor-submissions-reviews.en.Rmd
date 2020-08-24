@@ -147,7 +147,8 @@ g2 <- g2 %>%
 full <- g2 %>%  
   nest_by() %>% 
   summarize(time_relative = trelative(data), created = data$created) %>% 
-  inner_join(g2)
+  inner_join(g2) %>% 
+  unique()
 ```
 
 
@@ -285,7 +286,7 @@ by_actor_event_id <- g2 %>%
 
 We cab count how many users and issues have been involved with each event type:
 
-```{r}
+```{r events_view}
 by_event %>% 
   ggplot() + 
   geom_text_repel(aes(diff_id, diff_actor, label = event)) +
@@ -383,7 +384,7 @@ We can see that usually some adjustment to reviewers is made usually changing th
 Almost all the submitted packages without a reviewer (`r sum(by_issue$assignments == 0)` submissions) were rejected except for three: `r link_issue(81:83)` that were reviewed by `r link_profile("vobencha")` even if not officially assigned.
 Some of these were rejected because they didn't pass some automatic check and other after preliminary inspection.
 
-```{r}
+```{r open_close1}
 by_issue %>% 
   mutate(n_openers = lengths(openers),
          n_closers = lengths(closers)) %>% 
@@ -393,7 +394,10 @@ by_issue %>%
   facet_wrap(~Approved) +
   labs(x = "Closed", y = "Opened", title = "Issues closings and reopenings", 
        subtitle = "Approved?", size = "Submissions")
-  
+```
+
+
+```{r open_close2}
 by_issue %>% 
   rowwise(id) %>% 
   mutate(n_openers = n_distinct(openers),
@@ -445,7 +449,7 @@ On submissions with a reviewer assigned that were closed by someone (not the sub
 
 Although it seems like this leads to have the package approved. 
 
-```{r}
+```{r reviews}
 revi %>% 
   mutate(comments = unlist(map(event, pull, commented), FALSE, FALSE)) %>% 
   ggplot() +
@@ -595,7 +599,7 @@ bioc-issue-bot is an special user that makes lots of comments and assigning revi
 We can also see that it previously renamed the issues or unassigned reviewers.
 
 
-```{r}
+```{r comments_plot}
 comments <- full %>% 
   mutate(n = sum(event %in% "assigned"),
          reasigned  = any(event %in% "unassigned"),
@@ -618,7 +622,7 @@ comments %>%
 
 Comments by users (excluding the bot), usually only the author, the reviewer comment, frequently mtmorgan also suggests. 
 
-```{r}
+```{r comment_plot2}
 comments %>% 
   filter(mtmorgan != reviewer) %>% 
   mutate(perc = mtmorgan/other) %>% 
@@ -641,9 +645,11 @@ It is a bot that performs and report automatic checks on the submissions (The co
 Let's explore what does and what does it report
 
 ```{r bioc_bot_plot}
-bioc_bot <- full %>% 
+comments <- full %>% 
   ungroup() %>% 
-  filter(actor == "bioc-issue-bot" & event == "commented") %>% 
+  filter(event == "commented")
+bioc_bot <- comments %>% 
+  filter(actor == "bioc-issue-bot") %>% 
   mutate(reason = case_when(
     startsWith(text, "Hi @") ~ "Received",
     startsWith(text, "Received a valid push") ~ "Valid push",
@@ -676,34 +682,11 @@ bioc_bot %>%
 Classifying the comments reports that most of the comments are build results or that received a valid push. 
 We can also see some changes on the bot, like changing the messages or reporting differently the process triggered. 
 However, it also reports common problems on the submission: missing repository, unmatch between the repository name and the package name, reposting the same package, missing SSH key (needed to be able to push to Bioconductor git server), ...
-
-```{r, eval=FALSE}
-cm %>% 
-  group_by(id) %>% 
-  summarise(n = sum(n)) %>% 
-  ggplot() +
-  geom_point(aes(id, n)) 
-cm %>% 
-  group_by(id) %>% 
-  mutate(perc = n/sum(n)) %>% 
-  ggplot() +
-  geom_col(aes(id, perc, fill = fct_lump_n(reason, 7), 
-               col = fct_lump_n(reason, 7),
-               group = reason),
-           width = 1) +
-  labs(fill = "Type of comment", col = "Type of comment",
-       y = element_blank(), x = element_blank(),
-       title = "Comments on issues") +
-  scale_fill_brewer(type = "qual") +
-  scale_color_brewer(type = "qual") +
-  scale_y_continuous(labels = scales::percent)
-```
-
 We can see that most of them are related to building the packages being submitted.
 
 Let's check if there is some differences on the comments according to if they are later accepted or not.
 
-```{r}
+```{r user_events}
 bm3 <- bioc_bot %>% 
   group_by(id, reason) %>% 
   summarize(n = n(), Approved = unique(Approved)) %>% 
@@ -721,7 +704,7 @@ bm3 %>%
        title = "Diferences between accepted and non accepted issues by bioc-issue-bot comments")
 ```
 
-```{r significant, include=FALSE}
+```{r significant, eval=FALSE, include=FALSE}
 bm3 %>% 
   group_by(reason) %>% 
   filter(n_distinct(Approved) >= 2 & sum(Approved == "Yes") >= 2) %>% 
@@ -734,7 +717,8 @@ bm3 %>%
   pull(reason)
 ```
 
-We can see clearly differences on the behavior of the issues, some comments are all of the non-accepted packages. 
+We can see clearly differences on the behavior of the issues, some type of comments are all of the non-accepted packages.
+It seems like some are not corrected. 
 We can see here some common areas when submissions fail: failing to provide a valid link to the repository or many links to several repositories, or failing to comply with the guidelines about the repository name and the package name. 
 Reposting the same package is also a common reason of not getting that submission approved.
 
@@ -743,38 +727,191 @@ The only significant are the build results, the build results, the valid push, r
 
 
 ```{r common_feedback}
-build_related <- c("Build result", "Building", "Valid push", "Received", "Update version")
+build_related <- c("Build result", "Building", "Valid push", "Received", 
+                   "Update version")
 
-build_bot <- bioc_bot %>% 
+bm_com <- bioc_bot %>% 
   group_by(id) %>% 
-  summarise(builds = sum(reason %in% build_related), total = n(), 
-            Approved = unique(Approved))
-
-build_bot %>% 
+  summarise(builds = sum(reason %in% build_related), 
+            total = n(),
+            diff = total - builds, 
+            Approved = unique(Approved)) 
+bm_com %>%
   ggplot() +
   geom_count(aes(total, builds, col = Approved, shape = Approved)) +
   facet_wrap(~ Approved) +
-  labs(x = "All comments", title = "bioc-issue-bot comments", 
+  labs(x = "All comments", title = "bioc-issue-bot comments",
        y = "Build related", size = "Issues")
 ```
 
-Comments of bioc-issue-bot are driven by the build system.
+We can see, (and I expected so) that comments of bioc-issue-bot are driven by the build system.
 
-```{r}
-bioc_bot %>% 
-  group_by(id) %>% 
-  summarise(Approved = unique(Approved),
-            Received = sum(reason == "Received"),
-            Valid = sum(reason == "Valid push"),
-            update = sum(reason == "Update version"),
-             ) %>% 
+```{r bot_comments_approve}
+# t.test(diff ~ Approved, data = ungroup(bm_com))
+bm_com %>% 
+  count(diff, Approved) %>% 
   ggplot() +
-  geom_count(aes(Received, Valid, col = update)) +
-  facet_wrap(~Approved, scales = "free") +
-  scale_radius() +
-  labs(x = "Received push", y = "Valid push", size = "Issues", col = "Update")
+  geom_tile(aes(Approved, as.factor(diff), fill = n)) +
+  # geom_jitter(aes(Approved, diff, col = Approved), height = 0) +
+  # geom_violin(aes(Approved, diff, col = Approved), alpha = 0) +
+  labs(x = element_blank(), 
+       title = "bioc-issue-bot comments not related to builds", 
+       y = "Comments not related to builds", fill = "Issues")
 ```
 
+But the other comments are more frequent among the not approved packages, mainly errors and other automatically detected problems. 
+
+Aside from the bot, other users might comment on issues too:
+
+```{r comments_issues}
+com_is <- full %>% 
+  group_by(id) %>% 
+  mutate(submitter = unique(actor[event == "created"])) %>% 
+  mutate(assigners = list(reviewer[event %in% "assigned"]),
+         unassigners = list(reviewer[event %in% "unassigned"]),
+         reviewers = list(setdiff(unlist(assigners, FALSE, FALSE), 
+                                  unlist(unassigners, FALSE, FALSE))),
+         commenter = case_when(
+           actor %in% unlist(reviewers) ~ "Reviewer",
+           actor %in% submitter ~ "Author",
+           TRUE ~ "Other")
+  ) %>% 
+  filter(actor != "bioc-issue-bot" & event == "commented") %>% 
+  ungroup()
+com_is_w <- com_is %>% 
+  group_by(id) %>% 
+  count(commenter) %>% 
+  pivot_wider(names_from = commenter, values_from = n, values_fill = 0) %>% 
+  ungroup()
+  
+ra <- com_is_w %>% 
+  group_by(Author, Reviewer) %>% 
+  count(sort = TRUE) %>% 
+  ggplot() +
+  geom_abline(slope = 1) +
+  geom_point(aes(Author, Reviewer, col = n)) +
+  scale_color_continuous(limits = c(1, 50)) +
+  guides(col = FALSE)
+ro <- com_is_w %>% 
+  group_by(Other, Reviewer) %>% 
+  count(sort = TRUE) %>% 
+  ggplot() +
+  geom_abline(slope = -1) +
+  geom_point(aes(Reviewer, Other, col = n)) +
+  scale_y_continuous(position = "right") +
+  scale_x_continuous(trans = "reverse") +
+  labs(y = element_blank()) +
+  scale_color_continuous(limits = c(1, 50)) +
+  guides(col = FALSE)
+oa <- com_is_w %>% 
+  group_by(Author, Other) %>% 
+  count(sort = TRUE) %>% 
+  ggplot() +
+  geom_abline(slope = 1) +
+  geom_point(aes(Author, Other, col = n)) +
+  scale_color_continuous(limits = c(1, 50)) +
+  labs(col = "Issues")
+  # guides(col = FALSE)
+ra /(ro + oa ) +
+  plot_annotation(title = "Comments on submissions by users",
+                  tag_levels = "i") &
+  plot_layout(guides = "collect") 
+```
+
+In some issues reviewers comment more than authors, while on some there are more comments from authors than reviewers. 
+Surprisingly, in some issues there are more comments from other users than authors or reviewers.
+
+```{r comments_approved}
+com_is_w <- com_is %>% 
+  group_by(id, Approved) %>% 
+  count(commenter) %>% 
+  pivot_wider(names_from = commenter, values_from = n, values_fill = 0) %>% 
+  ungroup()
+  
+a <- com_is_w %>% 
+  group_by(Author, Reviewer, Approved) %>% 
+  count(sort = TRUE) %>% 
+  ggplot() +
+  geom_abline(slope = 1) +
+  geom_point(aes(Author, Reviewer, col = n)) +
+  scale_color_continuous(limits = c(1, 50)) +
+  labs(col = "Issues") +
+  facet_wrap(~Approved)
+b <- com_is_w %>% 
+  group_by(Other, Reviewer, Approved) %>% 
+  count(sort = TRUE) %>% 
+  ggplot() +
+  geom_abline(slope = 1) +
+  geom_point(aes(Reviewer, Other, col = n)) +
+  scale_color_continuous(limits = c(1, 50)) +
+  facet_wrap(~Approved) +
+  labs(col = "Issues")
+d <- com_is_w %>% 
+  group_by(Author, Other, Approved) %>% 
+  count(sort = TRUE) %>% 
+  ggplot() +
+  geom_abline(slope = 1) +
+  geom_point(aes(Author, Other, col = n)) +
+  scale_color_continuous(limits = c(1, 50)) +
+  facet_wrap(~Approved) +
+  labs(col = "Issues")
+a + b + d + plot_layout(ncol = 1,
+                        guides = "collect")  +
+  plot_annotation(title = "Comments on submissions by users",
+                  subtitle = "Separated by if approved or not")
+```
+
+Usually packages not approved have less comments from authors, reviewers and other users.
+
+About the time to get feedback we have previously seen that most of the issues were fast.
+However it included automatic actions from the bot, so let's check again without the automatic events.
+
+```{r delays}
+
+closed_c <- full %>% 
+  mutate(comment_n = cumsum(event == "commented" & actor != "bioc-issue-bot")) %>% 
+  filter(event == "closed") %>% 
+  filter(event_n == max(event_n)) %>% 
+  select(id, time_relative, comment_n, event_n, Approved)
+
+full %>% 
+  filter(event %in% c("commented", "created") & actor != "bioc-issue-bot") %>% 
+  mutate(comment_n = cumsum(event == "commented" & actor != "bioc-issue-bot")) %>% 
+  ggplot() +
+  geom_point(aes(time_relative, comment_n, col = id),  data = closed_c, shape = "square") +
+  geom_line(aes(time_relative, comment_n, group = id, col = id)) +
+  facet_wrap(~Approved, scales = "free") +
+  guides(col = FALSE) + 
+  labs(x = "Since creation of the issue (days)", y = "Comments", title = "Comments on issues")
+```
+
+Here the squares indicate when a issue is closed, and we can see most comments are before the issues are closed.
+
+```{r closing}
+closed_c <- mutate(closed_c, Closed = TRUE)
+aftr <- full %>% 
+  filter(event %in% c("commented", "created") & actor != "bioc-issue-bot") %>% 
+  mutate(comment_n = cumsum(event == "commented" & actor != "bioc-issue-bot"),
+         Closed = FALSE) %>% 
+  select(id, time_relative, comment_n, event_n, Approved, Closed) %>% 
+  rbind(closed_c) %>% 
+  group_by(id) %>% 
+  mutate(Closed = event_n > ifelse(any(Closed), event_n[Closed], Inf))
+aftr %>% 
+  group_by(id, Approved) %>% 
+  count(Closed) %>% 
+  filter(Closed) %>% 
+  ggplot() + 
+  geom_jitter(aes(Approved, n, col = Approved, shape = Approved), height = 0) +
+  labs(x = element_blank(), y = "Comments", 
+       title = "Comments after being closed",
+       size = "Issues")
+```
+
+And there doesn't seem to be any difference between approved and not approved packages.
+
+I would have expected more comments after closing an issue in the not approved submissions.
+This might indicate that the discussion happens before and/or that the process after closing the issue is not clear enough. 
 
 ### Reproducibility
 

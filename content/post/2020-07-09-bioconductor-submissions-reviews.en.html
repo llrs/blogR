@@ -1,7 +1,7 @@
 ---
 title: 'Bioconductor submissions: reviews'
 author: Lluís Revilla Sancho
-date: '2020-07-09'
+date: '2020-07-31'
 slug: bioconductor-submissions-reviews
 categories:
   - Bioconductor
@@ -9,8 +9,9 @@ categories:
 tags:
   - Bioconductor
   - r
+  - reviews
 authors: []
-description: ''
+description: 'Looking in detail to Bioconductor sumbissions: interactions between bots, reviewers and the community.'
 editor_options:
   chunk_output_type: console
 featured: no
@@ -18,8 +19,8 @@ draft: true
 image:
   caption: ''
   focal_point: ''
-subtitle: ''
-summary: ''
+subtitle: 'The second part of Bioconductor submissions'
+summary: 'Looking in detail to Bioconductor sumbissions: interactions between bots, reviewers and the community.'
 ---
 
 
@@ -27,50 +28,200 @@ summary: ''
 <p>First post is on <a href="https://llrs.dev/2020/06/bioconductor-submissions/">Bioconductor submissions</a> raised some questions comments but at the time I didn’t have a good way to answer them:</p>
 <ul>
 <li>issues get closed after they got assigned a reviewer and before the reviewer actually gets a chance to start the review.</li>
-<li>issues assigned to multiple people or reviews that switched reviewers</li>
+<li>issues assigned to multiple people or issues that switched reviewers</li>
 </ul>
-<p>The common problem is that I didn’t have the information available. To retrieve the information from github I developed a <a href="https://llrs.dev/2020/06/social-github/">new package</a> which .</p>
+<p>To answer both of them I needed more information.
+On the previous post I only gathered the information of the state of the issues at that moment.
+This excluded label changes, reviewer changes, renaming the issues, who commented on the issues and many more things.
+To retrieve these information from github I developed a <a href="https://llrs.dev/2020/06/social-github/">new package</a> <a href="https://github.com/llrs/socialGH"><code>{socialGH}</code></a> which downloads it from <a href="https://github.com">Github</a> to make the analysis possible.</p>
+<p>Now that we have more data about the issues we can plot them similarly to what we did on the previous post:</p>
+<p><img src="/post/2020-07-09-bioconductor-submissions-reviews.en_files/figure-html/first_plot-1.png" width="672" /></p>
+<p>We can see that sometimes the issues remained silent for several months and then had a high level of events, or a single one (closing).</p>
+<p>Compare to the previous version it is surprising to see that one of the earliest issues still gets new events to date.
+Apparently <a href="https://github.com/Bioconductor/Contributions">issue 51</a>, and others, are being used to test the Bioconductor builder.</p>
+<p><img src="/post/2020-07-09-bioconductor-submissions-reviews.en_files/figure-html/by_user-1.png" width="672" /><img src="/post/2020-07-09-bioconductor-submissions-reviews.en_files/figure-html/by_user-2.png" width="672" /></p>
+<div id="events" class="section level1">
+<h1>Events</h1>
+<p>We cab count how many users and issues have been involved with each event type:</p>
+<p><img src="/post/2020-07-09-bioconductor-submissions-reviews.en_files/figure-html/events_view-1.png" width="672" /></p>
+<p>We can see that few issues are locked or comments deleted.
+There is an almost equal amount of labeling and unlabeling, performed by few people but on lots of issues.
+There is a group of mentioning, commenting and subscribing too.
+Many people is involved on commenting and creating submissions.</p>
+<p>Looking a bit further on the issues we can look at the events that take place:</p>
+<p><img src="/post/2020-07-09-bioconductor-submissions-reviews.en_files/figure-html/second_plot-1.png" width="672" /></p>
+<p>We can see that most issues have few events which agrees with the previous findings that issues are handled fairly and expeditiously.</p>
+<p>The most common event are comments, mentions and the rarest events are deleting comments, locking or referencing them.</p>
+<p><img src="/post/2020-07-09-bioconductor-submissions-reviews.en_files/figure-html/events_time-1.png" width="672" /><img src="/post/2020-07-09-bioconductor-submissions-reviews.en_files/figure-html/events_time-2.png" width="672" /><img src="/post/2020-07-09-bioconductor-submissions-reviews.en_files/figure-html/events_time-3.png" width="672" /></p>
+<p>Some submissions have many events while others have few events but last longer.
+This is without looking at issues that were closed and later reopened.
+We can see that in a short amount of days a lot of events can be triggered.
+This is mostly that for each version update there are at least two messages on the issue.</p>
+<p><img src="/post/2020-07-09-bioconductor-submissions-reviews.en_files/figure-html/assignments-1.png" width="672" /></p>
+<p>We can see that usually some adjustment to reviewers is made usually changing them but some times they are added to have more than 1 reviewer (194).
+Almost all the submitted packages without a reviewer (537 submissions) were rejected except for three: <a href="https://github.com/Bioconductor/Contributions/issues/81">81</a>, <a href="https://github.com/Bioconductor/Contributions/issues/82">82</a>, <a href="https://github.com/Bioconductor/Contributions/issues/83">83</a> that were reviewed by <a href="https://github.com/vobencha">vobencha</a> even if not officially assigned.
+Some of these were rejected because they didn’t pass some automatic check and other after preliminary inspection.</p>
+<p><img src="/post/2020-07-09-bioconductor-submissions-reviews.en_files/figure-html/open_close1-1.png" width="672" /></p>
+<p><img src="/post/2020-07-09-bioconductor-submissions-reviews.en_files/figure-html/open_close2-1.png" width="672" /></p>
+<p>We can see that is common to close and reopen issues, but they are generally done by the same people (the reviewer or the original submitter)</p>
+<p><img src="/post/2020-07-09-bioconductor-submissions-reviews.en_files/figure-html/submission_acceptance-1.png" width="672" /></p>
+<p>On submissions with a reviewer assigned that were closed by someone (not the submitter), we can see here that reviews with more than one reviewer do not lead to significantly more comments from the reviewers.</p>
+<p>Although it seems like this leads to have the package approved.</p>
+<p><img src="/post/2020-07-09-bioconductor-submissions-reviews.en_files/figure-html/reviews-1.png" width="672" /></p>
+<p><img src="/post/2020-07-09-bioconductor-submissions-reviews.en_files/figure-html/submission_acceptance2-1.png" width="672" /><img src="/post/2020-07-09-bioconductor-submissions-reviews.en_files/figure-html/submission_acceptance2-2.png" width="672" /></p>
+<p>We can see that the percentage of approved on those issues where the reviewer commented is fairly similar and around 80% or above.
+However there is also at least a 5% of submissions that are closed despite the comments from reviewers.
+Usually this has to be with unresponsiveness from the submitter:</p>
+<p><img src="/post/2020-07-09-bioconductor-submissions-reviews.en_files/figure-html/events_days-1.png" width="672" /></p>
+<p>We can see that on the approved packages there are usually more events on the same time period.
+So make sure to follow the advice of the reviewers and the bot and make all the errors and warnings disappear.</p>
+<p><img src="/post/2020-07-09-bioconductor-submissions-reviews.en_files/figure-html/events_user_distribution-1.png" width="672" /></p>
+<p>While most issues have at least 8 different events they usually have 4 users involved.
+Presumably the creator of the issue, bioc-issue-bot, a reviewer and someone else.</p>
+<p><img src="/post/2020-07-09-bioconductor-submissions-reviews.en_files/figure-html/actor_event_types-1.png" width="672" /></p>
+<p>The more users involved, more different type of events are triggered.
+Presumably more people get subscribed or is mentioned.</p>
+<p><img src="/post/2020-07-09-bioconductor-submissions-reviews.en_files/figure-html/actors_events-1.png" width="672" /></p>
+<p>As expected the more users are involved in an issue more events are produced.
+We can also see the submissions that are closed by the bioc-issue-bot with few comments and users.</p>
+</div>
+<div id="who-does-each-action" class="section level1">
+<h1>Who does each action ?</h1>
+<p>We can look now at who performs what, we know there are 951 participants:</p>
+<p><img src="/post/2020-07-09-bioconductor-submissions-reviews.en_files/figure-html/who-1.png" width="672" /></p>
+<p>Here I cut the top 35 people who have triggered more than events.
+We can clearly see who are official reviewers (as seen on the previous post) because they labeled and unlabeled issues.
+bioc-issue-bot is an special user that makes lots of comments and assigning reviewers to issues.
+We can also see that it previously renamed the issues or unassigned reviewers.</p>
+<p><img src="/post/2020-07-09-bioconductor-submissions-reviews.en_files/figure-html/comments_plot-1.png" width="672" /></p>
+<p>Comments by users (excluding the bot), usually only the author, the reviewer comment, frequently mtmorgan also suggests.</p>
+<p><img src="/post/2020-07-09-bioconductor-submissions-reviews.en_files/figure-html/comment_plot2-1.png" width="672" /></p>
+<p>We can see that Martin Morgan has commented on almost all the submissions.
+The odd issue where there are some comments from mtmorgan but no other is the <a href="https://github.com/Bioconductor.org/Contributions/issue/611">issue 611</a> where he is the reviewer and the submitter of a package.</p>
+</div>
+<div id="bioconductor-bot" class="section level1">
+<h1>Bioconductor Bot</h1>
+<p>We have seen that one of the most relevant “users” is bioc-issue-bot.<br />
+It is a bot that performs and report automatic checks on the submissions (The code can be found <a href="https://github.com/Bioconductor/issue_tracker_github">here</a>).
+Let’s explore what does and what does it report</p>
+<p><img src="/post/2020-07-09-bioconductor-submissions-reviews.en_files/figure-html/bioc_bot_plot-1.png" width="672" /></p>
+<p>Classifying the comments reports that most of the comments are build results or that received a valid push.
+We can also see some changes on the bot, like changing the messages or reporting differently the process triggered.
+However, it also reports common problems on the submission: missing repository, unmatch between the repository name and the package name, reposting the same package, missing SSH key (needed to be able to push to Bioconductor git server), …
+We can see that most of them are related to building the packages being submitted.</p>
+<p>Let’s check if there is some differences on the comments according to if they are later accepted or not.</p>
+<p><img src="/post/2020-07-09-bioconductor-submissions-reviews.en_files/figure-html/user_events-1.png" width="672" /></p>
+<p>We can see clearly differences on the behavior of the issues, some type of comments are all of the non-accepted packages.
+It seems like some are not corrected.
+We can see here some common areas when submissions fail: failing to provide a valid link to the repository or many links to several repositories, or failing to comply with the guidelines about the repository name and the package name.
+Reposting the same package is also a common reason of not getting that submission approved.</p>
+<p>The only significant are the build results, the build results, the valid push, received, unmatch between the package name and the repository, and the update version.</p>
+<p><img src="/post/2020-07-09-bioconductor-submissions-reviews.en_files/figure-html/common_feedback-1.png" width="672" /></p>
+<p>We can see, (and I expected so) that comments of bioc-issue-bot are driven by the build system.</p>
+<p><img src="/post/2020-07-09-bioconductor-submissions-reviews.en_files/figure-html/bot_comments_approve-1.png" width="672" /></p>
+<p>But the other comments are more frequent among the not approved packages, mainly errors and other automatically detected problems.</p>
+<p>Aside from the bot, other users might comment on issues too:</p>
+<p><img src="/post/2020-07-09-bioconductor-submissions-reviews.en_files/figure-html/comments_issues-1.png" width="672" /></p>
+<p>In some issues reviewers comment more than authors, while on some there are more comments from authors than reviewers.
+Surprisingly, in some issues there are more comments from other users than authors or reviewers.</p>
+<p><img src="/post/2020-07-09-bioconductor-submissions-reviews.en_files/figure-html/comments_approved-1.png" width="672" /></p>
+<p>Usually packages not approved have less comments from authors, reviewers and other users.</p>
+<p>About the time to get feedback we have previously seen that most of the issues were fast.
+However it included automatic actions from the bot, so let’s check again without the automatic events.</p>
+<p><img src="/post/2020-07-09-bioconductor-submissions-reviews.en_files/figure-html/delays-1.png" width="672" /></p>
+<p>Here the squares indicate when a issue is closed, and we can see most comments are before the issues are closed.</p>
+<p><img src="/post/2020-07-09-bioconductor-submissions-reviews.en_files/figure-html/closing-1.png" width="672" /></p>
+<p>And there doesn’t seem to be any difference between approved and not approved packages.</p>
+<p>I would have expected more comments after closing an issue in the not approved submissions.
+This might indicate that the discussion happens before and/or that the process after closing the issue is not clear enough.</p>
 <div id="reproducibility" class="section level3">
 <h3>Reproducibility</h3>
 <details>
 <pre><code>## ─ Session info ───────────────────────────────────────────────────────────────────────────────────────────────────────
 ##  setting  value                       
-##  version  R version 3.6.3 (2020-02-29)
-##  os       Ubuntu 20.04 LTS            
+##  version  R version 4.0.1 (2020-06-06)
+##  os       Ubuntu 20.04.1 LTS          
 ##  system   x86_64, linux-gnu           
 ##  ui       X11                         
 ##  language (EN)                        
 ##  collate  en_US.UTF-8                 
 ##  ctype    en_US.UTF-8                 
 ##  tz       Europe/Madrid               
-##  date     2020-07-09                  
+##  date     2020-08-24                  
 ## 
 ## ─ Packages ───────────────────────────────────────────────────────────────────────────────────────────────────────────
-##  package     * version date       lib source        
-##  assertthat    0.2.1   2019-03-21 [1] CRAN (R 3.6.0)
-##  blogdown      0.19    2020-05-22 [1] CRAN (R 3.6.3)
-##  bookdown      0.19    2020-05-15 [1] CRAN (R 3.6.3)
-##  cli           2.0.2   2020-02-28 [1] CRAN (R 3.6.1)
-##  crayon        1.3.4   2017-09-16 [1] CRAN (R 3.6.0)
-##  digest        0.6.25  2020-02-23 [1] CRAN (R 3.6.1)
-##  evaluate      0.14    2019-05-28 [1] CRAN (R 3.6.0)
-##  fansi         0.4.1   2020-01-08 [1] CRAN (R 3.6.1)
-##  glue          1.4.1   2020-05-13 [1] CRAN (R 3.6.3)
-##  htmltools     0.5.0   2020-06-16 [1] CRAN (R 3.6.3)
-##  knitr         1.28    2020-02-06 [1] CRAN (R 3.6.1)
-##  magrittr      1.5     2014-11-22 [1] CRAN (R 3.6.0)
-##  rlang         0.4.6   2020-05-02 [1] CRAN (R 3.6.3)
-##  rmarkdown     2.2     2020-05-31 [1] CRAN (R 3.6.3)
-##  sessioninfo   1.1.1   2018-11-05 [1] CRAN (R 3.6.0)
-##  stringi       1.4.6   2020-02-17 [1] CRAN (R 3.6.3)
-##  stringr       1.4.0   2019-02-10 [1] CRAN (R 3.6.0)
-##  withr         2.2.0   2020-04-20 [1] CRAN (R 3.6.1)
-##  xfun          0.14    2020-05-20 [1] CRAN (R 3.6.3)
-##  yaml          2.2.1   2020-02-01 [1] CRAN (R 3.6.1)
+##  package      * version    date       lib source                             
+##  assertthat     0.2.1      2019-03-21 [1] CRAN (R 4.0.1)                     
+##  backports      1.1.8      2020-06-17 [1] CRAN (R 4.0.1)                     
+##  blob           1.2.1      2020-01-20 [1] CRAN (R 4.0.1)                     
+##  blogdown       0.20       2020-06-23 [1] CRAN (R 4.0.1)                     
+##  bookdown       0.20       2020-06-23 [1] CRAN (R 4.0.1)                     
+##  broom          0.7.0      2020-07-09 [1] CRAN (R 4.0.1)                     
+##  cellranger     1.1.0      2016-07-27 [1] CRAN (R 4.0.1)                     
+##  cli            2.0.2      2020-02-28 [1] CRAN (R 4.0.1)                     
+##  colorspace     1.4-1      2019-03-18 [1] CRAN (R 4.0.1)                     
+##  crayon         1.3.4      2017-09-16 [1] CRAN (R 4.0.1)                     
+##  DBI            1.1.0      2019-12-15 [1] CRAN (R 4.0.1)                     
+##  dbplyr         1.4.4      2020-05-27 [1] CRAN (R 4.0.1)                     
+##  digest         0.6.25     2020-02-23 [1] CRAN (R 4.0.1)                     
+##  dplyr        * 1.0.2      2020-08-18 [1] CRAN (R 4.0.1)                     
+##  ellipsis       0.3.1      2020-05-15 [1] CRAN (R 4.0.1)                     
+##  evaluate       0.14       2019-05-28 [1] CRAN (R 4.0.1)                     
+##  fansi          0.4.1      2020-01-08 [1] CRAN (R 4.0.1)                     
+##  farver         2.0.3      2020-01-16 [1] CRAN (R 4.0.1)                     
+##  forcats      * 0.5.0      2020-03-01 [1] CRAN (R 4.0.1)                     
+##  fs             1.5.0      2020-07-31 [1] CRAN (R 4.0.1)                     
+##  generics       0.0.2      2018-11-29 [1] CRAN (R 4.0.1)                     
+##  ggplot2      * 3.3.2      2020-06-19 [1] CRAN (R 4.0.1)                     
+##  ggrepel      * 0.8.2      2020-03-08 [1] CRAN (R 4.0.1)                     
+##  gh             1.1.0      2020-01-24 [1] CRAN (R 4.0.1)                     
+##  glue           1.4.1      2020-05-13 [1] CRAN (R 4.0.1)                     
+##  gtable         0.3.0      2019-03-25 [1] CRAN (R 4.0.1)                     
+##  haven          2.3.1      2020-06-01 [1] CRAN (R 4.0.1)                     
+##  here           0.1        2017-05-28 [1] CRAN (R 4.0.1)                     
+##  hms            0.5.3      2020-01-08 [1] CRAN (R 4.0.1)                     
+##  htmltools      0.5.0      2020-06-16 [1] CRAN (R 4.0.1)                     
+##  httr           1.4.2      2020-07-20 [1] CRAN (R 4.0.1)                     
+##  jsonlite       1.7.0      2020-06-25 [1] CRAN (R 4.0.1)                     
+##  knitr          1.29       2020-06-23 [1] CRAN (R 4.0.1)                     
+##  labeling       0.3        2014-08-23 [1] CRAN (R 4.0.1)                     
+##  lifecycle      0.2.0      2020-03-06 [1] CRAN (R 4.0.1)                     
+##  lubridate      1.7.9      2020-06-08 [1] CRAN (R 4.0.1)                     
+##  magrittr       1.5.0.9000 2020-08-21 [1] Github (tidyverse/magrittr@1d0559d)
+##  modelr         0.1.8      2020-05-19 [1] CRAN (R 4.0.1)                     
+##  munsell        0.5.0      2018-06-12 [1] CRAN (R 4.0.1)                     
+##  patchwork    * 1.0.1      2020-06-22 [1] CRAN (R 4.0.1)                     
+##  pillar         1.4.6      2020-07-10 [1] CRAN (R 4.0.1)                     
+##  pkgconfig      2.0.3      2019-09-22 [1] CRAN (R 4.0.1)                     
+##  purrr        * 0.3.4      2020-04-17 [1] CRAN (R 4.0.1)                     
+##  R6             2.4.1      2019-11-12 [1] CRAN (R 4.0.1)                     
+##  RColorBrewer   1.1-2      2014-12-07 [1] CRAN (R 4.0.1)                     
+##  Rcpp           1.0.5      2020-07-06 [1] CRAN (R 4.0.1)                     
+##  readr        * 1.3.1      2018-12-21 [1] CRAN (R 4.0.1)                     
+##  readxl         1.3.1      2019-03-13 [1] CRAN (R 4.0.1)                     
+##  reprex         0.3.0      2019-05-16 [1] CRAN (R 4.0.1)                     
+##  rlang          0.4.7      2020-07-09 [1] CRAN (R 4.0.1)                     
+##  rmarkdown      2.3        2020-06-18 [1] CRAN (R 4.0.1)                     
+##  rprojroot      1.3-2      2018-01-03 [1] CRAN (R 4.0.1)                     
+##  rstudioapi     0.11       2020-02-07 [1] CRAN (R 4.0.1)                     
+##  rvest          0.3.6      2020-07-25 [1] CRAN (R 4.0.1)                     
+##  scales         1.1.1      2020-05-11 [1] CRAN (R 4.0.1)                     
+##  sessioninfo    1.1.1      2018-11-05 [1] CRAN (R 4.0.1)                     
+##  socialGH     * 0.0.3      2020-08-17 [1] local                              
+##  stringi        1.4.6      2020-02-17 [1] CRAN (R 4.0.1)                     
+##  stringr      * 1.4.0      2019-02-10 [1] CRAN (R 4.0.1)                     
+##  tibble       * 3.0.3      2020-07-10 [1] CRAN (R 4.0.1)                     
+##  tidyr        * 1.1.1      2020-07-31 [1] CRAN (R 4.0.1)                     
+##  tidyselect     1.1.0      2020-05-11 [1] CRAN (R 4.0.1)                     
+##  tidyverse    * 1.3.0      2019-11-21 [1] CRAN (R 4.0.1)                     
+##  vctrs          0.3.2      2020-07-15 [1] CRAN (R 4.0.1)                     
+##  viridisLite    0.3.0      2018-02-01 [1] CRAN (R 4.0.1)                     
+##  withr          2.2.0      2020-04-20 [1] CRAN (R 4.0.1)                     
+##  xfun           0.16       2020-07-24 [1] CRAN (R 4.0.1)                     
+##  xml2           1.3.2      2020-04-23 [1] CRAN (R 4.0.1)                     
+##  yaml           2.2.1      2020-02-01 [1] CRAN (R 4.0.1)                     
 ## 
-## [1] /home/lluis/R/x86_64-pc-linux-gnu-library/3.6
-## [2] /usr/local/lib/R/site-library
-## [3] /usr/lib/R/site-library
-## [4] /usr/lib/R/library</code></pre>
+## [1] /home/lluis/bin/R/4.0.1/lib/R/library</code></pre>
 </details>
+</div>
 </div>
