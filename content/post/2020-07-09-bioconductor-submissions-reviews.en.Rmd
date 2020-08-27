@@ -14,8 +14,8 @@ authors: []
 description: 'Looking in detail to Bioconductor sumbissions: interactions between bots, reviewers and the community.'
 editor_options:
   chunk_output_type: console
-featured: no
-draft: true
+featured: yes
+draft: false
 image:
   caption: ''
   focal_point: ''
@@ -24,7 +24,8 @@ summary: 'Looking in detail to Bioconductor sumbissions: interactions between bo
 ---
 
 ```{r setup, include = FALSE}
-knitr::opts_chunk$set(collapse = TRUE, warning = FALSE, message = FALSE, echo = FALSE)
+knitr::opts_chunk$set(collapse = TRUE, warning = FALSE, message = FALSE, 
+                      echo = FALSE, cache = TRUE)
 ```
 
 First post  is on [Bioconductor submissions](https://llrs.dev/2020/06/bioconductor-submissions/) raised some questions comments but at the time I didn't have a good way to answer them:
@@ -63,8 +64,7 @@ pr <- g %>%
   pull(id)
 g2 <- g %>% 
   filter(!id %in% pr) %>% 
-  mutate(approved = any(vapply(label, 
-                           function(x){"3a. accepted" %in% x}, logical(1L))),
+  mutate(approved = any(label == "3a. accepted"),
          Approved = case_when(any(approved) ~ "Yes",
                               sum(event == "closed") >= sum(event == "reopened") ~ "No",
                               TRUE ~ "Ongoing"))
@@ -75,13 +75,18 @@ Now that we have more data about the issues we can plot them similarly to what w
 
 ```{r first_plot}
 library("socialGH")
+library("tidyverse")
+theme_set(theme_minimal())
 # If not closed add the closing time of today
-g2 <- readRDS(here::here("static", "20200818_github_data.RDS"))
+g2 <- readRDS(here::here("static", "20200818_github_data.RDS")) %>% 
+  mutate(
+    approved = any(str_detect(unlist(label[event %in% c("labeled", "unlabeled")]), "accept")),
+    Approved = case_when(any(approved) ~ "Yes",
+                              sum(event == "closed") >= sum(event == "reopened") ~ "No",
+                              TRUE ~ "Ongoing"))
 link_issue <- function(x) {
   socialGH::link_issue("Bioconductor/Contributions", x)
 }
-library("tidyverse")
-theme_set(theme_minimal())
 releases <- data.frame(release = paste0("3.", 3:12),
            date = as.POSIXct(c("2016/04/04", "2016/10/18", "2017/04/25", 
                             "2017/10/31", "2018/05/01", "2018/10/31", 
@@ -153,6 +158,22 @@ full <- g2 %>%
 
 
 ```{r by_issue}
+reviewers <- function(assigners, unassigners) {
+  ta <- table(assigners)
+  tu <- table(unassigners)
+  y <- 0
+  n <- sum(ta) - sum(tu)
+  reviewers <- vector("character", n)
+  for(reviwer in names(ta)) {
+    x <- ta[reviwer]-tu[reviwer]
+    if (x >= 1 | is.na(x)){
+      y <- y + 1
+      reviewers[y] <- reviwer
+    }
+  }
+  reviewers
+}
+
 by_issue <- g2 %>% 
   group_by(id) %>% 
   summarize(time_window = difftime(max(created), min(created), units = "days"),
@@ -165,9 +186,10 @@ by_issue <- g2 %>%
             reassigned = any(event %in% "unassigned"),
             assigners = list(reviewer[event %in% "assigned"]),
             unassigners = list(reviewer[event %in% "unassigned"]),
-            reviewers = list(setdiff(unlist(assigners, FALSE, FALSE), 
+            reviewers = list(reviewers(unlist(assigners, FALSE, FALSE), 
                                     unlist(unassigners, FALSE, FALSE))),
-            reviewer_comments = sum(event == "commented" & actor %in% unlist(reviewer), na.rm = TRUE),
+            reviewer_comments = sum(event == "commented" & 
+                                      actor %in% unlist(reviewers), na.rm = TRUE),
             closers = list(actor[event == "closed"]),
             openers = list(actor[event == "reopened"]),
             closed = sum(event == "closed") >= sum(event == "reopened") & any(event == "closed"),
@@ -381,21 +403,8 @@ by_issue %>%
 ```
 
 We can see that usually some adjustment to reviewers is made usually changing them but some times they are added to have more than 1 reviewer (`r sum(by_issue$assignments > 1)`).
-Almost all the submitted packages without a reviewer (`r sum(by_issue$assignments == 0)` submissions) were rejected except for three: `r link_issue(81:83)` that were reviewed by `r link_profile("vobencha")` even if not officially assigned.
+Almost all the submitted packages without a reviewer (`r sum(by_issue$assignments == 0)` submissions) were rejected except for three: `r socialGH::link_issue("Bioconductor/Contributions", 81:83)` that were reviewed by `r socialGH::link_profile("vobencha")` even if not officially assigned.
 Some of these were rejected because they didn't pass some automatic check and other after preliminary inspection.
-
-```{r open_close1}
-by_issue %>% 
-  mutate(n_openers = lengths(openers),
-         n_closers = lengths(closers)) %>% 
-  ggplot() +
-  geom_count(aes(n_closers, n_openers)) +
-  scale_radius(trans = "log10") +
-  facet_wrap(~Approved) +
-  labs(x = "Closed", y = "Opened", title = "Issues closings and reopenings", 
-       subtitle = "Approved?", size = "Submissions")
-```
-
 
 ```{r open_close2}
 by_issue %>% 
@@ -440,8 +449,8 @@ revi %>%
   ggplot() +
   geom_jitter(aes(Approved, reviewer_comments, 
                   col = Approved, shape = Approved), height = 0) +
-  facet_wrap(~n_reviewers) +
-  labs(x = element_blank(), y = "Comments", title = "Comments from reviewers",
+  facet_wrap(~n_reviewers, drop = TRUE) +
+  labs(x = element_blank(), y = "Reviewers comments", title = "Comments from reviewers",
        subtitle = "Reviewers assigned:")
 ```
 
@@ -602,15 +611,18 @@ We can also see that it previously renamed the issues or unassigned reviewers.
 ```{r comments_plot}
 comments <- full %>% 
   mutate(n = sum(event %in% "assigned"),
+         assigners = list(reviewer[event %in% "assigned"]),
+         unassigners = list(reviewer[event %in% "unassigned"]),
          reasigned  = any(event %in% "unassigned"),
-         reviewers = n - sum(event %in% "unassigned"),
-         creator = unique(actor[event == "created"]),
-         reviewer = last(reviewer[!is.na(reviewer)])) %>% 
-  filter(actor != "bioc-issue-bot", event == "commented", reviewers == 1) %>% 
+         reviewers = list(reviewers(unlist(assigners, FALSE, FALSE), 
+                                    unlist(unassigners, FALSE, FALSE))),
+         reviewers_n = length(reviewers),
+         creator = unique(actor[event == "created"])) %>% 
+  filter(actor != "bioc-issue-bot", event == "commented", reviewers_n == 1) %>% 
   group_by(id) %>% 
   summarise(speaking = n_distinct(actor), 
             comments = n(), 
-            reviewer = sum(actor == reviewer),
+            reviewer = sum(actor == unlist(reviewer)),
             author = sum(actor == creator),
             mtmorgan = sum(actor == "mtmorgan"),
             other = comments - reviewer - author)
@@ -912,6 +924,121 @@ And there doesn't seem to be any difference between approved and not approved pa
 
 I would have expected more comments after closing an issue in the not approved submissions.
 This might indicate that the discussion happens before and/or that the process after closing the issue is not clear enough. 
+
+
+
+Let's see how much time does it take to start the review and the time till the reviewer comments:
+
+```{r successful_build}
+full %>% 
+  summarise(success_build = any(event == "labeled" & label == "OK"),
+            Approved = unique(Approved)) %>% 
+  ungroup() %>% 
+  count(success_build, Approved, sort = TRUE) %>% 
+  mutate(success_build = ifelse(success_build, "Yes", "No"))%>% 
+  arrange(Approved, -n) %>% 
+  knitr::kable(col.names = c("Successful build?", "Approved?", "Submissions"))
+```
+
+We can see that most not approved packages do not have a successful build. 
+
+```{r trans_builds}
+logic_nth <- function(x, n){
+  y <- rep(FALSE, length(!!x))
+  z <- which(!!x)
+  y[z[seq_len(n)]] <- TRUE
+  y
+}
+builds <- full %>% 
+  mutate(assigners = list(reviewer[event %in% "assigned"]),
+            unassigners = list(reviewer[event %in% "unassigned"]),
+            reviewers = list(reviewers(unlist(assigners, FALSE, FALSE), 
+                                    unlist(unassigners, FALSE, FALSE))),
+         comment = event == "commented"
+         ) %>% 
+  filter((event == "labeled" & label == "OK") |
+           (comment & actor %in% unlist(reviewers))) %>% 
+  arrange(id, event_n) %>% 
+  mutate(keel = logic_nth(event == "labeled", 1),
+         keec = event == "commented",
+         k = any(keel),
+         k2 = ifelse(any(keel), event_n >= event_n[keel], FALSE),
+         k3 = keel | (keec  & k2),
+         k4 = logic_nth(k3, 2)) %>% 
+  filter(k4)
+builds %>% 
+  ggplot() +
+  geom_point(aes(time_relative, id, col = event)) +
+  facet_wrap(~Approved, ncol = 2) +
+  labs(x = "Days since submission",
+       y = "Issue",
+       title = "First successful build and comment of the reviewer after",
+       subtitle = "Submission approved?",
+       col = "Event")
+```
+
+An overview of the submissions, when was the first successful build and when was the first comment of the reviewer after the successful build. 
+
+```{r time_comment}
+bc <- builds %>% 
+  select(id, time_relative, event, Approved) %>% 
+  pivot_wider(names_from = event, values_from = time_relative, values_fill = NA)
+bc <- bc %>% 
+  # filter(!is.na(labeled) & !is.na(commented)) %>% 
+  mutate(td = commented-labeled)
+bc %>% 
+  filter(!is.na(labeled) & !is.na(commented)) %>% 
+  ggplot() +
+  geom_linerange(aes(y = id, xmin = labeled, xmax = commented)) +
+  facet_wrap(~Approved, ncol = 2, scales = "free") +
+  labs(title = "Time between successful build and comment from the reviewer",
+       x = "Days since submission", y = "Issue", 
+       subtitle = "Submission approved?")
+```
+
+Usually it takes close to `r round(median(bc$labeled, na.rm = TRUE))` days to have the first successful build on Bioconductor (if there is any as we have seen). 
+
+After it it takes close to `r round(median(bc$td, na.rm = TRUE))` days to the reviewer to comment.
+This comment might be the review of the package, as it is only done after the submissions passes all the checks.
+
+```{r td_plot}
+p1 <- bc %>% 
+  ggplot() +
+  geom_histogram(aes(labeled), binwidth = 1) +
+  facet_wrap(~Approved) +
+  labs(subtitle = "Submission approved?", 
+       title = "Days between submission and the first successful build",
+       x = "Days", y = "Issues")
+p1
+p1 +
+  coord_cartesian(xlim = c(0, 7)) +
+  labs(caption = "A zoom to the first week")
+bc %>% 
+  ggplot() +
+  geom_histogram(aes(td)) +
+  facet_wrap(~Approved) +
+  labs(subtitle = "Submission approved?", 
+       title = "Days between successful build and comment from reviwers",
+       x = "days", y = "Issues")
+```
+
+Usually the packages that get approved take a bit longer to be commented. 
+
+```{r}
+bc %>% 
+  group_by(Approved) %>% 
+  summarize(across(labeled:td, function(x){round(median(x, na.rm = TRUE))})) %>% 
+  knitr::kable(col.names = c("Approved", "Days to succcessful build",
+                      "Days to reviewer comment after build",
+                      "Days between build and reviewer comment"))
+```
+
+
+# Conclusions
+
+Most of the problems with the submissions are formal and automatically detected by the bot.
+Next come problems from the package itself not passing the checks performed on Bioconductor.
+So if you want to have your package included make sure that the package builds on Bioconductor and respond fast to the feedback provided by the bot. 
 
 ### Reproducibility
 
