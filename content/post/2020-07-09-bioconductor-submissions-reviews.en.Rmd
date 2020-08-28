@@ -609,27 +609,27 @@ We can also see that it previously renamed the issues or unassigned reviewers.
 
 
 ```{r comments_plot}
-comments <- full %>% 
+comments <- full %>%
   mutate(n = sum(event %in% "assigned"),
-         assigners = list(reviewer[event %in% "assigned"]),
-         unassigners = list(reviewer[event %in% "unassigned"]),
+         assigners = list(reviewer[event == "assigned"]),
+         unassigners = list(reviewer[event == "unassigned"]),
          reasigned  = any(event %in% "unassigned"),
          reviewers = list(reviewers(unlist(assigners, FALSE, FALSE), 
                                     unlist(unassigners, FALSE, FALSE))),
-         reviewers_n = length(reviewers),
+         reviewers_n = lengths(assigners)-lengths(unassigners),
          creator = unique(actor[event == "created"])) %>% 
-  filter(actor != "bioc-issue-bot", event == "commented", reviewers_n == 1) %>% 
+  filter(actor != "bioc-issue-bot", event == "commented", reviewers_n >= 1) %>% 
   group_by(id) %>% 
   summarise(speaking = n_distinct(actor), 
             comments = n(), 
-            reviewer = sum(actor == unlist(reviewer)),
+            reviewer = sum(actor %in% unlist(reviewers[1])),
             author = sum(actor == creator),
             mtmorgan = sum(actor == "mtmorgan"),
             other = comments - reviewer - author)
 comments %>% 
   ggplot() +
   geom_count(aes(author, reviewer)) +
-  labs(title = "Comments", x = "Authors", y = "Reviewer", size = "Issues")
+  labs(title = "Comments", x = "Authors", y = "Reviewer(s)", size = "Issues")
 ```
 
 Comments by users (excluding the bot), usually only the author, the reviewer comment, frequently mtmorgan also suggests. 
@@ -638,6 +638,7 @@ Comments by users (excluding the bot), usually only the author, the reviewer com
 comments %>% 
   filter(mtmorgan != reviewer) %>% 
   mutate(perc = mtmorgan/other) %>% 
+  mutate(perc = if_else(is.na(perc), 0, perc)) %>% 
   ggplot() +
   geom_count(aes(other, mtmorgan, col = perc)) +
   geom_abline(slope = 1, intercept = 0) +
@@ -974,7 +975,8 @@ builds %>%
        y = "Issue",
        title = "First successful build and comment of the reviewer after",
        subtitle = "Submission approved?",
-       col = "Event")
+       col = "Event") +
+  theme_minimal()
 ```
 
 An overview of the submissions, when was the first successful build and when was the first comment of the reviewer after the successful build. 
@@ -993,7 +995,8 @@ bc %>%
   facet_wrap(~Approved, ncol = 2, scales = "free") +
   labs(title = "Time between successful build and comment from the reviewer",
        x = "Days since submission", y = "Issue", 
-       subtitle = "Submission approved?")
+       subtitle = "Submission approved?") +
+  theme_minimal()
 ```
 
 Usually it takes close to `r round(median(bc$labeled, na.rm = TRUE))` days to have the first successful build on Bioconductor (if there is any as we have seen). 
@@ -1008,7 +1011,8 @@ p1 <- bc %>%
   facet_wrap(~Approved) +
   labs(subtitle = "Submission approved?", 
        title = "Days between submission and the first successful build",
-       x = "Days", y = "Issues")
+       x = "Days", y = "Issues") +
+  theme_minimal()
 p1
 p1 +
   coord_cartesian(xlim = c(0, 7)) +
@@ -1019,7 +1023,8 @@ bc %>%
   facet_wrap(~Approved) +
   labs(subtitle = "Submission approved?", 
        title = "Days between successful build and comment from reviwers",
-       x = "days", y = "Issues")
+       x = "days", y = "Issues") +
+  theme_minimal()
 ```
 
 Usually the packages that get approved take a bit longer to be commented. 
