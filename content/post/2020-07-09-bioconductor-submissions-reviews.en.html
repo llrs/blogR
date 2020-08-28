@@ -31,20 +31,25 @@ summary: 'Looking in detail to Bioconductor sumbissions: interactions between bo
 <li>issues assigned to multiple people or issues that switched reviewers</li>
 </ul>
 <p>To answer both of them I needed more information.
-On the previous post I only gathered the information of the state of the issues at that moment.
+On the <a href="https://llrs.dev/2020/06/bioconductor-submissions/">previous post</a> I only gathered the information of the state of the issues at that moment.
 This excluded label changes, reviewer changes, renaming the issues, who commented on the issues and many more things.
-To retrieve these information from github I developed a <a href="https://llrs.dev/2020/06/social-github/">new package</a> <a href="https://github.com/llrs/socialGH"><code>{socialGH}</code></a> which downloads it from <a href="https://github.com">Github</a> to make the analysis possible.</p>
-<p>Now that we have more data about the issues we can plot them similarly to what we did on the previous post:</p>
+To retrieve these information from github I developed a <a href="https://llrs.dev/2020/06/social-github/">new package</a> <a href="https://github.com/llrs/socialGH"><code>{socialGH}</code></a> which downloads it from <a href="https://github.com">Github</a> to make this analysis possible.</p>
+<p>I gathered all the information on issues using <a href="https://github.com/llrs/socialGH"><code>{socialGH}</code></a> on the 2020/08/18 and stored them in a tidy format.
+Now that we have more data about the issues we can plot them similarly to what we did on the previous post:</p>
 <p><img src="/post/2020-07-09-bioconductor-submissions-reviews.en_files/figure-html/first_plot-1.png" width="672" /></p>
-<p>We can see that sometimes the issues remained silent for several months and then had a high level of events, or a single one (closing).</p>
+<p>We can see that sometimes the issues remained silent for several months and then had a high level of events, or a single one (closing mainly).</p>
 <p>Compare to the previous version it is surprising to see that one of the earliest issues still gets new events to date.
-Apparently <a href="https://github.com/Bioconductor/Contributions">issue 51</a>, and others, are being used to test the Bioconductor builder.</p>
-<p><img src="/post/2020-07-09-bioconductor-submissions-reviews.en_files/figure-html/by_user-1.png" width="672" /><img src="/post/2020-07-09-bioconductor-submissions-reviews.en_files/figure-html/by_user-2.png" width="672" /></p>
+Apparently <a href="https://github.com/Bioconductor/Contributions/issues/51">issue 51</a>, and <a href="https://github.com/Bioconductor/Contributions/issues?q=label%3ATESTING+is%3Aclosed">others</a>, are being used to test the Bioconductor builder or the bot used to automate the process.</p>
+<p><img src="/post/2020-07-09-bioconductor-submissions-reviews.en_files/figure-html/by_user-1.png" width="672" /></p>
+<p>We can see that some reviewers comment more and are involved in more issues, but there is a group of fairly similar comments and issues.</p>
+<p>Clearly this will not be the same with users who submit packages:</p>
+<p><img src="/post/2020-07-09-bioconductor-submissions-reviews.en_files/figure-html/by_user2-1.png" width="672" /></p>
+<p>We can clearly see that most users are mainly only involved on submitting packages on one issue, but some people participate a lot and/or in several issues.</p>
 <div id="events" class="section level1">
 <h1>Events</h1>
 <p>We cab count how many users and issues have been involved with each event type:</p>
 <p><img src="/post/2020-07-09-bioconductor-submissions-reviews.en_files/figure-html/events_view-1.png" width="672" /></p>
-<p>We can see that few issues are locked or comments deleted.
+<p>We can see that few issues are locked (remember that it is different than closing the issue) or comments deleted.
 There is an almost equal amount of labeling and unlabeling, performed by few people but on lots of issues.
 There is a group of mentioning, commenting and subscribing too.
 Many people is involved on commenting and creating submissions.</p>
@@ -52,17 +57,27 @@ Many people is involved on commenting and creating submissions.</p>
 <p><img src="/post/2020-07-09-bioconductor-submissions-reviews.en_files/figure-html/second_plot-1.png" width="672" /></p>
 <p>We can see that most issues have few events which agrees with the previous findings that issues are handled fairly and expeditiously.</p>
 <p>The most common event are comments, mentions and the rarest events are deleting comments, locking or referencing them.</p>
-<p><img src="/post/2020-07-09-bioconductor-submissions-reviews.en_files/figure-html/events_time-1.png" width="672" /><img src="/post/2020-07-09-bioconductor-submissions-reviews.en_files/figure-html/events_time-2.png" width="672" /><img src="/post/2020-07-09-bioconductor-submissions-reviews.en_files/figure-html/events_time-3.png" width="672" /></p>
+<p><img src="/post/2020-07-09-bioconductor-submissions-reviews.en_files/figure-html/events_time-1.png" width="672" /></p>
+<p>We can see that most issues get around 50 events, but we can clearly see lots of issues that receive very few events.</p>
+<p><img src="/post/2020-07-09-bioconductor-submissions-reviews.en_files/figure-html/events_time2-1.png" width="672" /></p>
+<p>However, looking at the distribution along time most of the events are on the first 6 months after opening the issue.</p>
+<p><img src="/post/2020-07-09-bioconductor-submissions-reviews.en_files/figure-html/events_time3-1.png" width="672" /></p>
 <p>Some submissions have many events while others have few events but last longer.
-This is without looking at issues that were closed and later reopened.
+This is without looking at issues that were closed and later reopened, or the involvement of bioc-issue-bot.
 We can see that in a short amount of days a lot of events can be triggered.
 This is mostly that for each version update there are at least two messages on the issue.</p>
+</div>
+<div id="reviews" class="section level1">
+<h1>Reviews</h1>
+<p>Most of the differences are due to the automatic or manual review of the submissions.</p>
+<p>After passing some preliminary checks a reviewer is assigned to manually review the package:</p>
 <p><img src="/post/2020-07-09-bioconductor-submissions-reviews.en_files/figure-html/assignments-1.png" width="672" /></p>
 <p>We can see that usually some adjustment to reviewers is made usually changing them but some times they are added to have more than 1 reviewer (194).
 Almost all the submitted packages without a reviewer (537 submissions) were rejected except for three: <a href="https://github.com/Bioconductor/Contributions/issues/81">81</a>, <a href="https://github.com/Bioconductor/Contributions/issues/82">82</a>, <a href="https://github.com/Bioconductor/Contributions/issues/83">83</a> that were reviewed by <a href="https://github.com/vobencha">vobencha</a> even if not officially assigned.
 Some of these were rejected because they didn’t pass some automatic check and other after preliminary inspection.</p>
+<p>If some of these preliminary checks aren’t corrected the issue is closed:</p>
 <p><img src="/post/2020-07-09-bioconductor-submissions-reviews.en_files/figure-html/open_close2-1.png" width="672" /></p>
-<p>We can see that is common to close and reopen issues, but they are generally done by the same people (the reviewer or the original submitter)</p>
+<p>We can see that is common to close and reopen issues, but they are generally done by the same people (the reviewer, the original submitter or the bot).</p>
 <p><img src="/post/2020-07-09-bioconductor-submissions-reviews.en_files/figure-html/submission_acceptance-1.png" width="672" /></p>
 <p>On submissions with a reviewer assigned that were closed by someone (not the submitter), we can see here that reviews with more than one reviewer do not lead to significantly more comments from the reviewers.</p>
 <p>Although it seems like this leads to have the package approved.</p>
@@ -204,6 +219,7 @@ This comment might be the review of the package, as it is only done after the su
 </tr>
 </tbody>
 </table>
+<p>These measures are with median days</p>
 </div>
 <div id="conclusions" class="section level1">
 <h1>Conclusions</h1>

@@ -34,9 +34,9 @@ First post  is on [Bioconductor submissions](https://llrs.dev/2020/06/bioconduct
 - issues assigned to multiple people or issues that switched reviewers
 
 To answer both of them I needed more information.
-On the previous post I only gathered the information of the state of the issues at that moment. 
+On the [previous post](https://llrs.dev/2020/06/bioconductor-submissions/) I only gathered the information of the state of the issues at that moment. 
 This excluded label changes, reviewer changes, renaming the issues, who commented on the issues and many more things.
-To retrieve these information from github I developed a [new package](https://llrs.dev/2020/06/social-github/) [`{socialGH}`](https://github.com/llrs/socialGH) which downloads it from [Github](https://github.com) to make the analysis possible.
+To retrieve these information from github I developed a [new package](https://llrs.dev/2020/06/social-github/) [`{socialGH}`](https://github.com/llrs/socialGH) which downloads it from [Github](https://github.com) to make this analysis possible.
 
 ```{r reading, eval=FALSE}
 library("socialGH")
@@ -71,6 +71,7 @@ g2 <- g %>%
 saveRDS(g2, file = "static/20200818_github_data.RDS")
 ```
 
+I gathered all the information on issues using [`{socialGH}`](https://github.com/llrs/socialGH) on the 2020/08/18 and stored them in a tidy format.
 Now that we have more data about the issues we can plot them similarly to what we did on the previous post:
 
 ```{r first_plot}
@@ -114,10 +115,10 @@ g2 %>%
   guides(colour = guide_legend(nrow = 1), shape = guide_legend(nrow = 1))
 ```
 
-We can see that sometimes the issues remained silent for several months and then had a high level of events, or a single one (closing).
+We can see that sometimes the issues remained silent for several months and then had a high level of events, or a single one (closing mainly).
 
 Compare to the previous version it is surprising to see that one of the earliest issues still gets new events to date. 
-Apparently [issue 51](https://github.com/Bioconductor/Contributions), and others, are being used to test the Bioconductor builder. 
+Apparently [issue 51](https://github.com/Bioconductor/Contributions/issues/51), and [others](https://github.com/Bioconductor/Contributions/issues?q=label%3ATESTING+is%3Aclosed), are being used to test the Bioconductor builder or the bot used to automate the process. 
 
 ```{r exclude_testing}
 g2 <- filter(g2, !id %in% c(1:5, 51, 587, 764, 1540, 1541))
@@ -251,15 +252,27 @@ by_user <- by_user %>%
 library("ggrepel")
 by_user %>% 
   filter(is_reviewer) %>%
+  unnest(event) %>% 
+  filter(commented != 0) %>% 
   ggplot() + 
   geom_point(aes(actions, issues_participated)) +
   geom_text_repel(aes(actions, issues_participated, label = actor)) +
   scale_x_continuous(trans = "log10") +
   scale_y_continuous(trans = "log10") +
-  labs(size = "Users", col = "Different events", x = "Events", y = "Issues",
-       title = "Reviewers involvement")
+  labs(size = "Users", col = "Different events", x = "Comments", y = "Issues",
+       title = "Reviewers involvement") +
+  theme_minimal()
+```
+
+We can see that some reviewers comment more and are involved in more issues, but there is a group of fairly similar comments and issues.
+
+Clearly this will not be the same with users who submit packages:
+
+```{r by_user2}
 by_user %>% 
   filter(!is_reviewer & actor != "bioc-issue-bot" & !is.na(actor)) %>%
+  unnest(event) %>% 
+  filter(commented != 0) %>% 
   ggplot() + 
   geom_count(aes(actions, issues_participated)) +
   scale_color_viridis_d() + 
@@ -268,10 +281,12 @@ by_user %>%
   scale_radius(breaks = c(1, 10, 20, 30, 40)) +
   geom_text_repel(aes(actions, issues_participated, label = actor), 
                 data = . %>% filter(issues_participated > 10 | actions > 100)) +
-  labs(size = "Users", col = "Different events", x = "Events", y = "Issues",
-       title = "Users involvement")
+  labs(size = "Users", col = "Different events", x = "Comments", y = "Issues",
+       title = "Users involvement") +
+  theme_minimal()
 ```
 
+We can clearly see that most users are mainly only involved on submitting packages on one issue, but some people participate a lot and/or in several issues. 
 
 ```{r by_event}
 by_event1 <- g2 %>% 
@@ -311,14 +326,19 @@ We cab count how many users and issues have been involved with each event type:
 ```{r events_view}
 by_event %>% 
   ggplot() + 
-  geom_text_repel(aes(diff_id, diff_actor, label = event)) +
+  geom_abline(slope = 1, col = "gray") +
+  geom_text_repel(aes(diff_id, diff_actor, label = event, size = n, col = n)) +
   scale_y_continuous(trans = "log10") +
   scale_x_continuous(trans = "log10") +
   labs(title = "Events", x = "Number of different issues", 
-       y = "Number of different users")
+       y = "Number of different users", label = "Events", size = "Events",
+       col = "Events") +
+  scale_color_binned(trans = "log10", guide = "bins") +
+  scale_size(trans = "log10") +
+  theme_minimal()
 ```
 
-We can see that few issues are locked or comments deleted.
+We can see that few issues are locked (remember that it is different than closing the issue) or comments deleted.
 There is an almost equal amount of labeling and unlabeling, performed by few people but on lots of issues.
 There is a group of mentioning, commenting and subscribing too.
 Many people is involved on commenting and creating submissions. 
@@ -351,7 +371,13 @@ g2 %>%
   ungroup() %>% 
   ggplot() +
   geom_histogram(aes(event_n), bins = 40) +
-  labs(x = "Events", y = "Issues", title = "Events per issue")
+  labs(x = "Events", y = "Issues", title = "Events per issue") + 
+  theme_minimal()
+```
+
+We can see that most issues get around 50 events, but we can clearly see lots of issues that receive very few events.
+
+```{r events_time2}
 diff_time <- g2 %>% 
   group_by(id) %>% 
   summarise(open_time = difftime(max(created), min(created), units = unit),
@@ -364,12 +390,17 @@ diff_time %>%
   geom_point(aes(open_time, n, col = slope)) +
   scale_color_continuous(expand = expansion(), trans = "log10",
                          high = "#132B43", low = "#56B1F7") +
-  labs(y = "Events", x = glue::glue("Time open ({unit})"), 
+  labs(y = "Events", x = glue::glue("Time ({unit})"), 
        col = glue::glue("Events per {unit}"), 
-       title = "Number of events and time open") +
-  scale_x_continuous(breaks = 1:7*365, labels = function(x) {paste(x/365, "year")}) +
+       title = "Number of events and time") +
+  scale_x_continuous(breaks = 1:7*365, labels = function(x) {paste(x/365, "year")}) + 
+  theme_minimal() +
   theme(axis.text.x = element_text())
+```
 
+However, looking at the distribution along time most of the events are on the first 6 months after opening the issue. 
+
+```{r events_time3}
 diff_time %>% 
   filter(open_time <= median(diff_time$open_time)) %>% 
   ggplot() +
@@ -377,18 +408,25 @@ diff_time %>%
   scale_color_continuous(expand = expansion(), trans = "log10", 
                          high = "#132B43", low = "#56B1F7") +
   labs(y = "Events", 
-       x = glue::glue("Time open ({unit})"), 
+       x = glue::glue("Time ({unit})"), 
        col = glue::glue("Events per {unit}"), 
-       title = "Number of events and time open",
+       title = "Number of events and time",
        subtitle = "A zoom to the fastest half") +
-  scale_x_continuous(breaks = 1:7*7, labels = function(x) {paste(x/7, "weeks")}) +
-  theme(axis.text.x = element_text())
+  scale_x_continuous(breaks = 1:7*7, labels = function(x) {paste(x/7, "weeks")}) + 
+  theme_minimal() +
+  theme(axis.text.x = element_text()) 
 ```
 
 Some submissions have many events while others have few events but last longer.
-This is without looking at issues that were closed and later reopened. 
+This is without looking at issues that were closed and later reopened, or the involvement of bioc-issue-bot. 
 We can see that in a short amount of days a lot of events can be triggered.
 This is mostly that for each version update there are at least two messages on the issue.
+
+# Reviews
+
+Most of the differences are due to the automatic or manual review of the submissions.
+
+After passing some preliminary checks a reviewer is assigned to manually review the package:
 
 ```{r assignments}
 by_issue %>% 
@@ -406,6 +444,8 @@ We can see that usually some adjustment to reviewers is made usually changing th
 Almost all the submitted packages without a reviewer (`r sum(by_issue$assignments == 0)` submissions) were rejected except for three: `r socialGH::link_issue("Bioconductor/Contributions", 81:83)` that were reviewed by `r socialGH::link_profile("vobencha")` even if not officially assigned.
 Some of these were rejected because they didn't pass some automatic check and other after preliminary inspection.
 
+If some of these preliminary checks aren't corrected the issue is closed:
+
 ```{r open_close2}
 by_issue %>% 
   rowwise(id) %>% 
@@ -419,7 +459,7 @@ by_issue %>%
        subtitle = "Approved?", size = "Submissions")
 ```
 
-We can see that is common to close and reopen issues, but they are generally done by the same people (the reviewer or the original submitter)
+We can see that is common to close and reopen issues, but they are generally done by the same people (the reviewer, the original submitter or the bot).
 
 ```{r submission_acceptance}
 revi <- by_issue %>% 
@@ -1022,10 +1062,10 @@ p1 +
 bc %>% 
   ggplot() +
   geom_histogram(aes(td)) +
-  facet_wrap(~Approved) +
+  facet_wrap(~Approved, scales = "free") +
   labs(subtitle = "Submission approved?", 
        title = "Days between successful build and comment from reviwers",
-       x = "days", y = "Issues") +
+       x = "Days", y = "Issues") +
   theme_minimal()
 ```
 
@@ -1040,6 +1080,7 @@ bc %>%
                       "Days between build and reviewer comment"))
 ```
 
+These measures are with median days
 
 # Conclusions
 
