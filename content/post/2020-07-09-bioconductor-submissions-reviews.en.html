@@ -185,23 +185,42 @@ This might indicate that the discussion happens before and/or that the process a
 <p>An overview of the submissions, when was the first successful build and when was the first comment of the reviewer after the successful build.</p>
 <p><img src="/post/2020-07-09-bioconductor-submissions-reviews.en_files/figure-html/time_comment-1.png" width="672" /></p>
 <p>Usually it takes close to 3 days to have the first successful build on Bioconductor (if there is any as we have seen).</p>
-<p>After it it takes close to 10 days to the reviewer to comment.
-This comment might be the review of the package, as it is only done after the submissions passes all the checks.</p>
-<p><img src="/post/2020-07-09-bioconductor-submissions-reviews.en_files/figure-html/td_plot-1.png" width="672" /><img src="/post/2020-07-09-bioconductor-submissions-reviews.en_files/figure-html/td_plot-2.png" width="672" /><img src="/post/2020-07-09-bioconductor-submissions-reviews.en_files/figure-html/td_plot-3.png" width="672" /></p>
-<p>Usually the packages that get approved take a bit longer to be commented.</p>
+<p>After it it takes close to 10 days to the reviewer to comment.</p>
+<p><img src="/post/2020-07-09-bioconductor-submissions-reviews.en_files/figure-html/time_accepted-1.png" width="672" /></p>
+<p>This comment might be the review of the package, as it is only done after the submissions passes all the checks.</p>
+<p><img src="/post/2020-07-09-bioconductor-submissions-reviews.en_files/figure-html/time_build_plot-1.png" width="672" /></p>
+<p>A we have seen on the first table the main blocking point is that many submitted packages do not successfully build on Bioconductor servers.<br />
+But as we can see approved packages built slightly earlier.
+However the time between the first successful built and the first reviewer comment might be different, let’s check:</p>
+<p><img src="/post/2020-07-09-bioconductor-submissions-reviews.en_files/figure-html/time_review_plot_zoom-1.png" width="672" /></p>
+<p>We can see there aren’t many differences on the time between the first successful built and the first reviewer comment.
+Once a package has built and has the review it takes some time to address the comments till it is accepted:</p>
+<p><img src="/post/2020-07-09-bioconductor-submissions-reviews.en_files/figure-html/acceptance_plot-1.png" width="672" /></p>
+<p>We can see that since submission it usually takes two weeks to have the package accepted.
+However, the time between the first reviewer comment (after the first successful built) and the acceptance of the package might be different:</p>
+<p><img src="/post/2020-07-09-bioconductor-submissions-reviews.en_files/figure-html/time_acceptance_plot-1.png" width="672" /></p>
+<p>We can see that few packages take more than 50 days till acceptance.
+To have a complete picture we can see all the issues on a single plot with how much do they take to move to the next phase:</p>
+<p><img src="/post/2020-07-09-bioconductor-submissions-reviews.en_files/figure-html/times_phases-1.png" width="672" /></p>
+<p>We can see odd packages like the one that built correctly in short time but had some issues and finally got renamed and submitted on a different issue, or the issue that took more than 100 days to build correctly for the first time (and was later rejected).</p>
+<p>We can see that the steps that take more time is doing the review and later modify the package to address the comments pointed by the reviewers.</p>
 <table>
 <colgroup>
-<col width="8%" />
+<col width="4%" />
+<col width="13%" />
 <col width="23%" />
-<col width="33%" />
-<col width="35%" />
+<col width="8%" />
+<col width="25%" />
+<col width="23%" />
 </colgroup>
 <thead>
 <tr class="header">
 <th align="left">Approved</th>
-<th align="right">Days to succcessful build</th>
-<th align="right">Days to reviewer comment after build</th>
-<th align="right">Days between build and reviewer comment</th>
+<th align="right">Succcessful built (days)</th>
+<th align="right">First reviewer comment after build (days)</th>
+<th align="right">Accepted (days)</th>
+<th align="right">Time between build and reviewer comment (days)</th>
+<th align="right">Time between review and acceptance (days)</th>
 </tr>
 </thead>
 <tbody>
@@ -209,23 +228,28 @@ This comment might be the review of the package, as it is only done after the su
 <td align="left">No</td>
 <td align="right">4</td>
 <td align="right">20</td>
+<td align="right">NA</td>
 <td align="right">17</td>
+<td align="right">NA</td>
 </tr>
 <tr class="even">
 <td align="left">Yes</td>
 <td align="right">3</td>
 <td align="right">14</td>
+<td align="right">37</td>
 <td align="right">10</td>
+<td align="right">19</td>
 </tr>
 </tbody>
 </table>
-<p>These measures are with median days</p>
+<p>Looking at the median times of each step we can clearly see the same pattern.</p>
 </div>
 <div id="conclusions" class="section level1">
 <h1>Conclusions</h1>
 <p>Most of the problems with the submissions are formal and automatically detected by the bot.
 Next come problems from the package itself not passing the checks performed on Bioconductor.
 So if you want to have your package included make sure that the package builds on Bioconductor and respond fast to the feedback provided by the bot.</p>
+<p>On the next post I’ll explore the data from <a href="https://ropensci.org/">rOpenSci</a>, which also does the <a href="https://github.com/ropensci/software-review/issues/">reviews on GitHub</a>.</p>
 <div id="reproducibility" class="section level3">
 <h3>Reproducibility</h3>
 <details>

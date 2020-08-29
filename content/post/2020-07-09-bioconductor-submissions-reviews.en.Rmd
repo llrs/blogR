@@ -1000,24 +1000,30 @@ builds <- full %>%
          comment = event == "commented"
          ) %>% 
   filter((event == "labeled" & label == "OK") |
-           (comment & actor %in% unlist(reviewers))) %>% 
+           (comment & actor %in% unlist(reviewers)) |
+           (event == "labeled" & label == "3a. accepted")) %>% 
   arrange(id, event_n) %>% 
-  mutate(keel = logic_nth(event == "labeled", 1),
+  mutate(keel = logic_nth(label == "OK", 1),
+         keel2 = logic_nth(label == "3a. accepted", 1),
          keec = event == "commented",
          k = any(keel),
          k2 = ifelse(any(keel), event_n >= event_n[keel], FALSE),
          k3 = keel | (keec  & k2),
          k4 = logic_nth(k3, 2)) %>% 
-  filter(k4)
+  filter(k4 | keel2) %>% 
+  mutate(event = case_when(label == "OK" ~ "Built correctly",
+                           event == "commented" ~ "Reviewer comment",
+                           label == "3a. accepted" ~ "Accepted")) %>% 
+  ungroup()
 builds %>% 
   ggplot() +
-  geom_point(aes(time_relative, id, col = event)) +
-  facet_wrap(~Approved, ncol = 2) +
+  geom_point(aes(time_relative, id, col = event, shape = event)) +
+  facet_wrap(~Approved, ncol = 2, scales = "free_x") +
   labs(x = "Days since submission",
        y = "Issue",
        title = "First successful build and comment of the reviewer after",
        subtitle = "Submission approved?",
-       col = "Event") +
+       col = "Event", shape = "Event") +
   theme_minimal()
 ```
 
@@ -1026,14 +1032,15 @@ An overview of the submissions, when was the first successful build and when was
 ```{r time_comment}
 bc <- builds %>% 
   select(id, time_relative, event, Approved) %>% 
-  pivot_wider(names_from = event, values_from = time_relative, values_fill = NA)
-bc <- bc %>% 
-  # filter(!is.na(labeled) & !is.na(commented)) %>% 
-  mutate(td = commented-labeled)
+  pivot_wider(names_from = event, 
+              values_from = time_relative, 
+              values_fill = NA) %>% 
+  mutate(time_review = `Reviewer comment`-`Built correctly`,
+         time_acceptance = Accepted - `Reviewer comment`)
 bc %>% 
-  filter(!is.na(labeled) & !is.na(commented)) %>% 
+  filter(!is.na(`Built correctly`) & !is.na(`Reviewer comment`)) %>% 
   ggplot() +
-  geom_linerange(aes(y = id, xmin = labeled, xmax = commented)) +
+  geom_linerange(aes(y = id, xmin = `Built correctly`, xmax = `Reviewer comment`)) +
   facet_wrap(~Approved, ncol = 2, scales = "free") +
   labs(title = "Time between successful build and comment from the reviewer",
        x = "Days since submission", y = "Issue", 
@@ -1041,27 +1048,44 @@ bc %>%
   theme_minimal()
 ```
 
-Usually it takes close to `r round(median(bc$labeled, na.rm = TRUE))` days to have the first successful build on Bioconductor (if there is any as we have seen). 
+Usually it takes close to `r round(median(bc$'Built correctly', na.rm = TRUE))` days to have the first successful build on Bioconductor (if there is any as we have seen). 
 
-After it it takes close to `r round(median(bc$td, na.rm = TRUE))` days to the reviewer to comment.
+After it it takes close to `r round(median(bc$time_review, na.rm = TRUE))` days to the reviewer to comment.
+
+```{r time_accepted}
+bc %>% 
+  filter(!is.na(Accepted) & !is.na(`Reviewer comment`) & Approved == "Yes") %>% 
+  ggplot() +
+  geom_linerange(aes(y = id, xmax = Accepted, xmin = `Reviewer comment`)) +
+  labs(title = "Time comment from the reviewer after successful build and acceptance",
+       x = "Days since submission", y = "Issue") +
+  theme_minimal()
+```
+
 This comment might be the review of the package, as it is only done after the submissions passes all the checks.
 
-```{r td_plot}
+```{r time_build_plot}
 p1 <- bc %>% 
   ggplot() +
-  geom_histogram(aes(labeled), binwidth = 1) +
-  facet_wrap(~Approved) +
+  geom_histogram(aes(`Built correctly`), binwidth = 1) +
+  facet_wrap(~Approved, scales = "free_x") +
   labs(subtitle = "Submission approved?", 
-       title = "Days between submission and the first successful build",
        x = "Days", y = "Issues") +
   theme_minimal()
-p1
-p1 +
+p1 / p1 +
   coord_cartesian(xlim = c(0, 7)) +
-  labs(caption = "A zoom to the first week")
+  labs(title = "Zoom to the first week") +
+  plot_annotation(title = "Days between submission and the first successful build")
+```
+
+A we have seen on the first table the main blocking point is that many submitted packages do not successfully build on Bioconductor servers.  
+But as we can see approved packages built slightly earlier. 
+However the time between the first successful built and the first reviewer comment might be different, let's check:
+
+```{r time_review_plot_zoom}
 bc %>% 
   ggplot() +
-  geom_histogram(aes(td)) +
+  geom_histogram(aes(time_review)) +
   facet_wrap(~Approved, scales = "free") +
   labs(subtitle = "Submission approved?", 
        title = "Days between successful build and comment from reviwers",
@@ -1069,24 +1093,80 @@ bc %>%
   theme_minimal()
 ```
 
-Usually the packages that get approved take a bit longer to be commented. 
+We can see there aren't many differences on the time between the first successful built and the first reviewer comment. 
+Once a package has built and has the review it takes some time to address the comments till it is accepted:
 
-```{r}
-bc %>% 
-  group_by(Approved) %>% 
-  summarize(across(labeled:td, function(x){round(median(x, na.rm = TRUE))})) %>% 
-  knitr::kable(col.names = c("Approved", "Days to succcessful build",
-                      "Days to reviewer comment after build",
-                      "Days between build and reviewer comment"))
+```{r acceptance_plot}
+p2 <- bc %>% 
+  ggplot() +
+  geom_histogram(aes(Accepted), binwidth = 1) +
+  labs(title = "Days till acceptance",
+       x = "Days", y = "Issues") +
+  theme_minimal()
+p2 / p2 + coord_cartesian(xlim = c(0, 20)) + 
+  labs(title = element_blank(), subtitle = "A zoom")
 ```
 
-These measures are with median days
+We can see that since submission it usually takes two weeks to have the package accepted.
+However, the time between the first reviewer comment (after the first successful built) and the acceptance of the package might be different: 
+
+```{r time_acceptance_plot}
+bc %>% 
+  ggplot() +
+  geom_histogram(aes(time_acceptance), binwidth = 1) +
+  labs(title = "Days between comment from reviwers and acceptance",
+       x = "Days", y = "Issues") +
+  theme_minimal()
+```
+
+We can see that few packages take more than 50 days till acceptance.
+To have a complete picture we can see all the issues on a single plot with how much do they take to move to the next phase:
+
+```{r times_phases}
+p3 <- bc %>% 
+  filter(!is.na(`Built correctly`) & !is.na(time_review)) %>% 
+  ggplot() + 
+  geom_point(aes(`Built correctly`, time_review, 
+                 col = Approved, shape = Approved)) +
+  labs(y = "Time between built and review (days)") +
+  theme_minimal()
+p4 <- bc %>% 
+  filter(!is.na(time_review), !is.na(time_acceptance)) %>% 
+  ggplot() + 
+  geom_point(aes(time_review, time_acceptance), 
+             col = "#00BFC4", shape = "triangle") +
+  labs(x = "Time between built and review (days)",
+       y = "Time between review and acceptance (days)") +
+  theme_minimal()
+p3 + p4
+```
+
+We can see odd packages like the one that built correctly in short time but had some issues and finally got renamed and submitted on a different issue, or the issue that took more than 100 days to build correctly for the first time (and was later rejected).
+
+We can see that the steps that take more time is doing the review and later modify the package to address the comments pointed by the reviewers.
+
+```{r table_steps}
+bc %>% 
+  group_by(Approved) %>% 
+  summarize(across(`Built correctly`:time_acceptance, 
+                   function(x){round(median(x, na.rm = TRUE))})) %>% 
+  knitr::kable(col.names = c("Approved", 
+                             "Succcessful built (days)",
+                             "First reviewer comment after build (days)",
+                             "Accepted (days)",
+                             "Time between build and reviewer comment (days)",
+                             "Time between review and acceptance (days)"))
+```
+
+Looking at the median times of each step we can clearly see the same pattern.
 
 # Conclusions
 
 Most of the problems with the submissions are formal and automatically detected by the bot.
 Next come problems from the package itself not passing the checks performed on Bioconductor.
 So if you want to have your package included make sure that the package builds on Bioconductor and respond fast to the feedback provided by the bot. 
+
+On the next post I'll explore the data from [rOpenSci](https://ropensci.org/), which also does the [reviews on GitHub](https://github.com/ropensci/software-review/issues/). 
 
 ### Reproducibility
 
