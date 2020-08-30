@@ -38,7 +38,7 @@ On the [previous post](https://llrs.dev/2020/06/bioconductor-submissions/) I onl
 This excluded label changes, reviewer changes, renaming the issues, who commented on the issues and many more things.
 To retrieve these information from github I developed a [new package](https://llrs.dev/2020/06/social-github/) [`{socialGH}`](https://github.com/llrs/socialGH) which downloads it from [Github](https://github.com) to make this analysis possible.
 
-```{r reading, eval=FALSE}
+```{r downloading, eval=FALSE}
 library("socialGH")
 repo <- "Bioconductor/Contributions"
 gi <- get_issues(repo)
@@ -74,7 +74,7 @@ saveRDS(g2, file = "static/20200818_github_data.RDS")
 I gathered all the information on issues using [`{socialGH}`](https://github.com/llrs/socialGH) on the 2020/08/18 and stored them in a tidy format.
 Now that we have more data about the issues we can plot them similarly to what we did on the previous post:
 
-```{r first_plot}
+```{r reading}
 library("socialGH")
 library("tidyverse")
 theme_set(theme_minimal())
@@ -82,9 +82,15 @@ theme_set(theme_minimal())
 g2 <- readRDS(here::here("static", "20200818_github_data.RDS")) %>% 
   mutate(
     approved = any(str_detect(unlist(label[event %in% c("labeled", "unlabeled")]), "accept")),
-    Approved = case_when(any(approved) ~ "Yes",
-                              sum(event == "closed") >= sum(event == "reopened") ~ "No",
-                              TRUE ~ "Ongoing"))
+    Approved = case_when(
+      any(approved) ~ "Yes",
+      sum(event == "closed") == 0 ~ "Ongoing",
+      sum(event == "closed") >= sum(event == "reopened") ~ "No",
+      TRUE ~ "Ongoing"))
+```
+
+
+```{r first_plot}
 link_issue <- function(x) {
   socialGH::link_issue("Bioconductor/Contributions", x)
 }
@@ -448,13 +454,14 @@ If some of these preliminary checks aren't corrected the issue is closed:
 
 ```{r open_close2}
 by_issue %>% 
+  filter(Approved %in% c("No", "Yes")) %>% 
   rowwise(id) %>% 
   mutate(n_openers = n_distinct(openers),
          n_closers = n_distinct(closers)) %>% 
   ggplot() +
   geom_count(aes(n_closers, n_openers)) +
   scale_radius(trans = "log10") +
-  facet_wrap(~Approved) +
+  facet_wrap(~Approved, scales = "free") +
   labs(x = "Closers", y = "Openers", title = "Issues closers and reopeners", 
        subtitle = "Approved?", size = "Submissions")
 ```
@@ -490,8 +497,9 @@ revi %>%
   geom_jitter(aes(Approved, reviewer_comments, 
                   col = Approved, shape = Approved), height = 0) +
   facet_wrap(~n_reviewers, drop = TRUE) +
-  labs(x = element_blank(), y = "Reviewers comments", title = "Comments from reviewers",
-       subtitle = "Reviewers assigned:")
+  labs(x = element_blank(), y = "Reviewers comments", title = "Comments from reviewers", size = "Issues",
+       subtitle = "Reviewers assigned:") + 
+  theme_minimal()
 ```
 
 On submissions with a reviewer assigned that were closed by someone (not the submitter), we can see here that reviews with more than one reviewer do not lead to significantly more comments from the reviewers.
@@ -502,11 +510,16 @@ Although it seems like this leads to have the package approved.
 revi %>% 
   mutate(comments = unlist(map(event, pull, commented), FALSE, FALSE)) %>% 
   ggplot() +
-  geom_jitter(aes(comments, reviewer_comments, 
-                  col = Approved, shape = Approved), height = 0) +
-  labs(y = "Reviewer's comments", x = "Comments", title = "Comments from reviewers")
+  geom_count(aes(comments, reviewer_comments, 
+                  col = Approved, shape = Approved)) +
+  labs(y = "Reviewer's comments", x = "Comments", size = "Issues",
+       title = "Comments from reviewers") + 
+  facet_wrap(~Approved, scales = "free") +
+  theme_minimal()
 ```
 
+We can see that there are slightly more comments from reviewers on the approved packages.
+Perhaps because they provide more feedback once the review starts. 
 
 ```{r submission_acceptance2}
 ord_rev <- revi_sum %>% 
@@ -564,7 +577,8 @@ full %>%
   geom_line(aes(time_relative, event_n, col = id, group = id)) +
   facet_wrap(~Approved) +
   labs(title = "Events along time", subtitle = "Approved?",
-       x = "Days", y = element_blank())
+       x = "Days", y = element_blank(), col = "Issue") + 
+  theme_minimal()
 ```
 
 We can see that on the approved packages there are usually more events on the same time period.
@@ -743,6 +757,7 @@ Let's check if there is some differences on the comments according to if they ar
 
 ```{r user_events}
 bm3 <- bioc_bot %>% 
+  filter(Approved != "Ongoing") %>% 
   group_by(id, reason) %>% 
   summarize(n = n(), Approved = unique(Approved)) %>% 
   mutate(total = sum(n)) %>% 
@@ -792,6 +807,7 @@ bm_com <- bioc_bot %>%
             diff = total - builds, 
             Approved = unique(Approved)) 
 bm_com %>%
+  filter(Approved != "Ongoing") %>% 
   ggplot() +
   geom_count(aes(total, builds, col = Approved, shape = Approved)) +
   facet_wrap(~ Approved) +
@@ -820,6 +836,7 @@ Aside from the bot, other users might comment on issues too:
 
 ```{r comments_issues}
 com_is <- full %>% 
+  filter(Approved != "Ongoing") %>% 
   group_by(id) %>% 
   mutate(submitter = unique(actor[event == "created"])) %>% 
   mutate(assigners = list(reviewer[event %in% "assigned"]),
@@ -878,6 +895,7 @@ Surprisingly, in some issues there are more comments from other users than autho
 
 ```{r comments_approved}
 com_is_w <- com_is %>% 
+  filter(Approved != "Ongoing") %>% 
   group_by(id, Approved) %>% 
   count(commenter) %>% 
   pivot_wider(names_from = commenter, values_from = n, values_fill = 0) %>% 
@@ -968,7 +986,9 @@ And there doesn't seem to be any difference between approved and not approved pa
 I would have expected more comments after closing an issue in the not approved submissions.
 This might indicate that the discussion happens before and/or that the process after closing the issue is not clear enough. 
 
+# Steps
 
+So far we have compared closed and open issues, users, comments, events, but we haven't looked how does the proccess goes. 
 
 Let's see how much time does it take to start the review and the time till the reviewer comments:
 
@@ -1016,6 +1036,7 @@ builds <- full %>%
                            label == "3a. accepted" ~ "Accepted")) %>% 
   ungroup()
 builds %>% 
+  filter(Approved != "Ongoing") %>% 
   ggplot() +
   geom_point(aes(time_relative, id, col = event, shape = event)) +
   facet_wrap(~Approved, ncol = 2, scales = "free_x") +
@@ -1038,6 +1059,7 @@ bc <- builds %>%
   mutate(time_review = `Reviewer comment`-`Built correctly`,
          time_acceptance = Accepted - `Reviewer comment`)
 bc %>% 
+  filter(Approved != "Ongoing") %>% 
   filter(!is.na(`Built correctly`) & !is.na(`Reviewer comment`)) %>% 
   ggplot() +
   geom_linerange(aes(y = id, xmin = `Built correctly`, xmax = `Reviewer comment`)) +
@@ -1066,6 +1088,7 @@ This comment might be the review of the package, as it is only done after the su
 
 ```{r time_build_plot}
 p1 <- bc %>% 
+  filter(Approved != "Ongoing") %>% 
   ggplot() +
   geom_histogram(aes(`Built correctly`), binwidth = 1) +
   facet_wrap(~Approved, scales = "free_x") +
@@ -1084,6 +1107,7 @@ However the time between the first successful built and the first reviewer comme
 
 ```{r time_review_plot_zoom}
 bc %>% 
+  filter(Approved != "Ongoing") %>% 
   ggplot() +
   geom_histogram(aes(time_review)) +
   facet_wrap(~Approved, scales = "free") +
@@ -1160,11 +1184,113 @@ bc %>%
 
 Looking at the median times of each step we can clearly see the same pattern.
 
+# Labels
+
+So far we have looked via a combination of comments from reviewers and labels. However, the official way of showing on which step is a review is using labels.
+
+We have seen is the second most frequent event, around 1100 submissions have at least one label annotation. We can see here how many:
+
+```{r labels_general}
+labels <- full %>% 
+  ungroup() %>% 
+  filter(event == "labeled") %>% 
+  mutate(label = unlist(label),
+         label = case_when(
+           label == "1a. awaiting moderation" ~ "1. awaiting moderation", 
+           label == "4a. accepted" ~ "3a. accepted",
+           label == "ok_to_build" ~ "1. awaiting moderation",
+           label == "awaiting moderation" ~ "1. awaiting moderation",
+           label == "review-in-progress" ~ "2. review in progress",
+           label == "TESTING" ~ NA_character_, 
+           TRUE ~ label)) %>% 
+  filter(!is.na(label))
+```
+
+```{r labels_plot_overview}
+ord_label <- c("1. awaiting moderation",  
+               "2. review in progress", "3a. accepted", 
+               "3b. declined", "3c. inactive", "ABNORMAL", 
+               "VERSION BUMP REQUIRED", 
+               "TIMEOUT", "ERROR", 
+               "WARNINGS", "OK")
+labels %>% 
+  group_by(id) %>% 
+  count(label, sort = TRUE) %>% 
+  ggplot() +
+  geom_tile(aes(id, fct_relevel(label, rev(ord_label)), fill = n)) +
+  scale_fill_continuous(trans = "log10") +
+  labs(x = "Issue", y = element_blank(), title = "Labels per Issue",
+       fill = "Times")
+```
+
+We can see that the version bump, and the state of the build are the most frequent labels. 
+
+Looking into each label we can see differences between acceoted and declined submissions:
+
+```{r label_differences}
+labels %>% 
+  group_by(id) %>% 
+  count(label, Approved, sort = TRUE) %>% 
+  ungroup() %>% 
+  group_by(label) %>% 
+  filter(n_distinct(Approved) >= 2) %>% 
+  ungroup() %>% 
+  ggplot() + 
+  geom_jitter(aes(Approved, n, col = Approved, shape = Approved), height = 0) +
+  facet_wrap(~label, scales = "free", ncol = 2, drop = FALSE) +
+  guides(col = FALSE, shape = FALSE) +
+  labs(x = element_blank(), y = "Times", 
+       title = "Times each label has appeared on each issue")
+```
+
+
+```{r significant_label, eval=FALSE, include=FALSE}
+labels %>% 
+  group_by(id) %>% 
+  count(label, Approved, sort = TRUE) %>% 
+  ungroup() %>% 
+  filter(Approved != "Ongoing") %>% 
+  group_by(label) %>% 
+  filter(n_distinct(Approved) == 2, n_distinct(n) > 2) %>% 
+  nest_by() %>% 
+  mutate(t = list(t.test(n ~ Approved, data = data))) %>% 
+  mutate(broom::glance(t)) %>%
+  ungroup() %>% 
+  mutate(adj.p.value = p.adjust(p.value)) %>% 
+  filter(adj.p.value < 0.05) %>% 
+  pull(label)
+```
+
+Here we can see the differences in label assignment on each issue (labels which are assigned only to approved or rejected packages are not shown).  
+
+Some submissions were initially declined but later got approved, as well as some issues that for some time went inactive but ended up being accepted. 
+
+The main difference is how many times there are errors, timeouts, warnings, version bump required or OK on the issues approved. Successful packages have more!
+If you submit a package and get those errors don't worry, it is normal!!
+
+```{r labels_table}
+labels %>% 
+  group_by(id) %>% 
+  count(label, Approved, sort = TRUE) %>% 
+  ungroup() %>% 
+  filter(Approved != "Ongoing") %>%
+  pivot_wider(names_from = label, values_from = n, values_fill = 0) %>% 
+  select(-id) %>% 
+  group_by(Approved) %>% 
+  summarize(across(where(is.numeric), median)) %>% 
+  knitr::kable()
+```
+
+We can see that is more common to have more "troubles" on packages that end up accepted than those than not. 
+Note that there are at least two OK per submission, one required before the review start and the other one after the changes before acceptance. 
+
 # Conclusions
 
 Most of the problems with the submissions are formal and automatically detected by the bot.
 Next come problems from the package itself not passing the checks performed on Bioconductor.
 So if you want to have your package included make sure that the package builds on Bioconductor and respond fast to the feedback provided by the bot. 
+Once your package successfully builds, then address the comments from the reviewer. 
+Follow the steps and if you don't drop out you'll see your package accepted. 
 
 On the next post I'll explore the data from [rOpenSci](https://ropensci.org/), which also does the [reviews on GitHub](https://github.com/ropensci/software-review/issues/). 
 

@@ -82,6 +82,8 @@ Some of these were rejected because they didn’t pass some automatic check and 
 <p>On submissions with a reviewer assigned that were closed by someone (not the submitter), we can see here that reviews with more than one reviewer do not lead to significantly more comments from the reviewers.</p>
 <p>Although it seems like this leads to have the package approved.</p>
 <p><img src="/post/2020-07-09-bioconductor-submissions-reviews.en_files/figure-html/reviews-1.png" width="672" /></p>
+<p>We can see that there are slightly more comments from reviewers on the approved packages.
+Perhaps because they provide more feedback once the review starts.</p>
 <p><img src="/post/2020-07-09-bioconductor-submissions-reviews.en_files/figure-html/submission_acceptance2-1.png" width="672" /><img src="/post/2020-07-09-bioconductor-submissions-reviews.en_files/figure-html/submission_acceptance2-2.png" width="672" /></p>
 <p>We can see that the percentage of approved on those issues where the reviewer commented is fairly similar and around 80% or above.
 However there is also at least a 5% of submissions that are closed despite the comments from reviewers.
@@ -148,6 +150,10 @@ However it included automatic actions from the bot, so let’s check again witho
 <p>And there doesn’t seem to be any difference between approved and not approved packages.</p>
 <p>I would have expected more comments after closing an issue in the not approved submissions.
 This might indicate that the discussion happens before and/or that the process after closing the issue is not clear enough.</p>
+</div>
+<div id="steps" class="section level1">
+<h1>Steps</h1>
+<p>So far we have compared closed and open issues, users, comments, events, but we haven’t looked how does the proccess goes.</p>
 <p>Let’s see how much time does it take to start the review and the time till the reviewer comments:</p>
 <table>
 <thead>
@@ -244,11 +250,90 @@ To have a complete picture we can see all the issues on a single plot with how m
 </table>
 <p>Looking at the median times of each step we can clearly see the same pattern.</p>
 </div>
+<div id="labels" class="section level1">
+<h1>Labels</h1>
+<p>So far we have looked via a combination of comments from reviewers and labels. However, the official way of showing on which step is a review is using labels.</p>
+<p>We have seen is the second most frequent event, around 1100 submissions have at least one label annotation. We can see here how many:</p>
+<p><img src="/post/2020-07-09-bioconductor-submissions-reviews.en_files/figure-html/labels_plot_overview-1.png" width="672" /></p>
+<p>We can see that the version bump, and the state of the build are the most frequent labels.</p>
+<p>Looking into each label we can see differences between acceoted and declined submissions:</p>
+<p><img src="/post/2020-07-09-bioconductor-submissions-reviews.en_files/figure-html/label_differences-1.png" width="672" /></p>
+<p>Here we can see the differences in label assignment on each issue (labels which are assigned only to approved or rejected packages are not shown).</p>
+<p>Some submissions were initially declined but later got approved, as well as some issues that for some time went inactive but ended up being accepted.</p>
+<p>The main difference is how many times there are errors, timeouts, warnings, version bump required or OK on the issues approved. Successful packages have more!
+If you submit a package and get those errors don’t worry, it is normal!!</p>
+<table>
+<colgroup>
+<col width="6%" />
+<col width="14%" />
+<col width="4%" />
+<col width="6%" />
+<col width="2%" />
+<col width="5%" />
+<col width="6%" />
+<col width="15%" />
+<col width="8%" />
+<col width="14%" />
+<col width="8%" />
+<col width="8%" />
+</colgroup>
+<thead>
+<tr class="header">
+<th align="left">Approved</th>
+<th align="right">VERSION BUMP REQUIRED</th>
+<th align="right">ERROR</th>
+<th align="right">WARNINGS</th>
+<th align="right">OK</th>
+<th align="right">TIMEOUT</th>
+<th align="right">ABNORMAL</th>
+<th align="right">1. awaiting moderation</th>
+<th align="right">3a. accepted</th>
+<th align="right">2. review in progress</th>
+<th align="right">3c. inactive</th>
+<th align="right">3b. declined</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td align="left">No</td>
+<td align="right">0</td>
+<td align="right">1</td>
+<td align="right">0</td>
+<td align="right">0</td>
+<td align="right">0</td>
+<td align="right">0</td>
+<td align="right">1</td>
+<td align="right">0</td>
+<td align="right">1</td>
+<td align="right">0</td>
+<td align="right">0</td>
+</tr>
+<tr class="even">
+<td align="left">Yes</td>
+<td align="right">2</td>
+<td align="right">2</td>
+<td align="right">1</td>
+<td align="right">2</td>
+<td align="right">0</td>
+<td align="right">0</td>
+<td align="right">1</td>
+<td align="right">1</td>
+<td align="right">1</td>
+<td align="right">0</td>
+<td align="right">0</td>
+</tr>
+</tbody>
+</table>
+<p>We can see that is more common to have more “troubles” on packages that end up accepted than those than not.
+Note that there are at least two OK per submission, one required before the review start and the other one after the changes before acceptance.</p>
+</div>
 <div id="conclusions" class="section level1">
 <h1>Conclusions</h1>
 <p>Most of the problems with the submissions are formal and automatically detected by the bot.
 Next come problems from the package itself not passing the checks performed on Bioconductor.
-So if you want to have your package included make sure that the package builds on Bioconductor and respond fast to the feedback provided by the bot.</p>
+So if you want to have your package included make sure that the package builds on Bioconductor and respond fast to the feedback provided by the bot.
+Once your package successfully builds, then address the comments from the reviewer.
+Follow the steps and if you don’t drop out you’ll see your package accepted.</p>
 <p>On the next post I’ll explore the data from <a href="https://ropensci.org/">rOpenSci</a>, which also does the <a href="https://github.com/ropensci/software-review/issues/">reviews on GitHub</a>.</p>
 <div id="reproducibility" class="section level3">
 <h3>Reproducibility</h3>
