@@ -31,8 +31,8 @@ social:
 - icon: envelope
   icon_pack: fas
   link: mailto:lluis.revilla+blog@gmail.com
-- icon: linkedin
-  icon_pack: fa
+- icon: linkedin-in
+  icon_pack: fab
   link: https://linkedin.com/in/lluisrevilla/
 - icon: twitter
   icon_pack: fab
