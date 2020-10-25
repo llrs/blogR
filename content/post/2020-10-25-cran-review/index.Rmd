@@ -1,0 +1,140 @@
+---
+title: CRAN review
+author: Lluís Revilla Sancho
+date: '2020-10-25'
+slug: CRAN-review
+categories: []
+tags:
+  - R
+  - CRAN
+authors: []
+description: ''
+editor_options:
+  chunk_output_type: console
+featured: no
+image:
+  caption: ''
+  focal_point: ''
+subtitle: ''
+summary: ''
+---
+
+```{r setup, include = FALSE}
+knitr::opts_chunk$set(collapse = TRUE)
+```
+
+[cransays](https://github.com/lockedata/cransays) is a package to check package submissions which on the online documentation provides a [dashboard which](https://lockedata.github.io/cransays/articles/dashboard.html) is updated each hour.
+At the same time recently (since 2020/09/12) the status of the queues and folders of submissions are stored. 
+Using this information and the recent [script provided by Tim Taylor](https://github.com/tjtnew/newbies) I'll check how are the submissions on CRAN. 
+
+```{r prepare, eval = FALSE}
+path_zip <- here::here("static", "cransays-history.zip") # From downloading the cransays repository branch history
+dat <- unzip(path_zip, exdir = "static")
+csv <- dat[grepl("*.csv$", x = dat)]
+dates <- gsub("cran-incoming-(.+)\\.csv", "\\1", basename(csv))
+date <- as.POSIXct(dates, format = "%Y%m%dT%H%M")
+f <- sapply(csv, read.csv)
+m <- function(x, y) {
+  merge(x, y, sort = FALSE, all = TRUE)
+}
+updates <- Reduce(m, f)
+write.csv(updates, file = "static/cran_till_20201025.csv",  row.names = FALSE)
+```
+
+```{r}
+cran_submissions <- read.csv("static/cran_till_20201025.csv")
+col_names <- c("package", "version", "snapshot_time", "folder", "subfolder")
+cran_submissions <- cran_submissions[, col_names]
+library("tidyverse")
+library("lubridate")
+cran_submissions$snapshot_time <- as.POSIXct(cran_submissions$snapshot_time)
+```
+
+
+```{r}
+cran_submissions <- cran_submissions[!is.na(cran_submissions$version), ]
+theme_set(theme_minimal())
+cran_times <- cran_submissions %>% 
+  mutate(seconds = seconds(snapshot_time),
+         month = month(snapshot_time),
+         mday = mday(snapshot_time),
+         wday = wday(snapshot_time, locale = "en_GB.UTF-8"),
+         week = week(snapshot_time),
+         date = as_date(snapshot_time),
+         submission = paste0(package, version, collapse = "-")) 
+
+cran_times %>% 
+  group_by(folder, snapshot_time) %>% 
+  summarize(packages = n_distinct(package)) %>% 
+  group_by(snapshot_time) %>% 
+  summarize(n = sum(packages)) %>% 
+  ggplot() +
+  geom_col(aes(snapshot_time, n)) +
+  labs(x = "Date", y = "Packages on the queue", 
+       title = "Work on CRANsubmissions")
+
+cran_times %>% 
+  group_by(folder, snapshot_time) %>% 
+  summarize(packages = n_distinct(package),
+            week = unique(week)) %>% 
+  ggplot() +
+  geom_point(aes(snapshot_time, packages, col = fct_reorder(folder, -packages, sum))) +
+  labs(x = "Date", y = "Packages",
+       title = "Work on submissions", col = "Folder/Stage")
+
+cran_times %>% 
+  arrange(folder, date, mday) %>% 
+  group_by(folder, date, mday) %>% 
+  summarize(packages = n_distinct(package),
+            week = unique(week)) %>% 
+  group_by(folder, mday) %>% 
+  summarize(packages = median(packages)) %>% 
+  ggplot() +
+  geom_point(aes(mday, packages, col = fct_reorder2(folder, mday, packages, sum))) +
+  geom_path(aes(mday, packages, col = fct_reorder2(folder, mday, packages, sum))) +
+  labs(x = "Day of the month", y = "Packages", col = "Folder/stage",
+       title = "Evolution by month day")
+
+cran_times %>% 
+  group_by(folder, date, wday) %>% 
+  summarize(packages = n_distinct(package),
+            week = unique(week)) %>% 
+  group_by(folder, wday) %>% 
+  summarize(packages = median(packages)) %>% 
+  ggplot() +
+  geom_point(aes(wday, packages, col = fct_reorder2(folder, wday, packages, sum))) +
+  geom_path(aes(wday, packages, col = fct_reorder2(folder, wday, packages, sum))) +
+    labs(x = "Day of the week", y = "Packages", col = "Folder/stage",
+       title = "Evolution by week day")
+```
+
+
+```{r}
+tidy <- cran_times %>%
+  group_by(package) %>% 
+  filter(row_number() == 1 | folder != lag(folder)) %>% 
+  mutate(elapsed = difftime(snapshot_time, lag(snapshot_time), units = "hours")) %>% 
+  ungroup()
+
+count(state, folder, sort = TRUE)
+
+state %>%
+  mutate(folder = fct_relevel(as.factor(folder), "pretest", "newbies", "inspect")) %>%
+  group_by(package) %>%
+  mutate(cur = folder, prev = dplyr::lag(folder)) %>%
+  ungroup() %>%
+  filter(!is.na(prev)) %>%
+  group_by(prev, cur) %>%
+  summarise(n = n(), elapsed = mean(elapsed), .groups = "drop")
+```
+
+
+### Reproducibility
+
+<details>
+```{r reproducibility, echo = FALSE}
+## Reproducibility info
+options(width = 120)
+sessioninfo::session_info()
+```
+</details>
