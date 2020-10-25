@@ -11,16 +11,15 @@ tags:
   - reviews
   - GitHub
 authors: []
-description: ''
+description: 'Checking rOpenSci review process from the issues. Authors, editors, topics, speed of the review are compared with last post about Bioconductor review process.'
 editor_options:
   chunk_output_type: console
 featured: no
-draft: true
 image:
   caption: ''
   focal_point: ''
-subtitle: ''
-summary: ''
+subtitle: 'Checking rOpenSci review process'
+summary: 'Comparing rOpenSci review process to the Bioconductor review process. Most important differences are external reviewers and build on external machines as well as a longer review time.'
 ---
 
 ```{r setup, include = FALSE}
