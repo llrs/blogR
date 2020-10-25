@@ -30,10 +30,15 @@ user_tweets &lt;- get_timeline(user, n = 180000, type = &quot;mixed&quot;,
 # you might need to install this specific version of textfeatures:
 # devtools::install_version(&#39;textfeatures&#39;, version=&#39;0.2.0&#39;)
 botornot(user_tweets)</code></pre>
+<pre><code>## [32m↪[39m [38;5;244mCounting features in text...[39m
+## [32m↪[39m [38;5;244mSentiment analysis...[39m
+## [32m↪[39m [38;5;244mParts of speech...[39m
+## [32m↪[39m [38;5;244mWord dimensions started[39m
+## [32m✔[39m Job&#39;s done!</code></pre>
 <pre><code>## # A tibble: 1 x 3
 ##   screen_name    user_id   prob_bot
 ##   &lt;chr&gt;          &lt;chr&gt;        &lt;dbl&gt;
-## 1 josemariasiota 288661791    0.848</code></pre>
+## 1 josemariasiota 288661791    0.468</code></pre>
 <p>It gives a very high probability.</p>
 <p>We can visualize them with:</p>
 <pre class="r"><code>library(&quot;ggplot2&quot;)
@@ -53,20 +58,21 @@ ts_plot(user_tweets, &quot;weeks&quot;) +
 ## 
 ##     intersect, setdiff, setequal, union</code></pre>
 <pre class="r"><code>count(user_tweets, source, sort = TRUE)</code></pre>
-<pre><code>## # A tibble: 11 x 2
-##    source                   n
-##    &lt;chr&gt;                &lt;int&gt;
-##  1 dlvr.it               1249
-##  2 twitterfeed           1178
-##  3 Twitter Web Client     672
-##  4 Twitter for iPhone      58
-##  5 Hootsuite               13
-##  6 Twitter for Websites    12
-##  7 Camera on iOS            6
-##  8 Twitter Web App          2
-##  9 erased40502              1
-## 10 LinkedIn                 1
-## 11 Podcasts on iOS          1</code></pre>
+<pre><code>## # A tibble: 12 x 2
+##    source                      n
+##    &lt;chr&gt;                   &lt;int&gt;
+##  1 dlvr.it                  1573
+##  2 twitterfeed               818
+##  3 Twitter Web Client        601
+##  4 Twitter Web App           111
+##  5 Twitter for iPhone         74
+##  6 Twitter for Advertisers    19
+##  7 Hootsuite                  13
+##  8 Twitter for Websites        7
+##  9 Camera on iOS               6
+## 10 Twitter for iPad            2
+## 11 erased40502                 1
+## 12 Podcasts on iOS             1</code></pre>
 <pre class="r"><code>user &lt;- user_tweets %&gt;% 
   mutate(source = case_when(
     grepl(&quot; for | on | Web &quot;, source) ~ &quot;direct&quot;,
@@ -75,31 +81,29 @@ ts_plot(user_tweets, &quot;weeks&quot;) +
 
 user %&gt;% 
   count(source, sort = TRUE)</code></pre>
-<pre><code>## # A tibble: 6 x 2
+<pre><code>## # A tibble: 5 x 2
 ##   source          n
 ##   &lt;chr&gt;       &lt;int&gt;
-## 1 dlvr.it      1249
-## 2 twitterfeed  1178
-## 3 direct        751
+## 1 dlvr.it      1573
+## 2 direct        821
+## 3 twitterfeed   818
 ## 4 Hootsuite      13
-## 5 erased40502     1
-## 6 LinkedIn        1</code></pre>
+## 5 erased40502     1</code></pre>
 <pre class="r"><code>user &lt;- user %&gt;% 
   mutate(reply = case_when(
     is.na(reply_to_status_id) ~  &quot;content?&quot;,
     TRUE ~ &quot;reply&quot;))
 user %&gt;% 
   count(reply, source, sort = TRUE)</code></pre>
-<pre><code>## # A tibble: 7 x 3
+<pre><code>## # A tibble: 6 x 3
 ##   reply    source          n
 ##   &lt;chr&gt;    &lt;chr&gt;       &lt;int&gt;
-## 1 content? dlvr.it      1249
-## 2 content? twitterfeed  1178
-## 3 content? direct        647
-## 4 reply    direct        104
+## 1 content? dlvr.it      1573
+## 2 content? twitterfeed   818
+## 3 content? direct        740
+## 4 reply    direct         81
 ## 5 content? Hootsuite      13
-## 6 content? erased40502     1
-## 7 content? LinkedIn        1</code></pre>
+## 6 content? erased40502     1</code></pre>
 <pre class="r"><code>library(&quot;stringr&quot;)
 user &lt;- user %&gt;% 
   mutate(link = str_extract(text, &quot;https?://.+\\b&quot;),
@@ -111,12 +115,12 @@ user %&gt;% count(n_link, reply, sort = TRUE)</code></pre>
 <pre><code>## # A tibble: 7 x 3
 ##   n_link reply        n
 ##    &lt;int&gt; &lt;chr&gt;    &lt;int&gt;
-## 1      1 content?  2633
-## 2      2 content?   435
-## 3      0 reply       85
-## 4      0 content?    17
-## 5      1 reply       16
-## 6      3 content?     4
+## 1      1 content?  2544
+## 2      2 content?   582
+## 3      0 reply       63
+## 4      1 reply       15
+## 5      0 content?    14
+## 6      3 content?     5
 ## 7      2 reply        3</code></pre>
 <pre class="r"><code>user %&gt;% 
   group_by(lang, source) %&gt;% 
@@ -125,6 +129,7 @@ user %&gt;% count(n_link, reply, sort = TRUE)</code></pre>
   ggplot() +
   geom_point(aes(lang, source, size = n)) +
   theme_bw()</code></pre>
+<pre><code>## `summarise()` regrouping output by &#39;lang&#39; (override with `.groups` argument)</code></pre>
 <p><img src="/post/2019-08-twitter-bot_files/figure-html/count-1.png" width="672" /></p>
 <p>We can see that depending on the service there are some languages that are not used.</p>
 <p>We can visualize the tweets as they happen with:</p>
@@ -143,26 +148,23 @@ user %&gt;% count(n_link, reply, sort = TRUE)</code></pre>
 <p>We can clearly see a change on the end of 2016, I will focus on that point forward.</p>
 <p>A package that got my attention on twitter was <a href="https://cran.r-project.org/package=anomalize"><code>anomalize</code></a> which search for anomalies on time series of data. I hope that using this algorithm it will find when the data is not automated</p>
 <pre class="r"><code>library(&quot;anomalize&quot;)</code></pre>
+<pre><code>## ══ Use anomalize to improve your Forecasts by 50%! ═════════════════════════════════════════════════
+## Business Science offers a 1-hour course - Lab #18: Time Series Anomaly Detection!
+## &lt;/&gt; Learn more at: https://university.business-science.io/p/learning-labs-pro &lt;/&gt;</code></pre>
 <p>The excellent guide at their <a href="https://business-science.github.io/anomalize/">website</a> is easy to understand and follow</p>
 <pre class="r"><code>user &lt;- user %&gt;% 
   filter(created_at &gt; as.Date(&quot;2016-11-01&quot;)) %&gt;% 
   arrange(created_at) %&gt;% 
   time_decompose(created_at, method = &quot;stl&quot;, merge = TRUE, message = TRUE) </code></pre>
-<pre><code>## Warning: Incompatible methods (&quot;Ops.POSIXt&quot;, &quot;Ops.Date&quot;) for &quot;&gt;&quot;</code></pre>
-<pre><code>## Registered S3 method overwritten by &#39;xts&#39;:
-##   method     from
-##   as.zoo.xts zoo</code></pre>
+<pre><code>## Warning in mask$eval_all_filter(dots, env_filter): Incompatible methods
+## (&quot;Ops.POSIXt&quot;, &quot;Ops.Date&quot;) for &quot;&gt;&quot;</code></pre>
 <pre><code>## Converting from tbl_df to tbl_time.
 ## Auto-index message: index = created_at</code></pre>
 <pre><code>## frequency = 2 hours</code></pre>
-<pre><code>## trend = 44.5 hours</code></pre>
+<pre><code>## trend = 42 hours</code></pre>
 <pre><code>## Registered S3 method overwritten by &#39;quantmod&#39;:
 ##   method            from
 ##   as.zoo.data.frame zoo</code></pre>
-<pre><code>## Registered S3 methods overwritten by &#39;forecast&#39;:
-##   method             from    
-##   fitted.fracdiff    fracdiff
-##   residuals.fracdiff fracdiff</code></pre>
 <pre class="r"><code>user %&gt;% 
   filter(created_at &gt; as.Date(&quot;2016-11-01&quot;)) %&gt;% 
   anomalize(remainder, method = &quot;iqr&quot;) %&gt;%
@@ -172,6 +174,8 @@ user %&gt;% count(n_link, reply, sort = TRUE)</code></pre>
   labs(title = &quot;User anomalies&quot;, 
        subtitle = &quot;STL + IQR Methods&quot;, 
        x = &quot;Time&quot;) </code></pre>
+<pre><code>## Warning in grid.Call.graphics(C_points, x$x, x$y, x$pch, x$size): semi-
+## transparency is not supported on this device: reported only once per page</code></pre>
 <p><img src="/post/2019-08-twitter-bot_files/figure-html/unnamed-chunk-7-1.png" width="672" /></p>
 <pre class="r"><code>user %&gt;% 
   filter(created_at &gt; as.Date(&quot;2016-11-01&quot;)) %&gt;% 
@@ -183,7 +187,12 @@ user %&gt;% count(n_link, reply, sort = TRUE)</code></pre>
 <pre class="r"><code>user %&gt;% 
   filter(created_at &gt; as.Date(&quot;2016-11-01&quot;)) %&gt;% 
   botornot()</code></pre>
+<pre><code>## [32m↪[39m [38;5;244mCounting features in text...[39m
+## [32m↪[39m [38;5;244mSentiment analysis...[39m
+## [32m↪[39m [38;5;244mParts of speech...[39m
+## [32m↪[39m [38;5;244mWord dimensions started[39m
+## [32m✔[39m Job&#39;s done!</code></pre>
 <pre><code>## # A tibble: 1 x 3
 ##   screen_name    user_id   prob_bot
 ##   &lt;chr&gt;          &lt;chr&gt;        &lt;dbl&gt;
-## 1 josemariasiota 288661791    0.902</code></pre>
+## 1 josemariasiota 288661791    0.645</code></pre>

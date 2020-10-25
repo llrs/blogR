@@ -41,15 +41,12 @@ ggplot(fines) +
 <pre class="r"><code>library(&quot;lubridate&quot;)
 ## 
 ## Attaching package: &#39;lubridate&#39;
-## The following object is masked from &#39;package:base&#39;:
+## The following objects are masked from &#39;package:base&#39;:
 ## 
-##     date
+##     date, intersect, setdiff, union
 library(&quot;dplyr&quot;)
 ## 
 ## Attaching package: &#39;dplyr&#39;
-## The following objects are masked from &#39;package:lubridate&#39;:
-## 
-##     intersect, setdiff, union
 ## The following objects are masked from &#39;package:stats&#39;:
 ## 
 ##     filter, lag
@@ -154,67 +151,68 @@ fines_sector %&gt;%
 <details>
 <pre><code>## ─ Session info ───────────────────────────────────────────────────────────────────────────────────────────────────────
 ##  setting  value                       
-##  version  R version 3.6.1 (2019-07-05)
-##  os       Ubuntu 19.10                
+##  version  R version 4.0.1 (2020-06-06)
+##  os       Ubuntu 20.04.1 LTS          
 ##  system   x86_64, linux-gnu           
 ##  ui       X11                         
 ##  language (EN)                        
 ##  collate  en_US.UTF-8                 
 ##  ctype    en_US.UTF-8                 
 ##  tz       Europe/Madrid               
-##  date     2019-11-24                  
+##  date     2020-08-20                  
 ## 
 ## ─ Packages ───────────────────────────────────────────────────────────────────────────────────────────────────────────
-##  package       * version    date       lib source                      
-##  assertthat      0.2.1      2019-03-21 [1] CRAN (R 3.6.0)              
-##  bibtex          0.4.2      2017-06-30 [1] CRAN (R 3.6.0)              
-##  blogdown        0.17       2019-11-13 [1] CRAN (R 3.6.1)              
-##  bookdown        0.15       2019-11-12 [1] CRAN (R 3.6.1)              
-##  cli             1.1.0      2019-03-19 [1] CRAN (R 3.6.0)              
-##  colorspace      1.4-1      2019-03-18 [1] CRAN (R 3.6.0)              
-##  crayon          1.3.4      2017-09-16 [1] CRAN (R 3.6.0)              
-##  digest          0.6.23     2019-11-23 [1] CRAN (R 3.6.1)              
-##  dplyr         * 0.8.3      2019-07-04 [1] CRAN (R 3.6.0)              
-##  ellipsis        0.3.0      2019-09-20 [1] CRAN (R 3.6.0)              
-##  evaluate        0.14       2019-05-28 [1] CRAN (R 3.6.0)              
-##  forcats       * 0.4.0      2019-02-17 [1] CRAN (R 3.6.0)              
-##  ggplot2       * 3.2.1      2019-08-10 [1] CRAN (R 3.6.0)              
-##  glue            1.3.1      2019-03-12 [1] CRAN (R 3.6.0)              
-##  gtable          0.3.0      2019-03-25 [1] CRAN (R 3.6.0)              
-##  htmltools       0.4.0      2019-10-04 [1] CRAN (R 3.6.1)              
-##  httr            1.4.1      2019-08-05 [1] CRAN (R 3.6.0)              
-##  jsonlite        1.6        2018-12-07 [1] CRAN (R 3.6.0)              
-##  knitcitations * 1.0.10     2019-09-15 [1] CRAN (R 3.6.0)              
-##  knitr           1.26       2019-11-12 [1] CRAN (R 3.6.1)              
-##  labeling        0.3        2014-08-23 [1] CRAN (R 3.6.0)              
-##  lazyeval        0.2.2      2019-03-15 [1] CRAN (R 3.6.0)              
-##  lubridate     * 1.7.4      2018-04-11 [1] CRAN (R 3.6.0)              
-##  magrittr        1.5        2014-11-22 [1] CRAN (R 3.6.0)              
-##  munsell         0.5.0      2018-06-12 [1] CRAN (R 3.6.0)              
-##  pillar          1.4.2      2019-06-29 [1] CRAN (R 3.6.0)              
-##  pkgconfig       2.0.3      2019-09-22 [1] CRAN (R 3.6.0)              
-##  plyr            1.8.4      2016-06-08 [1] CRAN (R 3.6.0)              
-##  purrr           0.3.3      2019-10-18 [1] CRAN (R 3.6.0)              
-##  R6              2.4.1      2019-11-12 [1] CRAN (R 3.6.1)              
-##  Rcpp            1.0.3      2019-11-08 [1] CRAN (R 3.6.1)              
-##  RefManageR      1.2.12     2019-04-03 [1] CRAN (R 3.6.0)              
-##  rlang           0.4.1.9000 2019-11-20 [1] Github (r-lib/rlang@553a940)
-##  rmarkdown       1.17       2019-11-13 [1] CRAN (R 3.6.1)              
-##  scales        * 1.0.0      2018-08-09 [1] CRAN (R 3.6.0)              
-##  sessioninfo     1.1.1      2018-11-05 [1] CRAN (R 3.6.0)              
-##  stringi         1.4.3      2019-03-12 [1] CRAN (R 3.6.0)              
-##  stringr         1.4.0      2019-02-10 [1] CRAN (R 3.6.0)              
-##  tibble          2.1.3      2019-06-06 [1] CRAN (R 3.6.0)              
-##  tidyselect      0.2.5      2018-10-11 [1] CRAN (R 3.6.0)              
-##  viridisLite     0.3.0      2018-02-01 [1] CRAN (R 3.6.0)              
-##  withr           2.1.2      2018-03-15 [1] CRAN (R 3.6.0)              
-##  xfun            0.11       2019-11-12 [1] CRAN (R 3.6.1)              
-##  xml2            1.2.2      2019-08-09 [1] CRAN (R 3.6.0)              
-##  yaml            2.2.0      2018-07-25 [1] CRAN (R 3.6.0)              
+##  package       * version date       lib source        
+##  assertthat      0.2.1   2019-03-21 [1] CRAN (R 4.0.1)
+##  bibtex          0.4.2.2 2020-01-02 [1] CRAN (R 4.0.1)
+##  blogdown        0.20    2020-06-23 [1] CRAN (R 4.0.1)
+##  bookdown        0.20    2020-06-23 [1] CRAN (R 4.0.1)
+##  cli             2.0.2   2020-02-28 [1] CRAN (R 4.0.1)
+##  colorspace      1.4-1   2019-03-18 [1] CRAN (R 4.0.1)
+##  crayon          1.3.4   2017-09-16 [1] CRAN (R 4.0.1)
+##  digest          0.6.25  2020-02-23 [1] CRAN (R 4.0.1)
+##  dplyr         * 1.0.2   2020-08-18 [1] CRAN (R 4.0.1)
+##  ellipsis        0.3.1   2020-05-15 [1] CRAN (R 4.0.1)
+##  evaluate        0.14    2019-05-28 [1] CRAN (R 4.0.1)
+##  fansi           0.4.1   2020-01-08 [1] CRAN (R 4.0.1)
+##  farver          2.0.3   2020-01-16 [1] CRAN (R 4.0.1)
+##  forcats       * 0.5.0   2020-03-01 [1] CRAN (R 4.0.1)
+##  generics        0.0.2   2018-11-29 [1] CRAN (R 4.0.1)
+##  ggplot2       * 3.3.2   2020-06-19 [1] CRAN (R 4.0.1)
+##  glue            1.4.1   2020-05-13 [1] CRAN (R 4.0.1)
+##  gtable          0.3.0   2019-03-25 [1] CRAN (R 4.0.1)
+##  htmltools       0.5.0   2020-06-16 [1] CRAN (R 4.0.1)
+##  httr            1.4.2   2020-07-20 [1] CRAN (R 4.0.1)
+##  jsonlite        1.7.0   2020-06-25 [1] CRAN (R 4.0.1)
+##  knitcitations * 1.0.10  2019-09-15 [1] CRAN (R 4.0.1)
+##  knitr           1.29    2020-06-23 [1] CRAN (R 4.0.1)
+##  labeling        0.3     2014-08-23 [1] CRAN (R 4.0.1)
+##  lifecycle       0.2.0   2020-03-06 [1] CRAN (R 4.0.1)
+##  lubridate     * 1.7.9   2020-06-08 [1] CRAN (R 4.0.1)
+##  magrittr        1.5     2014-11-22 [1] CRAN (R 4.0.1)
+##  munsell         0.5.0   2018-06-12 [1] CRAN (R 4.0.1)
+##  pillar          1.4.6   2020-07-10 [1] CRAN (R 4.0.1)
+##  pkgconfig       2.0.3   2019-09-22 [1] CRAN (R 4.0.1)
+##  plyr            1.8.6   2020-03-03 [1] CRAN (R 4.0.1)
+##  purrr           0.3.4   2020-04-17 [1] CRAN (R 4.0.1)
+##  R6              2.4.1   2019-11-12 [1] CRAN (R 4.0.1)
+##  Rcpp            1.0.5   2020-07-06 [1] CRAN (R 4.0.1)
+##  RefManageR      1.2.12  2019-04-03 [1] CRAN (R 4.0.1)
+##  rlang           0.4.7   2020-07-09 [1] CRAN (R 4.0.1)
+##  rmarkdown       2.3     2020-06-18 [1] CRAN (R 4.0.1)
+##  scales        * 1.1.1   2020-05-11 [1] CRAN (R 4.0.1)
+##  sessioninfo     1.1.1   2018-11-05 [1] CRAN (R 4.0.1)
+##  stringi         1.4.6   2020-02-17 [1] CRAN (R 4.0.1)
+##  stringr         1.4.0   2019-02-10 [1] CRAN (R 4.0.1)
+##  tibble          3.0.3   2020-07-10 [1] CRAN (R 4.0.1)
+##  tidyselect      1.1.0   2020-05-11 [1] CRAN (R 4.0.1)
+##  vctrs           0.3.2   2020-07-15 [1] CRAN (R 4.0.1)
+##  viridisLite     0.3.0   2018-02-01 [1] CRAN (R 4.0.1)
+##  withr           2.2.0   2020-04-20 [1] CRAN (R 4.0.1)
+##  xfun            0.16    2020-07-24 [1] CRAN (R 4.0.1)
+##  xml2            1.3.2   2020-04-23 [1] CRAN (R 4.0.1)
+##  yaml            2.2.1   2020-02-01 [1] CRAN (R 4.0.1)
 ## 
-## [1] /home/lluis/R/x86_64-pc-linux-gnu-library/3.6
-## [2] /usr/local/lib/R/site-library
-## [3] /usr/lib/R/site-library
-## [4] /usr/lib/R/library</code></pre>
+## [1] /home/lluis/bin/R/4.0.1/lib/R/library</code></pre>
 <details>
 </div>

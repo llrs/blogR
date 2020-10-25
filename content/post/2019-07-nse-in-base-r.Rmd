@@ -38,35 +38,30 @@ The first different are the rownames that are changed.
 So we can make a function to make the result equal:
 
 ```{r filter2}
-filter_base <- function(x, ...) {
-  y <- subset(x, ...)
-  rownames(y) <- NULL
-  y
-}
-mtcars_subset <- filter_base(mtcars, am == "1")
+mtcars_subset <- subset(mtcars, am == "1")
 # From the previous subset
 all.equal(mtcars_filter, mtcars_subset)
 m <- mark(filter(mtcars, am == "1"), 
-          filter_base(mtcars, am == "1"),
+          subset(mtcars, am == "1"),
           iterations = 1000)
 plot(m) + ggplot2::theme_classic()
 ```
 
 ```{r filter3}
 mtcars_filter <- filter(mtcars, am == "1", mpg > 25)
-mtcars_subset <- filter_base(mtcars, am == "1", mpg > 25)
+mtcars_subset <- subset(mtcars, am == "1", mpg > 25)
 all.equal(mtcars_filter, mtcars_subset)
 ```
 The problem here is that we used a `,` to concatenate the different conditions.
 To concatenate a logical condition it is typical to use `&`. If we go this way:
 ```{r filter4}
-mtcars_subset <- filter_base(mtcars, am == "1" & mpg > 25)
+mtcars_subset <- subset(mtcars, am == "1" & mpg > 25)
 # mtcars_filter is the same
 all.equal(mtcars_filter, mtcars_subset)
 
 m <- mark(filter(mtcars, am == "1", mpg > 25),
           filter(mtcars, am == "1" & mpg > 25),
-          filter_base(mtcars, am == "1" & mpg > 25),
+          subset(mtcars, am == "1" & mpg > 25),
           iterations = 1000)
 plot(m) + ggplot2::theme_classic()
 ```

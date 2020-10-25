@@ -19,7 +19,7 @@ editor_options:
 
 
 
-<div id="evolucion-de-los-incendios-forestales-en-mexico" class="section level2">
+<div id="evolucion-de-los-incendios-forestales-en-méxico" class="section level2">
 <h2>Evolucion de los incendios forestales en México</h2>
 <p>I saw a map on twitter and I wanted to see if I could change a bit and improve it:</p>
 {{% tweet "1129429109212213248" %}}
@@ -29,6 +29,11 @@ editor_options:
 ## here() starts at /home/lluis/Documents/Projects/blogR
 library(&quot;ggplot2&quot;)
 library(&quot;gganimate&quot;)
+## No renderer backend detected. gganimate will default to writing frames to separate files
+## Consider installing:
+## - the `gifski` package for gif output
+## - the `av` package for video output
+## and restarting the R session
 library(&quot;ggthemes&quot;)
 # Maps from mexico
 # devtools::install_github(&#39;diegovalle/mxmaps&#39;)
@@ -66,7 +71,9 @@ m &lt;- ggplot() +
   theme_map()  +
   coord_map()
 ## Warning: Using size for a discrete variable is not advised.
-m</code></pre>
+m
+## Warning in grid.Call.graphics(C_points, x$x, x$y, x$pch, x$size): semi-
+## transparency is not supported on this device: reported only once per page</code></pre>
 <p><img src="/post/2019-05-24-fires-in-mexico_files/figure-html/map-1.png" width="672" /></p>
 </div>
 <div id="animation" class="section level2">
@@ -82,6 +89,7 @@ m</code></pre>
          y = element_blank(), 
          caption = &quot;Source: CONAFOR / Elaboracion: @4drian.bautista &amp; @Lluís_Rev&quot;)
 
-animate(gganimation, fps = 25, duration = 10)</code></pre>
-<p><img src="/post/2019-05-24-fires-in-mexico_files/figure-html/animation-1.gif" /><!-- --></p>
+animate(gganimation, fps = 25, duration = 10)
+## Warning: No renderer available. Please install the gifski, av, or magick package
+## to create animated output</code></pre>
 </div>
