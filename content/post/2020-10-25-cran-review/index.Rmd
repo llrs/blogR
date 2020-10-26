@@ -2,22 +2,21 @@
 title: CRAN review
 author: Lluís Revilla Sancho
 date: '2020-10-25'
-slug: CRAN-review
-categories: []
-tags:
-  - R
+categories:
+  - r
   - CRAN
-authors: []
-description: ''
+tags:
+  - CRAN
+  - R
+  - reviews
+slug: CRAN-review
 editor_options:
   chunk_output_type: console
 featured: no
-draft: true
+draft: yes
 image:
   caption: ''
   focal_point: ''
-subtitle: ''
-summary: ''
 ---
 
 ```{r setup, include = FALSE}
@@ -42,7 +41,7 @@ updates <- Reduce(m, f)
 write.csv(updates, file = "static/cran_till_20201025.csv",  row.names = FALSE)
 ```
 
-```{r}
+```{r load}
 cran_submissions <- read.csv(here::here("static", "cran_till_20201025.csv"))
 col_names <- c("package", "version", "snapshot_time", "folder", "subfolder")
 cran_submissions <- cran_submissions[, col_names]
@@ -52,7 +51,13 @@ cran_submissions$snapshot_time <- as.POSIXct(cran_submissions$snapshot_time)
 ```
 
 
-```{r}
+## CRAN load
+
+We all know that CRAN is busy with updates, fixes and so on.
+Now we can see how busy is usually CRAN. 
+How much do the 4 reviewers of CRAN have on their plates?
+
+```{r cran-times}
 cran_submissions <- cran_submissions[!is.na(cran_submissions$version), ]
 theme_set(theme_minimal())
 cran_times <- cran_submissions %>% 
@@ -62,18 +67,27 @@ cran_times <- cran_submissions %>%
          wday = wday(snapshot_time, locale = "en_GB.UTF-8"),
          week = week(snapshot_time),
          date = as_date(snapshot_time),
-         submission = paste0(package, version, collapse = "-")) 
+         submission = paste0(package, version, collapse = "-"))
+```
 
+
+
+```{r cran-queues}
 cran_times %>% 
   group_by(folder, snapshot_time) %>% 
   summarize(packages = n_distinct(package)) %>% 
   group_by(snapshot_time) %>% 
   summarize(n = sum(packages)) %>% 
   ggplot() +
-  geom_col(aes(snapshot_time, n)) +
+  geom_path(aes(snapshot_time, n)) +
   labs(x = "Date", y = "Packages on the queue", 
-       title = "Work on CRANsubmissions")
+       title = "Work on CRAN submissions")
+```
 
+We can see here the sampling pattern and how many packages there were. 
+But in which folders are they?
+
+```{r cran-submissions}
 cran_times %>% 
   group_by(folder, snapshot_time) %>% 
   summarize(packages = n_distinct(package),
@@ -82,7 +96,12 @@ cran_times %>%
   geom_point(aes(snapshot_time, packages, col = fct_reorder(folder, -packages, sum))) +
   labs(x = "Date", y = "Packages",
        title = "Work on submissions", col = "Folder/Stage")
+```
 
+The trend is mostly driven by newbies folder.
+We can look for patterns on the months
+
+```{r cran-monthly}
 cran_times %>% 
   arrange(folder, date, mday) %>% 
   group_by(folder, date, mday) %>% 
@@ -91,11 +110,15 @@ cran_times %>%
   group_by(folder, mday) %>% 
   summarize(packages = median(packages)) %>% 
   ggplot() +
-  geom_point(aes(mday, packages, col = fct_reorder2(folder, mday, packages, sum))) +
+  # geom_point(aes(mday, packages, col = fct_reorder2(folder, mday, packages, sum))) +
   geom_path(aes(mday, packages, col = fct_reorder2(folder, mday, packages, sum))) +
   labs(x = "Day of the month", y = "Packages", col = "Folder/stage",
        title = "Evolution by month day")
+```
 
+Or the day of the week. (Do developers submit more on weekends?)
+
+```{r cran-wday}
 cran_times %>% 
   group_by(folder, date, wday) %>% 
   summarize(packages = n_distinct(package),
@@ -103,10 +126,33 @@ cran_times %>%
   group_by(folder, wday) %>% 
   summarize(packages = median(packages)) %>% 
   ggplot() +
-  geom_point(aes(wday, packages, col = fct_reorder2(folder, wday, packages, sum))) +
+  # geom_point(aes(wday, packages, col = fct_reorder2(folder, wday, packages, sum))) +
   geom_path(aes(wday, packages, col = fct_reorder2(folder, wday, packages, sum))) +
     labs(x = "Day of the week", y = "Packages", col = "Folder/stage",
        title = "Evolution by week day")
+```
+
+
+
+
+```{r cran-wday}
+cran_members <- c("LH", "UL", "GS", "JH")
+cran_times %>% 
+  filter(!is.na(subfolder)) %>% 
+  group_by(subfolder, date, mday) %>% 
+  summarize(packages = n_distinct(package),
+            week = unique(week)) %>% 
+  group_by(subfolder, mday) %>% 
+  summarize(packages = median(packages)) %>% 
+  filter(subfolder %in% cran_members) %>% 
+  ggplot() +
+  # geom_point(aes(mday, packages, col = fct_reorder2(subfolder, mday, packages, sum))) +
+  geom_path(aes(mday, packages, col = fct_reorder2(subfolder, mday, packages, sum))) +
+    labs(x = "Day of the week", y = "Packages", col = "Folder/stage",
+       title = "Evolution by day of the month")
+```
+
+```{r}
 cran_times %>% 
   filter(!is.na(subfolder)) %>% 
   group_by(subfolder, date, wday) %>% 
@@ -114,19 +160,27 @@ cran_times %>%
             week = unique(week)) %>% 
   group_by(subfolder, wday) %>% 
   summarize(packages = median(packages)) %>% 
+  filter(subfolder %in% cran_members) %>% 
   ggplot() +
   geom_point(aes(wday, packages, col = fct_reorder2(subfolder, wday, packages, sum))) +
   geom_path(aes(wday, packages, col = fct_reorder2(subfolder, wday, packages, sum))) +
     labs(x = "Day of the week", y = "Packages", col = "Folder/stage",
        title = "Evolution by week day")
+```
 
+
+```{r cran-subfolder}
 cran_times %>% 
   group_by(folder, subfolder) %>% 
   count(sort = TRUE) %>% 
   ungroup() %>% 
-  filter(!(folder == subfolder))
+  filter(!(folder == subfolder) | is.na(subfolder))
 ```
 
+
+## Times
+
+Time spend on each folder/step.
 
 ```{r}
 tidy <- cran_times %>%
@@ -137,6 +191,13 @@ tidy <- cran_times %>%
   ungroup()
 ```
 
+
+## Resubmissions
+
+One big difference between CRAN and Bioconductor or rOpenSci is that even if your package is already included each time you want to fix something it gets reviewed by someone. 
+This ensures the high quality of the packages, as well as increases the pressure on the package reviewers.
+This in turn raises the bar for resubmissions. 
+How long between one submission and another of the same package?
 
 ### Reproducibility
 
