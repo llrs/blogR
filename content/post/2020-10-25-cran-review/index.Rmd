@@ -12,6 +12,7 @@ description: ''
 editor_options:
   chunk_output_type: console
 featured: no
+draft: true
 image:
   caption: ''
   focal_point: ''
@@ -42,7 +43,7 @@ write.csv(updates, file = "static/cran_till_20201025.csv",  row.names = FALSE)
 ```
 
 ```{r}
-cran_submissions <- read.csv("static/cran_till_20201025.csv")
+cran_submissions <- read.csv(here::here("static", "cran_till_20201025.csv"))
 col_names <- c("package", "version", "snapshot_time", "folder", "subfolder")
 cran_submissions <- cran_submissions[, col_names]
 library("tidyverse")
@@ -106,26 +107,34 @@ cran_times %>%
   geom_path(aes(wday, packages, col = fct_reorder2(folder, wday, packages, sum))) +
     labs(x = "Day of the week", y = "Packages", col = "Folder/stage",
        title = "Evolution by week day")
+cran_times %>% 
+  filter(!is.na(subfolder)) %>% 
+  group_by(subfolder, date, wday) %>% 
+  summarize(packages = n_distinct(package),
+            week = unique(week)) %>% 
+  group_by(subfolder, wday) %>% 
+  summarize(packages = median(packages)) %>% 
+  ggplot() +
+  geom_point(aes(wday, packages, col = fct_reorder2(subfolder, wday, packages, sum))) +
+  geom_path(aes(wday, packages, col = fct_reorder2(subfolder, wday, packages, sum))) +
+    labs(x = "Day of the week", y = "Packages", col = "Folder/stage",
+       title = "Evolution by week day")
+
+cran_times %>% 
+  group_by(folder, subfolder) %>% 
+  count(sort = TRUE) %>% 
+  ungroup() %>% 
+  filter(!(folder == subfolder))
 ```
 
 
 ```{r}
 tidy <- cran_times %>%
-  group_by(package) %>% 
+  group_by(submission) %>% 
+  arrange(snapshot_time) %>% 
   filter(row_number() == 1 | folder != lag(folder)) %>% 
   mutate(elapsed = difftime(snapshot_time, lag(snapshot_time), units = "hours")) %>% 
   ungroup()
-
-count(state, folder, sort = TRUE)
-
-state %>%
-  mutate(folder = fct_relevel(as.factor(folder), "pretest", "newbies", "inspect")) %>%
-  group_by(package) %>%
-  mutate(cur = folder, prev = dplyr::lag(folder)) %>%
-  ungroup() %>%
-  filter(!is.na(prev)) %>%
-  group_by(prev, cur) %>%
-  summarise(n = n(), elapsed = mean(elapsed), .groups = "drop")
 ```
 
 
