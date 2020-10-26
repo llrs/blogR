@@ -1,5 +1,5 @@
 ---
-title: rOpenSci submissions
+title: 'rOpenSci submissions'
 author: Lluís Revilla Sancho
 date: '2020-09-02'
 slug: ropensci-submissions
@@ -14,7 +14,8 @@ authors: []
 description: 'Checking rOpenSci review process from the issues. Authors, editors, topics, speed of the review are compared with last post about Bioconductor review process.'
 editor_options:
   chunk_output_type: console
-featured: no
+featured: yes
+draft: false
 image:
   caption: ''
   focal_point: ''

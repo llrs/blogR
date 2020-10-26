@@ -1,0 +1,362 @@
+---
+title: 'rOpenSci submissions'
+author: Lluís Revilla Sancho
+date: '2020-09-02'
+slug: ropensci-submissions
+categories:
+  - r
+  - rOpenSci
+tags:
+  - r
+  - reviews
+  - GitHub
+authors: []
+description: 'Checking rOpenSci review process from the issues. Authors, editors, topics, speed of the review are compared with last post about Bioconductor review process.'
+editor_options:
+  chunk_output_type: console
+featured: yes
+draft: false
+image:
+  caption: ''
+  focal_point: ''
+subtitle: 'Checking rOpenSci review process'
+summary: 'Comparing rOpenSci review process to the Bioconductor review process. Most important differences are external reviewers and build on external machines as well as a longer review time.'
+---
+
+<script src="index_files/header-attrs/header-attrs.js"></script>
+<link href="index_files/anchor-sections/anchor-sections.css" rel="stylesheet" />
+<script src="index_files/anchor-sections/anchor-sections.js"></script>
+
+
+<p>Following <a href="https://llrs.dev/2020/07/bioconductor-submissions-reviews/">last post on Bioconductor</a> I wanted to analyze another venue where code reviews are made: <a href="https://rOpenSci.org">rOpenSci</a>.
+There are some <a href="https://ropensci.org/blog/2018/04/26/a-satrday-ct-series/">other analysis</a> of the the reviews made by rOpenSci themselves:</p>
+<blockquote>
+<p>The <a href="https://ropensci.org/blog/2018/04/26/rectangling-onboarding/">first post</a> in the series will explain how I rectangled onboarding. The <a href="https://ropensci.org/blog/2018/05/03/onboarding-is-work/">second post</a> will give some clues as to how to quantify the work represented by rOpenSci onboarding. The <a href="https://ropensci.org/blog/2018/05/10/onboarding-social-weather/">third and last post</a> will use tidy text analysis of onboarding threads to characterize the social weather of onboarding.</p>
+</blockquote>
+<p>rOpenSci review process has some of the differences:</p>
+<p>One can ask before hand if the package submitted fits the scope of rOpenSci.
+In addition the review is done by two volunteers usually not affiliated with rOpenSci but with an editor that has the final decision
+Also there is an encouragement on a dialog and iteration to improve the package.
+Lastly, the build process is perform by third parties (Github actions, travis, appveyor …) and the results are not reported on the issue.</p>
+<p>Despite all these differences following the same methods I downloaded the data on 2020/09/02 to analyze similarly the submissions.</p>
+<p><img src="index_files/figure-html/first-plot-1.png" width="672" /></p>
+<p>We can see that there are fewer issues opened on rOpenSci but also the timeline is shorter.
+One difference is that there seems to be more events after the initial activity on the issues.</p>
+<p>If we look at the editors involved on the issues we can see who has commented more and in more issues</p>
+<p><img src="index_files/figure-html/by-users-1.png" width="672" /></p>
+<p>It seems like there are 10 comments per each issue an editor is involved with.
+Of course, this will change for people submitting software:</p>
+<p><img src="index_files/figure-html/by-user2-1.png" width="672" /></p>
+<p>Here I kept the same threshold to show the names of users.
+There are more names, indicating more people commenting and involved on the issues.
+I’m surprised to appear on this graph because I haven’t been much involved with rOpenSci.
+Stefanie Butland as the community manager of rOpenSci comments more and is involved in more issues than regular users.</p>
+<p>Now that we know who is involved comenting, what about the other events?</p>
+<p><img src="index_files/figure-html/events-view-1.png" width="672" /></p>
+<p>First thing, more people are mentioned between them than on Bioconductor.
+Also there seems to be a lot more of cross-references than on Bioconductor.</p>
+<p><img src="index_files/figure-html/second-plot-1.png" width="672" /></p>
+<p>The issues do have a highly social component with lots of mentions, subscriptions and comments.
+It is generally rare to unsubscribe from an issue or to have the issue added to a project.</p>
+<p><img src="index_files/figure-html/events-time-1.png" width="672" /></p>
+<p>Here we don’t see a clear pattern on the events, but most issues have few events (median events of 61).</p>
+<p><img src="index_files/figure-html/events-time2-1.png" width="672" /></p>
+<p>It is fairly similar to Bioconductor.
+We can see that issues have fewer events than on Bioconductor.
+This is because there isn’t any bot replying with each update to the repository neither a report of the build with every version increment.</p>
+<p><img src="index_files/figure-html/events-time3-1.png" width="672" /></p>
+<p>Most issues have all the events on the first weeks.</p>
+<div id="editor" class="section level1">
+<h1>Editor</h1>
+<p>As mentioned the editor is assigned to find the reviewers and have the final decision on the package.</p>
+<p><img src="index_files/figure-html/assignments-1.png" width="672" /></p>
+<p>There seem to be few assigned users, and in some cases there are like two users assigned.
+This might be because the reviewers are also assigned that issue or something else.</p>
+<p><img src="index_files/figure-html/submission-acceptance-1.png" width="672" /></p>
+<p>Editors are fairly more involved on the issues commenting around 11 times.</p>
+<p><img src="index_files/figure-html/events-days-1.png" width="672" /></p>
+<p>We can see that one presubmission issue took longer to decide than most of the submissions!
+In general submissions show the same behavior as in Bioconductor:
+Most of them have lots of events on a relatively short period of time.
+Some submissions take longer to close and remain without events for long periods of time.</p>
+<p><img src="index_files/figure-html/events-user-distribution-1.png" width="672" /></p>
+<p>Here are some differences on the number of different events per issue and different users involved.
+There are more users and events involved with issues on rOpenSci than on Bioconductor.
+This is partially expected as the review are done by more people but I expected a similar pattern of events per issue.</p>
+<p><img src="index_files/figure-html/actor-event-types-1.png" width="672" /></p>
+<p>We can see that users and events are more distributed.</p>
+<p><img src="index_files/figure-html/actors-events-1.png" width="672" /></p>
+<p>As in Bioconductor the more people involved more events per issue.</p>
+</div>
+<div id="who-does-each-action" class="section level1">
+<h1>Who does each action ?</h1>
+<p>We can look now at who performs what, we know there are 522 participants:</p>
+<p><img src="index_files/figure-html/who-1.png" width="672" /></p>
+<p>The top 35 people involved is dominated by editors.
+Surprisingly editors do also cross-reference other issues.</p>
+<p>If we look at how many comments there are on each issue per author and editor we can get a sense of how much work it takes for editors:</p>
+<p><img src="index_files/figure-html/comments-plot-1.png" width="672" /></p>
+<p>Here we can see that there are more comments from authors and editors.</p>
+<p><img src="index_files/figure-html/closing-1.png" width="672" /></p>
+<p>Some issues have fairly large number of comments after being closed.
+Perhaps discussing other alternatives or comparing to other existing software.</p>
+</div>
+<div id="mentions" class="section level1">
+<h1>Mentions</h1>
+<p>There are many more mentions than on Bioconductor.
+So what do these people do when added to the conversation ?</p>
+<p><img src="index_files/figure-html/mentions-1.png" width="672" /></p>
+<p>People mentioned bring their experience by commenting, and cross-referencing some other issues.</p>
+</div>
+<div id="labels" class="section level1">
+<h1>Labels</h1>
+<p>rOpenSci uses labels much more than Bioconductor, with a total of 65 different labels.
+It also uses them to mark on which step of the review process each issue is.
+We can see that it got expanded with time, from initially just three labels to the current 6-7 labels:</p>
+<p><img src="index_files/figure-html/labels_plot_overview-1.png" width="672" /></p>
+<p>But labels are also used to indicate to which is the topic of each package:</p>
+<p><img src="index_files/figure-html/labels_topic-1.png" width="672" /></p>
+<p>Surprisingly the focus seems to be on data-access followed by geospatial and data-extraction:</p>
+<table>
+<thead>
+<tr class="header">
+<th align="left">Topic</th>
+<th align="right">n</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td align="left">data-access</td>
+<td align="right">83</td>
+</tr>
+<tr class="even">
+<td align="left">geospatial</td>
+<td align="right">30</td>
+</tr>
+<tr class="odd">
+<td align="left">data-extraction</td>
+<td align="right">26</td>
+</tr>
+<tr class="even">
+<td align="left">reproducibility</td>
+<td align="right">25</td>
+</tr>
+<tr class="odd">
+<td align="left">data-munging</td>
+<td align="right">17</td>
+</tr>
+<tr class="even">
+<td align="left">text-mining</td>
+<td align="right">17</td>
+</tr>
+<tr class="odd">
+<td align="left">data-retrieval</td>
+<td align="right">13</td>
+</tr>
+<tr class="even">
+<td align="left">earth-science</td>
+<td align="right">13</td>
+</tr>
+<tr class="odd">
+<td align="left">climate-data</td>
+<td align="right">11</td>
+</tr>
+<tr class="even">
+<td align="left">literature</td>
+<td align="right">11</td>
+</tr>
+</tbody>
+</table>
+<p>Labels are also used to classify topics (and initially if it had an editor assigned)</p>
+<p><img src="index_files/figure-html/labels-other-1.png" width="672" /></p>
+<p>Other labels assigned, seem to be for packages or some other related to the process.
+Surprisingly there have been few submissions to MEE and JOSS according to the “pub:” labels.</p>
+<p>Looking at the labels for each step can compute the median time required to get them:</p>
+<table>
+<thead>
+<tr class="header">
+<th align="left">Step</th>
+<th align="right">Median days</th>
+<th align="right">Total days</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td align="left">1/editor-checks</td>
+<td align="right">2.1</td>
+<td align="right">2.1</td>
+</tr>
+<tr class="even">
+<td align="left">2/seeking-reviewer(s)</td>
+<td align="right">2.5</td>
+<td align="right">4.6</td>
+</tr>
+<tr class="odd">
+<td align="left">3/reviewer(s)-assigned</td>
+<td align="right">10.8</td>
+<td align="right">15.4</td>
+</tr>
+<tr class="even">
+<td align="left">4/review(s)-in-awaiting-changes</td>
+<td align="right">26.0</td>
+<td align="right">41.4</td>
+</tr>
+<tr class="odd">
+<td align="left">5/awaiting-reviewer(s)-response</td>
+<td align="right">30.5</td>
+<td align="right">71.9</td>
+</tr>
+<tr class="even">
+<td align="left">6/approved</td>
+<td align="right">17.0</td>
+<td align="right">88.9</td>
+</tr>
+</tbody>
+</table>
+<p>We see that the slowest step is awaiting reviewers response, right after awaiting changes from the authors.
+According to this the review process is long and it takes around 3 months to get a package approved.
+However, if we look for each issue how much time does it take to get the next label we see another picture:</p>
+<table>
+<thead>
+<tr class="header">
+<th align="left">name</th>
+<th align="right">Median days</th>
+<th align="right">Total days</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td align="left">1/editor-checks</td>
+<td align="right">2.1</td>
+<td align="right">2.1</td>
+</tr>
+<tr class="even">
+<td align="left">2/seeking-reviewer(s)</td>
+<td align="right">1.9</td>
+<td align="right">4.0</td>
+</tr>
+<tr class="odd">
+<td align="left">3/reviewer(s)-assigned</td>
+<td align="right">6.4</td>
+<td align="right">10.4</td>
+</tr>
+<tr class="even">
+<td align="left">4/review(s)-in-awaiting-changes</td>
+<td align="right">25.0</td>
+<td align="right">35.4</td>
+</tr>
+<tr class="odd">
+<td align="left">5/awaiting-reviewer(s)-response</td>
+<td align="right">17.1</td>
+<td align="right">52.5</td>
+</tr>
+<tr class="even">
+<td align="left">6/approved</td>
+<td align="right">12.2</td>
+<td align="right">64.7</td>
+</tr>
+</tbody>
+</table>
+<p>Now the longest step is changing the packages with the feedback from the reviewers, followed by awaiting the reviewers comments but that is almost half of the time it was.
+The other times do not change much.
+The total time is still around 2 months, which is the double of what it takes to get a package accepted in Bioconductor.</p>
+</div>
+<div id="conclusions" class="section level1">
+<h1>Conclusions</h1>
+<p>Following the steps/labels the review process is similar enough to be able to compare the review process of <a href="https://bioconductor.org">Bioconductor</a> and <a href="https://ropensci.org">rOpenSci</a>.
+Not having information about the build and check status of packages makes harder to compare some steps and the stage of the package upon submission.
+On some early submissions it was editor’s duties to review the packages like in Bioconductor.
+It was later abandoned in favor of two external reviewers.
+The reviews on the rOpenSci are handled by more people which makes submission to take longer (probably also because usually there are two reviewers) and
+because there might be a clarification of changes and a dialog after the first review.</p>
+<p>In general it takes longer to get the packages approved than on Bioconductor.</p>
+<div id="reproducibility" class="section level3">
+<h3>Reproducibility</h3>
+<details>
+<pre><code>## ─ Session info ───────────────────────────────────────────────────────────────────────────────────────────────────────
+##  setting  value                       
+##  version  R version 4.0.1 (2020-06-06)
+##  os       Ubuntu 20.04.1 LTS          
+##  system   x86_64, linux-gnu           
+##  ui       X11                         
+##  language (EN)                        
+##  collate  en_US.UTF-8                 
+##  ctype    en_US.UTF-8                 
+##  tz       Europe/Madrid               
+##  date     2020-10-26                  
+## 
+## ─ Packages ───────────────────────────────────────────────────────────────────────────────────────────────────────────
+##  package      * version    date       lib source                             
+##  assertthat     0.2.1      2019-03-21 [1] CRAN (R 4.0.1)                     
+##  backports      1.1.10     2020-09-15 [1] CRAN (R 4.0.1)                     
+##  blob           1.2.1      2020-01-20 [1] CRAN (R 4.0.1)                     
+##  blogdown       0.21       2020-10-11 [1] CRAN (R 4.0.1)                     
+##  bookdown       0.21       2020-10-13 [1] CRAN (R 4.0.1)                     
+##  broom          0.7.2      2020-10-20 [1] CRAN (R 4.0.1)                     
+##  cellranger     1.1.0      2016-07-27 [1] CRAN (R 4.0.1)                     
+##  cli            2.1.0      2020-10-12 [1] CRAN (R 4.0.1)                     
+##  colorspace     1.4-1      2019-03-18 [1] CRAN (R 4.0.1)                     
+##  crayon         1.3.4      2017-09-16 [1] CRAN (R 4.0.1)                     
+##  DBI            1.1.0      2019-12-15 [1] CRAN (R 4.0.1)                     
+##  dbplyr         1.4.4      2020-05-27 [1] CRAN (R 4.0.1)                     
+##  digest         0.6.26     2020-10-17 [1] CRAN (R 4.0.1)                     
+##  dplyr        * 1.0.2      2020-08-18 [1] CRAN (R 4.0.1)                     
+##  ellipsis       0.3.1      2020-05-15 [1] CRAN (R 4.0.1)                     
+##  evaluate       0.14       2019-05-28 [1] CRAN (R 4.0.1)                     
+##  fansi          0.4.1      2020-01-08 [1] CRAN (R 4.0.1)                     
+##  farver         2.0.3      2020-01-16 [1] CRAN (R 4.0.1)                     
+##  forcats      * 0.5.0      2020-03-01 [1] CRAN (R 4.0.1)                     
+##  fs             1.5.0      2020-07-31 [1] CRAN (R 4.0.1)                     
+##  generics       0.0.2      2018-11-29 [1] CRAN (R 4.0.1)                     
+##  ggplot2      * 3.3.2      2020-06-19 [1] CRAN (R 4.0.1)                     
+##  ggrepel      * 0.8.2      2020-03-08 [1] CRAN (R 4.0.1)                     
+##  glue           1.4.2      2020-08-27 [1] CRAN (R 4.0.1)                     
+##  gtable         0.3.0      2019-03-25 [1] CRAN (R 4.0.1)                     
+##  haven          2.3.1      2020-06-01 [1] CRAN (R 4.0.1)                     
+##  here           0.1        2017-05-28 [1] CRAN (R 4.0.1)                     
+##  highr          0.8        2019-03-20 [1] CRAN (R 4.0.1)                     
+##  hms            0.5.3      2020-01-08 [1] CRAN (R 4.0.1)                     
+##  htmltools      0.5.0      2020-06-16 [1] CRAN (R 4.0.1)                     
+##  httr           1.4.2      2020-07-20 [1] CRAN (R 4.0.1)                     
+##  jsonlite       1.7.1      2020-09-07 [1] CRAN (R 4.0.1)                     
+##  knitr          1.30       2020-09-22 [1] CRAN (R 4.0.1)                     
+##  labeling       0.4.2      2020-10-20 [1] CRAN (R 4.0.1)                     
+##  lifecycle      0.2.0      2020-03-06 [1] CRAN (R 4.0.1)                     
+##  lubridate      1.7.9      2020-06-08 [1] CRAN (R 4.0.1)                     
+##  magrittr       1.5.0.9000 2020-08-21 [1] Github (tidyverse/magrittr@1d0559d)
+##  modelr         0.1.8      2020-05-19 [1] CRAN (R 4.0.1)                     
+##  munsell        0.5.0      2018-06-12 [1] CRAN (R 4.0.1)                     
+##  patchwork    * 1.0.1      2020-06-22 [1] CRAN (R 4.0.1)                     
+##  pillar         1.4.6      2020-07-10 [1] CRAN (R 4.0.1)                     
+##  pkgconfig      2.0.3      2019-09-22 [1] CRAN (R 4.0.1)                     
+##  purrr        * 0.3.4      2020-04-17 [1] CRAN (R 4.0.1)                     
+##  R6             2.4.1      2019-11-12 [1] CRAN (R 4.0.1)                     
+##  RColorBrewer   1.1-2      2014-12-07 [1] CRAN (R 4.0.1)                     
+##  Rcpp           1.0.5      2020-07-06 [1] CRAN (R 4.0.1)                     
+##  readr        * 1.4.0      2020-10-05 [1] CRAN (R 4.0.1)                     
+##  readxl         1.3.1      2019-03-13 [1] CRAN (R 4.0.1)                     
+##  reprex         0.3.0      2019-05-16 [1] CRAN (R 4.0.1)                     
+##  rlang          0.4.8      2020-10-08 [1] CRAN (R 4.0.1)                     
+##  rmarkdown      2.5        2020-10-21 [1] CRAN (R 4.0.1)                     
+##  rprojroot      1.3-2      2018-01-03 [1] CRAN (R 4.0.1)                     
+##  rstudioapi     0.11       2020-02-07 [1] CRAN (R 4.0.1)                     
+##  rvest          0.3.6      2020-07-25 [1] CRAN (R 4.0.1)                     
+##  scales         1.1.1      2020-05-11 [1] CRAN (R 4.0.1)                     
+##  sessioninfo    1.1.1      2018-11-05 [1] CRAN (R 4.0.1)                     
+##  stringi        1.5.3      2020-09-09 [1] CRAN (R 4.0.1)                     
+##  stringr      * 1.4.0      2019-02-10 [1] CRAN (R 4.0.1)                     
+##  tibble       * 3.0.4      2020-10-12 [1] CRAN (R 4.0.1)                     
+##  tidyr        * 1.1.2      2020-08-27 [1] CRAN (R 4.0.1)                     
+##  tidyselect     1.1.0      2020-05-11 [1] CRAN (R 4.0.1)                     
+##  tidyverse    * 1.3.0      2019-11-21 [1] CRAN (R 4.0.1)                     
+##  vctrs          0.3.4      2020-08-29 [1] CRAN (R 4.0.1)                     
+##  viridisLite    0.3.0      2018-02-01 [1] CRAN (R 4.0.1)                     
+##  withr          2.3.0      2020-09-22 [1] CRAN (R 4.0.1)                     
+##  xfun           0.18       2020-09-29 [1] CRAN (R 4.0.1)                     
+##  xml2           1.3.2      2020-04-23 [1] CRAN (R 4.0.1)                     
+##  yaml           2.2.1      2020-02-01 [1] CRAN (R 4.0.1)                     
+## 
+## [1] /home/lluis/bin/R/4.0.1/lib/R/library</code></pre>
+</details>
+</div>
+</div>
