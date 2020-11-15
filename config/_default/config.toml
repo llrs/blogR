@@ -44,13 +44,14 @@ preserveTaxonomyNames = true
   home = [ "HTML", "RSS", "JSON",  "WebAppManifest"]
   section = [ "HTML", "RSS" ]
 
+rssLimit = 20
+
 [mediaTypes."application/manifest+json"]
   suffixes = ["webmanifest"]
 
 [outputFormats.WebAppManifest]
   mediaType = "application/manifest+json"
   rel = "manifest"
-
 
 [permalinks]
   post = "/:year/:month/:slug/"
