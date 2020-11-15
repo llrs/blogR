@@ -36,7 +36,7 @@ social:
   link: https://linkedin.com/in/lluisrevilla/
 - icon: twitter
   icon_pack: fab
-  link: https://twitter.com/Lluis_Rev
+  link: https://twitter.com/Lluis_Revilla
 - icon: github
   icon_pack: fab
   link: https://github.com/llrs
