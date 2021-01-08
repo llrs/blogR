@@ -2,8 +2,11 @@
 .RData
 .Rproj.user
 blogdown
-public/
+public
+resources
 themes/hugo-academic/exampleSite/
 static/fires-mexico/*.xlsx
 static/post/2015-07-23-r-rmarkdow_files/*
 static/post/2019*
+.DS_Store
+Thumbs.db
