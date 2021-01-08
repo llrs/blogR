@@ -13,7 +13,7 @@ slug: CRAN-review
 editor_options:
   chunk_output_type: console
 featured: no
-draft: yes
+draft: false
 image:
   caption: ''
   focal_point: ''
