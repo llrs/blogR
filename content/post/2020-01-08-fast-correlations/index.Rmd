@@ -47,7 +47,7 @@ Most of them are on CRAN and one is at github.
 
 # Dependencies
 
-If we are only interested on the correlation most of the dependencies that a package would bring aren't rellevant.
+If we are only interested on the correlation most of the dependencies that a package would bring aren't relevant.
 So how many dependencies have each of those packages?
 
 ```{r dep}
