@@ -2,161 +2,524 @@
 title: CRAN review
 author: Lluís Revilla Sancho
 date: '2020-10-25'
-slug: CRAN-review
-categories: []
-tags:
-  - R
+categories:
+  - r
   - CRAN
-authors: []
-description: ''
+tags:
+  - CRAN
+  - R
+  - reviews
+slug: CRAN-review
 editor_options:
   chunk_output_type: console
 featured: no
-draft: true
+draft: yes
 image:
   caption: ''
   focal_point: ''
-subtitle: ''
-summary: ''
 ---
 
-<script src="index_files/header-attrs/header-attrs.js"></script>
-<link href="index_files/anchor-sections/anchor-sections.css" rel="stylesheet" />
-<script src="index_files/anchor-sections/anchor-sections.js"></script>
+<script src="{{< blogdown/postref >}}index_files/header-attrs/header-attrs.js"></script>
 
 
 <p><a href="https://github.com/lockedata/cransays">cransays</a> is a package to check package submissions which on the online documentation provides a <a href="https://lockedata.github.io/cransays/articles/dashboard.html">dashboard which</a> is updated each hour.
 At the same time recently (since 2020/09/12) the status of the queues and folders of submissions are stored.
 Using this information and the recent <a href="https://github.com/tjtnew/newbies">script provided by Tim Taylor</a> I’ll check how are the submissions on CRAN.</p>
-<pre class="r"><code>path_zip &lt;- here::here(&quot;static&quot;, &quot;cransays-history.zip&quot;) # From downloading the cransays repository branch history
+<pre class="r"><code># Downloading the cransays repository branch history
+download.file(&quot;https://github.com/lockedata/cransays/archive/history.zip&quot;, 
+              destfile = &quot;static/cransays-history.zip&quot;)
+path_zip &lt;- here::here(&quot;static&quot;, &quot;cransays-history.zip&quot;) 
+# We unzip the files to read them
 dat &lt;- unzip(path_zip, exdir = &quot;static&quot;)
 csv &lt;- dat[grepl(&quot;*.csv$&quot;, x = dat)]
 dates &lt;- gsub(&quot;cran-incoming-(.+)\\.csv&quot;, &quot;\\1&quot;, basename(csv))
-date &lt;- as.POSIXct(dates, format = &quot;%Y%m%dT%H%M&quot;)
+date_cransays &lt;- as.POSIXct(dates, format = &quot;%Y%m%dT%H%M&quot;, tz = &quot;UTC&quot;)
 f &lt;- sapply(csv, read.csv)
 m &lt;- function(x, y) {
   merge(x, y, sort = FALSE, all = TRUE)
 }
-updates &lt;- Reduce(m, f)
-write.csv(updates, file = &quot;static/cran_till_20201025.csv&quot;,  row.names = FALSE)</code></pre>
-<pre class="r"><code>cran_submissions &lt;- read.csv(here::here(&quot;static&quot;, &quot;cran_till_20201025.csv&quot;))
+updates &lt;- Reduce(m, f) # Merge all files
+write.csv(updates, file = &quot;static/cran_till_now.csv&quot;,  row.names = FALSE)
+# Clean up
+unlink(&quot;static/cransays-history/&quot;, recursive = TRUE)
+unlink(&quot;static/cransays-history/&quot;, recursive = TRUE)
+unlink(&quot;static/cransays-history.zip&quot;, recursive = TRUE)</code></pre>
+<p>After preparing the files in one big file we can load and work with it.</p>
+<pre class="r"><code>path_file &lt;- here::here(&quot;static&quot;, &quot;post&quot;, &quot;2020-01-cran-dependencies_files&quot;, 
+                        &quot;cran_till_now.csv&quot;)
+cran_submissions &lt;- read.csv(path_file)
 col_names &lt;- c(&quot;package&quot;, &quot;version&quot;, &quot;snapshot_time&quot;, &quot;folder&quot;, &quot;subfolder&quot;)
 cran_submissions &lt;- cran_submissions[, col_names]
 library(&quot;tidyverse&quot;)
 ## ── Attaching packages ─────────────────────────────────────── tidyverse 1.3.0 ──
-## ✓ ggplot2 3.3.2     ✓ purrr   0.3.4
+## ✓ ggplot2 3.3.3     ✓ purrr   0.3.4
 ## ✓ tibble  3.0.4     ✓ dplyr   1.0.2
 ## ✓ tidyr   1.1.2     ✓ stringr 1.4.0
 ## ✓ readr   1.4.0     ✓ forcats 0.5.0
 ## ── Conflicts ────────────────────────────────────────── tidyverse_conflicts() ──
 ## x dplyr::filter() masks stats::filter()
 ## x dplyr::lag()    masks stats::lag()
+theme_set(theme_minimal())
 library(&quot;lubridate&quot;)
 ## 
 ## Attaching package: &#39;lubridate&#39;
 ## The following objects are masked from &#39;package:base&#39;:
 ## 
 ##     date, intersect, setdiff, union
-cran_submissions$snapshot_time &lt;- as.POSIXct(cran_submissions$snapshot_time)</code></pre>
+cran_submissions$snapshot_time &lt;- as.POSIXct(cran_submissions$snapshot_time,
+                                             tz = &quot;UTC&quot;)</code></pre>
+<div id="cran-load" class="section level2">
+<h2>CRAN load</h2>
+<p>We all know that CRAN is busy with updates, reports of bug fixes and so on.
+Thanks to cransays now we can see how how much do the 4 reviewers of CRAN have on their plates.</p>
+<p>The period we are going to analyze is from the beginning of the records till 2021/01/02.
+It includes some well earned holiday time for the CRAN team, during which submissions are not possible.</p>
+<p>I’ve read some comments on the inconsistencies of where do the holidays of the CRAN teams are reported and for the short period of time so far by cransays I used a <a href="https://twitter.com/krlmlr/status/1346005787668336640">screenshot</a> found on twitter.</p>
+<pre class="r"><code>holidays &lt;- data.frame(
+  start = as.POSIXct(&quot;18/12/2020&quot;, format = &quot;%d/%m/%Y&quot;, tz = &quot;UTC&quot;), 
+  end = as.POSIXct(&quot;04/01/2021&quot;, format = &quot;%d/%m/%Y&quot;, tz = &quot;UTC&quot;)
+)</code></pre>
 <pre class="r"><code>cran_submissions &lt;- cran_submissions[!is.na(cran_submissions$version), ]
-theme_set(theme_minimal())
-cran_times &lt;- cran_submissions %&gt;% 
+cran_queue &lt;- cran_submissions %&gt;% 
+  group_by(snapshot_time) %&gt;% 
+  summarize(n = n_distinct(package))
+## `summarise()` ungrouping output (override with `.groups` argument)
+ggplot(cran_queue) +
+  geom_rect(data = holidays, aes(xmin = start, xmax = end, ymin = 0, ymax = 200),
+            alpha = 0.5, fill = &quot;red&quot;) +
+  annotate(&quot;text&quot;, x = holidays$start + (holidays$end - holidays$start)/2, 
+           y = 150, label = &quot;CRAN holidays&quot;) +
+  geom_path(aes(snapshot_time, n)) +
+  scale_x_datetime(date_labels = &quot;%Y/%m/%d&quot;, date_breaks = &quot;2 weeks&quot;, 
+                   expand = expansion()) +
+  scale_y_continuous(expand = expansion()) +
+  labs(x = element_blank(), y = element_blank(), 
+       title = &quot;Packages on CRAN review process&quot;)</code></pre>
+<p><img src="{{< blogdown/postref >}}index_files/figure-html/cran-queues-1.png" width="672" /></p>
+<p>We can see that there are some ups and downs, but no specially increase before the holidays.
+There are some instance were the number of package on the queue have a sudden drop and then a recovery to previous levels.
+This might be an error on the CRAN system, or the cransays’ script.</p>
+<p>We can also see that people do not tend to rush and push the package before the holidays.</p>
+<p>And the increase of package submissions after they start accepting packages again?</p>
+<p>I do not have a clear understanding of the CRAN review process, but it seems like classifying to folders is part of the way to signal in which part of the process they are:</p>
+<pre class="r"><code>man_colors &lt;- RColorBrewer::brewer.pal(8, &quot;Dark2&quot;)
+names(man_colors) &lt;- unique(cran_submissions$folder)
+cran_submissions %&gt;% 
+  group_by(folder, snapshot_time) %&gt;% 
+  summarize(packages = n_distinct(package)) %&gt;% 
+  ggplot() +
+  geom_rect(data = holidays, aes(xmin = start, xmax = end, ymin = 0, ymax = 150),
+            alpha = 0.25, fill = &quot;red&quot;) +
+  annotate(&quot;text&quot;, x = holidays$start + (holidays$end - holidays$start)/2, 
+           y = 75, label = &quot;CRAN holidays&quot;) +
+  geom_path(aes(snapshot_time, packages, col = folder)) +
+  scale_x_datetime(date_labels = &quot;%Y/%m/%d&quot;, date_breaks = &quot;2 weeks&quot;, 
+                   expand = expansion()) +
+  scale_y_continuous(expand = expansion()) +
+  scale_color_manual(values = man_colors) +
+  labs(x = element_blank(), y = element_blank(),
+       title = &quot;Packages by folder&quot;, col = &quot;Folder&quot;)
+## `summarise()` regrouping output by &#39;folder&#39; (override with `.groups` argument)</code></pre>
+<p><img src="{{< blogdown/postref >}}index_files/figure-html/cran-submissions-1.png" width="672" /></p>
+<p>The queue trend is mostly driven by newbies folder.
+Surprisingly when the queue is split by folder we don’t see those sudden drops.
+This might indicate that there is a clean up on some of the folders.
+What we clearly see is a clean up on holidays, when almost all was cleared up.</p>
+<details>
+<p><summary>Detail on just the holidays dates</summary></p>
+<pre class="r"><code>cran_submissions %&gt;% 
+  group_by(folder, snapshot_time) %&gt;% 
+  summarize(packages = n_distinct(package)) %&gt;% 
+  filter(snapshot_time &gt;= holidays$start &amp; snapshot_time &lt;= holidays$end) %&gt;% 
+  ggplot() +
+  geom_path(aes(snapshot_time, packages, col = folder)) +
+  scale_x_datetime(date_labels = &quot;%Y/%m/%d&quot;, date_breaks = &quot;1 day&quot;, 
+                   expand = expansion()) +
+  scale_y_continuous(expand = expansion(), limits = c(0, NA)) +
+  scale_color_manual(values = man_colors) +
+  labs(x = element_blank(), y = element_blank(),
+       title = &quot;Holidays&quot;, col = &quot;Folder&quot;) +
+  theme(axis.text.x = element_text(angle = 45, hjust = 1),
+        legend.position = c(0.5, 0.6))
+## `summarise()` regrouping output by &#39;folder&#39; (override with `.groups` argument)</code></pre>
+<p><img src="{{< blogdown/postref >}}index_files/figure-html/cran-holidays-zoom-1.png" width="672" /></p>
+<p>It seems like that on the 31st there was a clean up of some packages on the waiting list.</p>
+</details>
+</div>
+<div id="time-patterns" class="section level2">
+<h2>Time patterns</h2>
+<p>We can look for patterns on the queue:
+- Month
+- <a href="#day-month">Day of the month</a>
+- <a href="#day-week">Day of the week</a></p>
+<div id="by-day-of-the-month-day-month" class="section level3">
+<h3>By day of the month {day-month}</h3>
+<pre class="r"><code>cran_times &lt;- cran_submissions %&gt;% 
   mutate(seconds = seconds(snapshot_time),
          month = month(snapshot_time),
          mday = mday(snapshot_time),
          wday = wday(snapshot_time, locale = &quot;en_GB.UTF-8&quot;),
          week = week(snapshot_time),
          date = as_date(snapshot_time),
-         submission = paste0(package, version, collapse = &quot;-&quot;)) 
-
-cran_times %&gt;% 
-  group_by(folder, snapshot_time) %&gt;% 
-  summarize(packages = n_distinct(package)) %&gt;% 
-  group_by(snapshot_time) %&gt;% 
-  summarize(n = sum(packages)) %&gt;% 
-  ggplot() +
-  geom_col(aes(snapshot_time, n)) +
-  labs(x = &quot;Date&quot;, y = &quot;Packages on the queue&quot;, 
-       title = &quot;Work on CRANsubmissions&quot;)
-## `summarise()` regrouping output by &#39;folder&#39; (override with `.groups` argument)
-## `summarise()` ungrouping output (override with `.groups` argument)</code></pre>
-<p><img src="index_files/figure-html/unnamed-chunk-2-1.png" width="672" /></p>
-<pre class="r"><code>
-cran_times %&gt;% 
-  group_by(folder, snapshot_time) %&gt;% 
-  summarize(packages = n_distinct(package),
-            week = unique(week)) %&gt;% 
-  ggplot() +
-  geom_point(aes(snapshot_time, packages, col = fct_reorder(folder, -packages, sum))) +
-  labs(x = &quot;Date&quot;, y = &quot;Packages&quot;,
-       title = &quot;Work on submissions&quot;, col = &quot;Folder/Stage&quot;)
-## `summarise()` regrouping output by &#39;folder&#39; (override with `.groups` argument)</code></pre>
-<p><img src="index_files/figure-html/unnamed-chunk-2-2.png" width="672" /></p>
-<pre class="r"><code>
+         submission = paste(package, version, sep = &quot;-&quot;))
 cran_times %&gt;% 
   arrange(folder, date, mday) %&gt;% 
   group_by(folder, date, mday) %&gt;% 
   summarize(packages = n_distinct(package),
             week = unique(week)) %&gt;% 
   group_by(folder, mday) %&gt;% 
-  summarize(packages = median(packages)) %&gt;% 
   ggplot() +
-  geom_point(aes(mday, packages, col = fct_reorder2(folder, mday, packages, sum))) +
-  geom_path(aes(mday, packages, col = fct_reorder2(folder, mday, packages, sum))) +
-  labs(x = &quot;Day of the month&quot;, y = &quot;Packages&quot;, col = &quot;Folder/stage&quot;,
-       title = &quot;Evolution by month day&quot;)
+  # geom_point(aes(mday, packages, col = fct_reorder2(folder, mday, packages, sum))) +
+  geom_smooth(aes(mday, packages, col = folder)) +
+  labs(x = &quot;Day of the month&quot;, y = element_blank(), col = &quot;Folder&quot;,
+       title = &quot;Evolution by month day&quot;) +
+  scale_color_manual(values = man_colors) +
+  coord_cartesian(ylim = c(0, NA), xlim = c(1, NA)) +
+  scale_x_continuous(expand = expansion()) +
+  scale_y_continuous(expand = expansion()) 
 ## `summarise()` regrouping output by &#39;folder&#39;, &#39;date&#39; (override with `.groups` argument)
-## `summarise()` regrouping output by &#39;folder&#39; (override with `.groups` argument)</code></pre>
-<p><img src="index_files/figure-html/unnamed-chunk-2-3.png" width="672" /></p>
-<pre class="r"><code>
-cran_times %&gt;% 
+## `geom_smooth()` using method = &#39;loess&#39; and formula &#39;y ~ x&#39;</code></pre>
+<p><img src="{{< blogdown/postref >}}index_files/figure-html/cran-monthly-1.png" width="672" /></p>
+<p>Surprisingly at the end of the month there is a big increase on package submissions and a decline on the packages on pretest.</p>
+</div>
+<div id="by-day-of-the-week" class="section level3">
+<h3>By day of the week</h3>
+<p>Do developers submit more on weekends or in work days?</p>
+<pre class="r"><code>cran_times %&gt;% 
   group_by(folder, date, wday) %&gt;% 
   summarize(packages = n_distinct(package),
             week = unique(week)) %&gt;% 
   group_by(folder, wday) %&gt;% 
-  summarize(packages = median(packages)) %&gt;% 
   ggplot() +
-  geom_point(aes(wday, packages, col = fct_reorder2(folder, wday, packages, sum))) +
-  geom_path(aes(wday, packages, col = fct_reorder2(folder, wday, packages, sum))) +
-    labs(x = &quot;Day of the week&quot;, y = &quot;Packages&quot;, col = &quot;Folder/stage&quot;,
-       title = &quot;Evolution by week day&quot;)
+  # geom_point(aes(wday, packages, col = fct_reorder2(folder, wday, packages, sum))) +
+  geom_smooth(aes(wday, packages, col = folder)) +
+  labs(x = &quot;Day of the week&quot;, y = &quot;Packages&quot;, col = &quot;Folder&quot;,
+       title = &quot;Evolution by week day&quot;) +
+  scale_color_manual(values = man_colors) +
+  scale_x_continuous(breaks = 1:7, expand = expansion()) +
+  scale_y_continuous(expand = expansion(), limits = c(0, NA))
 ## `summarise()` regrouping output by &#39;folder&#39;, &#39;date&#39; (override with `.groups` argument)
-## `summarise()` regrouping output by &#39;folder&#39; (override with `.groups` argument)</code></pre>
-<p><img src="index_files/figure-html/unnamed-chunk-2-4.png" width="672" /></p>
+## `geom_smooth()` using method = &#39;loess&#39; and formula &#39;y ~ x&#39;</code></pre>
+<p><img src="{{< blogdown/postref >}}index_files/figure-html/cran-wday-1.png" width="672" /></p>
+<p>It doesn’t seem to be a special pattern only on the human folder there is an increase on weekdays and a decrease on the weekend.
+However, note that reviewers might be on multiple time zones and this doesn’t allow us to make hard conclusions on this data.</p>
+</div>
+</div>
+<div id="subfolder" class="section level2">
+<h2>Subfolder</h2>
+<p>There is also a subfolder:</p>
 <pre class="r"><code>cran_times %&gt;% 
-  filter(!is.na(subfolder)) %&gt;% 
-  group_by(subfolder, date, wday) %&gt;% 
-  summarize(packages = n_distinct(package),
-            week = unique(week)) %&gt;% 
-  group_by(subfolder, wday) %&gt;% 
-  summarize(packages = median(packages)) %&gt;% 
-  ggplot() +
-  geom_point(aes(wday, packages, col = fct_reorder2(subfolder, wday, packages, sum))) +
-  geom_path(aes(wday, packages, col = fct_reorder2(subfolder, wday, packages, sum))) +
-    labs(x = &quot;Day of the week&quot;, y = &quot;Packages&quot;, col = &quot;Folder/stage&quot;,
-       title = &quot;Evolution by week day&quot;)
-## `summarise()` regrouping output by &#39;subfolder&#39;, &#39;date&#39; (override with `.groups` argument)
-## `summarise()` regrouping output by &#39;subfolder&#39; (override with `.groups` argument)</code></pre>
-<p><img src="index_files/figure-html/unnamed-chunk-2-5.png" width="672" /></p>
-<pre class="r"><code>
-cran_times %&gt;% 
+  mutate(subfolder = case_when(subfolder == &quot;&quot; ~ NA_character_,
+                               TRUE ~ subfolder)) %&gt;% 
   group_by(folder, subfolder) %&gt;% 
-  count(sort = TRUE) %&gt;% 
+  summarize(n = n()) %&gt;% 
+  ggplot() +
+  geom_tile(aes(folder, subfolder, fill = n)) +
+  scale_fill_continuous(trans = &quot;log10&quot;) +
+  scale_x_discrete(expand = expansion()) +
+  scale_y_discrete(expand = expansion()) +
+  labs(title = &quot;Folders and subfolders&quot;, fill = &quot;Packages&quot;,
+       x = &quot;Folder&quot;, y = &quot;Subfolder&quot;) +
+  theme(legend.position = c(0.9, 0.4))
+## `summarise()` regrouping output by &#39;folder&#39; (override with `.groups` argument)</code></pre>
+<p><img src="{{< blogdown/postref >}}index_files/figure-html/folder-subfolder-1.png" width="672" /></p>
+<p>We see that some packages are on the human folder but not under any of the other packages.</p>
+<pre class="r"><code>cran_members &lt;- c(&quot;LH&quot;, &quot;UL&quot;, &quot;GS&quot;, &quot;JH&quot;)
+cran_times %&gt;% 
+  filter(subfolder %in% cran_members) %&gt;% 
+  group_by(subfolder, snapshot_time) %&gt;% 
+  summarize(packages = n_distinct(package)) %&gt;% 
+  ggplot() +
+  geom_smooth(aes(snapshot_time, packages, col = subfolder)) +
+    labs(x = element_blank(), y = element_blank(), col = &quot;Subfolder&quot;,
+       title = &quot;Packages on subfolers&quot;) +
+  scale_y_continuous(expand = expansion(), breaks = 0:10) +
+  coord_cartesian(y = c(0, NA))  +
+  scale_x_datetime(date_labels = &quot;%Y/%m/%d&quot;, date_breaks = &quot;2 weeks&quot;, 
+               expand = expansion(add = 2))
+## `summarise()` regrouping output by &#39;subfolder&#39; (override with `.groups` argument)
+## `geom_smooth()` using method = &#39;gam&#39; and formula &#39;y ~ s(x, bs = &quot;cs&quot;)&#39;</code></pre>
+<p><img src="{{< blogdown/postref >}}index_files/figure-html/subfolder-pattern-1.png" width="672" /></p>
+<pre class="r"><code>cran_times %&gt;% 
+  filter(subfolder %in% cran_members) %&gt;% 
+  group_by(subfolder, mday) %&gt;% 
+  summarize(packages = n_distinct(package)) %&gt;% 
   ungroup() %&gt;% 
-  filter(!(folder == subfolder))
-## # A tibble: 4 x 3
-##   folder subfolder     n
-##   &lt;chr&gt;  &lt;chr&gt;     &lt;int&gt;
-## 1 human  UL         1011
-## 2 human  GS          145
-## 3 human  LH          111
-## 4 human  JH            3</code></pre>
-<pre class="r"><code>tidy &lt;- cran_times %&gt;%
+  ggplot() +
+  geom_smooth(aes(mday, packages, col = subfolder)) +
+  labs(x = &quot;Day of the month&quot;, y = element_blank(), col = &quot;Subfolder&quot;,
+       title = &quot;Packages on subfolers by day of the month&quot;) +
+  scale_y_continuous(expand = expansion()) +
+  scale_x_continuous(expand = expansion(), breaks = c(1,7,14,21,29)) +
+  coord_cartesian(ylim = c(0, NA))
+## `summarise()` regrouping output by &#39;subfolder&#39; (override with `.groups` argument)
+## `geom_smooth()` using method = &#39;loess&#39; and formula &#39;y ~ x&#39;</code></pre>
+<p><img src="{{< blogdown/postref >}}index_files/figure-html/subfolder-mday-1.png" width="672" /></p>
+<pre class="r"><code>cran_times %&gt;% 
+  filter(subfolder %in% cran_members) %&gt;% 
+  group_by(subfolder, wday) %&gt;% 
+  summarize(packages = n_distinct(package)) %&gt;% 
+  ungroup() %&gt;% 
+  ggplot() +
+  geom_smooth(aes(wday, packages, col = subfolder)) +
+  labs(x = &quot;Day of the week&quot;, y = element_blank(), col = &quot;Subfolder&quot;,
+       title = &quot;Evolution by week day&quot;) +
+  scale_y_continuous(expand = expansion()) +
+  scale_x_continuous(breaks = 1:7, expand = expansion()) +
+  coord_cartesian(ylim =  c(0, NA))
+## `summarise()` regrouping output by &#39;subfolder&#39; (override with `.groups` argument)
+## `geom_smooth()` using method = &#39;loess&#39; and formula &#39;y ~ x&#39;</code></pre>
+<p><img src="{{< blogdown/postref >}}index_files/figure-html/subfolder-wday-1.png" width="672" /></p>
+<p>There seem to be only 2 people usually working with subfolders.
+Suppose that there aren’t a common set of rules the reviewers follow.</p>
+</div>
+<div id="information-for-sumbitters" class="section level2">
+<h2>Information for sumbitters</h2>
+<p>From the developers and maintainers, one big question is when I submit when will be my package available on CRAN?
+We can measure the time spend on the queue</p>
+<pre class="r"><code>subm &lt;- cran_times %&gt;%
   group_by(submission) %&gt;% 
   arrange(snapshot_time) %&gt;% 
-  filter(row_number() == 1 | folder != lag(folder)) %&gt;% 
-  mutate(elapsed = difftime(snapshot_time, lag(snapshot_time), units = &quot;hours&quot;)) %&gt;% 
-  ungroup()</code></pre>
+  select(package, version, submission, snapshot_time) %&gt;% 
+  filter(row_number() %in% c(1, last(row_number()))) %&gt;% 
+  arrange(submission)</code></pre>
+<p>There are 358 packages that are only seen once.
+It might mean that it is an abandoned/rejected submissions like <a href="https://github.com/cboettig/knitcitations/issues/107#issuecomment-736069214">knitcitations</a>, other might be acceptances in less than an hour. `</p>
+<pre class="r"><code>rsubm &lt;- subm %&gt;% 
+  filter(n_distinct(snapshot_time) == 2) %&gt;%
+  mutate(time = c(&quot;start&quot;, &quot;end&quot;)) %&gt;% 
+  pivot_wider(values_from = snapshot_time, names_from = time) %&gt;% 
+  ungroup() %&gt;% 
+  mutate(r = row_number(), 
+         time  =  round(difftime(end, start, units = &quot;hour&quot;), 0)) %&gt;% 
+  group_by(package) %&gt;% 
+  mutate(n_submission = 1:n()) %&gt;% 
+  ungroup()
+ggplot(rsubm) +
+  geom_linerange(aes(y = fct_reorder(package, start, .fun = min, .desc = FALSE),
+                      x = start, xmin = start, xmax = end, 
+                     col = as.factor(n_submission))) + 
+  labs(x = element_blank(), y = element_blank(), title = 
+         &quot;Packages on the queue&quot;, col = &quot;Submissions&quot;) +
+  scale_x_datetime(date_labels = &quot;%Y/%m/%d&quot;, date_breaks = &quot;2 weeks&quot;, 
+                   expand = expansion(add = 2)) +
+  scale_colour_viridis_d() +
+  theme_minimal() +
+  theme(panel.grid.major.y = element_blank(),
+        axis.text.y = element_blank(),
+        legend.position = c(0.15, 0.7))</code></pre>
+<p><img src="{{< blogdown/postref >}}index_files/figure-html/resubm-1.png" width="672" /></p>
+<p>We can see the rapid growth of packages and that on this period some people submitted up to 8 times their packages.</p>
+<p>Also note that the definition used for submission is a package with different version number.
+Some authors do change the version number when CRAN reviewers require changes before accepting the package on CRAN while others do not and only change the version number according to their release cycle.</p>
+<p>Perhaps we could differentiate this by looking at the period between submissions but I think it won’t be interesting.</p>
+<p>Despite this differences we can see that most submissions are accepted fairly fast:</p>
+<pre class="r"><code>rsubm %&gt;% 
+  group_by(package) %&gt;% 
+  summarize(time = sum(time)) %&gt;% 
+  ggplot() +
+  geom_histogram(aes(time), bins = 100) +
+  labs(title = &quot;Packages total time on queue&quot;, x = &quot;Hours&quot;, 
+       y = element_blank()) +
+  scale_x_continuous(expand = expansion()) +
+  scale_y_continuous(expand = expansion())
+## `summarise()` ungrouping output (override with `.groups` argument)</code></pre>
+<p><img src="{{< blogdown/postref >}}index_files/figure-html/package-time-queue-1.png" width="672" /></p>
+<p>Also note that I found some packages that remained on the submission queue, and thus picked up by cransays, even after acceptance.</p>
+<pre class="r"><code>rsubm %&gt;% 
+  group_by(submission) %&gt;% 
+  summarize(time = sum(time)) %&gt;% 
+  ggplot() +
+  geom_histogram(aes(time), bins = 100) +
+  labs(title = &quot;Submission time on queue&quot;, x = &quot;Hours&quot;, 
+       y = element_blank()) +
+  scale_x_continuous(expand = expansion()) +
+  scale_y_continuous(expand = expansion())
+## `summarise()` ungrouping output (override with `.groups` argument)</code></pre>
+<p><img src="{{< blogdown/postref >}}index_files/figure-html/submission-queue-1.png" width="672" /></p>
+<p>By submission many more are shortly spanned.
+Perhaps hinting that more testing should be done before or what to expect on the review should be more clear to the authors, or that they are approved very fast.</p>
+<pre class="r"><code>subm2 &lt;- cran_times %&gt;%
+  group_by(submission, folder) %&gt;% 
+  arrange(snapshot_time) %&gt;% 
+  select(package, version, submission, snapshot_time, folder) %&gt;% 
+  filter(row_number() %in% c(1, last(row_number()))) %&gt;% 
+  arrange(submission)</code></pre>
+<p>There are 358 packages that are only seen once.
+It might mean that it is an abandoned/rejected submissions like <a href="https://github.com/cboettig/knitcitations/issues/107#issuecomment-736069214">knitcitations</a>, other might be acceptances in less than an hour (I’ll talk more about this later).</p>
+<pre class="r"><code>rsubm2 &lt;- subm2 %&gt;% 
+  filter(n_distinct(snapshot_time) == 2) %&gt;%
+  mutate(time = c(&quot;start&quot;, &quot;end&quot;)) %&gt;% 
+  pivot_wider(values_from = snapshot_time, names_from = time) %&gt;% 
+  ungroup() %&gt;% 
+  mutate(r = row_number(), 
+         time  =  round(difftime(end, start, units = &quot;hour&quot;), 0)) %&gt;% 
+  group_by(package) %&gt;% 
+  mutate(n_submission = 1:n())
+ggplot(rsubm2) +
+  geom_linerange(aes(y = fct_reorder(package, start, .fun = min, .desc = FALSE),
+                      x = start, xmin = start, xmax = end, col = folder)) + 
+  labs(x = element_blank(), y = element_blank(), title = 
+         &quot;Packages on the queue&quot;) +
+  scale_color_manual(values = man_colors) +
+  scale_x_datetime(date_labels = &quot;%Y/%m/%d&quot;, date_breaks = &quot;2 weeks&quot;, 
+               expand = expansion(add = 2)) +
+  labs(col = &quot;Folder&quot;) +
+  theme_minimal() +
+  theme(panel.grid.major.y = element_blank(),
+        axis.text.y = element_blank(),
+        legend.position = c(0.2, 0.7))</code></pre>
+<p><img src="{{< blogdown/postref >}}index_files/figure-html/resubm2-1.png" width="672" /></p>
+<pre class="r"><code>rsubm2 %&gt;% 
+  group_by(submission) %&gt;% 
+  summarize(n_folder = n_distinct(folder)) %&gt;% 
+  ggplot() + 
+  geom_histogram(aes(n_folder)) +
+  labs(title = &quot;Folders by submission&quot;, x = element_blank(), 
+       y = element_blank())
+## `summarise()` ungrouping output (override with `.groups` argument)
+## `stat_bin()` using `bins = 30`. Pick better value with `binwidth`.</code></pre>
+<p><img src="{{< blogdown/postref >}}index_files/figure-html/submissions-n-folders-1.png" width="672" /></p>
+<p>Most submissions are only in one folder, but some go up to 5 folders.</p>
+<pre class="r"><code>subm_folder &lt;- rsubm2 %&gt;% 
+  group_by(submission) %&gt;% 
+  arrange(start) %&gt;% 
+  summarise(folder = list(folder)) %&gt;% 
+  count(folder, sort = TRUE)
+## `summarise()` ungrouping output (override with `.groups` argument)</code></pre>
+<p>The most 5 common folders process of submissions are pretest; newbies; inspect; pretest, newbies; pretest, inspect.</p>
+<p>Another way of seeing if it is a right moment aside of how many packages are on the queue is looking how much activity there is:</p>
+<pre class="r"><code>subm3 &lt;- cran_times %&gt;%
+  arrange(snapshot_time) %&gt;% 
+  group_by(package) %&gt;% 
+  mutate(autor_change = submission != lag(submission),
+         cran_change = folder != lag(folder)) %&gt;% 
+  mutate(autor_change = ifelse(is.na(autor_change), TRUE, autor_change),
+         cran_change = ifelse(is.na(cran_change), FALSE, cran_change)) %&gt;% 
+  mutate(cran_change = case_when(subfolder != lag(subfolder) ~ TRUE,
+                                 TRUE ~ cran_change)) %&gt;% 
+  ungroup()
+subm3 %&gt;% 
+  group_by(snapshot_time) %&gt;% 
+  summarize(autor_change = sum(autor_change), cran_change = sum(cran_change)) %&gt;% 
+  filter(row_number() != 1) %&gt;% 
+  filter(autor_change != 0 | cran_change != 0) %&gt;% 
+  ggplot() +
+  geom_point(aes(snapshot_time, autor_change), fill = &quot;blue&quot;, size = 0) +
+  geom_area(aes(snapshot_time, autor_change), fill = &quot;blue&quot;) +
+  geom_point(aes(snapshot_time, -cran_change), fill = &quot;red&quot;, size = 0) +
+  geom_area(aes(snapshot_time, -cran_change), fill = &quot;red&quot;) +
+  scale_x_datetime(date_labels = &quot;%Y/%m/%d&quot;, date_breaks = &quot;2 weeks&quot;, 
+                   expand = expansion(add = 2)) +
+  scale_y_continuous(expand = expansion(add = c(0, 0))) + 
+  coord_cartesian(ylim = c(-26, 26)) +
+  annotate(&quot;text&quot;, label = &quot;CRAN&#39;s&quot;, y = 20, x = as_datetime(&quot;2020/11/02&quot;)) +
+  annotate(&quot;text&quot;, label = &quot;Author&#39;s&quot;, y = -20, x = as_datetime(&quot;2020/11/02&quot;)) +
+  labs(y = &quot;Changes&quot;, x = element_blank(), title = &quot;Activity on CRAN:&quot;)
+## `summarise()` ungrouping output (override with `.groups` argument)</code></pre>
+<p><img src="{{< blogdown/postref >}}index_files/figure-html/cran-pressure-1.png" width="672" /></p>
+<p>Only on few moments does the big pressure of the changes by authors as seen on the first plot.</p>
+</div>
+<div id="review-process" class="section level1">
+<h1>Review process</h1>
+<p>There is a <a href="https://lockedata.github.io/cransays/articles/dashboard.html#cran-review-workflow">scheme</a> about how does the review process work.
+However, it has been pointed out that it needs an update.</p>
+<p>We’ve seen which folders go before which ones, but we haven’t looked up what is the last folder in which package appear:</p>
+<pre class="r"><code>last_seen &lt;- cran_times %&gt;% 
+  ungroup() %&gt;% 
+  group_by(submission) %&gt;% 
+  arrange(snapshot_time) %&gt;% 
+  filter(1:n() == last(n())) %&gt;% 
+  ungroup()
+count(last_seen, folder, sort = TRUE) %&gt;% 
+  knitr::kable()</code></pre>
+<table>
+<thead>
+<tr class="header">
+<th align="left">folder</th>
+<th align="right">n</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td align="left">pretest</td>
+<td align="right">1253</td>
+</tr>
+<tr class="even">
+<td align="left">newbies</td>
+<td align="right">833</td>
+</tr>
+<tr class="odd">
+<td align="left">inspect</td>
+<td align="right">745</td>
+</tr>
+<tr class="even">
+<td align="left">recheck</td>
+<td align="right">373</td>
+</tr>
+<tr class="odd">
+<td align="left">waiting</td>
+<td align="right">349</td>
+</tr>
+<tr class="even">
+<td align="left">publish</td>
+<td align="right">336</td>
+</tr>
+<tr class="odd">
+<td align="left">human</td>
+<td align="right">269</td>
+</tr>
+<tr class="even">
+<td align="left">pending</td>
+<td align="right">188</td>
+</tr>
+</tbody>
+</table>
+<p>We can see that many submissions were left at the pretest, and just a minority on the human or publish folders.</p>
+</div>
+<div id="github-action-reliability" class="section level1">
+<h1>Github action reliability</h1>
+<p>The data of this post was collected using Github actions by cransays.
+At the same time I set up a <a href="https://llrs.github.io/cranis/">bot/package</a> to scan all the available packages on Bioconductor and CRAN, to track those packages that are accepted and when.
+I left it running for 3 months without checking that I could recover the data.
+When I started writing this post I found the data is not usable on the current format.</p>
+<p>Instead together with the cransays data I’ll use it to test how reliable are GitHub actions are.</p>
+<pre class="r"><code>download.file(&quot;https://github.com/llrs/cranis/archive/history.zip&quot;,
+              destfile = &quot;static/cranis-history.zip&quot;)
+path_zip &lt;- here::here(&quot;static&quot;, &quot;cranis-history.zip&quot;) # From downloading the cransays repository branch history
+dat &lt;- unzip(path_zip, list = TRUE)
+csv &lt;- dat$Name[grepl(&quot;*.csv$&quot;, x = dat$Name)]
+dates &lt;- gsub(&quot;available-packages-(.+)\\.csv&quot;, &quot;\\1&quot;, basename(csv))
+date &lt;- as.POSIXct(dates, format = &quot;%Y%m%dT%H%M&quot;, &quot;UTC&quot;)
+gha &lt;- data.frame(
+  month = month(date), 
+  mday = mday(date), 
+  wday = wday(date), 
+  week = week(date),
+  minute = minute(date), 
+  hour = hour(date), 
+  type = &quot;cranis&quot;)</code></pre>
+<p>For now, however we will use the data we already have</p>
+<pre class="r"><code>gha &lt;- cbind(cran_times[, c(&quot;month&quot;, &quot;mday&quot;, &quot;wday&quot;, &quot;week&quot;)], 
+      minute = minute(cran_submissions$snapshot_time), 
+      hour = hour(cran_times$snapshot_time),
+      type = &quot;cransays&quot;) %&gt;% 
+  distinct()
+gha %&gt;% 
+  ggplot() +
+  geom_violin(aes(as.factor(hour), minute)) +
+  scale_y_continuous(expand = expansion(add = 0.5), 
+                     breaks = c(0, 15, 30, 45, 60), limits = c(0, 60)) +
+  scale_x_discrete(expand = expansion())  +
+  labs(x = &quot;Hour&quot;, y = &quot;Minute&quot;, title = &quot;Daily variation&quot;)</code></pre>
+<p><img src="{{< blogdown/postref >}}index_files/figure-html/gha2-1.png" width="672" /></p>
+<p>There seems to be a lower limit around 10 minutes except for some builds that I think were manually triggered.
+Aside from this, there is usually low variation of ~ 10 minutes on the process but it can go up to more than 30 minutes.</p>
+<div id="conclusions" class="section level2">
+<h2>Conclusions</h2>
+<p>One big difference between CRAN and Bioconductor or rOpenSci is that even if your package is already included each time you want to fix something it gets reviewed by someone.
+This ensures a high quality of the packages, as well as increases the pressure on the package reviewers.
+This in turn raises the bar for resubmissions.</p>
 <div id="reproducibility" class="section level3">
 <h3>Reproducibility</h3>
 <details>
@@ -170,75 +533,82 @@ cran_times %&gt;%
 ##  collate  en_US.UTF-8                 
 ##  ctype    en_US.UTF-8                 
 ##  tz       Europe/Madrid               
-##  date     2020-10-26                  
+##  date     2021-01-08                  
 ## 
 ## ─ Packages ───────────────────────────────────────────────────────────────────────────────────────────────────────────
-##  package     * version    date       lib source                             
-##  assertthat    0.2.1      2019-03-21 [1] CRAN (R 4.0.1)                     
-##  backports     1.1.10     2020-09-15 [1] CRAN (R 4.0.1)                     
-##  blob          1.2.1      2020-01-20 [1] CRAN (R 4.0.1)                     
-##  blogdown      0.21       2020-10-11 [1] CRAN (R 4.0.1)                     
-##  bookdown      0.21       2020-10-13 [1] CRAN (R 4.0.1)                     
-##  broom         0.7.2      2020-10-20 [1] CRAN (R 4.0.1)                     
-##  cellranger    1.1.0      2016-07-27 [1] CRAN (R 4.0.1)                     
-##  cli           2.1.0      2020-10-12 [1] CRAN (R 4.0.1)                     
-##  colorspace    1.4-1      2019-03-18 [1] CRAN (R 4.0.1)                     
-##  crayon        1.3.4      2017-09-16 [1] CRAN (R 4.0.1)                     
-##  DBI           1.1.0      2019-12-15 [1] CRAN (R 4.0.1)                     
-##  dbplyr        1.4.4      2020-05-27 [1] CRAN (R 4.0.1)                     
-##  digest        0.6.26     2020-10-17 [1] CRAN (R 4.0.1)                     
-##  dplyr       * 1.0.2      2020-08-18 [1] CRAN (R 4.0.1)                     
-##  ellipsis      0.3.1      2020-05-15 [1] CRAN (R 4.0.1)                     
-##  evaluate      0.14       2019-05-28 [1] CRAN (R 4.0.1)                     
-##  fansi         0.4.1      2020-01-08 [1] CRAN (R 4.0.1)                     
-##  farver        2.0.3      2020-01-16 [1] CRAN (R 4.0.1)                     
-##  forcats     * 0.5.0      2020-03-01 [1] CRAN (R 4.0.1)                     
-##  fs            1.5.0      2020-07-31 [1] CRAN (R 4.0.1)                     
-##  generics      0.0.2      2018-11-29 [1] CRAN (R 4.0.1)                     
-##  ggplot2     * 3.3.2      2020-06-19 [1] CRAN (R 4.0.1)                     
-##  glue          1.4.2      2020-08-27 [1] CRAN (R 4.0.1)                     
-##  gtable        0.3.0      2019-03-25 [1] CRAN (R 4.0.1)                     
-##  haven         2.3.1      2020-06-01 [1] CRAN (R 4.0.1)                     
-##  here          0.1        2017-05-28 [1] CRAN (R 4.0.1)                     
-##  hms           0.5.3      2020-01-08 [1] CRAN (R 4.0.1)                     
-##  htmltools     0.5.0      2020-06-16 [1] CRAN (R 4.0.1)                     
-##  httr          1.4.2      2020-07-20 [1] CRAN (R 4.0.1)                     
-##  jsonlite      1.7.1      2020-09-07 [1] CRAN (R 4.0.1)                     
-##  knitr         1.30       2020-09-22 [1] CRAN (R 4.0.1)                     
-##  labeling      0.4.2      2020-10-20 [1] CRAN (R 4.0.1)                     
-##  lifecycle     0.2.0      2020-03-06 [1] CRAN (R 4.0.1)                     
-##  lubridate   * 1.7.9      2020-06-08 [1] CRAN (R 4.0.1)                     
-##  magrittr      1.5.0.9000 2020-08-21 [1] Github (tidyverse/magrittr@1d0559d)
-##  modelr        0.1.8      2020-05-19 [1] CRAN (R 4.0.1)                     
-##  munsell       0.5.0      2018-06-12 [1] CRAN (R 4.0.1)                     
-##  pillar        1.4.6      2020-07-10 [1] CRAN (R 4.0.1)                     
-##  pkgconfig     2.0.3      2019-09-22 [1] CRAN (R 4.0.1)                     
-##  purrr       * 0.3.4      2020-04-17 [1] CRAN (R 4.0.1)                     
-##  R6            2.4.1      2019-11-12 [1] CRAN (R 4.0.1)                     
-##  Rcpp          1.0.5      2020-07-06 [1] CRAN (R 4.0.1)                     
-##  readr       * 1.4.0      2020-10-05 [1] CRAN (R 4.0.1)                     
-##  readxl        1.3.1      2019-03-13 [1] CRAN (R 4.0.1)                     
-##  reprex        0.3.0      2019-05-16 [1] CRAN (R 4.0.1)                     
-##  rlang         0.4.8      2020-10-08 [1] CRAN (R 4.0.1)                     
-##  rmarkdown     2.5        2020-10-21 [1] CRAN (R 4.0.1)                     
-##  rprojroot     1.3-2      2018-01-03 [1] CRAN (R 4.0.1)                     
-##  rstudioapi    0.11       2020-02-07 [1] CRAN (R 4.0.1)                     
-##  rvest         0.3.6      2020-07-25 [1] CRAN (R 4.0.1)                     
-##  scales        1.1.1      2020-05-11 [1] CRAN (R 4.0.1)                     
-##  sessioninfo   1.1.1      2018-11-05 [1] CRAN (R 4.0.1)                     
-##  stringi       1.5.3      2020-09-09 [1] CRAN (R 4.0.1)                     
-##  stringr     * 1.4.0      2019-02-10 [1] CRAN (R 4.0.1)                     
-##  tibble      * 3.0.4      2020-10-12 [1] CRAN (R 4.0.1)                     
-##  tidyr       * 1.1.2      2020-08-27 [1] CRAN (R 4.0.1)                     
-##  tidyselect    1.1.0      2020-05-11 [1] CRAN (R 4.0.1)                     
-##  tidyverse   * 1.3.0      2019-11-21 [1] CRAN (R 4.0.1)                     
-##  utf8          1.1.4      2018-05-24 [1] CRAN (R 4.0.1)                     
-##  vctrs         0.3.4      2020-08-29 [1] CRAN (R 4.0.1)                     
-##  withr         2.3.0      2020-09-22 [1] CRAN (R 4.0.1)                     
-##  xfun          0.18       2020-09-29 [1] CRAN (R 4.0.1)                     
-##  xml2          1.3.2      2020-04-23 [1] CRAN (R 4.0.1)                     
-##  yaml          2.2.1      2020-02-01 [1] CRAN (R 4.0.1)                     
+##  package      * version date       lib source                           
+##  assertthat     0.2.1   2019-03-21 [1] CRAN (R 4.0.1)                   
+##  backports      1.2.1   2020-12-09 [1] CRAN (R 4.0.1)                   
+##  blogdown       0.21.84 2021-01-07 [1] Github (rstudio/blogdown@c4fbb58)
+##  bookdown       0.21    2020-10-13 [1] CRAN (R 4.0.1)                   
+##  broom          0.7.3   2020-12-16 [1] CRAN (R 4.0.1)                   
+##  cellranger     1.1.0   2016-07-27 [1] CRAN (R 4.0.1)                   
+##  cli            2.2.0   2020-11-20 [1] CRAN (R 4.0.1)                   
+##  colorspace     2.0-0   2020-11-11 [1] CRAN (R 4.0.1)                   
+##  crayon         1.3.4   2017-09-16 [1] CRAN (R 4.0.1)                   
+##  DBI            1.1.0   2019-12-15 [1] CRAN (R 4.0.1)                   
+##  dbplyr         2.0.0   2020-11-03 [1] CRAN (R 4.0.1)                   
+##  digest         0.6.27  2020-10-24 [1] CRAN (R 4.0.1)                   
+##  dplyr        * 1.0.2   2020-08-18 [1] CRAN (R 4.0.1)                   
+##  ellipsis       0.3.1   2020-05-15 [1] CRAN (R 4.0.1)                   
+##  evaluate       0.14    2019-05-28 [1] CRAN (R 4.0.1)                   
+##  fansi          0.4.1   2020-01-08 [1] CRAN (R 4.0.1)                   
+##  farver         2.0.3   2020-01-16 [1] CRAN (R 4.0.1)                   
+##  forcats      * 0.5.0   2020-03-01 [1] CRAN (R 4.0.1)                   
+##  fs             1.5.0   2020-07-31 [1] CRAN (R 4.0.1)                   
+##  generics       0.1.0   2020-10-31 [1] CRAN (R 4.0.1)                   
+##  ggplot2      * 3.3.3   2020-12-30 [1] CRAN (R 4.0.1)                   
+##  glue           1.4.2   2020-08-27 [1] CRAN (R 4.0.1)                   
+##  gtable         0.3.0   2019-03-25 [1] CRAN (R 4.0.1)                   
+##  haven          2.3.1   2020-06-01 [1] CRAN (R 4.0.1)                   
+##  here           1.0.1   2020-12-13 [1] CRAN (R 4.0.1)                   
+##  highr          0.8     2019-03-20 [1] CRAN (R 4.0.1)                   
+##  hms            0.5.3   2020-01-08 [1] CRAN (R 4.0.1)                   
+##  htmltools      0.5.0   2020-06-16 [1] CRAN (R 4.0.1)                   
+##  httr           1.4.2   2020-07-20 [1] CRAN (R 4.0.1)                   
+##  jsonlite       1.7.2   2020-12-09 [1] CRAN (R 4.0.1)                   
+##  knitr          1.30    2020-09-22 [1] CRAN (R 4.0.1)                   
+##  labeling       0.4.2   2020-10-20 [1] CRAN (R 4.0.1)                   
+##  lattice        0.20-41 2020-04-02 [1] CRAN (R 4.0.1)                   
+##  lifecycle      0.2.0   2020-03-06 [1] CRAN (R 4.0.1)                   
+##  lubridate    * 1.7.9.2 2020-11-13 [1] CRAN (R 4.0.1)                   
+##  magrittr       2.0.1   2020-11-17 [1] CRAN (R 4.0.1)                   
+##  Matrix         1.3-2   2021-01-06 [1] CRAN (R 4.0.1)                   
+##  mgcv           1.8-33  2020-08-27 [1] CRAN (R 4.0.1)                   
+##  modelr         0.1.8   2020-05-19 [1] CRAN (R 4.0.1)                   
+##  munsell        0.5.0   2018-06-12 [1] CRAN (R 4.0.1)                   
+##  nlme           3.1-151 2020-12-10 [1] CRAN (R 4.0.1)                   
+##  pillar         1.4.7   2020-11-20 [1] CRAN (R 4.0.1)                   
+##  pkgconfig      2.0.3   2019-09-22 [1] CRAN (R 4.0.1)                   
+##  purrr        * 0.3.4   2020-04-17 [1] CRAN (R 4.0.1)                   
+##  R6             2.5.0   2020-10-28 [1] CRAN (R 4.0.1)                   
+##  RColorBrewer   1.1-2   2014-12-07 [1] CRAN (R 4.0.1)                   
+##  Rcpp           1.0.5   2020-07-06 [1] CRAN (R 4.0.1)                   
+##  readr        * 1.4.0   2020-10-05 [1] CRAN (R 4.0.1)                   
+##  readxl         1.3.1   2019-03-13 [1] CRAN (R 4.0.1)                   
+##  reprex         0.3.0   2019-05-16 [1] CRAN (R 4.0.1)                   
+##  rlang          0.4.10  2020-12-30 [1] CRAN (R 4.0.1)                   
+##  rmarkdown      2.6     2020-12-14 [1] CRAN (R 4.0.1)                   
+##  rprojroot      2.0.2   2020-11-15 [1] CRAN (R 4.0.1)                   
+##  rstudioapi     0.13    2020-11-12 [1] CRAN (R 4.0.1)                   
+##  rvest          0.3.6   2020-07-25 [1] CRAN (R 4.0.1)                   
+##  scales         1.1.1   2020-05-11 [1] CRAN (R 4.0.1)                   
+##  sessioninfo    1.1.1   2018-11-05 [1] CRAN (R 4.0.1)                   
+##  stringi        1.5.3   2020-09-09 [1] CRAN (R 4.0.1)                   
+##  stringr      * 1.4.0   2019-02-10 [1] CRAN (R 4.0.1)                   
+##  tibble       * 3.0.4   2020-10-12 [1] CRAN (R 4.0.1)                   
+##  tidyr        * 1.1.2   2020-08-27 [1] CRAN (R 4.0.1)                   
+##  tidyselect     1.1.0   2020-05-11 [1] CRAN (R 4.0.1)                   
+##  tidyverse    * 1.3.0   2019-11-21 [1] CRAN (R 4.0.1)                   
+##  vctrs          0.3.6   2020-12-17 [1] CRAN (R 4.0.1)                   
+##  viridisLite    0.3.0   2018-02-01 [1] CRAN (R 4.0.1)                   
+##  withr          2.3.0   2020-09-22 [1] CRAN (R 4.0.1)                   
+##  xfun           0.20    2021-01-06 [1] CRAN (R 4.0.1)                   
+##  xml2           1.3.2   2020-04-23 [1] CRAN (R 4.0.1)                   
+##  yaml           2.2.1   2020-02-01 [1] CRAN (R 4.0.1)                   
 ## 
 ## [1] /home/lluis/bin/R/4.0.1/lib/R/library</code></pre>
 </details>
+</div>
+</div>
 </div>
