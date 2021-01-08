@@ -170,7 +170,7 @@ df %>%
   labs(title = "Issues that are open at least a day", 
        subtitle = "Vertical blue lines indicate Bioconductor releases.",
        x = element_blank(), y = element_blank(), 
-       caption = "Author: @Lluis_Rev") +
+       caption = "Author: @Lluis_Revilla") +
   scale_data +
   scale_y_continuous(expand = expansion(add = 10))
 ```
