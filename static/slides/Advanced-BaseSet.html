@@ -1,10 +1,11 @@
 <!DOCTYPE html>
-<html xmlns="http://www.w3.org/1999/xhtml" lang="" xml:lang="">
+<html lang="" xml:lang="">
   <head>
     <title>Advanced use of BaseSet</title>
     <meta charset="utf-8" />
-    <meta name="author" content="Lluís Revilla Sancho @Lluis_Rev" />
-    <meta name="date" content="2019-06-19" />
+    <meta name="author" content="Lluís Revilla Sancho @Lluis_Revilla" />
+    <meta name="date" content="2021-01-08" />
+    <script src="libs/header-attrs-2.6/header-attrs.js"></script>
     <link href="libs/remark-css-0.0.1/default.css" rel="stylesheet" />
     <link href="libs/remark-css-0.0.1/default-fonts.css" rel="stylesheet" />
   </head>
@@ -14,8 +15,8 @@ class: center, middle, inverse, title-slide
 
 # Advanced use of BaseSet
 ## Exploring Bioconductor packages
-### Lluís Revilla Sancho <span class="citation">@Lluis_Rev</span>
-### 2019-06-19
+### Lluís Revilla Sancho <span class="citation">@Lluis_Revilla</span>
+### 2021-01-08
 
 ---
 
@@ -68,14 +69,14 @@ The content:
 
 ```
 ## # A tibble: 6 x 8
-##   Package  Maintainer dependencyCount Depends   Imports Core  Depend Import
-##   &lt;chr&gt;    &lt;list&gt;               &lt;int&gt; &lt;chr&gt;     &lt;chr&gt;   &lt;lgl&gt; &lt;list&gt; &lt;list&gt;
-## 1 a4       &lt;chr [2]&gt;              131 a4Base, … &lt;NA&gt;    FALSE &lt;chr … &lt;chr …
-## 2 a4Base   &lt;chr [2]&gt;               56 "methods… &lt;NA&gt;    FALSE &lt;chr … &lt;chr …
-## 3 a4Class… &lt;chr [2]&gt;              122 "methods… a4Core  FALSE &lt;chr … &lt;chr …
-## 4 a4Core   &lt;chr [2]&gt;               15 methods,… &lt;NA&gt;    FALSE &lt;chr … &lt;chr …
-## 5 a4Prepr… &lt;chr [2]&gt;               26 methods,… &lt;NA&gt;    FALSE &lt;chr … &lt;chr …
-## 6 a4Repor… &lt;chr [2]&gt;               30 methods,… xtable… FALSE &lt;chr … &lt;chr …
+##   Package  Maintainer dependencyCount Depends    Imports     Core  Depend Import
+##   &lt;chr&gt;    &lt;list&gt;               &lt;int&gt; &lt;chr&gt;      &lt;chr&gt;       &lt;lgl&gt; &lt;list&gt; &lt;list&gt;
+## 1 a4       &lt;chr [1]&gt;               72 a4Base, a…  &lt;NA&gt;       FALSE &lt;chr … &lt;chr …
+## 2 a4Base   &lt;chr [1]&gt;               64 a4Preproc… "methods, … FALSE &lt;chr … &lt;chr …
+## 3 a4Class… &lt;chr [1]&gt;               30 a4Core, a… "methods, … FALSE &lt;chr … &lt;chr …
+## 4 a4Core   &lt;chr [1]&gt;               18 &lt;NA&gt;       "Biobase, … FALSE &lt;chr … &lt;chr …
+## 5 a4Prepr… &lt;chr [1]&gt;                7 &lt;NA&gt;       "BiocGener… FALSE &lt;chr … &lt;chr …
+## 6 a4Repor… &lt;chr [1]&gt;                4 &lt;NA&gt;       "methods, … FALSE &lt;chr … &lt;chr …
 ```
 
 As you can see the Maintainers field is a list and also the Depends and Import.
@@ -88,19 +89,18 @@ For each package we can have several maintainers. We must indicate what are our 
 
 ```r
 prepare &lt;- unnest(tbl[, c("Maintainer", "Package")])
+## Warning: `cols` is now required when using unnest().
+## Please use `cols = c(Maintainer)`
 colnames(prepare) &lt;- c("sets", "elements")
 maintainers &lt;- tidySet(prepare)
 ```
 
-We can see with `nElements(maintainers)` that it has less than 1322 maintainers. Because some appear duplicated:
+We can see with `nElements(maintainers)` that it has less than 1928 maintainers. Because some appear duplicated:
 
 
 ```r
 grep("Carey", name_elements(maintainers), value = TRUE)
-## [1] "Jacob Carey &lt;jcarey15@jhu.edu&gt;"          
-## [2] "V. Carey &lt;stvjc@channing.harvard.edu&gt;"   
-## [3] "Vince Carey &lt;stvjc@channing.harvard.edu&gt;"
-## [4] "VJ Carey &lt;stvjc@channing.harvard.edu&gt;"
+## character(0)
 ```
 
 ---
@@ -149,24 +149,7 @@ We can have a look at the packages maintained by Bioconductor:
   filter_element(grepl("Bioconductor", elements)) %&gt;% 
   droplevels() %&gt;% 
   pull_set(sets))
-##  [1] annotate             AnnotationDbi        AnnotationFilter    
-##  [4] AnnotationForge      AnnotationHub        AnnotationHubData   
-##  [7] Biobase              BiocCaseStudies      BiocCheck           
-## [10] BiocGenerics         BiocParallel         BiocStyle           
-## [13] BiocVersion          biocViews            bioDist             
-## [16] Category             chipseq              CoCiteStats         
-## [19] DynDoc               ensemblVEP           ExperimentHub       
-## [22] ExperimentHubData    genefilter           GeneMeta            
-## [25] geneplotter          GenomeInfoDb         GenomicAlignments   
-## [28] GenomicFeatures      GenomicFiles         GenomicRanges       
-## [31] GOstats              gpls                 graph               
-## [34] GSEABase             HCABrowser           hypergraph          
-## [37] Icens                IRanges              KEGGREST            
-## [40] LoomExperiment       pkgDepTools          ppiStats            
-## [43] RBGL                 RGalaxy              Rhtslib             
-## [46] Rsamtools            S4Vectors            ShortRead           
-## [49] SummarizedExperiment zlibbioc            
-## 50 Levels: annotate AnnotationDbi AnnotationFilter ... zlibbioc
+## character(0)
 ```
 
 
@@ -196,10 +179,9 @@ head(l, 2)
 ## [1] "a4Base"      "a4Preproc"   "a4Classif"   "a4Core"      "a4Reporting"
 ## 
 ## $a4Base
-##  [1] "methods"       "graphics"      "grid"          "Biobase"      
-##  [5] "AnnotationDbi" "annaffy"       "mpm"           "genefilter"   
-##  [9] "limma"         "multtest"      "glmnet"        "a4Preproc"    
-## [13] "a4Core"        "gplots"
+##  [1] "a4Preproc"  "a4Core"     "methods"    "graphics"   "grid"      
+##  [6] "Biobase"    "annaffy"    "mpm"        "genefilter" "limma"     
+## [11] "multtest"   "glmnet"     "gplots"
 ```
 
 ---
@@ -254,7 +236,7 @@ packages %&gt;%
 ```r
 p &lt;- packages %&gt;% 
   element_size() %&gt;% 
-  left_join(elements(packages), by = c("element" = "elements"))
+  left_join(elements(packages))
 p %&gt;% 
   ggplot() +
   geom_histogram(aes(size)) + 
@@ -281,8 +263,8 @@ p %&gt;%
 ```r
 table(p$Origin)
 ## 
-##      Bioconductor Bioconductor Core             Other            R core 
-##               435                40              1155                27
+##  Other R core 
+##   1802     27
 ```
  
 ---
@@ -318,17 +300,17 @@ We can check that the most probable
 
 ```r
 set_size(cells)
-##     set size probability
+##    sets size probability
 ## 1   NKT    1 0.018000000
-## 2   NKT    2 0.514000000
-## 3   NKT    3 0.216000000
+## 2   NKT    2 0.216000000
+## 3   NKT    3 0.514000000
 ## 4   NKT    4 0.252000000
 ## 5   Th1    2 0.200000000
 ## 6   Th1    3 0.650000000
 ## 7   Th1    4 0.150000000
 ## 8  Th17    3 0.016000000
-## 9  Th17    4 0.628000000
-## 10 Th17    5 0.212000000
+## 9  Th17    4 0.212000000
+## 10 Th17    5 0.628000000
 ## 11 Th17    6 0.144000000
 ## 12  Th2    3 0.160000000
 ## 13  Th2    4 0.680000000
@@ -337,11 +319,11 @@ set_size(cells)
 ## 16  Th9    3 0.440000000
 ## 17  Th9    4 0.080000000
 ## 18   Tm    1 0.002187152
-## 19   Tm    2 0.110590988
-## 20   Tm    3 0.304685320
+## 19   Tm    2 0.035036932
+## 20   Tm    3 0.179653640
 ## 21   Tm    4 0.354372080
-## 22   Tm    5 0.179653640
-## 23   Tm    6 0.035036932
+## 22   Tm    5 0.304685320
+## 23   Tm    6 0.110590988
 ## 24   Tm    7 0.013473888
 ```
 
@@ -402,9 +384,25 @@ if (window.HTMLWidgets) slideshow.on('afterShowSlide', function (slide) {
     }
     deleted = true;
   });
-})();</script>
-
-<script>
+})();
+(function() {
+  "use strict"
+  // Replace <script> tags in slides area to make them executable
+  var scripts = document.querySelectorAll(
+    '.remark-slides-area .remark-slide-container script'
+  );
+  if (!scripts.length) return;
+  for (var i = 0; i < scripts.length; i++) {
+    var s = document.createElement('script');
+    var code = document.createTextNode(scripts[i].textContent);
+    s.appendChild(code);
+    var scriptAttrs = scripts[i].attributes;
+    for (var j = 0; j < scriptAttrs.length; j++) {
+      s.setAttribute(scriptAttrs[j].name, scriptAttrs[j].value);
+    }
+    scripts[i].parentElement.replaceChild(s, scripts[i]);
+  }
+})();
 (function() {
   var links = document.getElementsByTagName('a');
   for (var i = 0; i < links.length; i++) {
@@ -413,7 +411,23 @@ if (window.HTMLWidgets) slideshow.on('afterShowSlide', function (slide) {
     }
   }
 })();
-</script>
+// adds .remark-code-has-line-highlighted class to <pre> parent elements
+// of code chunks containing highlighted lines with class .remark-code-line-highlighted
+(function(d) {
+  const hlines = d.querySelectorAll('.remark-code-line-highlighted');
+  const preParents = [];
+  const findPreParent = function(line, p = 0) {
+    if (p > 1) return null; // traverse up no further than grandparent
+    const el = line.parentElement;
+    return el.tagName === "PRE" ? el : findPreParent(el, ++p);
+  };
+
+  for (let line of hlines) {
+    let pre = findPreParent(line);
+    if (pre && !preParents.includes(pre)) preParents.push(pre);
+  }
+  preParents.forEach(p => p.classList.add("remark-code-has-line-highlighted"));
+})(document);</script>
 
 <script>
 slideshow._releaseMath = function(el) {

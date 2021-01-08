@@ -1,6 +1,6 @@
 ---
 title: "Advanced use of BaseSet"
-author: 'Lluís Revilla Sancho @Lluis_Rev'
+author: 'Lluís Revilla Sancho @Lluis_Revilla'
 subtitle: "Exploring Bioconductor packages"
 date: "`r Sys.Date()`"
 slug: BaseSet-advanced
@@ -202,7 +202,7 @@ packages %>%
 ```{r dependensies2, message=FALSE, warning=FALSE, fig.height=4, dev='svg'}
 p <- packages %>% 
   element_size() %>% 
-  left_join(elements(packages), by = c("element" = "elements"))
+  left_join(elements(packages))
 p %>% 
   ggplot() +
   geom_histogram(aes(size)) + 
