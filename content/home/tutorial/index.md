@@ -3,9 +3,9 @@ date: "2018-09-09T00:00:00+02:00"
 draft: false
 active: false
 menu:
-  tutorial:
-    name: Overview
-    weight: 1
+    tutorial:
+        - name: Overview
+        - weight: 1
 title: Overview
 toc: true
 type: docs
