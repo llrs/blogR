@@ -97,7 +97,7 @@ However it is better if we look to the timeline of an issue:, which downloads ea
 
 ```{r timeline}
 gt <- get_timelines("llrs/blogR", 23)
-gt[, c("label", "event", "created", "association", "poster")]
+gt[, c("label", "event", "created", "association", "actor")]
 ```
 
 With timeline we don't get the initial information of when the issue was created and we'll need to call `get_issue("llrs/blogR", 23)` to know that. 
