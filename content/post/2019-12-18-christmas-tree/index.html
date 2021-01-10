@@ -1,0 +1,155 @@
+---
+title: Christmas tree
+author: Lluís Revilla Sancho
+date: '2019-12-18'
+slug: christmas-tree
+categories:
+  - r
+tags:
+  - r
+  - christmas
+  - plot
+authors: []
+description: ''
+editor_options:
+  chunk_output_type: console
+featured: no
+image:
+  caption: ''
+  focal_point: ''
+subtitle: ''
+summary: ''
+---
+
+<script src="{{< blogdown/postref >}}index_files/header-attrs/header-attrs.js"></script>
+
+
+<p>So it is Christmas and I want a tree. I found this new package experimental <a href="https://github.com/thomasp85/ggfx">ggfx</a> and I thought it would be nice to use it for the lights.
+Then some time later I found (through twitter) this <a href="https://github.com/r-link/christmas_tree_challenge">other repo</a> about building trees.</p>
+<p>So here I am building my own christmas tree!</p>
+<div id="the-very-basics" class="section level1">
+<h1>The very basics</h1>
+<p>We start with installations:</p>
+<pre class="r"><code>devtools::install_github(&#39;thomasp85/ggfx&#39;)</code></pre>
+<p>We’ll build our tree with triangles:</p>
+<pre class="r"><code>library(&quot;ggplot2&quot;)
+ggplot(data.frame(x = c(-5, 5, 0), y = c(0, 0, 5))) +
+  geom_polygon(aes(x, y), fill = &quot;green&quot;) +
+  theme_void()</code></pre>
+<p><img src="{{< blogdown/postref >}}index_files/figure-html/triangle-1.png" width="672" /></p>
+<p>To make it easier we use some functions for the triangles:</p>
+<pre class="r"><code>iso_triangle &lt;- function(wide, height, xvertix, yvertix) {
+  y &lt;- c(rep(yvertix-height, 2), yvertix)
+  x &lt;- c(xvertix+wide/2, xvertix-wide/2, xvertix)
+  data.frame(x, y)
+}
+
+square &lt;- function(length, x_bottom_right, y_bottom_right) {
+  x &lt;- rep(c(x_bottom_right-length, x_bottom_right), 2)
+  y &lt;- rep(c(y_bottom_right, y_bottom_right+length), each = 2)
+  data.frame(x, y)[c(1, 3, 4, 2), ]
+}</code></pre>
+<p>And off to build a tree:</p>
+<pre class="r"><code>tree &lt;- ggplot() +
+  aes(x, y) +
+  geom_polygon(data = square(0.5, 0.25, 0.25), fill = &quot;brown&quot;) +
+  geom_polygon(data = iso_triangle(10, 4, 0, 4.5), fill = &quot;darkgreen&quot;) + 
+  geom_polygon(data = iso_triangle(9, 4, 0, 4.5), fill = &quot;lightgreen&quot;) + 
+  geom_polygon(data = iso_triangle(8, 3, 0, 6), fill = &quot;green&quot;) +
+  geom_polygon(data = iso_triangle(7, 3, 0, 6), fill = &quot;darkgreen&quot;) +
+  geom_polygon(data = iso_triangle(6, 2.5, 0, 7), fill = &quot;lightgreen&quot;) + 
+  geom_polygon(data = iso_triangle(5, 2.5, 0, 7), fill = &quot;green&quot;) + 
+  geom_polygon(data = iso_triangle(4, 1.5, 0, 7.5), fill = &quot;darkgreen&quot;) +
+  geom_polygon(data = iso_triangle(3, 1.5, 0, 7.5), fill = &quot;lightgreen&quot;) +
+  geom_polygon(data = iso_triangle(2, 1.5, 0, 8), fill = &quot;green&quot;)
+tree</code></pre>
+<p><img src="{{< blogdown/postref >}}index_files/figure-html/tree-1.png" width="672" /></p>
+<p>The tree looks good enough, but if you disagree or want some more realistic trees see <a href="https://github.com/r-link/christmas_tree_challenge">this challenge</a>.
+Very funny to play with it (but I didn’t manage to build my tree with it :/).
+Anyway, now we have the tree and we need to turn them to a glowing tree!!</p>
+</div>
+<div id="decorating-the-tree" class="section level1">
+<h1>Decorating the tree</h1>
+<p>Now it is time to decorate and turn on the lights with the help of ggfx:</p>
+<pre class="r"><code>library(&quot;ggfx&quot;)
+tree + 
+  with_blur(geom_point(data =data.frame(x = 0, y = 8), size = 3, col = &quot;yellow&quot;), sigma = 2, stack = TRUE) + 
+  with_blur(geom_point(data =data.frame(x = c(2, -3), y = c(1.5, 1)), size = 3, col = &quot;darkgreen&quot;), sigma = 2, stack = TRUE) + 
+  with_blur(geom_point(data =data.frame(x = c(2, -3), y = 2.5+c(1, 1.2)), size = 3, col = &quot;purple&quot;), sigma = 2, stack = TRUE) + 
+  with_blur(geom_point(data =data.frame(x = -5, y = 0.5), size = 3, col = &quot;red&quot;), sigma = 2, stack = TRUE) + 
+  with_blur(geom_point(data =data.frame(x = 5, y = 0.5), size = 3, col = &quot;orange&quot;), sigma = 2, stack = TRUE) + 
+  with_blur(geom_point(data =data.frame(x = -2.5, y = 4), size = 3, col = &quot;red&quot;), sigma = 2, stack = TRUE) + 
+  with_blur(geom_point(data =data.frame(x = 3, y = 3.5), size = 3, col = &quot;black&quot;), sigma = 2, stack = TRUE) + 
+  with_blur(geom_point(data =data.frame(x = c(-1, 1.25), y = c(5, 5.5)), size = 3, col = &quot;orange&quot;), sigma = 2, stack = TRUE) + 
+  theme_void() +
+  theme(plot.background = element_rect(fill = &quot;black&quot;)) +
+  NULL</code></pre>
+<p><img src="{{< blogdown/postref >}}index_files/figure-html/decorating-1.png" width="672" /></p>
+<p>And now we have our Christmas tree decorated!</p>
+<p>Happy Christmas!!</p>
+<div id="reproducibility" class="section level3">
+<h3>Reproducibility</h3>
+<details>
+<pre><code>## ─ Session info ───────────────────────────────────────────────────────────────────────────────────────────────────────
+##  setting  value                       
+##  version  R version 4.0.1 (2020-06-06)
+##  os       Ubuntu 20.04.1 LTS          
+##  system   x86_64, linux-gnu           
+##  ui       X11                         
+##  language (EN)                        
+##  collate  en_US.UTF-8                 
+##  ctype    en_US.UTF-8                 
+##  tz       Europe/Madrid               
+##  date     2021-01-08                  
+## 
+## ─ Packages ───────────────────────────────────────────────────────────────────────────────────────────────────────────
+##  package     * version    date       lib source                           
+##  assertthat    0.2.1      2019-03-21 [1] CRAN (R 4.0.1)                   
+##  blogdown      0.21.84    2021-01-07 [1] Github (rstudio/blogdown@c4fbb58)
+##  bookdown      0.21       2020-10-13 [1] CRAN (R 4.0.1)                   
+##  cli           2.2.0      2020-11-20 [1] CRAN (R 4.0.1)                   
+##  colorspace    2.0-0      2020-11-11 [1] CRAN (R 4.0.1)                   
+##  crayon        1.3.4      2017-09-16 [1] CRAN (R 4.0.1)                   
+##  digest        0.6.27     2020-10-24 [1] CRAN (R 4.0.1)                   
+##  dplyr         1.0.2      2020-08-18 [1] CRAN (R 4.0.1)                   
+##  ellipsis      0.3.1      2020-05-15 [1] CRAN (R 4.0.1)                   
+##  evaluate      0.14       2019-05-28 [1] CRAN (R 4.0.1)                   
+##  fansi         0.4.1      2020-01-08 [1] CRAN (R 4.0.1)                   
+##  farver        2.0.3      2020-01-16 [1] CRAN (R 4.0.1)                   
+##  generics      0.1.0      2020-10-31 [1] CRAN (R 4.0.1)                   
+##  ggfx        * 0.0.0.9000 2020-08-20 [1] Github (thomasp85/ggfx@4345c5e)  
+##  ggplot2     * 3.3.2      2020-06-19 [1] CRAN (R 4.0.1)                   
+##  glue          1.4.2      2020-08-27 [1] CRAN (R 4.0.1)                   
+##  gtable        0.3.0      2019-03-25 [1] CRAN (R 4.0.1)                   
+##  htmltools     0.5.0      2020-06-16 [1] CRAN (R 4.0.1)                   
+##  knitr         1.30       2020-09-22 [1] CRAN (R 4.0.1)                   
+##  labeling      0.4.2      2020-10-20 [1] CRAN (R 4.0.1)                   
+##  lifecycle     0.2.0      2020-03-06 [1] CRAN (R 4.0.1)                   
+##  magick        2.5.2      2020-11-10 [1] CRAN (R 4.0.1)                   
+##  magrittr      2.0.1      2020-11-17 [1] CRAN (R 4.0.1)                   
+##  munsell       0.5.0      2018-06-12 [1] CRAN (R 4.0.1)                   
+##  pillar        1.4.7      2020-11-20 [1] CRAN (R 4.0.1)                   
+##  pkgconfig     2.0.3      2019-09-22 [1] CRAN (R 4.0.1)                   
+##  purrr         0.3.4      2020-04-17 [1] CRAN (R 4.0.1)                   
+##  R6            2.5.0      2020-10-28 [1] CRAN (R 4.0.1)                   
+##  ragg          0.4.0      2020-10-05 [1] CRAN (R 4.0.1)                   
+##  Rcpp          1.0.5      2020-07-06 [1] CRAN (R 4.0.1)                   
+##  rlang         0.4.10     2020-12-30 [1] CRAN (R 4.0.1)                   
+##  rmarkdown     2.6        2020-12-14 [1] CRAN (R 4.0.1)                   
+##  scales        1.1.1      2020-05-11 [1] CRAN (R 4.0.1)                   
+##  sessioninfo   1.1.1      2018-11-05 [1] CRAN (R 4.0.1)                   
+##  stringi       1.5.3      2020-09-09 [1] CRAN (R 4.0.1)                   
+##  stringr       1.4.0      2019-02-10 [1] CRAN (R 4.0.1)                   
+##  systemfonts   0.3.2      2020-09-29 [1] CRAN (R 4.0.1)                   
+##  textshaping   0.2.1      2020-11-13 [1] CRAN (R 4.0.1)                   
+##  tibble        3.0.4      2020-10-12 [1] CRAN (R 4.0.1)                   
+##  tidyselect    1.1.0      2020-05-11 [1] CRAN (R 4.0.1)                   
+##  vctrs         0.3.6      2020-12-17 [1] CRAN (R 4.0.1)                   
+##  withr         2.3.0      2020-09-22 [1] CRAN (R 4.0.1)                   
+##  xfun          0.20       2021-01-06 [1] CRAN (R 4.0.1)                   
+##  yaml          2.2.1      2020-02-01 [1] CRAN (R 4.0.1)                   
+## 
+## [1] /home/lluis/bin/R/4.0.1/lib/R/library</code></pre>
+</details>
+</div>
+</div>

@@ -1,0 +1,148 @@
+---
+title: Covid-19
+author: Lluís Revilla Sancho
+date: '2020-03-15'
+slug: covid-19
+categories:
+  - news
+tags:
+  - disease
+  - analysis
+  - COVID19
+authors: []
+description: ''
+editor_options:
+  chunk_output_type: console
+featured: no
+image:
+  caption: ''
+  focal_point: ''
+subtitle: ''
+summary: 'Several important numbers about the COVID19 and the impact on the Spanish healthcare'
+---
+
+<script src="{{< blogdown/postref >}}index_files/header-attrs/header-attrs.js"></script>
+
+
+<div id="introduction" class="section level2">
+<h2>Introduction</h2>
+<p>I have seen several analysis and simulations of the spread.
+In this entry I want to use the number of beds in hospitals, the disease duration, and the infection rate to find when will the healthcare system collapse in Spain.
+I’ll try to link to the resoures of the assuptions I take, or where I find the numeric values I use.</p>
+</div>
+<div id="important-numbers" class="section level2">
+<h2>Important numbers</h2>
+<p>The <strong>reproductive number</strong> is the number of people that get the virus from a person with the virus.
+This is highly variable and is influenced by government decisons (lock down, travel bans, …) and social behavior (See slide 11 from <a href="https://drive.google.com/file/d/14tGJF9tdv4osPhY1-fswLcSlWZJ9zx45/view">this deck</a>). Many dataset are linked in this thread <a href="https://comunidad.civio.es/t/datos-en-abierto-y-reutilizables-sobre-evolucion-casos-covid-19/399">of Civio</a>.</p>
+<ul>
+<li>Before any major measure in Spain was ~2.6 <a href="https://twitter.com/oriolmitja/status/1238008116257730560">Source</a></li>
+<li>After major measures ? (too soon to say, we’ll need to wait a week)</li>
+</ul>
+<p>In order to know how many time are people ill and how much time they might need to spend at the hospital we need to know the <strong>disease duration</strong>:</p>
+<ul>
+<li>~20 days until death (healthy &lt;60 years woman) <a href="https://twitter.com/mraffatellu/status/1239175358185746436">Source</a></li>
+<li>37 days and still testing positive of SARS-CoV-2 <a href="https://twitter.com/Birdyword/status/1239071257510854657">Source</a></li>
+<li>Person released without symptoms and after a month tested again positive <a href="https://twitter.com/RVAwonk/status/1238797268871983105">Source</a></li>
+</ul>
+<p>The saturation of the hospitals can be measured by the capacity they have. Ventilators, oxygen, doctors those numbers affect at the peace the doctors can attend patients, generally the number of <strong>beds</strong> is used:</p>
+<ul>
+<li>315/100000 habitants <a href="https://twitter.com/dr_xeo/status/1239135981380435969">Source</a></li>
+</ul>
+<p>The Covid <strong>severity</strong>, from a widely circulated and verifyed <a href="https://medium.com/@tomaspueyo/coronavirus-act-today-or-people-will-die-f4d3d9cd99ca">source</a>:</p>
+<ul>
+<li>20% of infected need hospitalization (mild cases)</li>
+<li>5% of infected are critically ill (severe cases)</li>
+</ul>
+<p>Also we can check the difference in symptoms on the population at South Corea and Italy, via <a href="https://twitter.com/markwby/status/1238867143363567616">this tweet</a> that lead to <a href="https://medium.com/@andreasbackhausab/coronavirus-why-its-so-deadly-in-italy-c4200a15a7bf">this article</a>.
+Also the <a href="https://twitter.com/passantino/status/1240513400343388160">case of Iceland</a></p>
+<p>Some of them will not recover despite any treatments by the doctors, this is the <strong>letality rate</strong>.
+I’ve taken the numbers from a <a href="https://www.isglobal.org/event/-/asset_publisher/nVsLg5I1q6UT/content/coronavirus-myths-and-truths">webminar</a> of the lead epidemiologist of Hospital Clínic which was done the 5th of March.</p>
+<ul>
+<li>Globally of 2-2.5% on China 0.7% outside</li>
+<li>By age
+<ul>
+<li>Below 40 years old 0.2%</li>
+<li>50-60 years old 1.3%</li>
+<li>60-70 years old 3.6%</li>
+<li>70-80 years old 8%</li>
+<li>Above 80 years old 14.8%</li>
+</ul></li>
+</ul>
+<p>Also compare with the information <a href="https://twitter.com/hancocktom/status/1239706670546268161">here</a>, which takes it from <a href="https://www.imperial.ac.uk/media/imperial-college/medicine/sph/ide/gida-fellowships/Imperial-College-COVID19-NPI-modelling-16-03-2020.pdf">this document</a> used for GB decision mak
+ing.</p>
+<p>Time from infection to disease, <strong>incubation time</strong>:</p>
+<ul>
+<li>5-7 days <a href="https://www.isglobal.org/event/-/asset_publisher/nVsLg5I1q6UT/content/coronavirus-myths-and-truths">Source: webminar</a></li>
+</ul>
+<p>High risk groups are people that are more exposed to get the virus or have other <strong>comorbodities</strong> such as previous respiratory diseases or other major disease afecting the immune system (like cancer, HIV…) :</p>
+<ul>
+<li>Comorbidities ?, we’ll use <a href="https://github.com/rOpenSpain/MorbiditySpainR">MorbiditySpainR</a> to find it out.</li>
+</ul>
+<p>As seen on the death rate, the age at the moment of the infection is important.
+Generally Italy and Spain has a <strong>population age</strong> older than China:</p>
+<ul>
+<li>? We’ll use the data on INE <a href="https://github.com/oddworldng/INEbaseR">thanks to INEbaseR</a></li>
+</ul>
+</div>
+<div id="modelling" class="section level2">
+<h2>Modelling</h2>
+<p>One example of such analysis is this tweet:</p>
+<blockquote class="twitter-tweet">
+<p lang="es" dir="ltr">
+Acabamos de evaluar la predicción del efecto de las políticas de restricción de movilidad. Equipo <a href="https://twitter.com/jtmatamalas?ref_src=twsrc%5Etfw"><span class="citation">@jtmatamalas</span></a> <a href="https://twitter.com/SergioGomezJ?ref_src=twsrc%5Etfw"><span class="citation">@SergioGomezJ</span></a> <a href="https://twitter.com/stinomat?ref_src=twsrc%5Etfw"><span class="citation">@stinomat</span></a> <a href="https://twitter.com/urv?ref_src=twsrc%5Etfw"><span class="citation">@urv</span></a> y <a href="https://twitter.com/gomezgardenes?ref_src=twsrc%5Etfw"><span class="citation">@gomezgardenes</span></a> <a href="https://twitter.com/claragranell?ref_src=twsrc%5Etfw"><span class="citation">@claragranell</span></a> <a href="https://twitter.com/sorianopanos?ref_src=twsrc%5Etfw"><span class="citation">@sorianopanos</span></a> <a href="https://twitter.com/wlcota?ref_src=twsrc%5Etfw"><span class="citation">@wlcota</span></a> <a href="https://twitter.com/unizar?ref_src=twsrc%5Etfw"><span class="citation">@unizar</span></a>. Restricción de movilidad total, excepto servicios esenciales, necesaria YA. <a href="https://t.co/YaWqXHw7Qv">pic.twitter.com/YaWqXHw7Qv</a>
+</p>
+— Alex Arenas (<span class="citation">@_AlexArenas</span>) <a href="https://twitter.com/_AlexArenas/status/1239691646482161664?ref_src=twsrc%5Etfw">March 16, 2020</a>
+</blockquote>
+<script async src="https://platform.twitter.com/widgets.js" charset="utf-8"></script>
+<p>We could use models based on <a href="http://networksciencebook.com/chapter/10#epidemic">chapter 10</a> of the book Network Science of Albert-Lázló Barábasi, and from <a href="https://drive.google.com/file/d/14tGJF9tdv4osPhY1-fswLcSlWZJ9zx45/view">slide 28</a>.</p>
+<p>But follwing this advice I won’t:</p>
+<blockquote class="twitter-tweet">
+<p lang="en" dir="ltr">
+To my colleagues, who are highly accomplished geniuses in a variety of fields: now is not the time to start an independent public health or infectious disease modeling practice if you have no expertise in these areas.<br><br>Please get an expert to check your work. Don't just post.
+</p>
+— Michael Hoffman (<span class="citation">@michaelhoffman</span>) <a href="https://twitter.com/michaelhoffman/status/1240338198376714241?ref_src=twsrc%5Etfw">March 18, 2020</a>
+</blockquote>
+<script async src="https://platform.twitter.com/widgets.js" charset="utf-8"></script>
+<p>However, here I leave a <a href="https://twitter.com/datadista/status/1240668992655810560">link</a> to the UCI bed currently on use from DATADISTA.</p>
+<div id="reproducibility" class="section level3">
+<h3>Reproducibility</h3>
+<details>
+<pre><code>## ─ Session info ───────────────────────────────────────────────────────────────────────────────────────────────────────
+##  setting  value                       
+##  version  R version 4.0.1 (2020-06-06)
+##  os       Ubuntu 20.04.1 LTS          
+##  system   x86_64, linux-gnu           
+##  ui       X11                         
+##  language (EN)                        
+##  collate  en_US.UTF-8                 
+##  ctype    en_US.UTF-8                 
+##  tz       Europe/Madrid               
+##  date     2021-01-08                  
+## 
+## ─ Packages ───────────────────────────────────────────────────────────────────────────────────────────────────────────
+##  package     * version date       lib source                           
+##  assertthat    0.2.1   2019-03-21 [1] CRAN (R 4.0.1)                   
+##  blogdown      0.21.84 2021-01-07 [1] Github (rstudio/blogdown@c4fbb58)
+##  bookdown      0.21    2020-10-13 [1] CRAN (R 4.0.1)                   
+##  cli           2.2.0   2020-11-20 [1] CRAN (R 4.0.1)                   
+##  crayon        1.3.4   2017-09-16 [1] CRAN (R 4.0.1)                   
+##  digest        0.6.27  2020-10-24 [1] CRAN (R 4.0.1)                   
+##  evaluate      0.14    2019-05-28 [1] CRAN (R 4.0.1)                   
+##  fansi         0.4.1   2020-01-08 [1] CRAN (R 4.0.1)                   
+##  glue          1.4.2   2020-08-27 [1] CRAN (R 4.0.1)                   
+##  htmltools     0.5.0   2020-06-16 [1] CRAN (R 4.0.1)                   
+##  knitr         1.30    2020-09-22 [1] CRAN (R 4.0.1)                   
+##  magrittr      2.0.1   2020-11-17 [1] CRAN (R 4.0.1)                   
+##  rlang         0.4.10  2020-12-30 [1] CRAN (R 4.0.1)                   
+##  rmarkdown     2.6     2020-12-14 [1] CRAN (R 4.0.1)                   
+##  sessioninfo   1.1.1   2018-11-05 [1] CRAN (R 4.0.1)                   
+##  stringi       1.5.3   2020-09-09 [1] CRAN (R 4.0.1)                   
+##  stringr       1.4.0   2019-02-10 [1] CRAN (R 4.0.1)                   
+##  withr         2.3.0   2020-09-22 [1] CRAN (R 4.0.1)                   
+##  xfun          0.20    2021-01-06 [1] CRAN (R 4.0.1)                   
+##  yaml          2.2.1   2020-02-01 [1] CRAN (R 4.0.1)                   
+## 
+## [1] /home/lluis/bin/R/4.0.1/lib/R/library</code></pre>
+</details>
+</div>
+</div>

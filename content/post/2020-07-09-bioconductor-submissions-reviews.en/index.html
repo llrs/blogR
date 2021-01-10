@@ -1,0 +1,448 @@
+---
+title: 'Bioconductor submissions: reviews'
+author: Lluís Revilla Sancho
+date: '2020-07-31'
+slug: bioconductor-submissions-reviews
+categories:
+  - Bioconductor
+  - r
+tags:
+  - Bioconductor
+  - r
+  - reviews
+authors: []
+description: 'Looking in detail to Bioconductor sumbissions: interactions between bots, reviewers and the community.'
+editor_options:
+  chunk_output_type: console
+featured: yes
+draft: false
+image:
+  caption: ''
+  focal_point: ''
+subtitle: 'The second part of Bioconductor submissions'
+summary: 'Looking in detail to Bioconductor sumbissions: interactions between bots, reviewers and the community.'
+---
+
+<script src="{{< blogdown/postref >}}index_files/header-attrs/header-attrs.js"></script>
+
+
+<p>First post is on <a href="https://llrs.dev/2020/06/bioconductor-submissions/">Bioconductor submissions</a> raised some questions comments but at the time I didn’t have a good way to answer them:</p>
+<ul>
+<li>issues get closed after they got assigned a reviewer and before the reviewer actually gets a chance to start the review.</li>
+<li>issues assigned to multiple people or issues that switched reviewers</li>
+</ul>
+<p>To answer both of them I needed more information.
+On the <a href="https://llrs.dev/2020/06/bioconductor-submissions/">previous post</a> I only gathered the information of the state of the issues at that moment.
+This excluded label changes, reviewer changes, renaming the issues, who commented on the issues and many more things.
+To retrieve these information from github I developed a <a href="https://llrs.dev/2020/06/social-github/">new package</a> <a href="https://github.com/llrs/socialGH"><code>{socialGH}</code></a> which downloads it from <a href="https://github.com">Github</a> to make this analysis possible.</p>
+<p>I gathered all the information on issues using <a href="https://github.com/llrs/socialGH"><code>{socialGH}</code></a> on the 2020/08/18 and stored them in a tidy format.
+Now that we have more data about the issues we can plot them similarly to what we did on the previous post:</p>
+<p><img src="{{< blogdown/postref >}}index_files/figure-html/first_plot-1.png" width="672" /></p>
+<p>We can see that sometimes the issues remained silent for several months and then had a high level of events, or a single one (closing mainly).</p>
+<p>Compare to the previous version it is surprising to see that one of the earliest issues still gets new events to date.
+Apparently <a href="https://github.com/Bioconductor/Contributions/issues/51">issue 51</a>, and <a href="https://github.com/Bioconductor/Contributions/issues?q=label%3ATESTING+is%3Aclosed">others</a>, are being used to test the Bioconductor builder or the bot used to automate the process.</p>
+<p><img src="{{< blogdown/postref >}}index_files/figure-html/by_user-1.png" width="672" /></p>
+<p>We can see that some reviewers comment more and are involved in more issues, but there is a group of fairly similar comments and issues.</p>
+<p>Clearly this will not be the same with users who submit packages:</p>
+<p><img src="{{< blogdown/postref >}}index_files/figure-html/by_user2-1.png" width="672" /></p>
+<p>We can clearly see that most users are mainly only involved on submitting packages on one issue, but some people participate a lot and/or in several issues.</p>
+<div id="events" class="section level1">
+<h1>Events</h1>
+<p>We cab count how many users and issues have been involved with each event type:</p>
+<p><img src="{{< blogdown/postref >}}index_files/figure-html/events_view-1.png" width="672" /></p>
+<p>We can see that few issues are locked (remember that it is different than closing the issue) or comments deleted.
+There is an almost equal amount of labeling and unlabeling, performed by few people but on lots of issues.
+There is a group of mentioning, commenting and subscribing too.
+Many people is involved on commenting and creating submissions.</p>
+<p>Looking a bit further on the issues we can look at the events that take place:</p>
+<p><img src="{{< blogdown/postref >}}index_files/figure-html/second_plot-1.png" width="672" /></p>
+<p>We can see that most issues have few events which agrees with the previous findings that issues are handled fairly and expeditiously.</p>
+<p>The most common event are comments, mentions and the rarest events are deleting comments, locking or referencing them.</p>
+<p><img src="{{< blogdown/postref >}}index_files/figure-html/events_time-1.png" width="672" /></p>
+<p>We can see that most issues get around 50 events, but we can clearly see lots of issues that receive very few events.</p>
+<p><img src="{{< blogdown/postref >}}index_files/figure-html/events_time2-1.png" width="672" /></p>
+<p>However, looking at the distribution along time most of the events are on the first 6 months after opening the issue.</p>
+<p><img src="{{< blogdown/postref >}}index_files/figure-html/events_time3-1.png" width="672" /></p>
+<p>Some submissions have many events while others have few events but last longer.
+This is without looking at issues that were closed and later reopened, or the involvement of bioc-issue-bot.
+We can see that in a short amount of days a lot of events can be triggered.
+This is mostly that for each version update there are at least two messages on the issue.</p>
+</div>
+<div id="reviews" class="section level1">
+<h1>Reviews</h1>
+<p>Most of the differences are due to the automatic or manual review of the submissions.</p>
+<p>After passing some preliminary checks a reviewer is assigned to manually review the package:</p>
+<p><img src="{{< blogdown/postref >}}index_files/figure-html/assignments-1.png" width="672" /></p>
+<p>We can see that usually some adjustment to reviewers is made usually changing them but some times they are added to have more than 1 reviewer (194).
+Almost all the submitted packages without a reviewer (537 submissions) were rejected except for three: <a href="https://github.com/Bioconductor/Contributions/issues/81">81</a>, <a href="https://github.com/Bioconductor/Contributions/issues/82">82</a>, <a href="https://github.com/Bioconductor/Contributions/issues/83">83</a> that were reviewed by <a href="https://github.com/vobencha">vobencha</a> even if not officially assigned.
+Some of these were rejected because they didn’t pass some automatic check and other after preliminary inspection.</p>
+<p>If some of these preliminary checks aren’t corrected the issue is closed:</p>
+<p><img src="{{< blogdown/postref >}}index_files/figure-html/open_close2-1.png" width="672" /></p>
+<p>We can see that is common to close and reopen issues, but they are generally done by the same people (the reviewer, the original submitter or the bot).</p>
+<p><img src="{{< blogdown/postref >}}index_files/figure-html/submission_acceptance-1.png" width="672" /></p>
+<p>On submissions with a reviewer assigned that were closed by someone (not the submitter), we can see here that reviews with more than one reviewer do not lead to significantly more comments from the reviewers.</p>
+<p>Although it seems like this leads to have the package approved.</p>
+<p><img src="{{< blogdown/postref >}}index_files/figure-html/reviews-1.png" width="672" /></p>
+<p>We can see that there are slightly more comments from reviewers on the approved packages.
+Perhaps because they provide more feedback once the review starts.</p>
+<p><img src="{{< blogdown/postref >}}index_files/figure-html/submission_acceptance2-1.png" width="672" /><img src="{{< blogdown/postref >}}index_files/figure-html/submission_acceptance2-2.png" width="672" /></p>
+<p>We can see that the percentage of approved on those issues where the reviewer commented is fairly similar and around 80% or above.
+However there is also at least a 5% of submissions that are closed despite the comments from reviewers.
+Usually this has to be with unresponsiveness from the submitter:</p>
+<p><img src="{{< blogdown/postref >}}index_files/figure-html/events_days-1.png" width="672" /></p>
+<p>We can see that on the approved packages there are usually more events on the same time period.
+So make sure to follow the advice of the reviewers and the bot and make all the errors and warnings disappear.</p>
+<p><img src="{{< blogdown/postref >}}index_files/figure-html/events_user_distribution-1.png" width="672" /></p>
+<p>While most issues have at least 8 different events they usually have 4 users involved.
+Presumably the creator of the issue, bioc-issue-bot, a reviewer and someone else.</p>
+<p><img src="{{< blogdown/postref >}}index_files/figure-html/actor_event_types-1.png" width="672" /></p>
+<p>The more users involved, more different type of events are triggered.
+Presumably more people get subscribed or is mentioned.</p>
+<p><img src="{{< blogdown/postref >}}index_files/figure-html/actors_events-1.png" width="672" /></p>
+<p>As expected the more users are involved in an issue more events are produced.
+We can also see the submissions that are closed by the bioc-issue-bot with few comments and users.</p>
+</div>
+<div id="who-does-each-action" class="section level1">
+<h1>Who does each action ?</h1>
+<p>We can look now at who performs what, we know there are 951 participants:</p>
+<p><img src="{{< blogdown/postref >}}index_files/figure-html/who-1.png" width="672" /></p>
+<p>Here I cut the top 35 people who have triggered more than events.
+We can clearly see who are official reviewers (as seen on the previous post) because they labeled and unlabeled issues.
+bioc-issue-bot is an special user that makes lots of comments and assigning reviewers to issues.
+We can also see that it previously renamed the issues or unassigned reviewers.</p>
+<p><img src="{{< blogdown/postref >}}index_files/figure-html/comments_plot-1.png" width="672" /></p>
+<p>Comments by users (excluding the bot), usually only the author, the reviewer comment, frequently mtmorgan also suggests.</p>
+<p><img src="{{< blogdown/postref >}}index_files/figure-html/comment_plot2-1.png" width="672" /></p>
+<p>We can see that Martin Morgan has commented on almost all the submissions.
+The odd issue where there are some comments from mtmorgan but no other is the <a href="https://github.com/Bioconductor.org/Contributions/issue/611">issue 611</a> where he is the reviewer and the submitter of a package.</p>
+</div>
+<div id="bioconductor-bot" class="section level1">
+<h1>Bioconductor Bot</h1>
+<p>We have seen that one of the most relevant “users” is bioc-issue-bot.<br />
+It is a bot that performs and report automatic checks on the submissions (The code can be found <a href="https://github.com/Bioconductor/issue_tracker_github">here</a>).
+Let’s explore what does and what does it report</p>
+<p><img src="{{< blogdown/postref >}}index_files/figure-html/bioc_bot_plot-1.png" width="672" /></p>
+<p>Classifying the comments reports that most of the comments are build results or that received a valid push.
+We can also see some changes on the bot, like changing the messages or reporting differently the process triggered.
+However, it also reports common problems on the submission: missing repository, unmatch between the repository name and the package name, reposting the same package, missing SSH key (needed to be able to push to Bioconductor git server), …
+We can see that most of them are related to building the packages being submitted.</p>
+<p>Let’s check if there is some differences on the comments according to if they are later accepted or not.</p>
+<p><img src="{{< blogdown/postref >}}index_files/figure-html/user_events-1.png" width="672" /></p>
+<p>We can see clearly differences on the behavior of the issues, some type of comments are all of the non-accepted packages.
+It seems like some are not corrected.
+We can see here some common areas when submissions fail: failing to provide a valid link to the repository or many links to several repositories, or failing to comply with the guidelines about the repository name and the package name.
+Reposting the same package is also a common reason of not getting that submission approved.</p>
+<p>The only significant are the build results, the build results, the valid push, received, unmatch between the package name and the repository, and the update version.</p>
+<p><img src="{{< blogdown/postref >}}index_files/figure-html/common_feedback-1.png" width="672" /></p>
+<p>We can see, (and I expected so) that comments of bioc-issue-bot are driven by the build system.</p>
+<p><img src="{{< blogdown/postref >}}index_files/figure-html/bot_comments_approve-1.png" width="672" /></p>
+<p>But the other comments are more frequent among the not approved packages, mainly errors and other automatically detected problems.</p>
+<p>Aside from the bot, other users might comment on issues too:</p>
+<p><img src="{{< blogdown/postref >}}index_files/figure-html/comments_issues-1.png" width="672" /></p>
+<p>In some issues reviewers comment more than authors, while on some there are more comments from authors than reviewers.
+Surprisingly, in some issues there are more comments from other users than authors or reviewers.</p>
+<p><img src="{{< blogdown/postref >}}index_files/figure-html/comments_approved-1.png" width="672" /></p>
+<p>Usually packages not approved have less comments from authors, reviewers and other users.</p>
+<p>About the time to get feedback we have previously seen that most of the issues were fast.
+However it included automatic actions from the bot, so let’s check again without the automatic events.</p>
+<p><img src="{{< blogdown/postref >}}index_files/figure-html/delays-1.png" width="672" /></p>
+<p>Here the squares indicate when a issue is closed, and we can see most comments are before the issues are closed.</p>
+<p><img src="{{< blogdown/postref >}}index_files/figure-html/closing-1.png" width="672" /></p>
+<p>And there doesn’t seem to be any difference between approved and not approved packages.</p>
+<p>I would have expected more comments after closing an issue in the not approved submissions.
+This might indicate that the discussion happens before and/or that the process after closing the issue is not clear enough.</p>
+</div>
+<div id="steps" class="section level1">
+<h1>Steps</h1>
+<p>So far we have compared closed and open issues, users, comments, events, but we haven’t looked how does the proccess goes.</p>
+<p>Let’s see how much time does it take to start the review and the time till the reviewer comments:</p>
+<table>
+<thead>
+<tr class="header">
+<th align="left">Successful build?</th>
+<th align="left">Approved?</th>
+<th align="right">Submissions</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td align="left">No</td>
+<td align="left">No</td>
+<td align="right">608</td>
+</tr>
+<tr class="even">
+<td align="left">Yes</td>
+<td align="left">No</td>
+<td align="right">78</td>
+</tr>
+<tr class="odd">
+<td align="left">Yes</td>
+<td align="left">Ongoing</td>
+<td align="right">28</td>
+</tr>
+<tr class="even">
+<td align="left">No</td>
+<td align="left">Ongoing</td>
+<td align="right">19</td>
+</tr>
+<tr class="odd">
+<td align="left">Yes</td>
+<td align="left">Yes</td>
+<td align="right">723</td>
+</tr>
+<tr class="even">
+<td align="left">No</td>
+<td align="left">Yes</td>
+<td align="right">125</td>
+</tr>
+</tbody>
+</table>
+<p>We can see that most not approved packages do not have a successful build.</p>
+<p><img src="{{< blogdown/postref >}}index_files/figure-html/trans_builds-1.png" width="672" /></p>
+<p>An overview of the submissions, when was the first successful build and when was the first comment of the reviewer after the successful build.</p>
+<p><img src="{{< blogdown/postref >}}index_files/figure-html/time_comment-1.png" width="672" /></p>
+<p>Usually it takes close to 3 days to have the first successful build on Bioconductor (if there is any as we have seen).</p>
+<p>After it it takes close to 10 days to the reviewer to comment.</p>
+<p><img src="{{< blogdown/postref >}}index_files/figure-html/time_accepted-1.png" width="672" /></p>
+<p>This comment might be the review of the package, as it is only done after the submissions passes all the checks.</p>
+<p><img src="{{< blogdown/postref >}}index_files/figure-html/time_build_plot-1.png" width="672" /></p>
+<p>A we have seen on the first table the main blocking point is that many submitted packages do not successfully build on Bioconductor servers.<br />
+But as we can see approved packages built slightly earlier.
+However the time between the first successful built and the first reviewer comment might be different, let’s check:</p>
+<p><img src="{{< blogdown/postref >}}index_files/figure-html/time_review_plot_zoom-1.png" width="672" /></p>
+<p>We can see there aren’t many differences on the time between the first successful built and the first reviewer comment.
+Once a package has built and has the review it takes some time to address the comments till it is accepted:</p>
+<p><img src="{{< blogdown/postref >}}index_files/figure-html/acceptance_plot-1.png" width="672" /></p>
+<p>We can see that since submission it usually takes two weeks to have the package accepted.
+However, the time between the first reviewer comment (after the first successful built) and the acceptance of the package might be different:</p>
+<p><img src="{{< blogdown/postref >}}index_files/figure-html/time_acceptance_plot-1.png" width="672" /></p>
+<p>We can see that few packages take more than 50 days till acceptance.
+To have a complete picture we can see all the issues on a single plot with how much do they take to move to the next phase:</p>
+<p><img src="{{< blogdown/postref >}}index_files/figure-html/times_phases-1.png" width="672" /></p>
+<p>We can see odd packages like the one that built correctly in short time but had some issues and finally got renamed and submitted on a different issue, or the issue that took more than 100 days to build correctly for the first time (and was later rejected).</p>
+<p>We can see that the steps that take more time is doing the review and later modify the package to address the comments pointed by the reviewers.</p>
+<table>
+<colgroup>
+<col width="4%" />
+<col width="13%" />
+<col width="23%" />
+<col width="8%" />
+<col width="25%" />
+<col width="23%" />
+</colgroup>
+<thead>
+<tr class="header">
+<th align="left">Approved</th>
+<th align="right">Succcessful built (days)</th>
+<th align="right">First reviewer comment after build (days)</th>
+<th align="right">Accepted (days)</th>
+<th align="right">Time between build and reviewer comment (days)</th>
+<th align="right">Time between review and acceptance (days)</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td align="left">No</td>
+<td align="right">5</td>
+<td align="right">19</td>
+<td align="right">NA</td>
+<td align="right">14</td>
+<td align="right">NA</td>
+</tr>
+<tr class="even">
+<td align="left">Ongoing</td>
+<td align="right">3</td>
+<td align="right">25</td>
+<td align="right">NA</td>
+<td align="right">19</td>
+<td align="right">NA</td>
+</tr>
+<tr class="odd">
+<td align="left">Yes</td>
+<td align="right">3</td>
+<td align="right">14</td>
+<td align="right">37</td>
+<td align="right">10</td>
+<td align="right">19</td>
+</tr>
+</tbody>
+</table>
+<p>Looking at the median times of each step we can clearly see the same pattern.</p>
+</div>
+<div id="labels" class="section level1">
+<h1>Labels</h1>
+<p>So far we have looked via a combination of comments from reviewers and labels. However, the official way of showing on which step is a review is using labels.</p>
+<p>We have seen is the second most frequent event, around 1100 submissions have at least one label annotation. We can see here how many:</p>
+<p><img src="{{< blogdown/postref >}}index_files/figure-html/labels_plot_overview-1.png" width="672" /></p>
+<p>We can see that the version bump, and the state of the build are the most frequent labels.</p>
+<p>Looking into each label we can see differences between acceoted and declined submissions:</p>
+<p><img src="{{< blogdown/postref >}}index_files/figure-html/label_differences-1.png" width="672" /></p>
+<p>Here we can see the differences in label assignment on each issue (labels which are assigned only to approved or rejected packages are not shown).</p>
+<p>Some submissions were initially declined but later got approved, as well as some issues that for some time went inactive but ended up being accepted.</p>
+<p>The main difference is how many times there are errors, timeouts, warnings, version bump required or OK on the issues approved. Successful packages have more!
+If you submit a package and get those errors don’t worry, it is normal!!</p>
+<table>
+<colgroup>
+<col width="6%" />
+<col width="14%" />
+<col width="4%" />
+<col width="6%" />
+<col width="2%" />
+<col width="5%" />
+<col width="6%" />
+<col width="15%" />
+<col width="8%" />
+<col width="14%" />
+<col width="8%" />
+<col width="8%" />
+</colgroup>
+<thead>
+<tr class="header">
+<th align="left">Approved</th>
+<th align="right">VERSION BUMP REQUIRED</th>
+<th align="right">ERROR</th>
+<th align="right">WARNINGS</th>
+<th align="right">OK</th>
+<th align="right">TIMEOUT</th>
+<th align="right">ABNORMAL</th>
+<th align="right">1. awaiting moderation</th>
+<th align="right">3a. accepted</th>
+<th align="right">2. review in progress</th>
+<th align="right">3c. inactive</th>
+<th align="right">3b. declined</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td align="left">No</td>
+<td align="right">0</td>
+<td align="right">1</td>
+<td align="right">0</td>
+<td align="right">0</td>
+<td align="right">0</td>
+<td align="right">0</td>
+<td align="right">1</td>
+<td align="right">0</td>
+<td align="right">1</td>
+<td align="right">0</td>
+<td align="right">0</td>
+</tr>
+<tr class="even">
+<td align="left">Yes</td>
+<td align="right">2</td>
+<td align="right">2</td>
+<td align="right">1</td>
+<td align="right">2</td>
+<td align="right">0</td>
+<td align="right">0</td>
+<td align="right">1</td>
+<td align="right">1</td>
+<td align="right">1</td>
+<td align="right">0</td>
+<td align="right">0</td>
+</tr>
+</tbody>
+</table>
+<p>We can see that is more common to have more “troubles” on packages that end up accepted than those than not.
+Note that there are at least two OK per submission, one required before the review start and the other one after the changes before acceptance.</p>
+</div>
+<div id="conclusions" class="section level1">
+<h1>Conclusions</h1>
+<p>Most of the problems with the submissions are formal and automatically detected by the bot.
+Next come problems from the package itself not passing the checks performed on Bioconductor.
+So if you want to have your package included make sure that the package builds on Bioconductor and respond fast to the feedback provided by the bot.
+Once your package successfully builds, then address the comments from the reviewer.
+Follow the steps and if you don’t drop out you’ll see your package accepted.</p>
+<p>On the next post I’ll explore the data from <a href="https://ropensci.org/">rOpenSci</a>, which also does the <a href="https://github.com/ropensci/software-review/issues/">reviews on GitHub</a>.</p>
+<div id="reproducibility" class="section level3">
+<h3>Reproducibility</h3>
+<details>
+<pre><code>## ─ Session info ───────────────────────────────────────────────────────────────────────────────────────────────────────
+##  setting  value                       
+##  version  R version 4.0.1 (2020-06-06)
+##  os       Ubuntu 20.04.1 LTS          
+##  system   x86_64, linux-gnu           
+##  ui       X11                         
+##  language (EN)                        
+##  collate  en_US.UTF-8                 
+##  ctype    en_US.UTF-8                 
+##  tz       Europe/Madrid               
+##  date     2021-01-08                  
+## 
+## ─ Packages ───────────────────────────────────────────────────────────────────────────────────────────────────────────
+##  package      * version date       lib source                           
+##  assertthat     0.2.1   2019-03-21 [1] CRAN (R 4.0.1)                   
+##  backports      1.2.1   2020-12-09 [1] CRAN (R 4.0.1)                   
+##  blogdown       0.21.84 2021-01-07 [1] Github (rstudio/blogdown@c4fbb58)
+##  bookdown       0.21    2020-10-13 [1] CRAN (R 4.0.1)                   
+##  broom          0.7.3   2020-12-16 [1] CRAN (R 4.0.1)                   
+##  cellranger     1.1.0   2016-07-27 [1] CRAN (R 4.0.1)                   
+##  cli            2.2.0   2020-11-20 [1] CRAN (R 4.0.1)                   
+##  codetools      0.2-18  2020-11-04 [1] CRAN (R 4.0.1)                   
+##  colorspace     2.0-0   2020-11-11 [1] CRAN (R 4.0.1)                   
+##  crayon         1.3.4   2017-09-16 [1] CRAN (R 4.0.1)                   
+##  DBI            1.1.0   2019-12-15 [1] CRAN (R 4.0.1)                   
+##  dbplyr         2.0.0   2020-11-03 [1] CRAN (R 4.0.1)                   
+##  digest         0.6.27  2020-10-24 [1] CRAN (R 4.0.1)                   
+##  dplyr        * 1.0.2   2020-08-18 [1] CRAN (R 4.0.1)                   
+##  ellipsis       0.3.1   2020-05-15 [1] CRAN (R 4.0.1)                   
+##  evaluate       0.14    2019-05-28 [1] CRAN (R 4.0.1)                   
+##  fansi          0.4.1   2020-01-08 [1] CRAN (R 4.0.1)                   
+##  farver         2.0.3   2020-01-16 [1] CRAN (R 4.0.1)                   
+##  forcats      * 0.5.0   2020-03-01 [1] CRAN (R 4.0.1)                   
+##  fs             1.5.0   2020-07-31 [1] CRAN (R 4.0.1)                   
+##  generics       0.1.0   2020-10-31 [1] CRAN (R 4.0.1)                   
+##  ggplot2      * 3.3.3   2020-12-30 [1] CRAN (R 4.0.1)                   
+##  ggrepel      * 0.9.0   2020-12-16 [1] CRAN (R 4.0.1)                   
+##  gh             1.2.0   2020-11-27 [1] CRAN (R 4.0.1)                   
+##  glue           1.4.2   2020-08-27 [1] CRAN (R 4.0.1)                   
+##  gtable         0.3.0   2019-03-25 [1] CRAN (R 4.0.1)                   
+##  haven          2.3.1   2020-06-01 [1] CRAN (R 4.0.1)                   
+##  here           1.0.1   2020-12-13 [1] CRAN (R 4.0.1)                   
+##  highr          0.8     2019-03-20 [1] CRAN (R 4.0.1)                   
+##  hms            0.5.3   2020-01-08 [1] CRAN (R 4.0.1)                   
+##  htmltools      0.5.0   2020-06-16 [1] CRAN (R 4.0.1)                   
+##  httr           1.4.2   2020-07-20 [1] CRAN (R 4.0.1)                   
+##  jsonlite       1.7.2   2020-12-09 [1] CRAN (R 4.0.1)                   
+##  knitr          1.30    2020-09-22 [1] CRAN (R 4.0.1)                   
+##  labeling       0.4.2   2020-10-20 [1] CRAN (R 4.0.1)                   
+##  lifecycle      0.2.0   2020-03-06 [1] CRAN (R 4.0.1)                   
+##  lubridate      1.7.9.2 2020-11-13 [1] CRAN (R 4.0.1)                   
+##  magrittr       2.0.1   2020-11-17 [1] CRAN (R 4.0.1)                   
+##  modelr         0.1.8   2020-05-19 [1] CRAN (R 4.0.1)                   
+##  munsell        0.5.0   2018-06-12 [1] CRAN (R 4.0.1)                   
+##  patchwork    * 1.1.1   2020-12-17 [1] CRAN (R 4.0.1)                   
+##  pillar         1.4.7   2020-11-20 [1] CRAN (R 4.0.1)                   
+##  pkgconfig      2.0.3   2019-09-22 [1] CRAN (R 4.0.1)                   
+##  purrr        * 0.3.4   2020-04-17 [1] CRAN (R 4.0.1)                   
+##  R6             2.5.0   2020-10-28 [1] CRAN (R 4.0.1)                   
+##  RColorBrewer   1.1-2   2014-12-07 [1] CRAN (R 4.0.1)                   
+##  Rcpp           1.0.5   2020-07-06 [1] CRAN (R 4.0.1)                   
+##  readr        * 1.4.0   2020-10-05 [1] CRAN (R 4.0.1)                   
+##  readxl         1.3.1   2019-03-13 [1] CRAN (R 4.0.1)                   
+##  reprex         0.3.0   2019-05-16 [1] CRAN (R 4.0.1)                   
+##  rlang          0.4.10  2020-12-30 [1] CRAN (R 4.0.1)                   
+##  rmarkdown      2.6     2020-12-14 [1] CRAN (R 4.0.1)                   
+##  rprojroot      2.0.2   2020-11-15 [1] CRAN (R 4.0.1)                   
+##  rstudioapi     0.13    2020-11-12 [1] CRAN (R 4.0.1)                   
+##  rvest          0.3.6   2020-07-25 [1] CRAN (R 4.0.1)                   
+##  scales         1.1.1   2020-05-11 [1] CRAN (R 4.0.1)                   
+##  sessioninfo    1.1.1   2018-11-05 [1] CRAN (R 4.0.1)                   
+##  socialGH     * 0.0.3   2020-08-17 [1] local                            
+##  stringi        1.5.3   2020-09-09 [1] CRAN (R 4.0.1)                   
+##  stringr      * 1.4.0   2019-02-10 [1] CRAN (R 4.0.1)                   
+##  tibble       * 3.0.4   2020-10-12 [1] CRAN (R 4.0.1)                   
+##  tidyr        * 1.1.2   2020-08-27 [1] CRAN (R 4.0.1)                   
+##  tidyselect     1.1.0   2020-05-11 [1] CRAN (R 4.0.1)                   
+##  tidyverse    * 1.3.0   2019-11-21 [1] CRAN (R 4.0.1)                   
+##  vctrs          0.3.6   2020-12-17 [1] CRAN (R 4.0.1)                   
+##  viridisLite    0.3.0   2018-02-01 [1] CRAN (R 4.0.1)                   
+##  withr          2.3.0   2020-09-22 [1] CRAN (R 4.0.1)                   
+##  xfun           0.20    2021-01-06 [1] CRAN (R 4.0.1)                   
+##  xml2           1.3.2   2020-04-23 [1] CRAN (R 4.0.1)                   
+##  yaml           2.2.1   2020-02-01 [1] CRAN (R 4.0.1)                   
+## 
+## [1] /home/lluis/bin/R/4.0.1/lib/R/library</code></pre>
+</details>
+</div>
+</div>

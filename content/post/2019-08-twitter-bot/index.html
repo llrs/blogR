@@ -1,0 +1,192 @@
+---
+title: Twitter bot
+author: Lluís Revilla Sancho
+date: '2019-08-13'
+slug: twitter-bot
+description: Analyzing a user looking for patterns and to know if it is handled by a bot.
+categories:
+  - r
+tags:
+  - twitter
+image:
+  caption: ''
+  focal_point: ''
+editor_options: 
+  chunk_output_type: console
+---
+
+<script src="{{< blogdown/postref >}}index_files/header-attrs/header-attrs.js"></script>
+
+
+<p>I was talking with a friend about social networks when he mentioned that it
+wasn’t worth his time to invest on podcasts.
+He said that I looked up his twitter account, that that’s more useful for him.
+This reminded me that I haven’t used these wonderful tools about twitter nor had I the motivation for analyzing time serie data.</p>
+<p>This blogpost is my attempt to find how this user uses some kind of automated mechanism to publish.</p>
+<pre class="r"><code>library(&quot;rtweet&quot;)
+user_tweets &lt;- get_timeline(user, n = 180000, type = &quot;mixed&quot;, 
+                            include_rts = TRUE)</code></pre>
+<p>Now that we have the tweets we can look if he is a bot:</p>
+<pre class="r"><code>library(&quot;tweetbotornot&quot;) # from mkearney/tweetbotornot
+# you might need to install this specific version of textfeatures:
+# devtools::install_version(&#39;textfeatures&#39;, version=&#39;0.2.0&#39;)
+botornot(user_tweets)</code></pre>
+<pre><code>## [32m↪[39m [38;5;244mCounting features in text...[39m
+## [32m↪[39m [38;5;244mSentiment analysis...[39m
+## [32m↪[39m [38;5;244mParts of speech...[39m
+## [32m↪[39m [38;5;244mWord dimensions started[39m
+## [32m✔[39m Job&#39;s done!</code></pre>
+<pre><code>## # A tibble: 1 x 3
+##   screen_name    user_id   prob_bot
+##   &lt;chr&gt;          &lt;chr&gt;        &lt;dbl&gt;
+## 1 josemariasiota 288661791    0.386</code></pre>
+<p>It gives a very high probability.</p>
+<p>We can visualize them with:</p>
+<pre class="r"><code>library(&quot;ggplot2&quot;)
+ts_plot(user_tweets, &quot;weeks&quot;) +
+  theme_bw() +
+  labs(title = &quot;Tweets by @josemariasiota&quot;,
+       subtitle = &quot;Grouped by week&quot;, x = NULL, y = &quot;tweets&quot;)</code></pre>
+<p><img src="{{< blogdown/postref >}}index_files/figure-html/unnamed-chunk-4-1.png" width="672" /></p>
+<p>We can group the tweets by the source of them, if interactive or using some other service:</p>
+<pre class="r"><code>library(&quot;dplyr&quot;)</code></pre>
+<pre><code>## 
+## Attaching package: &#39;dplyr&#39;</code></pre>
+<pre><code>## The following objects are masked from &#39;package:stats&#39;:
+## 
+##     filter, lag</code></pre>
+<pre><code>## The following objects are masked from &#39;package:base&#39;:
+## 
+##     intersect, setdiff, setequal, union</code></pre>
+<pre class="r"><code>count(user_tweets, source, sort = TRUE)</code></pre>
+<pre><code>## # A tibble: 9 x 2
+##   source                               n
+##   &lt;chr&gt;                            &lt;int&gt;
+## 1 dlvr.it                           1738
+## 2 twitterfeed                        676
+## 3 Twitter Web Client                 553
+## 4 Twitter Web App                    149
+## 5 Twitter for iPhone                  78
+## 6 Twitter for Advertisers (legacy)    21
+## 7 Hootsuite                           13
+## 8 Twitter for iPad                     2
+## 9 Twitter for Websites                 2</code></pre>
+<pre class="r"><code>user &lt;- user_tweets %&gt;% 
+  mutate(source = case_when(
+    grepl(&quot; for | on | Web &quot;, source) ~ &quot;direct&quot;,
+    TRUE ~ source
+  ))
+
+user %&gt;% 
+  count(source, sort = TRUE)</code></pre>
+<pre><code>## # A tibble: 4 x 2
+##   source          n
+##   &lt;chr&gt;       &lt;int&gt;
+## 1 dlvr.it      1738
+## 2 direct        805
+## 3 twitterfeed   676
+## 4 Hootsuite      13</code></pre>
+<pre class="r"><code>user &lt;- user %&gt;% 
+  mutate(reply = case_when(
+    is.na(reply_to_status_id) ~  &quot;content?&quot;,
+    TRUE ~ &quot;reply&quot;))
+user %&gt;% 
+  count(reply, source, sort = TRUE)</code></pre>
+<pre><code>## # A tibble: 5 x 3
+##   reply    source          n
+##   &lt;chr&gt;    &lt;chr&gt;       &lt;int&gt;
+## 1 content? dlvr.it      1738
+## 2 content? direct        731
+## 3 content? twitterfeed   676
+## 4 reply    direct         74
+## 5 content? Hootsuite      13</code></pre>
+<pre class="r"><code>library(&quot;stringr&quot;)
+user &lt;- user %&gt;% 
+  mutate(link = str_extract(text, &quot;https?://.+\\b&quot;),
+         n_link = str_count(text, &quot;https?://&quot;),
+         n_users = str_count(text, &quot;@[:alnum:]+\\b&quot;),
+         n_hashtags = str_count(text, &quot;#[:alnum:]+\\b&quot;),
+         via = str_count(text, &quot;\\bvia\\b&quot;))
+user %&gt;% count(n_link, reply, sort = TRUE)</code></pre>
+<pre><code>## # A tibble: 7 x 3
+##   n_link reply        n
+##    &lt;int&gt; &lt;chr&gt;    &lt;int&gt;
+## 1      1 content?  2508
+## 2      2 content?   629
+## 3      0 reply       57
+## 4      0 content?    14
+## 5      1 reply       14
+## 6      3 content?     7
+## 7      2 reply        3</code></pre>
+<pre class="r"><code>user %&gt;% 
+  group_by(lang, source) %&gt;% 
+  summarise(n = n(), n_link = sum(n_link), n_users = sum(n_users), n_hashtags = sum(n_hashtags)) %&gt;% 
+  arrange(-n) %&gt;% 
+  ggplot() +
+  geom_point(aes(lang, source, size = n)) +
+  theme_bw()</code></pre>
+<pre><code>## `summarise()` regrouping output by &#39;lang&#39; (override with `.groups` argument)</code></pre>
+<p><img src="{{< blogdown/postref >}}index_files/figure-html/count-1.png" width="672" /></p>
+<p>We can see that depending on the service there are some languages that are not used.</p>
+<p>We can visualize the tweets as they happen with:</p>
+<pre class="r"><code>user %&gt;% 
+  mutate(hms = hms::as_hms(created_at),
+         d = as.Date(created_at)) %&gt;% 
+  ggplot(aes(d, hms, col = source, shape = reply)) +
+  geom_point() +
+  theme_bw() +
+  labs(y = &quot;Hour&quot;, x = &quot;Date&quot;, title = &quot;Tweets&quot;) +
+  scale_x_date(date_breaks = &quot;1 year&quot;, date_labels = &quot;%Y&quot;, 
+               expand = c(0.01, 0)) +
+  scale_y_time(labels = function(x) strftime(x, &quot;%H&quot;),
+               breaks = hms::hms(seq(0, 24, 1)*60*60), expand = c(0.01, 0))</code></pre>
+<p><img src="{{< blogdown/postref >}}index_files/figure-html/unnamed-chunk-5-1.png" width="672" /></p>
+<p>We can clearly see a change on the end of 2016, I will focus on that point forward.</p>
+<p>A package that got my attention on twitter was <a href="https://cran.r-project.org/package=anomalize"><code>anomalize</code></a> which search for anomalies on time series of data. I hope that using this algorithm it will find when the data is not automated</p>
+<pre class="r"><code>library(&quot;anomalize&quot;)</code></pre>
+<pre><code>## ══ Use anomalize to improve your Forecasts by 50%! ═════════════════════════════
+## Business Science offers a 1-hour course - Lab #18: Time Series Anomaly Detection!
+## &lt;/&gt; Learn more at: https://university.business-science.io/p/learning-labs-pro &lt;/&gt;</code></pre>
+<p>The excellent guide at their <a href="https://business-science.github.io/anomalize/">website</a> is easy to understand and follow</p>
+<pre class="r"><code>user &lt;- user %&gt;% 
+  filter(created_at &gt; as.Date(&quot;2016-11-01&quot;)) %&gt;% 
+  arrange(created_at) %&gt;% 
+  time_decompose(created_at, method = &quot;stl&quot;, merge = TRUE, message = TRUE) </code></pre>
+<pre><code>## Warning in mask$eval_all_filter(dots, env_filter): Incompatible methods
+## (&quot;Ops.POSIXt&quot;, &quot;Ops.Date&quot;) for &quot;&gt;&quot;</code></pre>
+<pre><code>## Converting from tbl_df to tbl_time.
+## Auto-index message: index = created_at</code></pre>
+<pre><code>## frequency = 2 hours</code></pre>
+<pre><code>## trend = 42.5 hours</code></pre>
+<pre><code>## Registered S3 method overwritten by &#39;quantmod&#39;:
+##   method            from
+##   as.zoo.data.frame zoo</code></pre>
+<pre class="r"><code>user %&gt;% 
+  filter(created_at &gt; as.Date(&quot;2016-11-01&quot;)) %&gt;% 
+  anomalize(remainder, method = &quot;iqr&quot;) %&gt;%
+  time_recompose() %&gt;%
+  # Anomaly Visualization
+  plot_anomalies(time_recomposed = TRUE, ncol = 3, alpha_dots = 0.25) +
+  labs(title = &quot;User anomalies&quot;, 
+       subtitle = &quot;STL + IQR Methods&quot;, 
+       x = &quot;Time&quot;) </code></pre>
+<p><img src="{{< blogdown/postref >}}index_files/figure-html/unnamed-chunk-7-1.png" width="672" /></p>
+<pre class="r"><code>user %&gt;% 
+  filter(created_at &gt; as.Date(&quot;2016-11-01&quot;)) %&gt;% 
+  anomalize(remainder, method = &quot;iqr&quot;) %&gt;%
+  plot_anomaly_decomposition() +
+  labs(title = &quot;Decomposition of Anomalized Lubridate Downloads&quot;)</code></pre>
+<p><img src="{{< blogdown/postref >}}index_files/figure-html/unnamed-chunk-7-2.png" width="672" /></p>
+<p>We can clearly see some tendencies on the tweeting so it is automated, since then. We can further check it with:</p>
+<pre class="r"><code>user %&gt;% 
+  filter(created_at &gt; as.Date(&quot;2016-11-01&quot;)) %&gt;% 
+  botornot()</code></pre>
+<pre><code>## [32m↪[39m [38;5;244mCounting features in text...[39m
+## [32m↪[39m [38;5;244mSentiment analysis...[39m
+## [32m↪[39m [38;5;244mParts of speech...[39m
+## [32m↪[39m [38;5;244mWord dimensions started[39m
+## [32m✔[39m Job&#39;s done!</code></pre>
+<pre><code>## # A tibble: 1 x 3
+##   screen_name    user_id   prob_bot
+##   &lt;chr&gt;          &lt;chr&gt;        &lt;dbl&gt;
+## 1 josemariasiota 288661791    0.469</code></pre>

@@ -8,7 +8,6 @@ menu:
         - weight: 1
 title: Overview
 toc: true
-type: docs
 summary: "Overview"  # Add a page description.
 type: "tutorial"  # Page type is a Widget Page
 ---

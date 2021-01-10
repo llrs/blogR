@@ -1,0 +1,112 @@
+---
+title: Debugging only when needed
+author: Lluís Revilla Sancho
+date: '2020-01-25'
+slug: debugging-conditional
+categories:
+  - r
+tags:
+  - r
+  - debug
+authors: []
+description: ''
+editor_options:
+  chunk_output_type: console
+featured: no
+image:
+  caption: ''
+  focal_point: ''
+subtitle: ''
+summary: ''
+---
+
+<script src="{{< blogdown/postref >}}index_files/header-attrs/header-attrs.js"></script>
+
+
+<p>One of the worst thing I experienced is having a bug in a nested call of functions.
+If it is not simple the problems comes to isolate when and why does it occur.
+Here I explore something that I found once on twitter but haven’t find explained in Advanced R or other blogs.</p>
+<div id="function-stack" class="section level1">
+<h1>Function stack</h1>
+<p>A simple function to debug is this one:</p>
+<pre class="r"><code>myfunction1 &lt;- function(x, y) {
+  if (sum(x &gt; 0) &gt;= 5) {
+    x + y
+  } else {
+    x - y
+  }
+}</code></pre>
+<p>We can use it:</p>
+<pre class="r"><code>myfunction1(runif(10), 5)
+##  [1] 5.703426 5.516683 5.217670 5.943402 5.173702 5.137270 5.768233 5.132304
+##  [9] 5.513719 5.404423
+myfunction1(runif(4), 5)
+## [1] -4.706239 -4.447211 -4.078848 -4.997719</code></pre>
+<p>However if our input has a NA we’ll get an error:</p>
+<pre class="r"><code>x &lt;- runif(10)
+x[5] &lt;- NA
+myfunction1(x, 5)
+## Error in if (sum(x &gt; 0) &gt;= 5) {: missing value where TRUE/FALSE needed</code></pre>
+<p>The problem is easy to find but lets assume it is not.
+The missing value where TRUE/FALSE needed indicates that we get a NA.
+So to find where we can use <code>browser</code> <em>and</em> the expression argument as this:</p>
+<pre class="r"><code>myfunction2 &lt;-  function(x, y) {
+  browser(expr = any(is.na(x)))
+  if (sum(x &gt; 0) &gt;= 5) {
+    x + y
+  } else {
+    x - y
+  }
+}
+myfunction2(x, 5)</code></pre>
+<p>Which lead us to this:</p>
+<div class="figure">
+<img src="/post/2020-01-debugging-only-when-needed_files/Screenshot%20from%202020-01-25%2013-21-03.png" alt="" />
+<p class="caption">debug with expr</p>
+</div>
+<p>If we use other input we can use the function as usual without triggering the debug:</p>
+<pre class="r"><code>myfunction2(runif(6), 5)
+## [1] 5.231687 5.008704 5.614821 5.561843 5.745173 5.026838</code></pre>
+<p>So if you are developing a package or functions and find an error on some calculation and you don’t want to press next or skip a loop just use the <code>expr</code> argument of browser to just jump into the problematic call.</p>
+<div id="reproducibility" class="section level3">
+<h3>Reproducibility</h3>
+<details>
+<pre><code>## ─ Session info ───────────────────────────────────────────────────────────────────────────────────────────────────────
+##  setting  value                       
+##  version  R version 4.0.1 (2020-06-06)
+##  os       Ubuntu 20.04.1 LTS          
+##  system   x86_64, linux-gnu           
+##  ui       X11                         
+##  language (EN)                        
+##  collate  en_US.UTF-8                 
+##  ctype    en_US.UTF-8                 
+##  tz       Europe/Madrid               
+##  date     2021-01-08                  
+## 
+## ─ Packages ───────────────────────────────────────────────────────────────────────────────────────────────────────────
+##  package     * version date       lib source                           
+##  assertthat    0.2.1   2019-03-21 [1] CRAN (R 4.0.1)                   
+##  blogdown      0.21.84 2021-01-07 [1] Github (rstudio/blogdown@c4fbb58)
+##  bookdown      0.21    2020-10-13 [1] CRAN (R 4.0.1)                   
+##  cli           2.2.0   2020-11-20 [1] CRAN (R 4.0.1)                   
+##  crayon        1.3.4   2017-09-16 [1] CRAN (R 4.0.1)                   
+##  digest        0.6.27  2020-10-24 [1] CRAN (R 4.0.1)                   
+##  evaluate      0.14    2019-05-28 [1] CRAN (R 4.0.1)                   
+##  fansi         0.4.1   2020-01-08 [1] CRAN (R 4.0.1)                   
+##  glue          1.4.2   2020-08-27 [1] CRAN (R 4.0.1)                   
+##  htmltools     0.5.0   2020-06-16 [1] CRAN (R 4.0.1)                   
+##  knitr         1.30    2020-09-22 [1] CRAN (R 4.0.1)                   
+##  magrittr      2.0.1   2020-11-17 [1] CRAN (R 4.0.1)                   
+##  rlang         0.4.10  2020-12-30 [1] CRAN (R 4.0.1)                   
+##  rmarkdown     2.6     2020-12-14 [1] CRAN (R 4.0.1)                   
+##  sessioninfo   1.1.1   2018-11-05 [1] CRAN (R 4.0.1)                   
+##  stringi       1.5.3   2020-09-09 [1] CRAN (R 4.0.1)                   
+##  stringr       1.4.0   2019-02-10 [1] CRAN (R 4.0.1)                   
+##  withr         2.3.0   2020-09-22 [1] CRAN (R 4.0.1)                   
+##  xfun          0.20    2021-01-06 [1] CRAN (R 4.0.1)                   
+##  yaml          2.2.1   2020-02-01 [1] CRAN (R 4.0.1)                   
+## 
+## [1] /home/lluis/bin/R/4.0.1/lib/R/library</code></pre>
+</details>
+</div>
+</div>

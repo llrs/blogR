@@ -1,0 +1,239 @@
+---
+title: Fast correlations
+author: Lluís Revilla Sancho
+date: '2020-01-08'
+slug: fast-correlations
+categories:
+  - r
+tags:
+  - r
+authors: []
+description: ''
+editor_options:
+  chunk_output_type: console
+featured: no
+image:
+  caption: ''
+  focal_point: ''
+subtitle: ''
+summary: ''
+draft: false
+---
+
+<script src="{{< blogdown/postref >}}index_files/header-attrs/header-attrs.js"></script>
+
+
+<div id="correlations" class="section level2">
+<h2>Correlations</h2>
+<p>One of the few methods that are commonly done are correlations.
+I found several implementations of Pearson correlations,
+and I was curious to know if which is the fastest one.</p>
+</div>
+<div id="implementations" class="section level2">
+<h2>Implementations</h2>
+<p>So far the implementations I found are:</p>
+<pre class="r"><code>stats::cor
+WGCNA::cor
+miRcomb::cor
+coop::pcor
+HiClimR::fastCor</code></pre>
+<p>Most of them are on CRAN and one is at github.</p>
+</div>
+<div id="dependencies" class="section level1">
+<h1>Dependencies</h1>
+<p>If we are only interested on the correlation most of the dependencies that a package would bring aren’t relevant.
+So how many dependencies have each of those packages?</p>
+<pre class="r"><code>ip &lt;- installed.packages()
+dp &lt;- tools::package_dependencies(c(&quot;stats&quot;, &quot;WGCNA&quot;, &quot;miRcomb&quot;, &quot;coop&quot;, &quot;HiClimR&quot;), 
+                            db = ip, which = &quot;Imports&quot;)
+sort(lengths(dp), decreasing = TRUE)
+##   WGCNA HiClimR   stats    coop miRcomb 
+##      15       5       3       0       0</code></pre>
+</div>
+<div id="speed" class="section level1">
+<h1>Speed</h1>
+<pre class="r"><code>library(&quot;bench&quot;)
+x &lt;- runif(50)
+y &lt;- runif(50)
+stats_cor &lt;- function() {
+  stats::cor(x, y, method = &quot;pearson&quot;)
+}
+
+WGCNA_cor &lt;- function() {
+  WGCNA::cor(x, y, method = &quot;pearson&quot;)[1, 1]
+}
+
+coop_cor &lt;- function() {
+  coop::pcor(x, y)
+}
+HiClimR_cor &lt;- function() {
+  HiClimR::fastCor(matrix(c(x, y), nrow = 50, ncol = 2), upperTri = FALSE, verbose = FALSE)[2, 1]
+}
+
+bm &lt;- mark(stats_cor(), WGCNA_cor(), coop_cor(), HiClimR_cor(), iterations = 10000)
+## 
+bm
+## # A tibble: 4 x 6
+##   expression         min   median `itr/sec` mem_alloc `gc/sec`
+##   &lt;bch:expr&gt;    &lt;bch:tm&gt; &lt;bch:tm&gt;     &lt;dbl&gt; &lt;bch:byt&gt;    &lt;dbl&gt;
+## 1 stats_cor()     30.1µs   32.4µs    24351.    88.6KB     4.87
+## 2 WGCNA_cor()     66.3µs   83.7µs     7315.   207.3MB     1.46
+## 3 coop_cor()      31.5µs   33.2µs    19694.    82.7KB     1.97
+## 4 HiClimR_cor()  115.6µs  126.9µs     5425.   171.1KB     2.17</code></pre>
+<pre class="r"><code>plot(bm) + ggplot2::theme_bw()
+## Loading required namespace: tidyr</code></pre>
+<p><img src="{{< blogdown/postref >}}index_files/figure-html/plot-1.png" width="672" /></p>
+<p>So we can see that for this basic comparison stats is king followed by coop, WGCNA, and HiClimR.</p>
+<p>It might be that these other functions are optimized for matrices so lets see it again</p>
+<pre class="r"><code>x &lt;- matrix(runif(100), ncol = 10, nrow = 10)
+y &lt;- matrix(runif(100), ncol = 10, nrow = 10)
+stats_cor2 &lt;- function() {
+  stats::cor(x, x, method = &quot;pearson&quot;)
+}
+
+WGCNA_cor2 &lt;- function() {
+  WGCNA::cor(x, x, method = &quot;pearson&quot;)
+}
+
+coop_cor2 &lt;- function() {
+  coop::pcor(x)
+}
+HiClimR_cor2 &lt;- function() {
+  HiClimR::fastCor(x, upperTri = FALSE, verbose = FALSE)
+}
+
+bm2 &lt;- mark(stats_cor2(), WGCNA_cor2(), coop_cor2(), HiClimR_cor2(), iterations = 10000)
+bm2
+## # A tibble: 4 x 6
+##   expression          min   median `itr/sec` mem_alloc `gc/sec`
+##   &lt;bch:expr&gt;     &lt;bch:tm&gt; &lt;bch:tm&gt;     &lt;dbl&gt; &lt;bch:byt&gt;    &lt;dbl&gt;
+## 1 stats_cor2()     33.4µs   35.4µs    25493.      848B     2.55
+## 2 WGCNA_cor2()     64.2µs   69.4µs     9988.    3.36KB     2.00
+## 3 coop_cor2()      30.9µs   33.8µs    18887.    49.8KB     1.89
+## 4 HiClimR_cor2()  193.3µs  214.1µs     3466.    5.02KB     2.43</code></pre>
+<pre class="r"><code>plot(bm2) + ggplot2::theme_bw()</code></pre>
+<p><img src="{{< blogdown/postref >}}index_files/figure-html/plot2-1.png" width="672" /></p>
+<p>Here we can see that coop takes the lead and stats is the second fastest followed by WGCNA and HiClimR.</p>
+<div id="references" class="section level3">
+<h3>References</h3>
+</div>
+<div id="reproducibility" class="section level3">
+<h3>Reproducibility</h3>
+<details>
+<pre><code>## ─ Session info ───────────────────────────────────────────────────────────────────────────────────────────────────────
+##  setting  value                       
+##  version  R version 4.0.1 (2020-06-06)
+##  os       Ubuntu 20.04.1 LTS          
+##  system   x86_64, linux-gnu           
+##  ui       X11                         
+##  language (EN)                        
+##  collate  en_US.UTF-8                 
+##  ctype    en_US.UTF-8                 
+##  tz       Europe/Madrid               
+##  date     2021-01-10                  
+## 
+## ─ Packages ───────────────────────────────────────────────────────────────────────────────────────────────────────────
+##  package        * version date       lib source                           
+##  AnnotationDbi    1.52.0  2020-10-27 [1] Bioconductor                     
+##  assertthat       0.2.1   2019-03-21 [1] CRAN (R 4.0.1)                   
+##  backports        1.2.1   2020-12-09 [1] CRAN (R 4.0.1)                   
+##  base64enc        0.1-3   2015-07-28 [1] CRAN (R 4.0.1)                   
+##  beeswarm         0.2.3   2016-04-25 [1] CRAN (R 4.0.1)                   
+##  bench          * 1.1.1   2020-01-13 [1] CRAN (R 4.0.1)                   
+##  Biobase          2.50.0  2020-10-27 [1] Bioconductor                     
+##  BiocGenerics     0.36.0  2020-10-27 [1] Bioconductor                     
+##  bit              4.0.4   2020-08-04 [1] CRAN (R 4.0.1)                   
+##  bit64            4.0.5   2020-08-30 [1] CRAN (R 4.0.1)                   
+##  blob             1.2.1   2020-01-20 [1] CRAN (R 4.0.1)                   
+##  blogdown         1.0.1   2021-01-10 [1] Github (rstudio/blogdown@0f7f73f)
+##  bookdown         0.21    2020-10-13 [1] CRAN (R 4.0.1)                   
+##  checkmate        2.0.0   2020-02-06 [1] CRAN (R 4.0.1)                   
+##  cli              2.2.0   2020-11-20 [1] CRAN (R 4.0.1)                   
+##  cluster          2.1.0   2019-06-19 [1] CRAN (R 4.0.1)                   
+##  codetools        0.2-18  2020-11-04 [1] CRAN (R 4.0.1)                   
+##  colorspace       2.0-0   2020-11-11 [1] CRAN (R 4.0.1)                   
+##  coop             0.6-2   2019-04-22 [1] CRAN (R 4.0.1)                   
+##  crayon           1.3.4   2017-09-16 [1] CRAN (R 4.0.1)                   
+##  data.table       1.13.6  2020-12-30 [1] CRAN (R 4.0.1)                   
+##  DBI              1.1.0   2019-12-15 [1] CRAN (R 4.0.1)                   
+##  digest           0.6.27  2020-10-24 [1] CRAN (R 4.0.1)                   
+##  doParallel       1.0.16  2020-10-16 [1] CRAN (R 4.0.1)                   
+##  dplyr            1.0.2   2020-08-18 [1] CRAN (R 4.0.1)                   
+##  dynamicTreeCut   1.63-1  2016-03-11 [1] CRAN (R 4.0.1)                   
+##  ellipsis         0.3.1   2020-05-15 [1] CRAN (R 4.0.1)                   
+##  evaluate         0.14    2019-05-28 [1] CRAN (R 4.0.1)                   
+##  fansi            0.4.1   2020-01-08 [1] CRAN (R 4.0.1)                   
+##  farver           2.0.3   2020-01-16 [1] CRAN (R 4.0.1)                   
+##  fastcluster      1.1.25  2018-06-07 [1] CRAN (R 4.0.1)                   
+##  foreach          1.5.1   2020-10-15 [1] CRAN (R 4.0.1)                   
+##  foreign          0.8-80  2020-05-24 [1] CRAN (R 4.0.1)                   
+##  Formula          1.2-4   2020-10-16 [1] CRAN (R 4.0.1)                   
+##  generics         0.1.0   2020-10-31 [1] CRAN (R 4.0.1)                   
+##  ggbeeswarm       0.6.0   2017-08-07 [1] CRAN (R 4.0.1)                   
+##  ggplot2          3.3.3   2020-12-30 [1] CRAN (R 4.0.1)                   
+##  glue             1.4.2   2020-08-27 [1] CRAN (R 4.0.1)                   
+##  GO.db            3.12.1  2020-12-17 [1] Bioconductor                     
+##  gridExtra        2.3     2017-09-09 [1] CRAN (R 4.0.1)                   
+##  gtable           0.3.0   2019-03-25 [1] CRAN (R 4.0.1)                   
+##  HiClimR          2.1.8   2021-01-05 [1] CRAN (R 4.0.1)                   
+##  Hmisc            4.4-2   2020-11-29 [1] CRAN (R 4.0.1)                   
+##  htmlTable        2.1.0   2020-09-16 [1] CRAN (R 4.0.1)                   
+##  htmltools        0.5.0   2020-06-16 [1] CRAN (R 4.0.1)                   
+##  htmlwidgets      1.5.3   2020-12-10 [1] CRAN (R 4.0.1)                   
+##  httr             1.4.2   2020-07-20 [1] CRAN (R 4.0.1)                   
+##  impute           1.64.0  2020-10-27 [1] Bioconductor                     
+##  IRanges          2.24.1  2020-12-12 [1] Bioconductor                     
+##  iterators        1.0.13  2020-10-15 [1] CRAN (R 4.0.1)                   
+##  jpeg             0.1-8.1 2019-10-24 [1] CRAN (R 4.0.1)                   
+##  jsonlite         1.7.2   2020-12-09 [1] CRAN (R 4.0.1)                   
+##  knitcitations  * 1.0.10  2019-09-15 [1] CRAN (R 4.0.1)                   
+##  knitr            1.30    2020-09-22 [1] CRAN (R 4.0.1)                   
+##  lattice          0.20-41 2020-04-02 [1] CRAN (R 4.0.1)                   
+##  latticeExtra     0.6-29  2019-12-19 [1] CRAN (R 4.0.1)                   
+##  lifecycle        0.2.0   2020-03-06 [1] CRAN (R 4.0.1)                   
+##  lubridate        1.7.9.2 2020-11-13 [1] CRAN (R 4.0.1)                   
+##  magrittr         2.0.1   2020-11-17 [1] CRAN (R 4.0.1)                   
+##  Matrix           1.3-2   2021-01-06 [1] CRAN (R 4.0.1)                   
+##  matrixStats      0.57.0  2020-09-25 [1] CRAN (R 4.0.1)                   
+##  memoise          1.1.0   2017-04-21 [1] CRAN (R 4.0.1)                   
+##  munsell          0.5.0   2018-06-12 [1] CRAN (R 4.0.1)                   
+##  ncdf4            1.17    2019-10-23 [1] CRAN (R 4.0.1)                   
+##  nnet             7.3-14  2020-04-26 [1] CRAN (R 4.0.1)                   
+##  pillar           1.4.7   2020-11-20 [1] CRAN (R 4.0.1)                   
+##  pkgconfig        2.0.3   2019-09-22 [1] CRAN (R 4.0.1)                   
+##  plyr             1.8.6   2020-03-03 [1] CRAN (R 4.0.1)                   
+##  png              0.1-7   2013-12-03 [1] CRAN (R 4.0.1)                   
+##  preprocessCore   1.52.0  2020-10-27 [1] Bioconductor                     
+##  profmem          0.6.0   2020-12-13 [1] CRAN (R 4.0.1)                   
+##  purrr            0.3.4   2020-04-17 [1] CRAN (R 4.0.1)                   
+##  R6               2.5.0   2020-10-28 [1] CRAN (R 4.0.1)                   
+##  RColorBrewer     1.1-2   2014-12-07 [1] CRAN (R 4.0.1)                   
+##  Rcpp             1.0.5   2020-07-06 [1] CRAN (R 4.0.1)                   
+##  RefManageR       1.3.0   2020-11-13 [1] CRAN (R 4.0.1)                   
+##  rlang            0.4.10  2020-12-30 [1] CRAN (R 4.0.1)                   
+##  rmarkdown        2.6     2020-12-14 [1] CRAN (R 4.0.1)                   
+##  rpart            4.1-15  2019-04-12 [1] CRAN (R 4.0.1)                   
+##  RSQLite          2.2.1   2020-09-30 [1] CRAN (R 4.0.1)                   
+##  rstudioapi       0.13    2020-11-12 [1] CRAN (R 4.0.1)                   
+##  S4Vectors        0.28.1  2020-12-09 [1] Bioconductor                     
+##  scales           1.1.1   2020-05-11 [1] CRAN (R 4.0.1)                   
+##  sessioninfo      1.1.1   2018-11-05 [1] CRAN (R 4.0.1)                   
+##  stringi          1.5.3   2020-09-09 [1] CRAN (R 4.0.1)                   
+##  stringr          1.4.0   2019-02-10 [1] CRAN (R 4.0.1)                   
+##  survival         3.2-7   2020-09-28 [1] CRAN (R 4.0.1)                   
+##  tibble           3.0.4   2020-10-12 [1] CRAN (R 4.0.1)                   
+##  tidyr            1.1.2   2020-08-27 [1] CRAN (R 4.0.1)                   
+##  tidyselect       1.1.0   2020-05-11 [1] CRAN (R 4.0.1)                   
+##  utf8             1.1.4   2018-05-24 [1] CRAN (R 4.0.1)                   
+##  vctrs            0.3.6   2020-12-17 [1] CRAN (R 4.0.1)                   
+##  vipor            0.4.5   2017-03-22 [1] CRAN (R 4.0.1)                   
+##  WGCNA            1.69    2020-02-28 [1] CRAN (R 4.0.1)                   
+##  withr            2.3.0   2020-09-22 [1] CRAN (R 4.0.1)                   
+##  xfun             0.20    2021-01-06 [1] CRAN (R 4.0.1)                   
+##  xml2             1.3.2   2020-04-23 [1] CRAN (R 4.0.1)                   
+##  yaml             2.2.1   2020-02-01 [1] CRAN (R 4.0.1)                   
+## 
+## [1] /home/lluis/bin/R/4.0.1/lib/R/library</code></pre>
+</details>
+</div>
+</div>

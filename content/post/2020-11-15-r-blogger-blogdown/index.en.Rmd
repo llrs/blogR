@@ -1,0 +1,77 @@
+---
+title: Creating an RSS feed for r-bloggers for my blogdown
+author: Lluís Revilla Sancho
+date: '2020-11-15'
+slug: r-blogger-blogdown
+categories:
+  - r
+tags:
+  - R
+authors: []
+description: ''
+editor_options:
+  chunk_output_type: console
+featured: no
+image:
+  caption: ''
+  focal_point: ''
+subtitle: ''
+summary: ''
+---
+
+```{r setup, include = FALSE}
+knitr::opts_chunk$set(collapse = TRUE)
+```
+
+I am following [Yongfu's blog](https://yongfu.name/2018/12/13/hugo_rss.html):
+I copy here the content in case it is moved:
+
+>     Copy the default RSS template
+
+>    Change <description>{{ .Summary | html }}</description> to <description>{{ .Content | html }}</description>
+
+>    Create subdirectories in layouts/ and save the RSS template files (name them rss.xml) in them (one for each subdirectory).
+
+
+
+I was first confused when I wanted to copy the rss.xml file mentioned and didn't know where to go.
+I finally found the [section](https://gohugo.io/templates/rss/#the-embedded-rssxml) from which I could go to the file I was supposed to copy. 
+
+So far so good, so without further testing I assume this worked. 
+Following [the instructions](https://gohugo.io/templates/rss/), I moved the rss.xml file to layouts/posts/ to only report post of the blog, not new projects or other leafs from Hugo.
+
+Next step is filtering and further configuring the feed.
+Filtering because I cannot feed R-bloggers with other languages than English, and configure because I don't want to submit/provide everything, just the latest posts.
+
+So, a quick search reported [several](https://benjamincongdon.me/blog/2020/01/14/Tips-for-Customizing-Hugo-RSS-Feeds/) [leads](https://discourse.gohugo.io/t/how-to-generate-pages-excluding-specific-rss/4026):
+
+So I set a limit of 20 post on the config.toml file.
+
+
+
+### References
+
+```{r bibsetup, echo=FALSE, message=FALSE, warning=FALSE}
+## Load knitcitations with a clean bibliography
+library('knitcitations')
+cleanbib()
+cite_options(hyperlink = 'to.doc', citation_format = 'text', style = 'html')
+pi <- sessioninfo::package_info()
+packages <- c(pi$package[pi$attached], 'knitcitations')
+l <- sapply(packages, function(x){citation(x)[1]}, simplify = FALSE)
+bib <- c(l, 'blogdown' = citation('blogdown')[2])
+```
+
+```{r results = 'asis', echo = FALSE, cache = FALSE}
+bibliography(style = 'html')
+```
+
+### Reproducibility
+
+<details>
+```{r reproducibility, echo = FALSE}
+## Reproducibility info
+options(width = 120)
+sessioninfo::session_info()
+```
+</details>
