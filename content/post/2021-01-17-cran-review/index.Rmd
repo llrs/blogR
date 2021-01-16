@@ -1,7 +1,7 @@
 ---
 title: CRAN review
 author: Lluís Revilla Sancho
-date: '2020-10-25'
+date: '2021-01-17'
 categories:
   - r
   - CRAN
@@ -20,7 +20,7 @@ image:
 ---
 
 ```{r setup, include = FALSE}
-knitr::opts_chunk$set(collapse = TRUE)
+knitr::opts_chunk$set(collapse = TRUE, message = FALSE)
 ```
 
 [cransays](https://github.com/lockedata/cransays) is a package to check package submissions which on the online documentation provides a [dashboard which](https://lockedata.github.io/cransays/articles/dashboard.html) is updated each hour.
@@ -68,7 +68,7 @@ cran_submissions$snapshot_time <- as.POSIXct(cran_submissions$snapshot_time,
 ## CRAN load
 
 We all know that CRAN is busy with updates, reports of bug fixes and so on.
-Thanks to cransays now we can see how how much do the 4 reviewers of CRAN have on their plates.
+Thanks to cransays now we can see how much have the reviewers of CRAN on their plates.
 
 The period we are going to analyze is from the beginning of the records till 2021/01/02.
 It includes some well earned holiday time for the CRAN team, during which submissions are not possible.
