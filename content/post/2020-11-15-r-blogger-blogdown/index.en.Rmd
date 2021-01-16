@@ -3,6 +3,7 @@ title: Creating an RSS feed for r-bloggers for my blogdown
 author: Lluís Revilla Sancho
 date: '2020-11-15'
 slug: r-blogger-blogdown
+draft: true
 categories:
   - r
 tags:
@@ -32,39 +33,19 @@ I copy here the content in case it is moved:
 
 >    Create subdirectories in layouts/ and save the RSS template files (name them rss.xml) in them (one for each subdirectory).
 
-
-
 I was first confused when I wanted to copy the rss.xml file mentioned and didn't know where to go.
 I finally found the [section](https://gohugo.io/templates/rss/#the-embedded-rssxml) from which I could go to the file I was supposed to copy. 
 
 So far so good, so without further testing I assume this worked. 
-Following [the instructions](https://gohugo.io/templates/rss/), I moved the rss.xml file to layouts/posts/ to only report post of the blog, not new projects or other leafs from Hugo.
+Following [the instructions](https://gohugo.io/templates/rss/), I moved the rss.xml file to `layouts/post/` to only report posts of the blog, not new projects or other leafs from Hugo.
 
-Next step is filtering and further configuring the feed.
-Filtering because I cannot feed R-bloggers with other languages than English, and configure because I don't want to submit/provide everything, just the latest posts.
+I also created a rss.xml on `layouts/categories/`. 
+As the templates provided by gohugo.io didn't work I copied and pasted the [files from Yongfu's Blog](https://github.com/liao961120/Hugo-RSS/tree/master/layouts).
 
-So, a quick search reported [several](https://benjamincongdon.me/blog/2020/01/14/Tips-for-Customizing-Hugo-RSS-Feeds/) [leads](https://discourse.gohugo.io/t/how-to-generate-pages-excluding-specific-rss/4026):
+To check that it worked I went to [`llr.dev/categories/cran/index.xml`](https://llr.dev/categories/cran/index.xml).
+Surprisingly it worked for some categories but not for others ([r](https://llr.dev/categories/r/index.xml)), so I needed to tweak the layout.
 
-So I set a limit of 20 post on the config.toml file.
-
-
-
-### References
-
-```{r bibsetup, echo=FALSE, message=FALSE, warning=FALSE}
-## Load knitcitations with a clean bibliography
-library('knitcitations')
-cleanbib()
-cite_options(hyperlink = 'to.doc', citation_format = 'text', style = 'html')
-pi <- sessioninfo::package_info()
-packages <- c(pi$package[pi$attached], 'knitcitations')
-l <- sapply(packages, function(x){citation(x)[1]}, simplify = FALSE)
-bib <- c(l, 'blogdown' = citation('blogdown')[2])
-```
-
-```{r results = 'asis', echo = FALSE, cache = FALSE}
-bibliography(style = 'html')
-```
+I set a limit of 20 post on the config.toml file `rssLimit = 20`. 
 
 ### Reproducibility
 
