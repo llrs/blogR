@@ -20,7 +20,7 @@ image:
 ---
 
 ```{r setup, include = FALSE}
-knitr::opts_chunk$set(collapse = TRUE, message = FALSE)
+knitr::opts_chunk$set(collapse = TRUE, message = FALSE, out.width = "120%")
 ```
 
 I've been doing some [analysis on the review submissions](https://llrs.dev/tags/reviews/) of several projects of R.
@@ -89,7 +89,7 @@ After preparing the files in one big file we can load and work with it.
 First steps, check the data and prepare it for what we want:
 
 ```{r reformat}
-# Use appropiate class
+# Use appropriate class
 cran_submissions$snapshot_time <- as.POSIXct(cran_submissions$snapshot_time,
                                              tz = "UTC")
 # Fix subfolders structure
@@ -117,7 +117,7 @@ packges_multiple_versions <- cran_submissions %>%
 
 There are `r length(packges_multiple_versions)` packages with multiple versions at the same time on CRAN queue.
 
-Perhaps because package are left in different folders (2 or even 3) at the same time:
+Perhaps because packages are left in different folders (2 or even 3) at the same time:
 
 ```{r package-multiple-folders}
 package_multiple <- cran_submissions %>% 
@@ -156,7 +156,7 @@ cran_submissions <- cran_submissions %>%
 ```
 
 Now we removed ~3500 records of packages with two versions remaining on the queue.
-Next we check packages in multiple folders but with the same version and remove them until we are left with a single one (under the reasoning that there aren't parallel steps on the review):
+Next we check packages in multiple folders but with the same version and remove them until we are left with a single one (assuming there aren't parallel steps on the review process followed):
 
 ```{r remove-duplicated-packges-folder}
 cran_submissions <- cran_submissions %>% 
@@ -168,7 +168,7 @@ cran_submissions <- cran_submissions %>%
   select(-n)
 ```
 
-Last we want to know how many submission, in this period, did a package submit:
+Last, we add the number of submissions, in this period, for each package:
 
 ```{r submissions_cleanup}
 diff0 <- structure(0, class = "difftime", units = "hours")
@@ -214,17 +214,15 @@ ggplot(cran_queue) +
   scale_y_continuous(expand = expansion()) +
   labs(x = element_blank(), y = element_blank(), 
        title = "Packages on CRAN review process")
-
-# Several version of the same packages in the same time.
-# This makes this completley wrong in those cases. 
 ```
 
 We can see that there are some ups and downs, and ranges between 200 to 50.
 
 There are some instance were the number of package on the queue have a sudden drop and then a recovery to previous levels.
-This might be an error on the CRAN system, or the cransays' script.
+This as far as I know is a visual artifact.
+
 We can also see that people do not tend to rush and push the package before the holidays.
-But clearly there is some build up of submissions after holidays, as the the highest packages on the queue is reached after holidays.
+But clearly there is some build up of submissions after holidays, as the the highest number of packages on the queue is reached after holidays.
 
 On the CRAN review process classifying package in folders seems to be part of the process:
 
@@ -257,8 +255,9 @@ What we clearly see is a clean up on holidays for all the folders, when almost a
 
 [^1]: Or a problem with ggplot2 representing a sudden value that is much different from those around them.
 
-Also the pretest folder might indicate that the package there are just updating.
-As there isn't any later increase of other folders as we can see if we <details><summary>focus on the holidays and after them.</summary>
+Also the pretest seems to be before the newbies folder raises, so it seems like these tests are done done only to new pacakges.
+
+There other folders do not have such an increase <details><summary>after the holidays .</summary>
 
 ```{r cran-holidays-zoom}
 cran_submissions %>% 
@@ -282,13 +281,13 @@ cran_submissions %>%
 ```
 
 It seems like that on the 31st there was a clean up of some packages on the waiting list.
-And we can see the increase of submissions on the first week of January.
+And we can see the increase of submissions on the first week of January, as described previously.
 
 </details>
 
 ## Time patterns {#time-patterns}
 
-Some people has expressed they view to submit to CRAN when there are few packages on the queue.
+Some people has expressed they try to submit to CRAN when there are few packages on the queue.
 Thus, looking when does this low moments happens could be relevant.
 We can look for patterns on the queue:
 
@@ -317,9 +316,8 @@ cran_times %>%
             week = unique(week)) %>% 
   group_by(folder, mday) %>% 
   ggplot() +
-  # geom_point(aes(mday, packages, col = fct_reorder2(folder, mday, packages, sum))) +
   geom_smooth(aes(mday, packages, col = folder)) +
-  labs(x = "Day of the month", y = element_blank(), col = "Folder",
+  labs(x = "Day of the month", y = "Packages", col = "Folder",
        title = "Evolution by month day") +
   scale_color_manual(values = man_colors) +
   coord_cartesian(ylim = c(0, NA), xlim = c(1, NA)) +
@@ -328,7 +326,7 @@ cran_times %>%
 ```
 
 At the beginning and end of the month there is more variation on several folders (This could also be that there isn't information of the end of December and beginning of January).
-There seems to be an increase of *new packages submissions towards the middle of the month* and later and increase on the human folder by the beginning of the month.
+There seems to be an increase of **new packages submissions towards the beginning of the month** and later and increase on the newbies folder by the middle of the month.
 
 
 ### By day of the week {#day-week}
@@ -343,7 +341,6 @@ cran_times %>%
             week = unique(week)) %>% 
   group_by(folder, wday) %>% 
   ggplot() +
-  # geom_point(aes(wday, packages, col = fct_reorder2(folder, wday, packages, sum))) +
   geom_smooth(aes(wday, packages, col = folder)) +
   labs(x = "Day of the week", y = "Packages", col = "Folder",
        title = "Evolution by week day") +
@@ -352,8 +349,7 @@ cran_times %>%
   scale_y_continuous(expand = expansion(), limits = c(0, NA))
 ```
 
-It doesn't seem to be a special pattern only on the human folder there is an increase on weekdays and a decrease on the weekend.
-What we see is a *rise towards the middle of the week* of the packages on the pretest folder, indicating new packages submissions. 
+We see a **rise towards the middle of the week** of the packages on the pretest folder, indicating new packages submissions. 
 
 ### Other folders
 
@@ -373,12 +369,13 @@ cran_times %>%
   scale_y_continuous(expand = expansion(), breaks = 0:10) +
   coord_cartesian(y = c(0, NA))  +
   scale_x_datetime(date_labels = "%Y/%m/%d", date_breaks = "2 weeks", 
-               expand = expansion(add = 2))
+               expand = expansion(add = 2)) +
+  theme(legend.position = c(0.1, 0.8))
 ```
 
-There doesn't seem to be any rule about using those folders or, the work was quick enough to not be recorded.
+There doesn't seem to be any rule about using those folders or, the work was so quick that the hourly updated data didn't record it.
 
-<details><summary>Looking for any temporal pattern doesn't worth it.</summary>
+<details><summary>Looking for any temporal pattern on those folders isn't worth it.</summary>
 
 ```{r subfolder-mday}
 cran_times %>% 
@@ -388,7 +385,7 @@ cran_times %>%
   ungroup() %>% 
   ggplot() +
   geom_smooth(aes(mday, packages, col = subfolder)) +
-  labs(x = "Day of the month", y = element_blank(), col = "Subfolder",
+  labs(x = "Day of the month", y = "Pacakges", col = "Subfolder",
        title = "Packages on subfolers by day of the month") +
   scale_y_continuous(expand = expansion()) +
   scale_x_continuous(expand = expansion(), breaks = c(1,7,14,21,29)) +
@@ -405,7 +402,7 @@ cran_times %>%
   ungroup() %>% 
   ggplot() +
   geom_smooth(aes(wday, packages, col = subfolder)) +
-  labs(x = "Day of the week", y = element_blank(), col = "Subfolder",
+  labs(x = "Day of the week", y = "Pacakges", col = "Subfolder",
        title = "Evolution by week day") +
   scale_y_continuous(expand = expansion()) +
   scale_x_continuous(breaks = 1:7, expand = expansion()) +
@@ -427,9 +424,9 @@ One of the big question we can provide information about with the data available
 
 ```{r time-submission}
 subm <- cran_times %>%
-  group_by(package, submission_n) %>% 
   arrange(snapshot_time) %>% 
   select(package, version, submission_n, snapshot_time) %>% 
+  group_by(package, submission_n) %>% 
   filter(row_number() %in% c(1, last(row_number()))) %>% 
   arrange(package, submission_n)
 ```
@@ -440,7 +437,7 @@ It might mean that it is an abandoned, delayed or rejected submissions, other mi
 [^3]: Which now I cannot find the evidence to link to.
     If anyone finds the tweet I would appreciate it.
 
-If we look at the package submission by date we can see the quick increase of packages:
+If we look at the package submission by date we can see the quick increase of packages of packages:
 
 ```{r resubm}
 rsubm <- subm %>% 
@@ -451,8 +448,6 @@ rsubm <- subm %>%
   ungroup() %>% 
   mutate(r = row_number(), 
          time  =  round(difftime(end, start, units = "hour"), 0)) %>% 
-  group_by(package) %>% 
-  mutate(n_submission = 1:n()) %>% 
   ungroup()
 lv <- levels(fct_reorder(rsubm$package, rsubm$start, .fun = min, .desc = FALSE))
 ggplot(rsubm) +
@@ -460,7 +455,7 @@ ggplot(rsubm) +
             ymin = first(lv), ymax = last(lv), alpha = 0.5, fill = "red") +
   geom_linerange(aes(y = fct_reorder(package, start, .fun = min, .desc = FALSE),
                       x = start, xmin = start, xmax = end, 
-                     col = as.factor(n_submission))) + 
+                     col = as.factor(submission_n))) + 
   labs(x = element_blank(), y = element_blank(), title = 
          "Packages on the queue", col = "Submissions") +
   scale_x_datetime(date_labels = "%Y/%m/%d", date_breaks = "2 weeks", 
@@ -472,9 +467,8 @@ ggplot(rsubm) +
         legend.position = c(0.15, 0.7))
 ```
 
-We can see the rapid growth of packages and that on this period some people submitted more than 5 times their packages in this period.
+Some packages were submitted more than 5 times in this period. Recall the definition for submission used: a package with different version number after 24 hours or which wasn't seen in the queue for the last 24 hours (even if they have the same version number).
 
-Also note that the definition used for submission is a package with different version number.
 Some authors do change the version number when CRAN reviewers require changes before accepting the package on CRAN while others do not and only change the version number according to their release cycle.
 
 ```{r rate}
@@ -490,8 +484,7 @@ rsubm %>%
   mutate(estimate = estimate/(60*60)) # Hours
 ```
 
-More or less there is a *new package submission every hour*. 
-
+More or less there is a **new package submission every hour** on CRAN.
 Despite this submission rate we can see that most submissions are on the queue a short time:
 
 ```{r package-time-queue}
@@ -518,7 +511,11 @@ p2 <- rsubm %>%
 p1 + inset_element(p2, 0.2, 0.2, 1, 1)
 ```
 
-Also note that I found some packages that remained on the submission queue, and thus picked up by cransays, even after acceptance.
+The accuracy of this data is not great. 
+Because I found some packages that remained on the submission queue, and thus picked up by cransays, even after acceptance, so this might be a bit overestimated.
+Also, there are packages that got a speedy submission that didn't last more than an hour, and they weren't included. 
+
+Looking at the recorded submissions might be more accurate:
 
 ```{r submission-queue}
 p1 <- rsubm %>% 
@@ -543,11 +540,13 @@ p2 <- rsubm %>%
 p1 + inset_element(p2, 0.2, 0.2, 1, 1)
 ```
 
-By submission many more are shortly spanned.
+Many submissions are shortly spanned.
 Perhaps hinting that more testing should be done before or what to expect on the review should be more clear to the authors, or that they are approved very fast, or...
 
 There are `r sum(table(subm$package) == 1)` packages that are only seen once.
 It might mean that it is an abandoned/rejected submissions other might be acceptances in less than an hour.
+
+If we look at the folders of each submission well see different picture:
 
 ```{r resubm2}
 subm2 <- cran_times %>%
@@ -583,31 +582,40 @@ ggplot(rsubm2) +
         legend.position = c(0.2, 0.7))
 ```
 
-Looking at the submissions by the folder they are, looks like some packages take a long time to change folder. 
-Some packages are recorded to be in just 1 folder and some other go through multiple folders:
+It looks like some packages take a long time to change folder, perhaps the maintainers have troubles fixing the issues pointed by the reviewers, or don't have time to deal with them. 
+Some packages are recorded in just 1 folder and some other go through multiple folders:
 
 ```{r submissions-n-folders}
 rsubm2 %>% 
   group_by(package, submission_n) %>% 
   summarize(n_folder = n_distinct(folder)) %>% 
   ggplot() + 
-  geom_histogram(aes(n_folder)) +
+  geom_histogram(aes(n_folder), bins = 5) +
   labs(title = "Folders by submission", x = element_blank(), 
        y = element_blank())
 ```
 
 Most submissions end up in one folder, but some go up to 5 folders.
 
+Let's see the most 5 common folders process of submissions:
+
 ```{r submissions-folders}
-subm_folder <- cran_times %>% 
+compact_folders <- function(x) {
+  y <- x != lag(x)
+  y[1] <- TRUE
+  x[y]
+}
+cran_times %>% 
   group_by(package, submission_n) %>% 
-  distinct(folder) %>% 
-  summarise(folder = list(folder)) %>% 
+  summarize (folder = list(compact_folders(folder))) %>% 
   ungroup() %>% 
   count(folder, sort = TRUE)
+  top_n(5) %>% 
+  rename(Folders = folder, Frequency = n) %>% 
+  as.data.frame()
 ```
 
-The most 5 common folders process of submissions are `r paste(unlist(lapply(subm_folder$folder[1:5], paste, collapse = ", ")), collapse = "; ")`.
+As expected the pretest and newbies are one of the most frequent folders.
 
 Another way of seeing whether it is a right moment to submit your package, aside of how many packages are on the queue, is looking how much activity there is:
 
@@ -639,11 +647,12 @@ subm3 %>%
   scale_y_continuous(expand = expansion(add = c(0, 0))) + 
   coord_cartesian(ylim = c(-26, 26)) +
   annotate("text", label = "CRAN's", y = 20, x = as_datetime("2020/11/02")) +
-  annotate("text", label = "Author's", y = -20, x = as_datetime("2020/11/02")) +
+  annotate("text", label = "Maintainers'", y = -20, x = as_datetime("2020/11/02")) +
   labs(y = "Changes", x = element_blank(), title = "Activity on CRAN:")
 ```
 
 On this plot we can see that changes on folders or submissions are not simultaneous.
+But they are quite frequent. 
 
 ### Review process {#review-process}
 
@@ -653,13 +662,13 @@ However, it has been pointed out that it needs an update.
 We've seen which folders go before which ones, but we haven't looked up what is the last folder in which package appear:
 
 ```{r review-process}
-last_seen <- cran_times %>% 
+cran_times %>% 
   ungroup() %>% 
   group_by(package, submission_n) %>% 
   arrange(snapshot_time) %>% 
   filter(1:n() == last(n())) %>% 
-  ungroup()
-count(last_seen, folder, sort = TRUE) %>% 
+  ungroup() %>% 
+  count(folder, sort = TRUE) %>% 
   knitr::kable(col.names = c("Last folder", "Submissions"))
 ```
 
@@ -681,7 +690,7 @@ package_submissions <- cran_times %>%
   filter(submission_period != 0)
 ```
 
-This is a good aproximation about how long does it take a package to be accepted or rejected, but some packages remain on the queue after they are accepted and appear on CRAN. 
+This is a good approximation about how long does it take a package to be accepted or rejected, but some packages remain on the queue after they are accepted and appear on CRAN. 
 Joining this data with data from [metacran](https://r-pkg.org/) we could know how often does this happend.
 But I leave that for the reader or some other posts. 
 Let's go back to time spend on the queue:
@@ -704,8 +713,11 @@ package_submissions %>%
 These diagonals suggest that the work is done in batches in a day or an afternoon.
 And the prominent diagonal after holidays are packages still on the queue. 
 
+If we summarize by day and take the median of all the first package submission we can see how much long is a package on the queue:
+
 ```{r daily-submission}
 package_submissions %>% 
+  filter(submission_n == 1) %>% 
   ungroup() %>%
   mutate(d = as.Date(submission_time)) %>%
   group_by(d) %>% 
@@ -715,10 +727,15 @@ package_submissions %>%
             ymin = 0, ymax = 80, alpha = 0.5, fill = "red") + 
   geom_smooth(aes(d, m)) +
   coord_cartesian(ylim = c(0, NA)) +
-  labs(x = "Submission", y = "Daily median time in queue (hours)", 
+  scale_x_date(date_labels = "%Y/%m/%d", date_breaks = "2 weeks",
+                   expand = expansion(add = 1)) +
+  labs(x = element_blank(), y = "Daily median time in queue (hours)", 
        title = "Submission time")
 ```
 
+We can see that usually it takes more than a day to disappear from the queue for a new package submitted on CRAN. 
+
+There is a lot of variation among submissions:
 
 ```{r submission-progression}
 package_submissions %>% 
@@ -726,8 +743,9 @@ package_submissions %>%
   mutate(submission_n = as.character(submission_n)) %>% 
   ggplot() +
   geom_jitter(aes(submission_n, submission_period), height = 0) +
-  labs(title = "Submission time in queue", y = "Hours", x = element_blank()) +
-  scale_y_continuous(limits = c(1, NA), expand = expansion(add = c(0, 2)))
+  scale_y_continuous(limits = c(1, NA), expand = expansion(add = c(1, 10)),
+                     breaks = seq(0,  4550, by = 24*7)) +
+  labs(title = "Submission time in queue", y = "Hours", x = element_blank())
 ```
 
 Surprisingly sometimes a submissions goes missing from the folders for some days (I checked with one package I submitted and it doesn't appear for 7 days, although it was on the queue). 
@@ -739,39 +757,18 @@ package_submissions %>%
   group_by(submission_n) %>% 
   mutate(submission_n = as.character(submission_n)) %>% 
   filter(n() > 5) %>% 
-  summarize(median(submission_period)) %>% 
-  knitr::kable(col.names = c("Submission", "Median time (hours"))
+  summarize(median = round(median(submission_period), 2)) %>% 
+  knitr::kable(col.names = c("Submission", "Median time (h)"))
 ```
 
 So it usually takes more than a day for new packages and later is around 12 hours. 
 
-## Github action reliability  {#GHAR}
+To set in context the work done by CRAN checking system, which is the one that helps to keep the high quality of the packages, let's explore other checking system: GitHub actions.
+
+## GitHub action reliability  {#GHAR}
 
 The data of this post was collected using Github actions by cransays.
-At the same time I set up a [bot/package](https://llrs.github.io/cranis/) to scan all the available packages on Bioconductor and CRAN, to track those packages that are accepted and when.
-I left it running for 3 months without checking whether I could recover the data.
-When I started writing this post I found the data is not usable on the current format.
-
-Instead I'll use cransays data to test how reliable are GitHub actions are.
-
-```{r gha, eval=FALSE, show=FALSE}
-download.file("https://github.com/llrs/cranis/archive/history.zip",
-              destfile = "static/cranis-history.zip")
-path_zip <- here::here("static", "cranis-history.zip") # From downloading the cransays repository branch history
-dat <- unzip(path_zip, list = TRUE)
-csv <- dat$Name[grepl("*.csv$", x = dat$Name)]
-dates <- gsub("available-packages-(.+)\\.csv", "\\1", basename(csv))
-date <- as.POSIXct(dates, format = "%Y%m%dT%H%M", "UTC")
-gha <- data.frame(
-  month = month(date), 
-  mday = mday(date), 
-  wday = wday(date), 
-  week = week(date),
-  minute = minute(date), 
-  hour = hour(date), 
-  type = "cranis")
-```
-
+Well use this data to test how reliable GitHub actions are.
 
 ```{r gha2}
 gha <- cbind(cran_times[, c("month", "mday", "wday", "week")], 
@@ -813,14 +810,15 @@ These numbers are great, but on CRAN and Bioconductor all packages are checked d
 Some of the most important points from this post:
 
  - Some packages appear on several folders and even there are times that multiple versions of a package are on the queue. 
- - Most submission happens in the first days of the week and towards the middle of the month
- - Most of the submissions disappear from the CRAN queue in less than a day. 
+ - Most submission happens in the first days of the week and towards the beginning of the month.
+ - Most of the submissions disappear from the CRAN queue in less than a day but new submission take around 36 hours. 
  - There's a new package submission to CRAN every hour.
  - In later submissions time in the queue is considerably shorter.
  - It was impossible to know when there was a reply from CRAN, as no information is provided.
  - Not possible to know when a package has all OK before it hits CRAN as some packages remain in the queue even after acceptance. 
  
 Last, I compare the review system with other reviews of R software like Bioconductor and rOpenSci.
+
 One big difference between CRAN and Bioconductor or rOpenSci is that even if your package is already included each time you want to fix something it gets reviewed by someone.
 This ensures a high quality of the packages, as well as increases the work for the reviewers.
 
@@ -851,7 +849,7 @@ Perhaps a mentorship program to review packages or a guideline to what to check 
 
 [^4]: I'm not aware of anyone whose full job is just R reviewing. 
 
-The peace and work of the maintainers as seen on this analyisis is huge, and much more that cannot be seen with this data. 
+The peace and work of the maintainers as seen on this analysis is huge, and much more that cannot be seen with this data. 
 Many thanks to all the volunteers that maintain it, those who donate to the R Foundation and the employers of those volunteers that make possible CRAN and R.
 
 ### Reproducibility
