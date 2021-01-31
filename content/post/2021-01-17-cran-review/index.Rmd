@@ -1,7 +1,7 @@
 ---
 title: CRAN review
 author: Lluís Revilla Sancho
-date: '2021-01-17'
+date: '2021-01-31'
 categories:
   - r
   - CRAN
@@ -33,7 +33,7 @@ I'll look at the [CRAN queue](#cran-load), I'll explore some [time patterns](#ti
 Later I'll go to a more [practical information](#information-for-submitters) for people submitting a package.
 Lastly, we'll see how hard is the job of the CRAN team by looking at the reliability of the [Github action used](#GHAR).
 
-Before all this we need preliminary work to download the data:
+Before all this we need preliminary work to download the data and clean it:
 
 ```{r prepare, eval = FALSE}
 # Downloading the cransays repository branch history
@@ -54,18 +54,18 @@ unlink("static/cransays-history/", recursive = TRUE)
 unlink("static/cransays-history.zip", recursive = TRUE)
 ```
 
-Once we have the data we can load it:
+Once we have the data we can load it, and we load the libraries used for the analysis:
 
 ```{r load}
 library("tidyverse")
 library("lubridate")
+library("hms")
 path_file <- here::here("static", "cran_till_now.csv")
 cran_submissions <- read.csv(path_file)
 theme_set(theme_minimal()) # For plotting
 col_names <- c("package", "version", "snapshot_time", "folder", "subfolder")
 cran_submissions <- cran_submissions[, col_names]
 ```
-
 
 The period we are going to analyze is from the beginning of the records till `r as.Date(max(cran_submissions$snapshot_time))`.
 It includes some well earned holiday time for the CRAN team, during which submissions were not possible.
@@ -81,13 +81,14 @@ holidays <- data.frame(
 )
 ```
 
+Now that we know the holidays and have them in a single data.frame it's time to explore and clean the data collected:
 
 ## Cleaning the data
 
 After preparing the files in one big file we can load and work with it.
 First steps, check the data and prepare it for what we want:
 
-```{r prepare}
+```{r reformat}
 # Use appropiate class
 cran_submissions$snapshot_time <- as.POSIXct(cran_submissions$snapshot_time,
                                              tz = "UTC")
@@ -155,7 +156,7 @@ cran_submissions <- cran_submissions %>%
 ```
 
 Now we removed ~3500 records of packages with two versions remaining on the queue.
-Now we are ready to analyze more.
+Next we check packages in multiple folders but with the same version and remove them until we are left with a single one (under the reasoning that there aren't parallel steps on the review):
 
 ```{r remove-duplicated-packges-folder}
 cran_submissions <- cran_submissions %>% 
@@ -167,7 +168,7 @@ cran_submissions <- cran_submissions %>%
   select(-n)
 ```
 
-Last we want to know how many submissions (in this period did a package undergone:)
+Last we want to know how many submission, in this period, did a package submit:
 
 ```{r submissions_cleanup}
 diff0 <- structure(0, class = "difftime", units = "hours")
@@ -187,6 +188,10 @@ cran_submissions <- cran_submissions %>%
   select(-diff_time, -diff_v, -new_version)
 ```
 
+As sometimes after a release there is soon a fast update to fix some bugs raised on the new features introduced, if a package isn't seen in 24h in the queue it is considered a new submission. 
+Also if it change the package version but not if it change the version while addressing  the feedback from reviewers.
+
+Now we have the data ready for further analysis.
 
 ## CRAN load {#cran-load}
 
@@ -323,7 +328,8 @@ cran_times %>%
 ```
 
 At the beginning and end of the month there is more variation on several folders (This could also be that there isn't information of the end of December and beginning of January).
-There seems to be an increase of new packages towards the end of the month and later and increase on the human folder by the beginning of the month.
+There seems to be an increase of *new packages submissions towards the middle of the month* and later and increase on the human folder by the beginning of the month.
+
 
 ### By day of the week {#day-week}
 
@@ -347,10 +353,7 @@ cran_times %>%
 ```
 
 It doesn't seem to be a special pattern only on the human folder there is an increase on weekdays and a decrease on the weekend.
-What we see is a rise towards the middle of the week of the packages on the pretest folder, indicating new packages submissions. 
-However, note that reviewers might be on multiple time zones and this doesn't allow us to make hard conclusions on this data[^2].
-
-[^2]: I don't know the list of the reviewers, just some folders with the initials of some R core members, and I haven't check their time zones. 
+What we see is a *rise towards the middle of the week* of the packages on the pretest folder, indicating new packages submissions. 
 
 ### Other folders
 
@@ -375,7 +378,7 @@ cran_times %>%
 
 There doesn't seem to be any rule about using those folders or, the work was quick enough to not be recorded.
 
-<details><summary>Looking for any temporal pattern doesn't seem to be worth it.</summary>
+<details><summary>Looking for any temporal pattern doesn't worth it.</summary>
 
 ```{r subfolder-mday}
 cran_times %>% 
@@ -432,10 +435,12 @@ subm <- cran_times %>%
 ```
 
 There are `r sum(table(subm$package) == 1)` packages that are only seen once.
-It might mean that it is an abandoned, delayed or rejected submissions like [knitcitations](https://github.com/cboettig/knitcitations/issues/107#issuecomment-736069214), other might be acceptances in less than an hour[^3].
+It might mean that it is an abandoned, delayed or rejected submissions, other might be acceptances in less than an hour[^3].
 
 [^3]: Which now I cannot find the evidence to link to.
     If anyone finds the tweet I would appreciate it.
+
+If we look at the package submission by date we can see the quick increase of packages:
 
 ```{r resubm}
 rsubm <- subm %>% 
@@ -472,10 +477,22 @@ We can see the rapid growth of packages and that on this period some people subm
 Also note that the definition used for submission is a package with different version number.
 Some authors do change the version number when CRAN reviewers require changes before accepting the package on CRAN while others do not and only change the version number according to their release cycle.
 
-Perhaps we could differentiate this by looking at the period between submissions but I think it won't be interesting.
-As sometimes after a release there is soon a fast update to fix some bugs raised on the new features introduced.
+```{r rate}
+rsubm %>% 
+  arrange(start) %>% 
+  filter(start < holidays$start, # Look only before the holidays
+    submission_n == 1,# Use only the first submission
+    start > min(start)) %>%   # Just new submissions
+  mutate(r = row_number(),
+         start1 = as.numeric(seconds(start))) %>% 
+  lm(start1 ~ r, data = .) %>% 
+  broom::tidy() %>%  
+  mutate(estimate = estimate/(60*60)) # Hours
+```
 
-Despite this differences we can see that most submissions are on the queue fairly few time:
+More or less there is a *new package submission every hour*. 
+
+Despite this submission rate we can see that most submissions are on the queue a short time:
 
 ```{r package-time-queue}
 library("patchwork")
@@ -651,7 +668,7 @@ We can see that many submissions were left at the pretest, and just a minority o
 ### Time it takes to disappear from the system
 
 One of the motivations to do this post was a [question on R-pkg-devel](https://stat.ethz.ch/pipermail/r-package-devel/2020q4/006174.html), about how long does it usually take for a package to be accepted on CRAN. 
-So far we haven't looked at it this way:
+We can look how long does each submission take until it is removed from the queue:
 
 ```{r cran-public}
 package_submissions <- cran_times %>% 
@@ -660,9 +677,14 @@ package_submissions <- cran_times %>%
                                          min(snapshot_time), 
                                          units = "hour"),
             submission_time = min(snapshot_time)) %>% 
-  ungroup()
+  ungroup() %>% 
+  filter(submission_period != 0)
 ```
 
+This is a good aproximation about how long does it take a package to be accepted or rejected, but some packages remain on the queue after they are accepted and appear on CRAN. 
+Joining this data with data from [metacran](https://r-pkg.org/) we could know how often does this happend.
+But I leave that for the reader or some other posts. 
+Let's go back to time spend on the queue:
 
 ```{r time-time}
 package_submissions %>% 
@@ -670,7 +692,10 @@ package_submissions %>%
   ggplot() +
   geom_point(aes(submission_time, submission_period, col = submission_n)) +
   geom_rect(data = holidays, aes(xmin = start, xmax = end),
-            ymin = -1, ymax = 3500, alpha = 0.5, fill = "red") + 
+            ymin = 0, ymax = 3500, alpha = 0.5, fill = "red") + 
+  scale_x_datetime(date_labels = "%Y/%m/%d", date_breaks = "2 weeks",
+                   expand = expansion(add = 10)) +
+  scale_y_continuous(expand = expansion(add = 10)) +
   labs(title = "Time on the queue according to the submission",
        x = "Submission", y = "Time (hours)", col = "Submission") +
   theme(legend.position = c(0.5, 0.8))
@@ -679,7 +704,7 @@ package_submissions %>%
 These diagonals suggest that the work is done in batches in a day or an afternoon.
 And the prominent diagonal after holidays are packages still on the queue. 
 
-```{r}
+```{r daily-submission}
 package_submissions %>% 
   ungroup() %>%
   mutate(d = as.Date(submission_time)) %>%
@@ -687,7 +712,7 @@ package_submissions %>%
   summarize(m = median(submission_period)) %>% 
   ggplot() +
   geom_rect(data = holidays, aes(xmin = as.Date(start), xmax = as.Date(end)),
-            ymin = 0, ymax = 50, alpha = 0.5, fill = "red") + 
+            ymin = 0, ymax = 80, alpha = 0.5, fill = "red") + 
   geom_smooth(aes(d, m)) +
   coord_cartesian(ylim = c(0, NA)) +
   labs(x = "Submission", y = "Daily median time in queue (hours)", 
@@ -695,7 +720,7 @@ package_submissions %>%
 ```
 
 
-```{r}
+```{r submission-progression}
 package_submissions %>% 
   group_by(submission_n) %>% 
   mutate(submission_n = as.character(submission_n)) %>% 
@@ -708,6 +733,17 @@ package_submissions %>%
 Surprisingly sometimes a submissions goes missing from the folders for some days (I checked with one package I submitted and it doesn't appear for 7 days, although it was on the queue). 
 This might affect this analysis as it will count them as new submissions but some of them won't be.
 
+```{r submission_median_time}
+package_submissions %>% 
+  filter(submission_period != 0) %>% 
+  group_by(submission_n) %>% 
+  mutate(submission_n = as.character(submission_n)) %>% 
+  filter(n() > 5) %>% 
+  summarize(median(submission_period)) %>% 
+  knitr::kable(col.names = c("Submission", "Median time (hours"))
+```
+
+So it usually takes more than a day for new packages and later is around 12 hours. 
 
 ## Github action reliability  {#GHAR}
 
@@ -774,20 +810,40 @@ These numbers are great, but on CRAN and Bioconductor all packages are checked d
 
 ## Conclusions {#conclusions}
 
+Some of the most important points from this post:
+
+ - Some packages appear on several folders and even there are times that multiple versions of a package are on the queue. 
+ - Most submission happens in the first days of the week and towards the middle of the month
+ - Most of the submissions disappear from the CRAN queue in less than a day. 
+ - There's a new package submission to CRAN every hour.
+ - In later submissions time in the queue is considerably shorter.
+ - It was impossible to know when there was a reply from CRAN, as no information is provided.
+ - Not possible to know when a package has all OK before it hits CRAN as some packages remain in the queue even after acceptance. 
+ 
+Last, I compare the review system with other reviews of R software like Bioconductor and rOpenSci.
 One big difference between CRAN and Bioconductor or rOpenSci is that even if your package is already included each time you want to fix something it gets reviewed by someone.
 This ensures a high quality of the packages, as well as increases the work for the reviewers.
 
+Also, the list of reviewers as far as I know is just 5 people who also are part of the developers maintaining and developing R. 
+In Bioconductor it is the same (except they do not to take care of R itself) but in rOpenSci this doesn't happen that way.
+
 The next big difference is the lack of transparency on the process of the review itself.
 Perhaps because CRAN started earlier (1997) while Bioconductor in 2002 and rOpenSci much later. 
+On CRAN with the information available we don't know the steps to be accepted beyond the pretest and the manual review.
+We don't know when the package is accepted or rejected, what is the content of the feedback to the maintainer (or when there is feedback and how long does the maintainer get to address those changes). 
+It is no clear how does the process work.
+Additionally, the reviewer's work seems highly manual as we found some duplicated packages on the queue. 
+
+Further automatization and transparency on the process could help reduce the load on the reviewers, as well as increasing the number of reviewers. 
 A public review could help reduce the burden to CRAN reviewers as outsiders could help solving errors (although this is somewhat already fulfilled by the [mailing list](https://www.r-project.org/mail.html) R-package-devel), and would help notice and find a compromise on inconsistencies between reviews. 
 As anecdotal evidence I submitted two packages one shortly after the first, on the second package they asked me to change some URLS that on the first I wasn't required to change.
 
-Another difference are the manual page.
-It seems that CRAN repository is equated to be R, so the [manual for writing R extensions](https://cran.r-project.org/doc/manuals/r-release/R-exts.html) is under `cran.r-project.org` as well as the [CRAN policies](https://cran.r-project.org/web/packages/policies.html). 
+Another difference between these three repositories are the manuals.
+It seems that CRAN repository is equated to be R, so the [manual for writing R extensions](https://cran.r-project.org/doc/manuals/r-release/R-exts.html) is under `cran.r-project.org`, while this is about extending R and can and does happen outside CRAN. 
 
-The policies change without notice to the existing developers.
+The [CRAN policies](https://cran.r-project.org/web/packages/policies.html) changes without notice to the existing developers.
 Sending an email to the maintainers or R-announce mailing list would help developers to notice policy changes. 
-Developers had to create a [policy watch](http://dirk.eddelbuettel.com/blog/2013/10/23/) and other resources to [keep up with CRAN](https://blog.r-hub.io/2019/05/29/keep-up-with-cran/) changes. 
+Developers had to create a [policy watch](http://dirk.eddelbuettel.com/blog/2013/10/23/) and other resources to [keep up with CRAN](https://blog.r-hub.io/2019/05/29/keep-up-with-cran/) changes that not only affect them on submitting a package but also on packages already included on CRAN. 
 
 The CRAN reviewers are involved on multiple demanding tasks: their own regular jobs and outside work (familiar, friend, other interests) commitments, and then, R development and maintenance, CRAN reviews and maintenance, R-journal[^4]. 
 One possible solution to reduce the burden for them is increase the number of reviewers.
@@ -795,7 +851,8 @@ Perhaps a mentorship program to review packages or a guideline to what to check 
 
 [^4]: I'm not aware of anyone whose full job is just R reviewing. 
 
-Many thanks to all the volunteers that maintain it, those who donate to the R Foundation and the employers of those volunteers that make possible the CRAN and R work.
+The peace and work of the maintainers as seen on this analyisis is huge, and much more that cannot be seen with this data. 
+Many thanks to all the volunteers that maintain it, those who donate to the R Foundation and the employers of those volunteers that make possible CRAN and R.
 
 ### Reproducibility
 
