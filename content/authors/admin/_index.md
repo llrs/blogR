@@ -14,10 +14,11 @@ organizations:
 - name: RSGSpain
   url: http://www.rsg-spain.iscbsc.org/
 bio: Bioinformatician with interests in functional enrichment, data integration and
-  transcriptomics.
+  transcriptomics. 
 interests:
 - Functional enrichment
 - Data integration
+- Improve process
 education:
   courses:
   - course: MSc in Bioinformatics for Health Science
@@ -50,7 +51,7 @@ user_groups:
 - Researchers
 ---
 
-I am a bioinformatician doing my PhD at the [IBD](https://ibd-bcn.org) lab of Dr. Julià Panès under the joint supervision of Azucena Salas and Juanjo Lozano. 
-My research interests include functional enrichment, transcriptomics, data integration and analysis outside comparisons. 
-I created some packages deposited in Bioconductor and contributed to other packages on CRAN, Bioconductor and GitHub. 
-Outside work among other things like hiking, I enjoy jumping rope & diabolo as hobbies. 
+I am a bioinformatician currently doing a PhD at the [IBD](https://ibd-bcn.org) lab of Dr. [Julian Panès](https://orcid.org/0000-0002-4971-6902) under the joint supervision of [Azucena Salas](https://orcid.org/0000-0003-4572-2907) and [Juanjo Lozano](https://orcid.org/0000-0001-7613-3908). My research interests include data integration (my PhD topic) and functional enrichment.  
+Other interest are helping with data to make better decisions and improve processes,  from transparency, lawyer activities, media handling to open source activities.
+To be more effective at this I'm in touch with some organizations and I created some packages deposited in [Bioconductor](https://bioconductor.org/packages/BioCor/), [CRAN](https://cran.r-project.org/web/checks/check_results_lluis.revilla_at_gmail.com.html), [rOpenSci](https://ropensci.org/), [rOpenSpain](https://ropenspain.es/) and [GitHub](https://github.com/llrs).  
+Outside programming I enjoy hiking, jumping rope and diabolo as hobbies. 
