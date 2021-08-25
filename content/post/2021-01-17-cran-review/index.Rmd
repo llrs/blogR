@@ -609,7 +609,7 @@ cran_times %>%
   group_by(package, submission_n) %>% 
   summarize (folder = list(compact_folders(folder))) %>% 
   ungroup() %>% 
-  count(folder, sort = TRUE)
+  count(folder, sort = TRUE) %>% 
   top_n(5) %>% 
   rename(Folders = folder, Frequency = n) %>% 
   as.data.frame()
