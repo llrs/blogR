@@ -1,5 +1,5 @@
 ---
-title: Talks or Workshops
+title: Talks and Workshops
 subtitle: "Slides, recording and comments"
 summary: "Talks, workshops"
 type: "talks"
