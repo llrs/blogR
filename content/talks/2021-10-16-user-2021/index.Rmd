@@ -1,6 +1,6 @@
 ---
 title: "Packages submission and reviews; how does it work?"
-subtitle: "My talk at useR! 2021"
+subtitle: "My talk at UseR! 2021"
 author: "Lluís Revilla Sancho"
 date: '2021-10-16'
 slug: user-2021
@@ -9,7 +9,7 @@ categories:
 tags:
   - CRAN
   - packages
-event: "useR!2021"
+event: "UseR!2021"
 event_url: "https://user2021.r-project.org/"
 summary: "Description of the submission process to CRAN"
 abstract: |
