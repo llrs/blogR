@@ -92,3 +92,10 @@ rssLimit = 20
   disable = false # use of Cookies is disabled,
   useSessionStorage = true # instead Session Storage is used
   respectDoNotTrack = true # respect the “Do Not Track” HTTP header
+
+
+[params]
+
+    # Custom favicon param. See layouts/partials/favicon.html for use
+    # Add favicon.png to static/ and it will be copied to public/ on build
+    favicon = "/favicon-32x32.png"
