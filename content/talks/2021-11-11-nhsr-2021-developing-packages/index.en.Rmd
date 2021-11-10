@@ -1,0 +1,35 @@
+---
+title: 'Improving (analysis) process: developing packages'
+subtitle: Ennvironment around creating internal packages
+author: Lluís Revilla Sancho
+date: '2021-11-11'
+slug: nhsr-2021-developing-packages
+categories: []
+tags:
+  - NHS-R
+  - invited-talk
+event: "NHS-R conference 2021"
+event_url: https://nhsrcommunity.com/nhs-r-community-conference-2021/
+location: ~
+summary: ~
+abstract: ~
+date_end: '2021-11-09T00:06:09+01:00'
+all_day: no
+publishDate: '2021-11-09T00:06:09+01:00'
+authors: [-admin]
+featured: yes
+image:
+  caption: 'Title slide'
+  focal_point: 'center'
+  preview_only: no
+url_slides: https://nhsr2021.llrs.dev
+url_code: https://github.com/llrs/nhsr2021
+url_pdf: ~
+url_video: ~
+slides: ''
+projects: []
+---
+
+I was invited to give this talk shortly after [my talk at useR!2021](/talks/user-2021/).
+I was very nervous because I would like to have such a community on Spain and work together with them. 
+
