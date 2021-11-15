@@ -1,0 +1,1412 @@
+---
+title: Bugs in R
+author: Lluís Revilla Sancho
+date: '2021-11-16'
+slug: bugs-in-r
+categories:
+  - r
+tags:
+  - analysis
+  - API
+  - R
+authors: []
+description: ''
+draft: no
+editor_options:
+  chunk_output_type: console
+featured: no
+image:
+  caption: 'A bug'
+  focal_point: 'center'
+subtitle: 'Exploring the history of bugs in R'
+summary: ''
+---
+
+<script src="{{< blogdown/postref >}}index.en_files/header-attrs/header-attrs.js"></script>
+<script src="{{< blogdown/postref >}}index.en_files/kePrint/kePrint.js"></script>
+<link href="{{< blogdown/postref >}}index.en_files/lightable/lightable.css" rel="stylesheet" />
+
+
+<p>This post has a relatively long introduction, you can skip and go ahead to the <a href="#The-analysis">analysis</a>.</p>
+<p>I knew about the r-devel (abbreviated Rd) mailing list that is where some discussions about the language happen and
+I had read that post of the <a href="https://developer.r-project.org/Blog/public/2019/10/09/r-can-use-your-help-reviewing-bug-reports/index.html">R core requesting help reviewing bug reports</a> and I had <a href="https://www.r-project.org/bugs.html">requested an account</a> the same day it came out to be able to post on <a href="https://bugs.r-project.org/">Bugzilla: https://bugs.r-project.org/</a>.
+But I hadn’t reported any bug or anything, what had I to bring?</p>
+<p>After RStudio 2021 I saw announced the <a href="https://r-devel.slack.com" class="uri">https://r-devel.slack.com</a> (you can join via <a href="https://forwards.github.io/rcontribution/">this website</a>) and when I joined I checked some bugs and I found something odd.
+This lead to the creation of my first R bug: <a href="https://bugs.r-project.org/show_bug.cgi?id=18055">18055</a>.</p>
+<p>Then I thinking about the analysis about <a href="https://llrs.dev/tags/reviews/">package reviews</a> I realized it was analyzing issues.
+Then it came to me that I could actually also analyse the issues of R, aka bugs reports.</p>
+<div id="collecting-the-data" class="section level1">
+<h1>Collecting the data</h1>
+<p>First was step was collecting the data needed.
+Similar with the rOpenSci and Bioconductor analysis I knew I might need to create a package or a script just to retrieve the data.</p>
+<p>I found somehow that it reports some data as xml and I though I could use that.
+But exploring the documentation I found it had an API that could be used to retrieve data.
+It required authentication to interact with the API.
+Instead of putting me off it made it a reasonable challenge and progression.
+If previously I used the <a href="https://cran.r-project.org/package=gh">gh package</a> to authenticate and retrieve the raw data this time I had to learn how to authenticate to an API.
+I already developed a package that uses a poorly explained API to <a href="https://ropenspain.github.io/BOE/," title="Collect the national gazette">retrieve documents</a> and adding a new step to authenticate requests was a small enough step.</p>
+<p>I also found a package, <a href="https://github.com/mvkorpel/bugtractr/">bugtractr</a>, that did this already but I had some problems using it and didn’t use authenticated requests to get the data.
+This meant it couldn’t retrieve all data I wanted.
+So I went on developing my own package to interact with Bugzilla’s API.</p>
+<p>As I was learning to interact with API and I wanted to make it useful for the R community I looked at how to make that.
+Lukyly for me at the time I was doing this, I found the book <a href="https://books.ropensci.org/http-testing/index.html">HTTP testing in R</a>, which was still under heavy writing but almost complete, and started reading and using its helpful advice to learn.
+One of the <a href="https://books.ropensci.org/http-testing/graceful.html#choose-the-http-resource-wisely">first recommendations</a> was to contact with the API providers, so I email the R core about my intentions.</p>
+<p>They raised some concerns:
+- Impact on the load of the machine.
+- if the API is robust enough.
+- However, semi-automating report submissions needs more thought.</p>
+<p>Yes, at that time I had realized that the API allows to submit bug reports on the database (comments and attachments too), so I thought it could be an easy way to help people submit more bugs: submitting bugs from R itself.</p>
+<p>After some exchanges about why, and how I was trying to retrieve data from Bugzilla I was deferred Simon Urbanek.</p>
+<p>By that time I already posted about this on R-devel and got some interest from R contributing working group to which I presented the idea on March 12 (One month after the first commit on the package).</p>
+<p>It was suggested on that meeting to present a Google Summer of Code project[^1] which closed the project submission period shortly after.
+Soon two students contacted me and Heather Turner, who agreed to co-mentor the project, to write a proposal to work on my project.</p>
+<p>1: A program from Google where they sponsor students and organizations to work on open source projects. I didn’t knew R participated, but here is the <a href="https://github.com/rstats-gsoc">organization on Github</a>.</p>
+<p>By that time Simon kindly provided a database dump (without the user list) due to concerns on privacy and load on the server (which I found it can return different results on the same query), and provided the id of R core members.</p>
+</div>
+<div id="the-analysis" class="section level1">
+<h1>The analysis</h1>
+<p>This is a mix of analysis for three several purposes:</p>
+<ul>
+<li>To understand what is going on with bug reports.</li>
+<li>To understand how to make better bug reports to help bug submissions via bugRzilla.</li>
+<li>To help the R contributor working group and R forwards to identify contributors.</li>
+<li>To help the R core team identifying possible areas of improvements.</li>
+</ul>
+<p>It is based on the <a href="https://llrs.github.io/bugzilla_viz/bugRzilla_review.html">analysis by Piyush Kumar</a> and <a href="https://llrs.github.io/bugzilla_viz/">myself</a>.
+If you want code and explore the database follow these links and you’ll be able to download it.</p>
+<p>A first exploration is to see the bug ids and the creation time of the bug id:</p>
+<p><img src="{{< blogdown/postref >}}index.en_files/figure-html/unnamed-chunk-1-1.png" width="768" /></p>
+<p>The first suprising thing are these three points that appear outside the line the other bugs form.</p>
+<p>One of these outliers is <a href="https://bugs.r-project.org/show_bug.cgi?id=1">a test</a> when the bug reports moved from Jitterbug to Bugzilla as <a href="https://stat.ethz.ch/pipermail/r-devel/2010-March/056954.html">mentioned on the mailing list</a>.</p>
+<p>I don’t know the reason of the move, probably due to SPAM or interface improvements.
+If we look at those missing ids we can estimate the SPAM, note that some might be vulnerabilities on R (but I doubt that there are this much):</p>
+<p><img src="{{< blogdown/postref >}}index.en_files/figure-html/unnamed-chunk-2-1.png" width="768" /></p>
+<p>The first observable thing is the high number of ids missing on Jitterbug.
+I heard that this was an abuse of the site, which seems particularly bad arround two dates.</p>
+<p>Later on when the system moved to Bugzilla there are much less missing ids, until one day there are around 120 missing ids and the date later to have an account it was required to send a message to the R core about it.
+Probably spamers abused the Bugzilla’s API.
+Is understandable that the R core team is concerned on receiving spam messages from those past experiences.</p>
+<p>As the information from Jitterbug is both old and not as reach as those bugs on Bugzilla I will limit from now on to analyze those bugs reported on Bugzilla.
+In addition the number of bugs reported on Bugzilla is similar to the ones on Jitterbug:</p>
+<table class="table" style="margin-left: auto; margin-right: auto;">
+<thead>
+<tr>
+<th style="text-align:left;">
+Reported on
+</th>
+<th style="text-align:right;">
+Reports
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:left;">
+Jitterbug
+</td>
+<td style="text-align:right;">
+3594
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+Bugzilla
+</td>
+<td style="text-align:right;">
+3448
+</td>
+</tr>
+</tbody>
+</table>
+<p>There are some old bugs opened on Jitterbug modified on Bugzilla (428) and still not closed.</p>
+<div id="openning-bugs-reports" class="section level2">
+<h2>Openning bugs reports</h2>
+<p>If we focus only on bugs reported on Bugzilla we find the following number of bugs:</p>
+<p><img src="{{< blogdown/postref >}}index.en_files/figure-html/unnamed-chunk-4-1.png" width="768" /></p>
+<p>Most bugs are closed followed by unconfirmed:</p>
+<table class="table" style="margin-left: auto; margin-right: auto;">
+<thead>
+<tr>
+<th style="text-align:left;">
+Status
+</th>
+<th style="text-align:right;">
+Bug reports
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:left;">
+CLOSED
+</td>
+<td style="text-align:right;">
+2792
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+UNCONFIRMED
+</td>
+<td style="text-align:right;">
+324
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+NEW
+</td>
+<td style="text-align:right;">
+125
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+ASSIGNED
+</td>
+<td style="text-align:right;">
+39
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+CONFIRMED
+</td>
+<td style="text-align:right;">
+13
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+REOPENED
+</td>
+<td style="text-align:right;">
+11
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+RESOLVED
+</td>
+<td style="text-align:right;">
+9
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+VERIFIED
+</td>
+<td style="text-align:right;">
+3
+</td>
+</tr>
+</tbody>
+</table>
+<p>Do bugs reported have an attachment with a patch?</p>
+<img src="{{< blogdown/postref >}}index.en_files/figure-html/unnamed-chunk-6-1.png" width="768" />
+<table class="table" style="margin-left: auto; margin-right: auto;">
+<thead>
+<tr>
+<th style="text-align:center;">
+Attachment on opening
+</th>
+<th style="text-align:center;">
+Patch
+</th>
+<th style="text-align:center;">
+Bugs
+</th>
+<th style="text-align:center;">
+%
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:center;">
+No
+</td>
+<td style="text-align:center;">
+No
+</td>
+<td style="text-align:center;">
+380
+</td>
+<td style="text-align:center;">
+43.18
+</td>
+</tr>
+<tr>
+<td style="text-align:center;">
+No
+</td>
+<td style="text-align:center;">
+Yes
+</td>
+<td style="text-align:center;">
+500
+</td>
+<td style="text-align:center;">
+56.82
+</td>
+</tr>
+<tr>
+<td style="text-align:center;">
+Yes
+</td>
+<td style="text-align:center;">
+No
+</td>
+<td style="text-align:center;">
+438
+</td>
+<td style="text-align:center;">
+61.60
+</td>
+</tr>
+<tr>
+<td style="text-align:center;">
+Yes
+</td>
+<td style="text-align:center;">
+Yes
+</td>
+<td style="text-align:center;">
+273
+</td>
+<td style="text-align:center;">
+38.40
+</td>
+</tr>
+</tbody>
+</table>
+<p>Many bug reports have attachments on opening, mostly they contain code to reproduce the problem.
+If bugs do not contain attachments and they receive an attachment it will usually be a patch (but it might not).</p>
+</div>
+<div id="what-happens-after-submitting-a-bug-report" class="section level2">
+<h2>What happens after submitting a bug report?</h2>
+<p><img src="{{< blogdown/postref >}}index.en_files/figure-html/unnamed-chunk-7-1.png" width="768" /></p>
+<p>Most common action is receiving a comment, whose author is added on the CC field.</p>
+<p><img src="{{< blogdown/postref >}}index.en_files/figure-html/unnamed-chunk-8-1.png" width="768" /></p>
+<p>The R core is very active answering on the bug reports, only it seems that those that are trivial do not receive a reply as often as the other categories.</p>
+<p><img src="{{< blogdown/postref >}}index.en_files/figure-html/unnamed-chunk-9-1.png" width="768" /></p>
+<p>If we look by component and OS there are some combinations that received few comments, mostly those that are wishes for R.</p>
+<p>If we split them between peitions to improve R and actual bug reports we can see a different pattern:</p>
+<p><img src="{{< blogdown/postref >}}index.en_files/figure-html/unnamed-chunk-10-1.png" width="768" /></p>
+<p>Enhancements usually receive less comments from the R core.
+Wishlists receive more comments from the R core among the enhancements.</p>
+<p>What about the comments made by the original poster?
+Do they comment when they receive some feedback from other users?</p>
+<table class="table" style="margin-left: auto; margin-right: auto;">
+<thead>
+<tr>
+<th style="text-align:left;">
+Responsive
+</th>
+<th style="text-align:right;">
+Bugs reports
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:left;">
+no
+</td>
+<td style="text-align:right;">
+409
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+yes
+</td>
+<td style="text-align:right;">
+122
+</td>
+</tr>
+</tbody>
+</table>
+<p>Most of them do not reply back when they receive a comment.
+There might be several causes, one of them is if their bug report is closed or assigned to an R core member.</p>
+<table class="table" style="margin-left: auto; margin-right: auto;">
+<thead>
+<tr>
+<th style="text-align:left;">
+handled
+</th>
+<th style="text-align:right;">
+bugs
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:left;">
+no
+</td>
+<td style="text-align:right;">
+177
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+yes
+</td>
+<td style="text-align:right;">
+232
+</td>
+</tr>
+</tbody>
+</table>
+<p>Which shows that the majority of those who do not respond is because either the bug report is closed (fixed or not) or a R core member is assigned (usually to himself).</p>
+</div>
+<div id="who-is-active" class="section level2">
+<h2>Who is active ?</h2>
+<p>So far we have explored the activity of users who report a bug and the R core members that receive this.
+But there are some users that beyond this they also participate and collaborate with the R core.
+To make it more recent we will look at those users active on the bugs opened on the last three years.</p>
+<table>
+<thead>
+<tr>
+<th style="text-align:right;">
+ID
+</th>
+<th style="text-align:left;">
+Name
+</th>
+<th style="text-align:right;">
+All comments
+</th>
+<th style="text-align:right;">
+All attachments
+</th>
+<th style="text-align:right;">
+Comments
+</th>
+<th style="text-align:right;">
+Attachments
+</th>
+<th style="text-align:right;">
+Bugs opened
+</th>
+<th style="text-align:right;">
+Bugs interacted
+</th>
+<th style="text-align:right;">
+Actions
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:right;">
+3299
+</td>
+<td style="text-align:left;">
+Elin Waring
+</td>
+<td style="text-align:right;">
+100
+</td>
+<td style="text-align:right;">
+2
+</td>
+<td style="text-align:right;">
+99
+</td>
+<td style="text-align:right;">
+1
+</td>
+<td style="text-align:right;">
+1
+</td>
+<td style="text-align:right;">
+66
+</td>
+<td style="text-align:right;">
+101
+</td>
+</tr>
+<tr>
+<td style="text-align:right;">
+963
+</td>
+<td style="text-align:left;">
+Suharto Anggono
+</td>
+<td style="text-align:right;">
+115
+</td>
+<td style="text-align:right;">
+39
+</td>
+<td style="text-align:right;">
+55
+</td>
+<td style="text-align:right;">
+7
+</td>
+<td style="text-align:right;">
+21
+</td>
+<td style="text-align:right;">
+42
+</td>
+<td style="text-align:right;">
+83
+</td>
+</tr>
+<tr>
+<td style="text-align:right;">
+274
+</td>
+<td style="text-align:left;">
+Sebastian Meyer
+</td>
+<td style="text-align:right;">
+80
+</td>
+<td style="text-align:right;">
+24
+</td>
+<td style="text-align:right;">
+49
+</td>
+<td style="text-align:right;">
+11
+</td>
+<td style="text-align:right;">
+18
+</td>
+<td style="text-align:right;">
+58
+</td>
+<td style="text-align:right;">
+78
+</td>
+</tr>
+<tr>
+<td style="text-align:right;">
+430
+</td>
+<td style="text-align:left;">
+Benjamin Tyner
+</td>
+<td style="text-align:right;">
+59
+</td>
+<td style="text-align:right;">
+4
+</td>
+<td style="text-align:right;">
+52
+</td>
+<td style="text-align:right;">
+4
+</td>
+<td style="text-align:right;">
+5
+</td>
+<td style="text-align:right;">
+32
+</td>
+<td style="text-align:right;">
+61
+</td>
+</tr>
+<tr>
+<td style="text-align:right;">
+3256
+</td>
+<td style="text-align:left;">
+Michael Chirico
+</td>
+<td style="text-align:right;">
+110
+</td>
+<td style="text-align:right;">
+51
+</td>
+<td style="text-align:right;">
+2
+</td>
+<td style="text-align:right;">
+1
+</td>
+<td style="text-align:right;">
+52
+</td>
+<td style="text-align:right;">
+54
+</td>
+<td style="text-align:right;">
+55
+</td>
+</tr>
+<tr>
+<td style="text-align:right;">
+1044
+</td>
+<td style="text-align:left;">
+Kevin Ushey
+</td>
+<td style="text-align:right;">
+65
+</td>
+<td style="text-align:right;">
+10
+</td>
+<td style="text-align:right;">
+4
+</td>
+<td style="text-align:right;">
+0
+</td>
+<td style="text-align:right;">
+35
+</td>
+<td style="text-align:right;">
+39
+</td>
+<td style="text-align:right;">
+39
+</td>
+</tr>
+<tr>
+<td style="text-align:right;">
+1036
+</td>
+<td style="text-align:left;">
+Henrik Bengtsson
+</td>
+<td style="text-align:right;">
+56
+</td>
+<td style="text-align:right;">
+14
+</td>
+<td style="text-align:right;">
+9
+</td>
+<td style="text-align:right;">
+1
+</td>
+<td style="text-align:right;">
+26
+</td>
+<td style="text-align:right;">
+31
+</td>
+<td style="text-align:right;">
+36
+</td>
+</tr>
+<tr>
+<td style="text-align:right;">
+2307
+</td>
+<td style="text-align:left;">
+Lionel Henry
+</td>
+<td style="text-align:right;">
+41
+</td>
+<td style="text-align:right;">
+25
+</td>
+<td style="text-align:right;">
+6
+</td>
+<td style="text-align:right;">
+2
+</td>
+<td style="text-align:right;">
+20
+</td>
+<td style="text-align:right;">
+22
+</td>
+<td style="text-align:right;">
+28
+</td>
+</tr>
+<tr>
+<td style="text-align:right;">
+1056
+</td>
+<td style="text-align:left;">
+Bill Dunlap
+</td>
+<td style="text-align:right;">
+28
+</td>
+<td style="text-align:right;">
+0
+</td>
+<td style="text-align:right;">
+1
+</td>
+<td style="text-align:right;">
+0
+</td>
+<td style="text-align:right;">
+21
+</td>
+<td style="text-align:right;">
+22
+</td>
+<td style="text-align:right;">
+22
+</td>
+</tr>
+<tr>
+<td style="text-align:right;">
+2801
+</td>
+<td style="text-align:left;">
+Bob Rudis
+</td>
+<td style="text-align:right;">
+19
+</td>
+<td style="text-align:right;">
+4
+</td>
+<td style="text-align:right;">
+16
+</td>
+<td style="text-align:right;">
+2
+</td>
+<td style="text-align:right;">
+2
+</td>
+<td style="text-align:right;">
+12
+</td>
+<td style="text-align:right;">
+20
+</td>
+</tr>
+<tr>
+<td style="text-align:right;">
+1299
+</td>
+<td style="text-align:left;">
+Gabriel Becker
+</td>
+<td style="text-align:right;">
+52
+</td>
+<td style="text-align:right;">
+28
+</td>
+<td style="text-align:right;">
+0
+</td>
+<td style="text-align:right;">
+0
+</td>
+<td style="text-align:right;">
+18
+</td>
+<td style="text-align:right;">
+18
+</td>
+<td style="text-align:right;">
+18
+</td>
+</tr>
+<tr>
+<td style="text-align:right;">
+11
+</td>
+<td style="text-align:left;">
+Ben Bolker
+</td>
+<td style="text-align:right;">
+14
+</td>
+<td style="text-align:right;">
+0
+</td>
+<td style="text-align:right;">
+11
+</td>
+<td style="text-align:right;">
+0
+</td>
+<td style="text-align:right;">
+3
+</td>
+<td style="text-align:right;">
+9
+</td>
+<td style="text-align:right;">
+14
+</td>
+</tr>
+<tr>
+<td style="text-align:right;">
+114
+</td>
+<td style="text-align:left;">
+Gabor Csardi
+</td>
+<td style="text-align:right;">
+26
+</td>
+<td style="text-align:right;">
+8
+</td>
+<td style="text-align:right;">
+4
+</td>
+<td style="text-align:right;">
+0
+</td>
+<td style="text-align:right;">
+10
+</td>
+<td style="text-align:right;">
+11
+</td>
+<td style="text-align:right;">
+14
+</td>
+</tr>
+<tr>
+<td style="text-align:right;">
+610
+</td>
+<td style="text-align:left;">
+Jeroen Ooms
+</td>
+<td style="text-align:right;">
+15
+</td>
+<td style="text-align:right;">
+4
+</td>
+<td style="text-align:right;">
+6
+</td>
+<td style="text-align:right;">
+1
+</td>
+<td style="text-align:right;">
+7
+</td>
+<td style="text-align:right;">
+11
+</td>
+<td style="text-align:right;">
+14
+</td>
+</tr>
+<tr>
+<td style="text-align:right;">
+1602
+</td>
+<td style="text-align:left;">
+brodie.gaslam@
+</td>
+<td style="text-align:right;">
+53
+</td>
+<td style="text-align:right;">
+16
+</td>
+<td style="text-align:right;">
+0
+</td>
+<td style="text-align:right;">
+0
+</td>
+<td style="text-align:right;">
+13
+</td>
+<td style="text-align:right;">
+13
+</td>
+<td style="text-align:right;">
+13
+</td>
+</tr>
+<tr>
+<td style="text-align:right;">
+6
+</td>
+<td style="text-align:left;">
+Duncan Murdoch
+</td>
+<td style="text-align:right;">
+22
+</td>
+<td style="text-align:right;">
+7
+</td>
+<td style="text-align:right;">
+0
+</td>
+<td style="text-align:right;">
+0
+</td>
+<td style="text-align:right;">
+12
+</td>
+<td style="text-align:right;">
+12
+</td>
+<td style="text-align:right;">
+12
+</td>
+</tr>
+<tr>
+<td style="text-align:right;">
+921
+</td>
+<td style="text-align:left;">
+Dirk Eddelbuettel
+</td>
+<td style="text-align:right;">
+17
+</td>
+<td style="text-align:right;">
+4
+</td>
+<td style="text-align:right;">
+4
+</td>
+<td style="text-align:right;">
+0
+</td>
+<td style="text-align:right;">
+7
+</td>
+<td style="text-align:right;">
+11
+</td>
+<td style="text-align:right;">
+11
+</td>
+</tr>
+<tr>
+<td style="text-align:right;">
+1715
+</td>
+<td style="text-align:left;">
+Herv� Pag�s
+</td>
+<td style="text-align:right;">
+24
+</td>
+<td style="text-align:right;">
+1
+</td>
+<td style="text-align:right;">
+5
+</td>
+<td style="text-align:right;">
+1
+</td>
+<td style="text-align:right;">
+5
+</td>
+<td style="text-align:right;">
+7
+</td>
+<td style="text-align:right;">
+11
+</td>
+</tr>
+<tr>
+<td style="text-align:right;">
+2885
+</td>
+<td style="text-align:left;">
+Jan Gorecki
+</td>
+<td style="text-align:right;">
+14
+</td>
+<td style="text-align:right;">
+1
+</td>
+<td style="text-align:right;">
+1
+</td>
+<td style="text-align:right;">
+0
+</td>
+<td style="text-align:right;">
+9
+</td>
+<td style="text-align:right;">
+10
+</td>
+<td style="text-align:right;">
+10
+</td>
+</tr>
+<tr>
+<td style="text-align:right;">
+3051
+</td>
+<td style="text-align:left;">
+Xianying Tan
+</td>
+<td style="text-align:right;">
+20
+</td>
+<td style="text-align:right;">
+0
+</td>
+<td style="text-align:right;">
+4
+</td>
+<td style="text-align:right;">
+0
+</td>
+<td style="text-align:right;">
+6
+</td>
+<td style="text-align:right;">
+7
+</td>
+<td style="text-align:right;">
+10
+</td>
+</tr>
+<tr>
+<td style="text-align:right;">
+3228
+</td>
+<td style="text-align:left;">
+Emil Bode
+</td>
+<td style="text-align:right;">
+16
+</td>
+<td style="text-align:right;">
+4
+</td>
+<td style="text-align:right;">
+0
+</td>
+<td style="text-align:right;">
+0
+</td>
+<td style="text-align:right;">
+10
+</td>
+<td style="text-align:right;">
+10
+</td>
+<td style="text-align:right;">
+10
+</td>
+</tr>
+<tr>
+<td style="text-align:right;">
+3344
+</td>
+<td style="text-align:left;">
+Joe Cheng
+</td>
+<td style="text-align:right;">
+7
+</td>
+<td style="text-align:right;">
+3
+</td>
+<td style="text-align:right;">
+7
+</td>
+<td style="text-align:right;">
+3
+</td>
+<td style="text-align:right;">
+0
+</td>
+<td style="text-align:right;">
+1
+</td>
+<td style="text-align:right;">
+10
+</td>
+</tr>
+<tr>
+<td style="text-align:right;">
+2264
+</td>
+<td style="text-align:left;">
+Neal Fultz
+</td>
+<td style="text-align:right;">
+20
+</td>
+<td style="text-align:right;">
+5
+</td>
+<td style="text-align:right;">
+0
+</td>
+<td style="text-align:right;">
+0
+</td>
+<td style="text-align:right;">
+9
+</td>
+<td style="text-align:right;">
+9
+</td>
+<td style="text-align:right;">
+9
+</td>
+</tr>
+<tr>
+<td style="text-align:right;">
+317
+</td>
+<td style="text-align:left;">
+Mikko Korpela
+</td>
+<td style="text-align:right;">
+9
+</td>
+<td style="text-align:right;">
+0
+</td>
+<td style="text-align:right;">
+5
+</td>
+<td style="text-align:right;">
+0
+</td>
+<td style="text-align:right;">
+3
+</td>
+<td style="text-align:right;">
+6
+</td>
+<td style="text-align:right;">
+8
+</td>
+</tr>
+<tr>
+<td style="text-align:right;">
+847
+</td>
+<td style="text-align:left;">
+Pavel N. Krivitsky
+</td>
+<td style="text-align:right;">
+15
+</td>
+<td style="text-align:right;">
+2
+</td>
+<td style="text-align:right;">
+0
+</td>
+<td style="text-align:right;">
+0
+</td>
+<td style="text-align:right;">
+8
+</td>
+<td style="text-align:right;">
+8
+</td>
+<td style="text-align:right;">
+8
+</td>
+</tr>
+<tr>
+<td style="text-align:right;">
+1251
+</td>
+<td style="text-align:left;">
+Arni Magnusson
+</td>
+<td style="text-align:right;">
+13
+</td>
+<td style="text-align:right;">
+8
+</td>
+<td style="text-align:right;">
+0
+</td>
+<td style="text-align:right;">
+0
+</td>
+<td style="text-align:right;">
+8
+</td>
+<td style="text-align:right;">
+8
+</td>
+<td style="text-align:right;">
+8
+</td>
+</tr>
+<tr>
+<td style="text-align:right;">
+1849
+</td>
+<td style="text-align:left;">
+Andre Mikulec
+</td>
+<td style="text-align:right;">
+21
+</td>
+<td style="text-align:right;">
+4
+</td>
+<td style="text-align:right;">
+1
+</td>
+<td style="text-align:right;">
+0
+</td>
+<td style="text-align:right;">
+7
+</td>
+<td style="text-align:right;">
+8
+</td>
+<td style="text-align:right;">
+8
+</td>
+</tr>
+<tr>
+<td style="text-align:right;">
+3330
+</td>
+<td style="text-align:left;">
+André Gillibert
+</td>
+<td style="text-align:right;">
+20
+</td>
+<td style="text-align:right;">
+10
+</td>
+<td style="text-align:right;">
+0
+</td>
+<td style="text-align:right;">
+0
+</td>
+<td style="text-align:right;">
+8
+</td>
+<td style="text-align:right;">
+8
+</td>
+<td style="text-align:right;">
+8
+</td>
+</tr>
+<tr>
+<td style="text-align:right;">
+3376
+</td>
+<td style="text-align:left;">
+Hangfan Zhang
+</td>
+<td style="text-align:right;">
+14
+</td>
+<td style="text-align:right;">
+3
+</td>
+<td style="text-align:right;">
+0
+</td>
+<td style="text-align:right;">
+0
+</td>
+<td style="text-align:right;">
+8
+</td>
+<td style="text-align:right;">
+8
+</td>
+<td style="text-align:right;">
+8
+</td>
+</tr>
+<tr>
+<td style="text-align:right;">
+2040
+</td>
+<td style="text-align:left;">
+Bill Denney
+</td>
+<td style="text-align:right;">
+16
+</td>
+<td style="text-align:right;">
+1
+</td>
+<td style="text-align:right;">
+0
+</td>
+<td style="text-align:right;">
+0
+</td>
+<td style="text-align:right;">
+7
+</td>
+<td style="text-align:right;">
+7
+</td>
+<td style="text-align:right;">
+7
+</td>
+</tr>
+</tbody>
+</table>
+<p>(You can find a sortable anf filterable version of this table <a href="https://llrs.github.io/bugzilla_viz/#R_contributors">here</a>).
+One of the top contributors was recently added as R core member.
+Other</p>
+<p><img src="{{< blogdown/postref >}}index.en_files/figure-html/unnamed-chunk-14-1.png" width="768" /></p>
+<p>Some contributors focus on providing patches, other’s open many bugs, other’s comment on the bugs to confirm bugs or provide context to the bugs.</p>
+</div>
+<div id="future-of-the-report-system" class="section level2">
+<h2>Future of the report system ?</h2>
+<p>Last what is the progression of bugs</p>
+<p><img src="{{< blogdown/postref >}}index.en_files/figure-html/unnamed-chunk-15-1.png" width="768" /></p>
+<p>If we look only at bug reports and not enhancements every 1.52 day there is one bug report and one enhancement petitions per 4.44 days.</p>
+<p><img src="{{< blogdown/postref >}}index.en_files/figure-html/unnamed-chunk-16-1.png" width="768" /></p>
+<p>If we look only at bug reports and not enhancements there are 1.48 comments every day from R users, one comment on enhancement per 1.9 days.</p>
+<p>Both of them has remained fairly constant over the years, at times a bit faster and sometimes slower.</p>
+</div>
+</div>
+<div id="final-comments" class="section level1">
+<h1>Final comments</h1>
+<p>This is probably the post that took longer so far.
+I started on February to work on this blog post but until now I haven’t actually written the blog post I wanted.</p>
+<p>Many thanks to Simon Urbanek for providing the database dump, without it would have been slower and harder if not impossible to do this analysis.
+Thanks to Heather Turner for encouraging me to do more on this project and providing valuable feedback about what kind of analysis could be useful and co-mentoring Pyush Kumar who I also like to thank the first analysis on the data and his contributions during GSoC.
+Many thanks to Gabe Becker and Michael Quirico for their feedback on the R contributors working group.</p>
+<p>Now that the analysis is done, I want to finish the bugRzilla package (which I already started to use for small tasks on this analysis).
+I’m still working on it testing how is the best way to submit properly formatted bug reports with a developer instance set up by Simon.
+Then I’ll ask the R core if the way it submits bug reports works well for them.</p>
+<p><strong>TL:DR:</strong> There are many bug reported and handled by the R core and many users contribute on solving the bug reports.
+The peace of new bug reports and comments is constant as well as enhancements on the language itself.</p>
+</div>
+<div id="references" class="section level1">
+<h1>References</h1>
+</div>
+<div id="reproducibility" class="section level1">
+<h1>Reproducibility</h1>
+<details>
+<pre><code>## ─ Session info  ──────────────────────────────────────────────────────────────────────────────────────────────────────
+##  hash: hot dog, wheelchair symbol, cinema
+## 
+##  setting  value
+##  version  R version 4.1.2 (2021-11-01)
+##  os       Ubuntu 20.04.3 LTS
+##  system   x86_64, linux-gnu
+##  ui       X11
+##  language (EN)
+##  collate  en_US.UTF-8
+##  ctype    en_US.UTF-8
+##  tz       Europe/Madrid
+##  date     2021-11-16
+##  pandoc   2.14.0.3 @ /usr/lib/rstudio/bin/pandoc/ (via rmarkdown)
+## 
+## ─ Packages ───────────────────────────────────────────────────────────────────────────────────────────────────────────
+##  package       * version   date (UTC) lib source
+##  assertthat      0.2.1     2019-03-21 [1] CRAN (R 4.1.2)
+##  backports       1.3.0     2021-10-27 [1] CRAN (R 4.1.2)
+##  bit             4.0.4     2020-08-04 [1] CRAN (R 4.1.2)
+##  bit64           4.0.5     2020-08-30 [1] CRAN (R 4.1.2)
+##  blob            1.2.2     2021-07-23 [1] CRAN (R 4.1.2)
+##  blogdown        1.6       2021-11-09 [1] CRAN (R 4.1.2)
+##  bookdown        0.24      2021-09-02 [1] CRAN (R 4.1.2)
+##  broom           0.7.10    2021-10-31 [1] CRAN (R 4.1.2)
+##  bslib           0.3.1     2021-10-06 [1] CRAN (R 4.1.2)
+##  bugRzilla     * 0.0.90001 2021-11-13 [1] Github (llrs/bugRzilla@24bc5de)
+##  cachem          1.0.6     2021-08-19 [1] CRAN (R 4.1.2)
+##  cli             3.1.0     2021-10-27 [1] CRAN (R 4.1.2)
+##  colorspace      2.0-2     2021-06-24 [1] CRAN (R 4.1.2)
+##  crayon          1.4.2     2021-10-29 [1] CRAN (R 4.1.2)
+##  curl            4.3.2     2021-06-23 [1] CRAN (R 4.1.2)
+##  DBI           * 1.1.1     2021-01-15 [1] CRAN (R 4.1.2)
+##  dbplyr        * 2.1.1     2021-04-06 [1] CRAN (R 4.1.2)
+##  digest          0.6.28    2021-09-23 [1] CRAN (R 4.1.2)
+##  dplyr         * 1.0.7     2021-06-18 [1] CRAN (R 4.1.2)
+##  ellipsis        0.3.2     2021-04-29 [1] CRAN (R 4.1.2)
+##  evaluate        0.14      2019-05-28 [1] CRAN (R 4.1.2)
+##  fansi           0.5.0     2021-05-25 [1] CRAN (R 4.1.2)
+##  farver          2.1.0     2021-02-28 [1] CRAN (R 4.1.2)
+##  fastmap         1.1.0     2021-01-25 [1] CRAN (R 4.1.2)
+##  forcats       * 0.5.1     2021-01-27 [1] CRAN (R 4.1.2)
+##  generics        0.1.1     2021-10-25 [1] CRAN (R 4.1.2)
+##  ggpattern     * 0.2.2     2021-11-11 [1] Github (coolbutuseless/ggpattern@7214181)
+##  ggplot2       * 3.3.5     2021-06-25 [1] CRAN (R 4.1.2)
+##  ggrepel       * 0.9.1     2021-01-15 [1] CRAN (R 4.1.2)
+##  glue            1.5.0     2021-11-07 [1] CRAN (R 4.1.2)
+##  gtable          0.3.0     2019-03-25 [1] CRAN (R 4.1.2)
+##  highr           0.9       2021-04-16 [1] CRAN (R 4.1.2)
+##  htmltools       0.5.2     2021-08-25 [1] CRAN (R 4.1.2)
+##  httr            1.4.2     2020-07-20 [1] CRAN (R 4.1.2)
+##  jquerylib       0.1.4     2021-04-26 [1] CRAN (R 4.1.2)
+##  jsonlite        1.7.2     2020-12-09 [1] CRAN (R 4.1.2)
+##  kableExtra      1.3.4     2021-02-20 [1] CRAN (R 4.1.2)
+##  knitcitations * 1.0.12    2021-01-10 [1] CRAN (R 4.1.2)
+##  knitr           1.36      2021-09-29 [1] CRAN (R 4.1.2)
+##  labeling        0.4.2     2020-10-20 [1] CRAN (R 4.1.2)
+##  lattice         0.20-45   2021-09-22 [1] CRAN (R 4.1.2)
+##  lifecycle       1.0.1     2021-09-24 [1] CRAN (R 4.1.2)
+##  lubridate     * 1.8.0     2021-10-07 [1] CRAN (R 4.1.2)
+##  magrittr        2.0.1     2020-11-17 [1] CRAN (R 4.1.2)
+##  Matrix          1.3-4     2021-06-01 [1] CRAN (R 4.1.2)
+##  memoise         2.0.0     2021-01-26 [1] CRAN (R 4.1.2)
+##  mgcv            1.8-38    2021-10-06 [1] CRAN (R 4.1.2)
+##  munsell         0.5.0     2018-06-12 [1] CRAN (R 4.1.2)
+##  nlme            3.1-153   2021-09-07 [1] CRAN (R 4.1.2)
+##  patchwork     * 1.1.1     2020-12-17 [1] CRAN (R 4.1.2)
+##  pillar          1.6.4     2021-10-18 [1] CRAN (R 4.1.2)
+##  pkgconfig       2.0.3     2019-09-22 [1] CRAN (R 4.1.2)
+##  plyr            1.8.6     2020-03-03 [1] CRAN (R 4.1.2)
+##  purrr           0.3.4     2020-04-17 [1] CRAN (R 4.1.2)
+##  R6              2.5.1     2021-08-19 [1] CRAN (R 4.1.2)
+##  Rcpp            1.0.7     2021-07-07 [1] CRAN (R 4.1.2)
+##  RefManageR      1.3.0     2020-11-13 [1] CRAN (R 4.1.2)
+##  rlang           0.4.12    2021-10-18 [1] CRAN (R 4.1.2)
+##  rmarkdown       2.11      2021-09-14 [1] CRAN (R 4.1.2)
+##  RMySQL        * 0.10.22   2021-06-22 [1] CRAN (R 4.1.2)
+##  RSQLite       * 2.2.8     2021-08-21 [1] CRAN (R 4.1.2)
+##  rstudioapi      0.13      2020-11-12 [1] CRAN (R 4.1.2)
+##  rvest           1.0.2     2021-10-16 [1] CRAN (R 4.1.2)
+##  sass            0.4.0     2021-05-12 [1] CRAN (R 4.1.2)
+##  scales          1.1.1     2020-05-11 [1] CRAN (R 4.1.2)
+##  sessioninfo     1.2.1     2021-11-02 [1] CRAN (R 4.1.2)
+##  stringi         1.7.5     2021-10-04 [1] CRAN (R 4.1.2)
+##  stringr         1.4.0     2019-02-10 [1] CRAN (R 4.1.2)
+##  svglite         2.0.0     2021-02-20 [1] CRAN (R 4.1.2)
+##  systemfonts     1.0.3     2021-10-13 [1] CRAN (R 4.1.2)
+##  tibble          3.1.6     2021-11-07 [1] CRAN (R 4.1.2)
+##  tidyr           1.1.4     2021-09-27 [1] CRAN (R 4.1.2)
+##  tidyselect      1.1.1     2021-04-30 [1] CRAN (R 4.1.2)
+##  utf8            1.2.2     2021-07-24 [1] CRAN (R 4.1.2)
+##  vctrs           0.3.8     2021-04-29 [1] CRAN (R 4.1.2)
+##  viridisLite     0.4.0     2021-04-13 [1] CRAN (R 4.1.2)
+##  webshot         0.5.2     2019-11-22 [1] CRAN (R 4.1.2)
+##  withr           2.4.2     2021-04-18 [1] CRAN (R 4.1.2)
+##  xfun            0.28      2021-11-04 [1] CRAN (R 4.1.2)
+##  xml2            1.3.2     2020-04-23 [1] CRAN (R 4.1.2)
+##  yaml            2.2.1     2020-02-01 [1] CRAN (R 4.1.2)
+## 
+##  [1] /home/lluis/bin/R/4.1.2/lib/R/library
+## 
+## ──────────────────────────────────────────────────────────────────────────────────────────────────────────────────────</code></pre>
+</details>
+</div>

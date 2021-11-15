@@ -1,0 +1,682 @@
+---
+title: Bugs in R
+author: Lluís Revilla Sancho
+date: '2021-11-16'
+slug: bugs-in-r
+categories:
+  - r
+tags:
+  - analysis
+  - API
+  - R
+authors: []
+description: ''
+draft: no
+editor_options:
+  chunk_output_type: console
+featured: no
+image:
+  caption: 'A bug'
+  focal_point: 'center'
+subtitle: 'Exploring the history of bugs in R'
+summary: ''
+---
+
+```{r setup, include = FALSE}
+knitr::opts_chunk$set(collapse = TRUE, echo = FALSE, message = FALSE, warning = FALSE, fig.width = 8)
+```
+
+This post has a relatively long introduction, you can skip and go ahead to the [analysis](#The-analysis).
+
+I knew about the r-devel (abbreviated Rd) mailing list that is where some discussions about the language happen and
+I had read that post of the [R core requesting help reviewing bug reports](https://developer.r-project.org/Blog/public/2019/10/09/r-can-use-your-help-reviewing-bug-reports/index.html) and I had [requested an account](https://www.r-project.org/bugs.html) the same day it came out to be able to post on [Bugzilla: https://bugs.r-project.org/](https://bugs.r-project.org/).
+But I hadn't reported any bug or anything, what had I to bring? 
+
+After RStudio 2021 I saw announced the https://r-devel.slack.com (you can join via [this website](https://forwards.github.io/rcontribution/)) and when I joined I checked some bugs and I found something odd. 
+This lead to the creation of my first R bug: [18055](https://bugs.r-project.org/show_bug.cgi?id=18055).
+
+Then I thinking about the analysis about [package reviews](https://llrs.dev/tags/reviews/) I realized it was analyzing issues. 
+Then it came to me that I could actually also analyse the issues of R, aka bugs reports.
+
+
+# Collecting the data
+
+First was step was collecting the data needed. 
+Similar with the rOpenSci and Bioconductor analysis I knew I might need to create a package or a script just to retrieve the data.
+
+I found somehow that it reports some data as xml and I though I could use that. 
+But exploring the documentation I found it had an API that could be used to retrieve data. 
+It required authentication to interact with the API. 
+Instead of putting me off it made it a reasonable challenge and progression. 
+If previously I used the [gh package](https://cran.r-project.org/package=gh) to authenticate and retrieve the raw data this time I had to learn how to authenticate to an API.
+I already developed a package that uses a poorly explained API to [retrieve documents](https://ropenspain.github.io/BOE/, "Collect the national gazette") and adding a new step to authenticate requests was a small enough step.
+
+I also found a package, [bugtractr](https://github.com/mvkorpel/bugtractr/), that did this already but I had some problems using it and didn't use authenticated requests to get the data.
+This meant it couldn't retrieve all data I wanted. 
+So I went on developing my own package to interact with Bugzilla's API. 
+
+As I was learning to interact with API and I wanted to make it useful for the R community I looked at how to make that. 
+Lukyly for me at the time I was doing this, I found the book [HTTP testing in R](https://books.ropensci.org/http-testing/index.html), which was still under heavy writing but almost complete, and started reading and using its helpful advice to learn.
+One of the [first recommendations](https://books.ropensci.org/http-testing/graceful.html#choose-the-http-resource-wisely) was to contact with the API providers, so I email the R core about my intentions.
+
+They raised some concerns: 
+- Impact on the load of the machine.
+- if the API is robust enough.
+- However, semi-automating report submissions needs more thought.
+
+Yes, at that time I had realized that the API allows to submit bug reports on the database (comments and attachments too), so I thought it could be an easy way to help people submit more bugs: submitting bugs from R itself. 
+
+After some exchanges about why, and how I was trying to retrieve data from Bugzilla I was deferred Simon Urbanek. 
+
+By that time I already posted about this on R-devel and got some interest from R contributing working group to which I presented the idea on March 12 (One month after the first commit on the package).
+
+It was suggested on that meeting to present a Google Summer of Code project[^1] which closed the project submission period shortly after.
+Soon two students contacted me and Heather Turner, who agreed to co-mentor the project, to write a proposal to work on my project.
+
+1: A program from Google where they sponsor students and organizations to work on open source projects. I didn't knew R participated, but here is the [organization on Github](https://github.com/rstats-gsoc).
+
+By that time Simon kindly provided a database dump (without the user list) due to concerns on privacy and load on the server (which I found it can return different results on the same query), and provided the id of R core members. 
+
+# The analysis
+
+This is a mix of analysis for three several purposes:
+
+- To understand what is going on with bug reports.
+- To understand how to make better bug reports to help bug submissions via bugRzilla.
+- To help the R contributor working group and R forwards to identify contributors.
+- To help the R core team identifying possible areas of improvements.
+
+It is based on the [analysis by Piyush Kumar](https://llrs.github.io/bugzilla_viz/bugRzilla_review.html) and [myself](https://llrs.github.io/bugzilla_viz/).
+If you want code and explore the database follow these links and you'll be able to download it.
+
+A first exploration is to see the bug ids and the creation time of the bug id:
+
+```{r}
+library("dbplyr")
+library("dplyr")
+library("RSQLite")
+library("RMySQL")
+library("ggplot2")
+library("patchwork")
+library("ggpattern") # from github: coolbutuseless/ggpattern
+library("forcats")
+theme_set(theme_minimal())
+# Connecting R with MySQL
+db_bugzilla <- dbConnect(RMySQL::MySQL(), dbname = "rbugs")
+library("lubridate")
+
+date_columns_bugs <- c("creation_ts", "delta_ts", "lastdiffed", "deadline")
+db_bugs <- tbl(db_bugzilla, "bugs") |> 
+  collect() |> 
+  mutate(across(!!date_columns_bugs, as.POSIXct, tz = "UTC", format = "%Y-%m-%d %H:%M:%OS")) |> 
+  mutate(reported_on = ifelse(reporter == 2, "Jitterbug", "Bugzilla"),
+         reported_on = factor(reported_on, levels = c("Jitterbug", "Bugzilla")))
+db_bugs |> 
+  ggplot() +
+  geom_point(aes(creation_ts, bug_id, color = bug_id)) +
+  labs(title = "Bugs created", y = "ID", x = "Creation") +
+  guides(color = "none") +
+  scale_x_datetime(expand = expansion())
+```
+
+The first suprising thing are these three points that appear outside the line the other bugs form.
+
+One of these outliers is [a test](https://bugs.r-project.org/show_bug.cgi?id=1) when the bug reports moved from Jitterbug to Bugzilla as [mentioned on the mailing list](https://stat.ethz.ch/pipermail/r-devel/2010-March/056954.html).
+
+I don't know the reason of the move, probably due to SPAM or interface improvements.
+If we look at those missing ids we can estimate the SPAM, note that some might be vulnerabilities on R (but I doubt that there are this much):
+
+```{r}
+missing_ids <- (db_bugs$bug_id - lag(db_bugs$bug_id) -1)
+missing_ids[db_bugs$resolution == "SPAM"] <- 1
+missing_ids[is.na(missing_ids)] <- 0
+spam_df <- data.frame(bug = db_bugs$creation_ts, 
+                      spam = missing_ids, 
+                      reported_on = db_bugs$reported_on) |>
+  filter(spam != 0)
+
+ggplot(spam_df) +
+  geom_point(aes(bug, spam, color = reported_on, shape = reported_on)) +
+  # Date from https://www.r-project.org/bugs.html +1 day of effect
+  geom_vline(xintercept = as_datetime("2016-07-10"), linetype = 3) + 
+  annotate(geom = "text", x = as_datetime("2016-07-10"), y = 150, 
+           label = "Preapproval of accounts") +
+  labs(title = "Waves of spam",
+       y = "Missing bugs or SPAM",
+       col = "Site",
+       shape = "Site",
+       x = element_blank()) +
+  theme(legend.position = c(0.15, 0.85)) +
+  scale_y_continuous(expand = expansion(add = c(0, NA))) +
+  scale_x_datetime(expand = expansion(add = 3))
+```
+
+The first observable thing is the high number of ids missing on Jitterbug.
+I heard that this was an abuse of the site, which seems particularly bad arround two dates.
+
+Later on when the system moved to Bugzilla there are much less missing ids, until one day there are around 120 missing ids and the date later to have an account it was required to send a message to the R core about it. 
+Probably spamers abused the Bugzilla's API. 
+Is understandable that the R core team is concerned on receiving spam messages from those past experiences.
+
+As the information from Jitterbug is both old and not as reach as those bugs on Bugzilla I will limit from now on to analyze those bugs reported on Bugzilla. 
+In addition the number of bugs reported on Bugzilla is similar to the ones on Jitterbug:
+
+```{r}
+moving_date <- max(db_bugs$creation_ts[db_bugs$reported_on == "Jitterbug"], 
+                   na.rm = TRUE)
+
+db_bugs2 <- db_bugs |> 
+  mutate(modified_on = ifelse(delta_ts >= moving_date, "Bugzilla", "Jitterbug")) |> 
+  mutate(modified_on = ifelse(is.na(modified_on), "Jitterbug", modified_on)) |> 
+  mutate(modified_on  = ifelse(reported_on == "Bugzilla", "Bugzilla", modified_on))
+
+count(db_bugs2, reported_on) |> 
+  knitr::kable(col.names = c("Reported on", "Reports")) |> 
+  kableExtra::kable_styling(position = "center")
+
+n_mixed <- db_bugs2 |> 
+  count(reported_on, modified_on) |> 
+  filter(reported_on != modified_on) |> 
+  pull(n)
+```
+
+There are some old bugs opened on Jitterbug modified on Bugzilla (`r n_mixed`) and still not closed.
+
+## Openning bugs reports
+
+If we focus only on bugs reported on Bugzilla we find the following number of bugs:
+
+```{r}
+db_bugs4 <- db_bugs2 |> 
+  filter(resolution != "SPAM") |> 
+  mutate(bug_severity = fct_relevel(bug_severity, 
+                                    c("trivial", "minor", "normal", "major", "blocker", "enhancement")),
+         type = if_else(bug_severity == "enhancement", "enhancement", "bug report")) |> 
+  filter(reported_on == "Bugzilla",
+         bug_id != 1)
+db_bugs4 |> 
+  count(bug_severity, bug_status, sort = TRUE) |> 
+  ggplot() +
+  geom_tile(aes(bug_severity, bug_status, fill = n)) +
+  scale_fill_viridis_c() +
+  labs(x = "Severity", y = "Status", fill = "Bugs", title = "Bugs on Bugzilla")
+```
+
+Most bugs are closed followed by unconfirmed:
+
+```{r}
+count(db_bugs4, bug_status, sort = TRUE) |> 
+  knitr::kable(col.names = c("Status", "Bug reports")) |> 
+  kableExtra::kable_styling(position = "center")
+```
+
+Do bugs reported have an attachment with a patch?
+
+```{r}
+db_attachments <- tbl(db_bugzilla, "attachments") |> 
+  collect() |> 
+  mutate(across(c("creation_ts", "modification_time"), as.POSIXct, format = "%Y-%m-%d %H:%M:%OS", tz = "UTC"))
+db_attachments_bugs <- db_bugs4 |> 
+  left_join(db_attachments, by = "bug_id", suffix = c(".bug", ".at"))
+
+attachments_type <- db_attachments_bugs |> 
+  group_by(bug_severity, bug_status, bug_id, reported_on) |> 
+  summarize(have_attachments = any(!is.na(creation_ts.at)),
+            n_attachments = sum(!is.na(creation_ts.at))/n()) |> 
+  ungroup() |> 
+  group_by(bug_severity, bug_status, reported_on) |> 
+  count(n_attachments) |> 
+  mutate(attached = n_attachments > 0) |>
+  group_by(bug_severity, bug_status, reported_on) |> 
+  mutate(p = n/sum(n)) |> 
+  filter(attached)
+## `summarise()` has grouped output by 'bug_severity', 'bug_status', 'bug_id'. You can override using the `.groups` argument.
+
+attachments_type |> 
+  filter(reported_on == "Bugzilla") |> 
+  ggplot() +
+  geom_tile(aes(bug_severity, bug_status, fill = p)) +
+  scale_fill_viridis_c(labels = scales::percent_format(), limits = c(0, 1)) +
+  labs(title = "Percentage of issues with attachments",
+       subtitle = "On Bugzilla", fill = "Attachments",
+       x = "Severity", y = "Status") 
+
+attachment_time <- db_attachments_bugs |> 
+  filter(!is.na(creation_ts.at),
+         !is.na(creation_ts.bug)) |> 
+  filter(reported_on == "Bugzilla") |> 
+  mutate(t = creation_ts.at - creation_ts.bug,
+         mt0 = t == 0)
+attachment_in <- attachment_time |>
+  filter(!mt0) |> 
+  group_by(bug_id) |> 
+  arrange(t) |> 
+  slice_head(n = 1) |> 
+  ungroup() |> 
+  summarize(attachment_in = as.numeric(median(t), units = "hours")) |> 
+  pull(attachment_in)
+attachment_time |> 
+  count(mt0, ispatch) |> 
+  group_by(mt0) |> 
+  mutate(p = round(n/sum(n)*100, 2)) |> 
+  ungroup() |> 
+  mutate(ispatch = c("No", "Yes")[ispatch+1],
+         mt0 = c("No", "Yes")[mt0+1]) |> 
+  knitr::kable(col.names = c("Attachment on  opening", "Patch", "Bugs", "%"), align = "c") |> 
+  kableExtra::kable_styling(position = "center")
+```
+
+Many bug reports have attachments on opening, mostly they contain code to reproduce the problem.
+If bugs do not contain attachments and they receive an attachment it will usually be a patch (but it might not). 
+
+## What happens after submitting a bug report?
+
+```{r}
+db_activity <- tbl(db_bugzilla, "bugs_activity") |> 
+  collect() |> 
+  mutate(bug_when = as.POSIXct(bug_when, tz = "UTC", format = "%Y-%m-%d %H:%M:%OS")) |> 
+  filter(bug_id %in% db_bugs4$bug_id)
+
+
+field_names <- c(
+  "2" = "Summary", 
+  "5" = "Version", 
+  "6" = "Hardware", 
+  "7" = "URL",
+  "8" = "OS", 
+  "9" = "Status", 
+  "11" = "Keywords", 
+  "12" = "Resolution",
+  "13" = "Severity", 
+  "14" = "Priority", 
+  "15" = "Component", 
+  "16" = "Assignee",
+  "20" = "CC", 
+  "21" = "Depends on", 
+  "22" = "Blocks", 
+  "23" = "Attachment description",
+  "25" = "Attachment mime type", 
+  "26" = "Attachment is patch",
+  "27" = "Attachment is obsolete", 
+  "34" = "?", 
+  "36" = "Ever confirmed",
+  "39" = "Group", 
+  "40" = "?", 
+  "41" = "?", 
+  "42" = "Deadline", 
+  "47" = "?",
+  "54" = "See Also"
+)
+
+db_activity2 <- db_activity |> 
+  inner_join(db_bugs4, by = "bug_id") |> 
+  mutate(field = field_names[as.character(fieldid)])
+
+db_activity2 |> 
+  count(field, adding = ifelse(removed %in% c("", "0"), "Added", "Changed")) |> 
+  tidyr::pivot_longer(cols = adding,
+                      names_to = "type", values_to = "value") |> 
+  select(-type) |> 
+  ggplot() +
+  geom_tile(aes(value, fct_reorder(field, n, .fun = sum), fill = n)) +
+  scale_fill_viridis_c(trans = "log10") +
+  labs(x = element_blank(), y = element_blank(), title = "Actions on bugs",
+       fill = "Bugs")
+```
+
+Most common action is receiving a comment, whose author is added on the CC field.
+
+```{r}
+r_core <- c(3, 5, 9, 18, 19, 28, 34, 54, 137, 151, 216, 308, 413, 420, 1249, 
+            1330, 2442)
+component_names <- c("2" = "Accuracy",
+                     "3" = "Analyses",
+                     "4" = "Graphics",
+                     "5" = "Installation",
+                     "6" = "Low-level", 
+                     "8" = "S4methods", 
+                     "7" = "Misc",
+                     "9" = "System-specific",
+                     "10" = "Translations",
+                     "11" = "Documentation", 
+                     "12" = "Language",
+                     "13" = "Startup", 
+                     "14" = "Models",
+                     "15" = "Add-ons", 
+                     "16" = "I/O",
+                     "17" = "Wishlist", 
+                     "18" = "Mac GUI / Mac specific", 
+                     "19" = "Windows GUI / Window specific" 
+)
+
+db_comments <- db_bugzilla |> 
+  tbl("longdescs") |> 
+  collect() |> 
+  mutate(bug_when = as.POSIXct(bug_when, tz = "UTC", 
+                               format = "%Y-%m-%d %H:%M:%OS")) |> 
+  filter(bug_id %in% db_bugs4$bug_id)
+
+comments_authors <- db_comments |> 
+  merge(db_bugs4, by = "bug_id") |> 
+  mutate(component = component_names[as.character(component_id)]) |> 
+  group_by(bug_id) |> 
+  summarize(author = ifelse(any(who %in% r_core), "R core", "Others"),
+            bug_severity = unique(bug_severity[!is.na(bug_severity)]),
+            resolution = unique(resolution[!is.na(resolution)]),
+            rep_platform = unique(rep_platform[!is.na(rep_platform)]),
+            component = unique(component[!is.na(component)]),
+            type = unique(type.y)) |> 
+  ungroup()
+comments_authors |> 
+  count(author, bug_severity, resolution, sort = TRUE)  |> 
+  group_by(bug_severity, resolution) |> 
+  mutate(p = n/sum(n)) |> 
+  filter(author != "Others") |> 
+  ggplot() +
+  geom_tile(aes(bug_severity, resolution, fill = p)) +
+  scale_fill_viridis_c(labels = scales::percent_format(), limits = c(0, NA)) +
+  labs(title = "Bugs reports commented by the R core", 
+       x = "Severity", y = "Resolution", fill = "%")
+```
+
+The R core is very active answering on the bug reports, only it seems that those that are trivial do not receive a reply as often as the other categories. 
+
+```{r}
+
+comments_r_core <- comments_authors |> 
+  count(type, author, rep_platform, component, sort = TRUE)  |> 
+  group_by(rep_platform, component) |> 
+  mutate(p = n/sum(n)) |> 
+  filter(author != "Others")
+
+comments_r_core |> 
+  filter(type == "bug report") |> 
+  ggplot() +
+  geom_tile(aes(rep_platform, component, fill = p)) +
+  scale_fill_viridis_c(labels = scales::percent_format(), limits = c(0, NA)) +
+  labs(title = "Bug reports commented by the R core", 
+       x = element_blank(), y = element_blank(), fill = "%")
+```
+
+If we look by component and OS there are some combinations that received few comments, mostly those that are wishes for R.
+
+If we split them between peitions to improve R and actual bug reports we can see a different pattern:
+
+```{r}
+comments_r_core |> 
+  filter(type != "bug report") |> 
+  ungroup() |> 
+  ggplot() +
+  geom_tile(aes(rep_platform, component, fill = p)) +
+  scale_fill_viridis_c(labels = scales::percent_format(), limits = c(0, NA)) +
+  labs(title = "Enhancements commented by the R core", 
+       x = element_blank(), y = element_blank(), fill = "%")
+```
+
+Enhancements usually receive less comments from the R core.
+Wishlists receive more comments from the R core among the enhancements. 
+
+What about the comments made by the original poster? 
+Do they comment when they receive some feedback from other users?
+
+```{r}
+begin <- max(db_bugs4$creation_ts, na.rm = TRUE) - lubridate::years(3)
+
+opener <- db_bugs4 |> 
+  select(bug_id, time = creation_ts, user = reporter) |> 
+  mutate(action = "open") |> 
+  filter(time >= begin)
+
+commenter <- db_comments |> 
+  filter(bug_id %in% opener$bug_id) |> 
+  select(bug_id, time = bug_when, user = who) |> 
+  mutate(action = "comment")
+
+attacher <- db_attachments_bugs |> 
+  filter(bug_id %in% opener$bug_id) |> 
+  filter(!is.na(creation_ts.at),
+         bug_id %in% db_bugs4$bug_id) |> 
+  select(bug_id, time = creation_ts.at, user = submitter_id) |> 
+  mutate(action = "attach")
+
+db_activity_bugs <- db_activity2 |> 
+  merge(db_bugs4, by = "bug_id", all.y = TRUE)
+
+status <- db_activity_bugs |> 
+  filter(bug_id %in% opener$bug_id) |> 
+  select(bug_id,  time = bug_when, user = who, field, added) |> 
+  filter(field == "Status") |> 
+  select(-field, action = added) |> 
+  filter(action != "NEW")
+
+# Select last 3 years of data
+history <- rbind(opener, commenter, attacher, status) |> 
+  arrange(bug_id, time) |> 
+  filter(time >= begin)
+
+# Keep only bugs opened on the last 3 years (not comments before them and so on)
+# history <- history[min(which(history$action == "open")):nrow(history), ]
+# Commented to keep all actions even on older bugs
+
+user_engaged <- history |> 
+  group_by(bug_id) |> 
+  arrange(time) |> 
+  summarize(opener = user[action == "open"],
+            other_comments = any(opener != user & action == "comment"),
+            r_core = any(r_core %in% user[user != opener]),
+            # engaged = sum(user == opener & action != "open") > 1,
+            when_o = min(which(!user[-c(1:2)] %in% opener)), # Skiping opening and first comment
+            when_u = min(which(user[-c(1:2)] %in% opener)),
+            when_u = ifelse(is.infinite(when_u), 0, when_u),
+            when_s = min(which(action %in% c("ASSIGNED", "CLOSED"))-2),
+            when_s = ifelse(is.infinite(when_s), 0, when_s),
+            engaged = when_o < when_u,
+            handled = when_s == when_o + 1
+  ) |> 
+  filter(other_comments) |> 
+  ungroup()
+user_engaged |> 
+  count(engaged, name = "bugs") |> 
+  mutate(engaged = ifelse(engaged, "yes", "no")) |> 
+  knitr::kable(col.names = c("Responsive", "Bugs reports")) |> 
+  kableExtra::kable_styling(position = "center")
+```
+
+Most of them do not reply back when they receive a comment. 
+There might be several causes, one of them is if their bug report is closed or assigned to an R core member. 
+
+```{r}
+user_engaged |> 
+  filter(!engaged) |> 
+  count(handled, name = "bugs") |> 
+  mutate(handled = ifelse(handled, "yes", "no")) |> 
+  knitr::kable() |> 
+  kableExtra::kable_styling(position = "center")
+```
+
+Which shows that the majority of those who do not respond is because either the bug report is closed (fixed or not) or a R core member is assigned (usually to himself).
+
+## Who is active ?
+
+So far we have explored the activity of users who report a bug and the R core members that receive this. 
+But there are some users that beyond this they also participate and collaborate with the R core.
+To make it more recent we will look at those users active on the bugs opened on the last three years.
+
+```{r}
+# all actions including on their own reports
+actions_users <- history |> 
+  filter(action %in% c("open", "comment", "attach")) |> 
+  group_by(user) |> 
+  count(action, sort = TRUE) |> 
+  tidyr::pivot_wider(names_from = action, values_from = n,
+                     values_fill = 0) |> 
+  arrange(user) |> 
+  mutate(all_comment = ifelse(is.na(comment), 0, comment),
+         all_attach = ifelse(is.na(attach), 0, attach),
+         r_core = ifelse(user %in% r_core, "yes", "no"),
+         user = as.character(user)) |> 
+  ungroup() |> 
+  select(-comment, -attach, -open)
+
+# Actions on other issues (except opening)
+act_o <- history |> 
+  group_by(user) |> 
+  summarize(comment = sum(action == "comment" & !bug_id %in% bug_id[action == "open"], na.rm = TRUE),
+            attach = sum(action == "attach" & !bug_id %in% bug_id[action == "open"], na.rm = TRUE),
+            open = sum(action == "open", na.rm = TRUE),
+            bugs_interacted = n_distinct(bug_id)) |> 
+  ungroup() |> 
+  mutate(r_core = ifelse(user %in% r_core, "yes", "no"),
+         user = as.character(user))
+m <- merge(actions_users, act_o) |> 
+  mutate(self_comments = all_comment - comment,
+         self_attach = all_attach - attach)
+active_users <- m |> filter(r_core == "no") |> 
+  rowwise() |> 
+  mutate(actions = sum(comment, attach, open)) |> 
+  ungroup() |> 
+  arrange(-actions) 
+ids <- as.numeric(active_users$user[1:30])
+
+library("bugRzilla") # Still experimental
+bugRzilla:::use_key() # Using my personal key
+## ✓ Using key `R_BUGZILLA`.
+# gu <- get_user(ids = as.numeric(ids), host = "https://rbugs-devel.urbanek.info/")
+gu <- get_user(ids = as.numeric(ids))
+active_users_merged <- merge(gu[, 1:2], active_users, 
+                             by.x = "id", by.y = "user", 
+                             all.x = TRUE, all.y = FALSE) |> 
+  select(-r_core, -self_comments, -self_attach) |> 
+  arrange(-actions) |> 
+  mutate(real_name = ifelse(real_name == "", NA_character_, real_name))
+knitr::kable(active_users_merged,
+             col.names = c("ID", "Name", "All comments", "All attachments",
+                          "Comments", "Attachments", "Bugs opened", "Bugs interacted", "Actions"))
+  # kableExtra::kable_styling(position = "center")
+```
+
+(You can find a sortable anf filterable version of this table [here](https://llrs.github.io/bugzilla_viz/#R_contributors)). 
+One of the top contributors was recently added as R core member.
+Other 
+
+```{r}
+library("ggrepel")
+p <- ggplot(act_o) + 
+  geom_count(aes(open, comment, col = attach, shape = r_core)) +
+  scale_size(range = c(2, 6), trans = "log10") +
+  labs(x = "Bug reports opened", y = "Comments", shape = "R core?",
+       size = "Users", title = "Contributions", 
+       subtitle = "Attachments and comments to other's bug reports", 
+       col = "Attachments") +
+  scale_color_viridis_c(direction = -1)
+p +     
+  geom_text_repel(aes(open, comment, label = real_name), 
+                  data = active_users_merged) +
+  scale_y_log10()
+```
+
+Some contributors focus on providing patches, other's open many bugs, other's comment on the bugs to confirm bugs or provide context to the bugs.
+
+## Future of the report system ?
+
+Last what is the progression of bugs 
+
+```{r}
+speed <- db_bugs4 |> 
+  group_by(type) |> 
+  arrange(bug_id) |> 
+  mutate(n = 1:n(),
+         days = difftime(creation_ts, min(creation_ts), units = "days")) |> 
+  ungroup() |> 
+  select(creation_ts, bug_id, n, days, type) 
+
+models <- speed |> 
+  group_by(type) |> 
+  summarize(model = list(broom::tidy((lm(n ~ 0 + days))))) |> 
+  tidyr::unnest(model)
+
+ggplot(speed) +
+  # geom_smooth(aes(days, n, col = type), linetype = 2 , method = "lm", formula = y ~ 0 + x) +
+  geom_smooth(aes(creation_ts, n, col = type), linetype = 2 , method = "lm", formula = y ~ x) +
+  geom_line(aes(creation_ts, n, col = type), size = 2) +
+  labs(x = "Years", y = "Reports", title = "Submission rate", col = "Type") +
+  theme(legend.position = c(0.15, 0.85))
+```
+
+If we look only at bug reports and not enhancements every `r round(1/models$estimate[1], 2)` day there is one bug report and one enhancement petitions per `r round(1/models$estimate[2], 2)` days.
+
+```{r}
+speed0 <- db_comments |> 
+  select(comment_id, bug_id, bug_when, who) |> 
+  left_join(db_bugs4, by = "bug_id") |> 
+  filter(!who %in% r_core) |> 
+  group_by(type) |> 
+  mutate(n = 1:n(),
+         days = difftime(bug_when, min(bug_when, na.rm = TRUE), units = "days"),
+         creation_ts = bug_when) |> 
+  ungroup() |> 
+  select(creation_ts, bug_id, n, days, type)
+
+
+models <- speed0 |> 
+  group_by(type) |> 
+  summarize(model = list(broom::tidy((lm(n ~ 0 + days))))) |> 
+  tidyr::unnest(model)
+
+ggplot(speed0) +
+  # geom_smooth(aes(days, n, col = type), linetype = 2 , method = "lm", formula = y ~ 0 + x) +
+  geom_smooth(aes(creation_ts, n, col = type), linetype = 2 , method = "lm", formula = y ~ x) +
+  geom_line(aes(creation_ts, n, col = type), size = 2) +
+  labs(x = "Years", y = "Comments", title = "Comments rate outside R core", col = "Type") +
+  theme(legend.position = c(0.15, 0.85)) +
+  scale_x_datetime(expand = expansion()) +
+  scale_y_continuous(expand = expansion(add = 5))
+```
+
+If we look only at bug reports and not enhancements there are `r round(models$estimate[1], 2)` comments every day from R users, one comment on enhancement per `r round(1/models$estimate[2], 2)` days.
+
+Both of them has remained fairly constant over the years, at times a bit faster and sometimes slower. 
+
+# Final comments
+
+This is probably the post that took longer so far. 
+I started on February to work on this blog post but until now I haven't actually written the blog post I wanted.
+
+Many thanks to Simon Urbanek for providing the database dump, without it would have been slower and harder if not impossible to do this analysis.
+Thanks to Heather Turner for encouraging me to do more on this project and providing valuable feedback about what kind of analysis could be useful and co-mentoring Pyush Kumar who I also like to thank the first analysis on the data and his contributions during GSoC. 
+Many thanks to Gabe Becker and Michael Quirico for their feedback on the R contributors working group. 
+
+Now that the analysis is done, I want to finish the bugRzilla package (which I already started to use for small tasks on this analysis).
+I'm still working on it testing how is the best way to submit properly formatted bug reports with a developer instance set up by Simon. 
+Then I'll ask the R core if the way it submits bug reports works well for them.
+
+**TL:DR:** There are many bug reported and handled by the R core and many users contribute on solving the bug reports. 
+The peace of new bug reports and comments is constant as well as enhancements on the language itself.
+
+
+# References
+
+```{r bibsetup, echo=FALSE, message=FALSE, warning=FALSE}
+## Load knitcitations with a clean bibliography
+library('knitcitations')
+cleanbib()
+cite_options(hyperlink = 'to.doc', citation_format = 'text', style = 'html')
+pi <- sessioninfo::package_info()
+packages <- c(pi$package[pi$attached], 'knitcitations')
+l <- sapply(packages, function(x){citation(x)[1]}, simplify = FALSE)
+bib <- c(l, 'blogdown' = citation('blogdown')[2])
+```
+
+```{r results = 'asis', echo = FALSE, cache = FALSE}
+bibliography(style = 'html')
+```
+
+# Reproducibility
+
+<details>
+```{r reproducibility, echo = FALSE}
+## Reproducibility info
+options(width = 120)
+sessioninfo::session_info()
+```
+</details>
