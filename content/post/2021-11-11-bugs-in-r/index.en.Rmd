@@ -28,63 +28,61 @@ knitr::opts_chunk$set(collapse = TRUE, echo = FALSE, message = FALSE, warning = 
 
 This post has a relatively long introduction, you can skip and go ahead to the [analysis](#The-analysis).
 
-I knew about the r-devel (abbreviated Rd) mailing list that is where some discussions about the language happen and
-I had read that post of the [R core requesting help reviewing bug reports](https://developer.r-project.org/Blog/public/2019/10/09/r-can-use-your-help-reviewing-bug-reports/index.html) and I had [requested an account](https://www.r-project.org/bugs.html) the same day it came out to be able to post on [Bugzilla: https://bugs.r-project.org/](https://bugs.r-project.org/).
-But I hadn't reported any bug or anything, what had I to bring? 
+I knew about the r-devel (abbreviated Rd) mailing list that is where some discussions about the language happen and I had read that post of the [R core requesting help reviewing bug reports](https://developer.r-project.org/Blog/public/2019/10/09/r-can-use-your-help-reviewing-bug-reports/index.html) and I had [requested an account](https://www.r-project.org/bugs.html) the same day it came out to be able to post on [Bugzilla: https://bugs.r-project.org/](https://bugs.r-project.org/).
+But I hadn't reported any bug or anything, what had I to bring?
 
-After RStudio 2021 I saw announced the https://r-devel.slack.com (you can join via [this website](https://forwards.github.io/rcontribution/)) and when I joined I checked some bugs and I found something odd. 
+After RStudio 2021 I saw announced the <https://r-devel.slack.com> (you can join via [this website](https://forwards.github.io/rcontribution/)) and when I joined I checked some bugs and I found something odd.
 This lead to the creation of my first R bug: [18055](https://bugs.r-project.org/show_bug.cgi?id=18055).
 
-Then I thinking about the analysis about [package reviews](https://llrs.dev/tags/reviews/) I realized it was analyzing issues. 
+Then I thinking about the analysis about [package reviews](https://llrs.dev/tags/reviews/) I realized it was analyzing issues.
 Then it came to me that I could actually also analyse the issues of R, aka bugs reports.
-
 
 # Collecting the data
 
-First was step was collecting the data needed. 
+First was step was collecting the data needed.
 Similar with the rOpenSci and Bioconductor analysis I knew I might need to create a package or a script just to retrieve the data.
 
-I found somehow that it reports some data as xml and I though I could use that. 
-But exploring the documentation I found it had an API that could be used to retrieve data. 
-It required authentication to interact with the API. 
-Instead of putting me off it made it a reasonable challenge and progression. 
+I found somehow that it reports some data as xml and I though I could use that.
+But exploring the documentation I found it had an API that could be used to retrieve data.
+It required authentication to interact with the API.
+Instead of putting me off it made it a reasonable challenge and progression.
 If previously I used the [gh package](https://cran.r-project.org/package=gh) to authenticate and retrieve the raw data this time I had to learn how to authenticate to an API.
 I already developed a package that uses a poorly explained API to [retrieve documents](https://ropenspain.github.io/BOE/, "Collect the national gazette") and adding a new step to authenticate requests was a small enough step.
 
 I also found a package, [bugtractr](https://github.com/mvkorpel/bugtractr/), that did this already but I had some problems using it and didn't use authenticated requests to get the data.
-This meant it couldn't retrieve all data I wanted. 
-So I went on developing my own package to interact with Bugzilla's API. 
+This meant it couldn't retrieve all data I wanted.
+So I went on developing my own package to interact with Bugzilla's API.
 
-As I was learning to interact with API and I wanted to make it useful for the R community I looked at how to make that. 
+As I was learning to interact with API and I wanted to make it useful for the R community I looked at how to make that.
 Lukyly for me at the time I was doing this, I found the book [HTTP testing in R](https://books.ropensci.org/http-testing/index.html), which was still under heavy writing but almost complete, and started reading and using its helpful advice to learn.
 One of the [first recommendations](https://books.ropensci.org/http-testing/graceful.html#choose-the-http-resource-wisely) was to contact with the API providers, so I email the R core about my intentions.
 
-They raised some concerns: 
-- Impact on the load of the machine.
+They raised some concerns: - Impact on the load of the machine.
 - if the API is robust enough.
 - However, semi-automating report submissions needs more thought.
 
-Yes, at that time I had realized that the API allows to submit bug reports on the database (comments and attachments too), so I thought it could be an easy way to help people submit more bugs: submitting bugs from R itself. 
+Yes, at that time I had realized that the API allows to submit bug reports on the database (comments and attachments too), so I thought it could be an easy way to help people submit more bugs: submitting bugs from R itself.
 
-After some exchanges about why, and how I was trying to retrieve data from Bugzilla I was deferred Simon Urbanek. 
+After some exchanges about why, and how I was trying to retrieve data from Bugzilla I was deferred Simon Urbanek.
 
 By that time I already posted about this on R-devel and got some interest from R contributing working group to which I presented the idea on March 12 (One month after the first commit on the package).
 
-It was suggested on that meeting to present a Google Summer of Code project[^1] which closed the project submission period shortly after.
+It was suggested on that meeting to present a Google Summer of Code[^1] project which closed the project submission period shortly after.
 Soon two students contacted me and Heather Turner, who agreed to co-mentor the project, to write a proposal to work on my project.
 
-1: A program from Google where they sponsor students and organizations to work on open source projects. I didn't knew R participated, but here is the [organization on Github](https://github.com/rstats-gsoc).
+[^1]: A program from Google where they sponsor students and organizations to work on open source projects.
+    I didn't knew R participated, but here is the [organization on Github](https://github.com/rstats-gsoc).
 
-By that time Simon kindly provided a database dump (without the user list) due to concerns on privacy and load on the server (which I found it can return different results on the same query), and provided the id of R core members. 
+By that time Simon kindly provided a database dump (without the user list) due to concerns on privacy and load on the server (which I found it can return different results on the same query), and provided the id of R core members.
 
-# The analysis
+# The analysis {#the-analysis}
 
 This is a mix of analysis for three several purposes:
 
-- To understand what is going on with bug reports.
-- To understand how to make better bug reports to help bug submissions via bugRzilla.
-- To help the R contributor working group and R forwards to identify contributors.
-- To help the R core team identifying possible areas of improvements.
+-   To understand what is going on with bug reports.
+-   To understand how to make better bug reports to help bug submissions via bugRzilla.
+-   To help the R contributor working group and R forwards to identify contributors.
+-   To help the R core team identifying possible areas of improvements.
 
 It is based on the [analysis by Piyush Kumar](https://llrs.github.io/bugzilla_viz/bugRzilla_review.html) and [myself](https://llrs.github.io/bugzilla_viz/).
 If you want code and explore the database follow these links and you'll be able to download it.
@@ -154,11 +152,10 @@ ggplot(spam_df) +
 The first observable thing is the high number of ids missing on Jitterbug.
 I heard that this was an abuse of the site, which seems particularly bad arround two dates.
 
-Later on when the system moved to Bugzilla there are much less missing ids, until one day there are around 120 missing ids and the date later to have an account it was required to send a message to the R core about it. 
-Probably spamers abused the Bugzilla's API. 
-Is understandable that the R core team is concerned on receiving spam messages from those past experiences.
+Later on when the system moved to Bugzilla there are much less missing ids, until one day there are around 120 missing ids and the date later to have an account it was required to send a message to the R core about it.
+Probably spamers abused the Bugzilla's API. Is understandable that the R core team is concerned on receiving spam messages from those past experiences.
 
-As the information from Jitterbug is both old and not as reach as those bugs on Bugzilla I will limit from now on to analyze those bugs reported on Bugzilla. 
+As the information from Jitterbug is both old and not as reach as those bugs on Bugzilla I will limit from now on to analyze those bugs reported on Bugzilla.
 In addition the number of bugs reported on Bugzilla is similar to the ones on Jitterbug:
 
 ```{r reporting}
@@ -267,9 +264,11 @@ attachment_time |>
 ```
 
 Many bug reports have attachments on opening, mostly they contain code to reproduce the problem.
-If bugs do not contain attachments and they receive an attachment it will usually be a patch (but it might not). 
+If bugs do not contain attachments and they receive an attachment it will usually be a patch (but it might not).
 
 ## What happens after submitting a bug report?
+
+One of the most common thing to happen is that someone might comment on the bug either to ask for clarification or to discuss the bug report and possible solutions:
 
 ```{r activity}
 db_activity <- tbl(db_bugzilla, "bugs_activity") |> 
@@ -379,7 +378,7 @@ comments_authors |>
        x = "Severity", y = "Resolution", fill = "%")
 ```
 
-The R core is very active answering on the bug reports, only it seems that those that are trivial do not receive a reply as often as the other categories. 
+The R core is very active answering on the bug reports, only it seems that those that are trivial do not receive a reply as often as the other categories.
 
 ```{r comment-core}
 
@@ -414,9 +413,9 @@ comments_r_core |>
 ```
 
 Enhancements usually receive less comments from the R core.
-Wishlists receive more comments from the R core among the enhancements. 
+Wishlists receive more comments from the R core among the enhancements.
 
-What about the comments made by the original poster? 
+What about the comments made by the original poster?
 Do they comment when they receive some feedback from other users?
 
 ```{r history}
@@ -482,8 +481,8 @@ user_engaged |>
   kableExtra::kable_styling(position = "center")
 ```
 
-Most of them do not reply back when they receive a comment. 
-There might be several causes, one of them is if their bug report is closed or assigned to an R core member. 
+Most of them do not reply back when they receive a comment.
+There might be several causes, one of them is if their bug report is closed or assigned to an R core member.
 
 ```{r engagement}
 user_engaged |> 
@@ -498,7 +497,7 @@ Which shows that the majority of those who do not respond is because either the 
 
 ## Who is active ?
 
-So far we have explored the activity of users who report a bug and the R core members that receive this. 
+So far we have explored the activity of users who report a bug and the R core members that receive this.
 But there are some users that beyond this they also participate and collaborate with the R core.
 To make it more recent we will look at those users active on the bugs opened on the last three years.
 
@@ -555,9 +554,9 @@ knitr::kable(active_users_merged,
   # kableExtra::kable_styling(position = "center")
 ```
 
-(You can find a sortable anf filterable version of this table [here](https://llrs.github.io/bugzilla_viz/#R_contributors)). 
+(You can find a sortable anf filterable version of this table [here](https://llrs.github.io/bugzilla_viz/#R_contributors)).
 One of the top contributors was recently added as R core member.
-Other 
+Other
 
 ```{r users}
 library("ggrepel")
@@ -579,7 +578,7 @@ Some contributors focus on providing patches, other's open many bugs, other's co
 
 ## Future of the report system ?
 
-Last what is the progression of bugs 
+Last what is the progression of bugs
 
 ```{r speed}
 speed <- db_bugs4 |> 
@@ -635,30 +634,38 @@ ggplot(speed0) +
 
 If we look only at bug reports and not enhancements there are `r round(models$estimate[1], 2)` comments every day from R users, one comment on enhancement per `r round(1/models$estimate[2], 2)` days.
 
-Both of them has remained fairly constant over the years, at times a bit faster and sometimes slower. 
+Both of them has remained fairly constant over the years, at times a bit faster and sometimes slower.
 
 # Final comments
 
-This is probably the post that took longer so far. 
+This is probably the post that took longer so far.
 I started on February to work on this blog post but until now I haven't actually written the blog post I wanted.
 
 Many thanks to Simon Urbanek for providing the database dump, without it would have been slower and harder if not impossible to do this analysis.
-Thanks to Heather Turner for encouraging me to do more on this project and providing valuable feedback about what kind of analysis could be useful and co-mentoring Pyush Kumar who I also like to thank the first analysis on the data and his contributions during GSoC. 
-Many thanks to Gabe Becker and Michael Quirico for their feedback on the R contributors working group. 
+Thanks to Heather Turner for encouraging me to do more on this project and providing valuable feedback about what kind of analysis could be useful and co-mentoring Pyush Kumar who I also like to thank the first analysis on the data and his contributions during GSoC.
+Many thanks to Gabe Becker and Michael Quirico for their feedback on the R contributors working group.
 
 Now that the analysis is done, I want to finish the bugRzilla package (which I already started to use for small tasks on this analysis).
-I'm still working on it testing how is the best way to submit properly formatted bug reports with a developer instance set up by Simon. 
+I'm still working on it testing how is the best way to submit properly formatted bug reports with a developer instance set up by Simon.
 Then I'll ask the R core if the way it submits bug reports works well for them.
 
-**TL:DR:** There are many bug reported and handled by the R core and many users contribute on solving the bug reports. 
+**TL:DR:** There are many bug reported and handled by the R core and many users contribute on solving the bug reports.
 The peace of new bug reports and comments is constant as well as enhancements on the language itself.
 
 # Reproducibility
 
-<details><summary>Session Info</summary>
+<details>
+
+<summary>
+
+Session Info
+
+</summary>
+
 ```{r reproducibility, echo = FALSE}
 ## Reproducibility info
 options(width = 120)
 sessioninfo::session_info()
 ```
+
 </details>
