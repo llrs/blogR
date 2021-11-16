@@ -10,6 +10,7 @@ title = "B101nfo"
 # The URL of your site.
 # End your URL with a `/` trailing slash, e.g. `https://example.com/`.
 baseurl = "https://llrs.dev/"
+baseURL = "https://llrs.dev/"
 googleAnalytics = "UA-57101844-5"
 
 # Enter a copyright notice to display in the site footer.
