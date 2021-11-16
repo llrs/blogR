@@ -91,7 +91,7 @@ If you want code and explore the database follow these links and you'll be able 
 
 A first exploration is to see the bug ids and the creation time of the bug id:
 
-```{r}
+```{r database}
 library("dbplyr")
 library("dplyr")
 library("RSQLite")
@@ -126,7 +126,7 @@ One of these outliers is [a test](https://bugs.r-project.org/show_bug.cgi?id=1) 
 I don't know the reason of the move, probably due to SPAM or interface improvements.
 If we look at those missing ids we can estimate the SPAM, note that some might be vulnerabilities on R (but I doubt that there are this much):
 
-```{r}
+```{r spam}
 missing_ids <- (db_bugs$bug_id - lag(db_bugs$bug_id) -1)
 missing_ids[db_bugs$resolution == "SPAM"] <- 1
 missing_ids[is.na(missing_ids)] <- 0
@@ -161,7 +161,7 @@ Is understandable that the R core team is concerned on receiving spam messages f
 As the information from Jitterbug is both old and not as reach as those bugs on Bugzilla I will limit from now on to analyze those bugs reported on Bugzilla. 
 In addition the number of bugs reported on Bugzilla is similar to the ones on Jitterbug:
 
-```{r}
+```{r reporting}
 moving_date <- max(db_bugs$creation_ts[db_bugs$reported_on == "Jitterbug"], 
                    na.rm = TRUE)
 
@@ -186,7 +186,7 @@ There are some old bugs opened on Jitterbug modified on Bugzilla (`r n_mixed`) a
 
 If we focus only on bugs reported on Bugzilla we find the following number of bugs:
 
-```{r}
+```{r reportin2}
 db_bugs4 <- db_bugs2 |> 
   filter(resolution != "SPAM") |> 
   mutate(bug_severity = fct_relevel(bug_severity, 
@@ -204,7 +204,7 @@ db_bugs4 |>
 
 Most bugs are closed followed by unconfirmed:
 
-```{r}
+```{r reporting-status}
 count(db_bugs4, bug_status, sort = TRUE) |> 
   knitr::kable(col.names = c("Status", "Bug reports")) |> 
   kableExtra::kable_styling(position = "center")
@@ -212,7 +212,7 @@ count(db_bugs4, bug_status, sort = TRUE) |>
 
 Do bugs reported have an attachment with a patch?
 
-```{r}
+```{r attachments}
 db_attachments <- tbl(db_bugzilla, "attachments") |> 
   collect() |> 
   mutate(across(c("creation_ts", "modification_time"), as.POSIXct, format = "%Y-%m-%d %H:%M:%OS", tz = "UTC"))
@@ -271,7 +271,7 @@ If bugs do not contain attachments and they receive an attachment it will usuall
 
 ## What happens after submitting a bug report?
 
-```{r}
+```{r activity}
 db_activity <- tbl(db_bugzilla, "bugs_activity") |> 
   collect() |> 
   mutate(bug_when = as.POSIXct(bug_when, tz = "UTC", format = "%Y-%m-%d %H:%M:%OS")) |> 
@@ -326,7 +326,7 @@ db_activity2 |>
 
 Most common action is receiving a comment, whose author is added on the CC field.
 
-```{r}
+```{r r-core}
 r_core <- c(3, 5, 9, 18, 19, 28, 34, 54, 137, 151, 216, 308, 413, 420, 1249, 
             1330, 2442)
 component_names <- c("2" = "Accuracy",
@@ -381,7 +381,7 @@ comments_authors |>
 
 The R core is very active answering on the bug reports, only it seems that those that are trivial do not receive a reply as often as the other categories. 
 
-```{r}
+```{r comment-core}
 
 comments_r_core <- comments_authors |> 
   count(type, author, rep_platform, component, sort = TRUE)  |> 
@@ -402,7 +402,7 @@ If we look by component and OS there are some combinations that received few com
 
 If we split them between peitions to improve R and actual bug reports we can see a different pattern:
 
-```{r}
+```{r comments-enhancements}
 comments_r_core |> 
   filter(type != "bug report") |> 
   ungroup() |> 
@@ -419,7 +419,7 @@ Wishlists receive more comments from the R core among the enhancements.
 What about the comments made by the original poster? 
 Do they comment when they receive some feedback from other users?
 
-```{r}
+```{r history}
 begin <- max(db_bugs4$creation_ts, na.rm = TRUE) - lubridate::years(3)
 
 opener <- db_bugs4 |> 
@@ -485,7 +485,7 @@ user_engaged |>
 Most of them do not reply back when they receive a comment. 
 There might be several causes, one of them is if their bug report is closed or assigned to an R core member. 
 
-```{r}
+```{r engagement}
 user_engaged |> 
   filter(!engaged) |> 
   count(handled, name = "bugs") |> 
@@ -502,7 +502,7 @@ So far we have explored the activity of users who report a bug and the R core me
 But there are some users that beyond this they also participate and collaborate with the R core.
 To make it more recent we will look at those users active on the bugs opened on the last three years.
 
-```{r}
+```{r actions}
 # all actions including on their own reports
 actions_users <- history |> 
   filter(action %in% c("open", "comment", "attach")) |> 
@@ -559,7 +559,7 @@ knitr::kable(active_users_merged,
 One of the top contributors was recently added as R core member.
 Other 
 
-```{r}
+```{r users}
 library("ggrepel")
 p <- ggplot(act_o) + 
   geom_count(aes(open, comment, col = attach, shape = r_core)) +
@@ -581,7 +581,7 @@ Some contributors focus on providing patches, other's open many bugs, other's co
 
 Last what is the progression of bugs 
 
-```{r}
+```{r speed}
 speed <- db_bugs4 |> 
   group_by(type) |> 
   arrange(bug_id) |> 
@@ -605,7 +605,7 @@ ggplot(speed) +
 
 If we look only at bug reports and not enhancements every `r round(1/models$estimate[1], 2)` day there is one bug report and one enhancement petitions per `r round(1/models$estimate[2], 2)` days.
 
-```{r}
+```{r speed-comments}
 speed0 <- db_comments |> 
   select(comment_id, bug_id, bug_when, who) |> 
   left_join(db_bugs4, by = "bug_id") |> 
@@ -653,27 +653,9 @@ Then I'll ask the R core if the way it submits bug reports works well for them.
 **TL:DR:** There are many bug reported and handled by the R core and many users contribute on solving the bug reports. 
 The peace of new bug reports and comments is constant as well as enhancements on the language itself.
 
-
-# References
-
-```{r bibsetup, echo=FALSE, message=FALSE, warning=FALSE}
-## Load knitcitations with a clean bibliography
-library('knitcitations')
-cleanbib()
-cite_options(hyperlink = 'to.doc', citation_format = 'text', style = 'html')
-pi <- sessioninfo::package_info()
-packages <- c(pi$package[pi$attached], 'knitcitations')
-l <- sapply(packages, function(x){citation(x)[1]}, simplify = FALSE)
-bib <- c(l, 'blogdown' = citation('blogdown')[2])
-```
-
-```{r results = 'asis', echo = FALSE, cache = FALSE}
-bibliography(style = 'html')
-```
-
 # Reproducibility
 
-<details>
+<details><summary>Session Info</summary>
 ```{r reproducibility, echo = FALSE}
 ## Reproducibility info
 options(width = 120)
