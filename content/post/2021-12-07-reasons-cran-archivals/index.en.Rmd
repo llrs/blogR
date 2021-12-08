@@ -1,0 +1,302 @@
+---
+title: Reasons why packages are archived on CRAN
+author: Lluís Revilla Sancho
+date: '2021-12-07'
+slug: reasons-cran-archivals
+categories:
+  - CRAN
+  - r
+tags:
+  - CRAN
+  - packages
+  - archived
+authors: []
+description: ''
+draft: no
+editor_options:
+  chunk_output_type: console
+featured: no
+image:
+  caption: ''
+  focal_point: ''
+subtitle: ''
+summary: ''
+---
+
+```{r setup, include = FALSE}
+knitr::opts_chunk$set(collapse = TRUE, echo = FALSE, fig.width = 9, message = FALSE, warning = FALSE)
+# https://bookdown.org/yihui/rmarkdown-cookbook/opts-render.html
+knit_print.data.frame = function(x, ...) {
+  res <- paste(c("", "", knitr::kable(x)), collapse = "\n")
+  knitr::asis_output(res)
+}
+
+registerS3method(
+  "knit_print", "data.frame", knit_print.data.frame,
+  envir = asNamespace("knitr")
+)
+
+```
+
+
+On the Repositories working group of the R Consortium Rich FitzJohn posted [a comment](https://github.com/RConsortium/r-repositories-wg/issues/8#issuecomment-979486806) to [a file](https://cran.r-project.org/src/contrib/PACKAGES.in) that seems to be were the CRAN team stores and uses to check the package history.
+
+The structure is not defined anywhere I could find (I haven't looked much to be honest).
+
+```
+Package: <package name>
+X-CRAN-Comment: Archived on YYYY-MM-DD as <reason>.
+X-CRAN-History: Archived on YYYY-MM-DD as <reason>.
+  Unarchived on YYYY-MM-DD.
+  .
+  <Optional clarification of archival reason>
+<Optional fields like License_restricts_use, Replaced_by, Maintainer: ORPHANED, OS_type: unix>
+```
+
+The file is incomplete as it doesn't have some archival records of some packages, but there are old records from 2013 to now so we can use it to see understand what are the reasons of removal of packages.
+
+# The data
+
+First step is read the record. 
+As it seems that it has some `key: value` structure similar to DESCRIPTION file of packages it seems it is a DCF format: Debian Control File format.
+
+```{r read}
+url <- "https://cran.r-project.org/src/contrib/PACKAGES.in"
+con <- url(url)
+file <- read.dcf(con) |> 
+  as.data.frame()
+```
+
+A brief exploration of the data:
+
+```{r basic-exploration}
+library("dplyr")
+count(file,
+      comment = !is.na(`X-CRAN-Comment`), 
+      history = !is.na(`X-CRAN-History`),
+      sort = TRUE, name = "packages")
+```
+
+Many package with either comments or history but relatively few with both. 
+I'm not sure when either of them is used, as I would expect that all that have history would have a comment.
+
+```{r basic-exploration2}
+count(file,
+      Replaced_by = !is.na(`Replaced_by`), 
+      sort = TRUE, name = "packages")
+```
+
+Many packages are simply replaced by some other package. 
+
+```{r basic-exploration3}
+count(file,
+      Maintainer = !is.na(`Maintainer`), 
+      sort = TRUE, name = "packages")
+```
+
+Most of the packages that have a Maintainer field are orphaned.
+Does it mean that all the others are not orphaned? 
+
+Now that it is in R data structure, we can extract the relevant information, dates, type of action and reasons for each archival event.
+
+```{r extract}
+proto <- data.frame(action = character(), date = Sys.Date()[0], reason = character())
+regex <- "^([[:alpha:]]+) \\w+ ([0-9]{4}-[0-9]{2}-[0-9]{2}) \\w+ (.+)"
+comments_l <- lapply(file$`X-CRAN-Comment`, function(x) {
+  unlist(strsplit(x, "[\n]+"), FALSE, FALSE)
+})
+comments_c <- unlist(comments_l)
+comments_df <- cbind(Package = rep(file$Package, lengths(comments_l)), 
+           strcapture(pattern = regex, x = comments_c, proto = proto))
+
+history_l <- lapply(file$`X-CRAN-History`, function(x) {
+  unlist(strsplit(x, "[\n]+"), FALSE, FALSE)
+})
+history_c <- unlist(history_l)
+history_df <- cbind(Package = rep(file$Package, lengths(history_l)), 
+           strcapture(pattern = regex, x = history_c, proto = proto))
+
+regex2 <- "Versions? .+ (\\w+) \\w+ ([0-9]{4}-[0-9]{2}-[0-9]{2}) ?\\w+ (.+)"
+history_df2 <- cbind(Package = rep(file$Package, lengths(history_l)), 
+           strcapture(pattern = regex2, x = history_c, proto = proto))
+comments_df2 <- cbind(Package = rep(file$Package, lengths(comments_l)), 
+           strcapture(pattern = regex2, x = comments_c, proto = proto))
+regex3 <- "Versions? .+ (\\w+) \\w+ ([0-9]{4}-[0-9]{2}-[0-9]{2}) ?\\w+ (.+)"
+history_df3 <- cbind(Package = rep(file$Package, lengths(history_l)), 
+           strcapture(pattern = regex3, x = history_c, proto = proto))
+comments_df3 <- cbind(Package = rep(file$Package, lengths(comments_l)), 
+           strcapture(pattern = regex3, x = comments_c, proto = proto))
+
+history <- rbind(comments_df, history_df,
+                 comments_df2, history_df2,
+                 comments_df3, history_df3) |> 
+  filter(!is.na(action)) |> 
+  mutate(action = tolower(action),
+         action = gsub(pattern = "e$", replacement = "ed", action)) |> 
+  arrange(Package)
+```
+
+I don't know how the file is written probably it is a mix of automated tools and manual editing so there isn't a simple way to collect all the information in a structured way.
+Simply because the structure has been changing along the years as well as the details of what is stored has changed, or there are missing events. 
+However, the extracted information should be enough for our purposes. 
+
+```{r actions}
+history |>  
+  filter(action != "cran") |> 
+  count(action, name = "events")
+```
+
+As expected the most common recorded event are archivations, but there are some orphaned packages and even some removed packages. 
+Also note the number of orphaned packages is greater than those with the Maintainer field, supporting my theory that the format has changed and that this shouldn't be taken as an exhaustive and complete analysis of archivations.
+
+How are they along time?
+
+```{r plots_df}
+library("ggplot2")
+history |>  
+  filter(action != "cran") |> 
+  group_by(action) |> 
+  count(date, sort = TRUE) |> 
+  ggplot() +
+  geom_col(aes(date, n, fill = action)) +
+  labs(y = "Events", fill = "Action") +
+  theme_minimal() +
+  theme(legend.position = c(0.2, 0.7), text = element_text(size = 15))
+```
+
+Even if there are some events recorded from 2009 it seems that this file has been more used more recently (last commit related to [this was on 2012](https://github.com/wch/r-source/blame/trunk/src/library/tools/R/QC.R#L7778)). 
+I know that there are some old events not recorded on the file, because there are some packages currently present on CRAN that they have an archived event but not an unarchived one.
+So, this doesn't necessarily mean that there are currently more packages archived from CRAN. 
+
+Now that most of the package events are collected and we have the reasons of the actions, we can explore and classify the reasons.
+
+```{r reasons}
+hist_expand <- history |> 
+  filter(!is.na(date)) |> 
+  mutate(not_corrected = grepl("not correct", reason, fixed = TRUE),
+         request = grepl("request", reason, fixed = TRUE),
+         maintainer = grepl("maintainer", reason, fixed = TRUE),
+         request_maintainer =  maintainer & request,
+         request_author = grepl("author", reason, fixed = TRUE) & request,
+         reminders = grepl("reminders", reason, fixed = TRUE),
+         install = grepl("install", reason, fixed = TRUE),
+         email = grepl("email", reason, fixed = TRUE),
+         email_error = email & grepl("undeliverable|bounce[sd]?|returned|rejected|refused", reason),
+         depends = grepl("depends", reason, fixed = TRUE),
+         unresponsive_maintainer = grepl("uncontactable|unresponsive", reason) & maintainer,
+         check = grepl("check", reason, fixed = TRUE),
+         licence = grepl("licen[cs]e", reason),
+         update = grepl("updated?", reason),
+         required = grepl("require[sd]?", reason),
+         policy = grepl("policy violation", reason, fixed = TRUE),
+         archived = grepl("archived?", reason),
+         authorship = grepl("authorship", reason, fixed = TRUE),
+         depends_archived = depends & archived,
+         )
+```
+
+We can look at the most frequent error reasons for archiving packages:
+
+```{r}
+counts <- hist_expand |> 
+  filter(action == "archived") |> 
+  select(-Package, -action, -date, -reason) |> 
+  colSums()
+counts2 <- data.frame(type = names(counts), events = unname(counts)) |> 
+  filter(!type %in% c("email", "request", "maintainer")) |> 
+  arrange(-events)
+counts2
+```
+
+The most frequent error is that errors are not corrected or checks, even when there are reminders.  
+Next are the packages archived because they depend on other packages already not on CRAN.  
+The third most common reason seems to be at the request of the maintainer.   
+There are some packages that are replaced by others and some maintainers might not want to continue supporting the package when they receive a message from CRAN about fixing an error.
+
+Policy violation makes to the top 5 but with less than 500 events.
+Dependencies problems are the sixth cause, followed by email errors (bouncing, incorrect email...) and then come very sporadic problems about license, not fixing on updates of R, authorship problems or requests from authors.
+
+Some of these errors happen at the same time for each event, but grouping these reasons together we get a similar table:
+
+```{r summary_table}
+hist_summary <- hist_expand |> 
+  filter(action == "archived") |> 
+  select(-Package, -action, -date, -reason) |> 
+  mutate(package_not_corrected =  not_corrected | check | reminders | install | update,
+         request_maintainer = request_maintainer,
+         dependencies = required | depends | archived |depends_archived,
+         other = email_error | licence | authorship | unresponsive_maintainer|  request_author) |> 
+  group_by(package_not_corrected, request_maintainer, dependencies, other) |> 
+  count(sort = TRUE, name = "events") |> 
+  ungroup()
+hist_summary
+```
+
+Surprisingly the second most frequent group of archiving actions are due to many different reasons.
+This is probably the [Pareto's principle](https://en.wikipedia.org/wiki/Pareto_principle) in action because they are around 15% of the archiving events but the causes are very diverse between them. 
+
+However, if we look at the packages which were archived (not at the request of maintainers), most of them just happen once:
+
+```{r}
+pkg_event <- hist_expand |> 
+  filter(action == "archived" & !request_maintainer) |> 
+  count(Package, sort = TRUE, name = "Events")
+count(pkg_event, Events, name = "Packages")
+```
+
+This suggests that once a package is archived maintainers do not make the effort to put it back on CRAN. 
+To check we can see the current available packages and see how many of those are still present on CRAN:
+
+```{r}
+ap <- available.packages()
+pkg_event |> 
+  mutate(CRAN = Package %in% rownames(ap)) |> 
+  group_by(CRAN) |> 
+  count(name = "Packages") |>
+  ungroup() |> 
+  mutate(Proportion = scales::percent(Packages/sum(Packages)))
+```
+
+Many packages are currently on CRAN despite their past archivation but close to 60% are currently not on CRAN.
+
+# Discussion
+
+Most packages archived on CRAN are due to the maintainers not correcting errors found on the package by CRAN checks.
+It is clear that the checks that CRAN help packages to have a high quality but it has high cost on the maintainers and specially on CRAN team.
+Maintainers don't seem to have enough time to fix the issues on time.
+And the CRAN team sends personalized reminders to maintainers and sometimes patches to the packages.
+
+Although the desire to have packages corrected and with no issues is the common goal there are few options on light of these:
+
+- Be more restrictive
+
+  Prevent a package to be accepted if it breaks dependencies or archive packages when they fail checks. 
+  This will make it harder to keep packages on CRAN but would lift some pressure on the CRAN team. 
+  This would go against the current on other languages repositories, which often they don't check the packages/modules and even have less restrictions on dependencies (so it might be an unpopular decision). 
+  
+- Be more permissive:  
+
+ One option would be to allow for more time for maintainers to fix issues. I haven't find any report of how long does it take for a package since an error to a fix on CRAN but often it is quite long. 
+ I have seen packages with a warning for months if not years and they weren't archived from CRAN. 
+
+ Maybe if users get a warning on installing packages that a package or one of its dependencies is not clear on all CRAN checks (without error or warnings).
+ This might help to make users more conscious of their dependencies but this might add pressure to maintainers who already don't have enough time to fix the problems of their packages. 
+
+- Provide more help or tools to maintainers  
+
+ Another option is to provide a mechanism for maintainers to receive help or fix the package. 
+ Currently CRAN requires that new packages that break dependencies to give enough notice in advance to other maintainers to fix their package. 
+ On R-pkg-devel mailing list there are often requests for help on submitting and fixing some errors detected by CRAN checks which often result on other maintainers sharing their solutions for the same problem.
+ There is need for something else? How would that work? 
+
+ There high percentage of packages that once archived do not come back to CRAN might be a good place to start helping maintainers and an opportunity for users to step in and help maintainers of packages they have been using. 
+ 
+# Reproducibility
+
+<details>
+```{r reproducibility, echo = FALSE}
+## Reproducibility info
+options(width = 120)
+sessioninfo::session_info()
+```
+</details>

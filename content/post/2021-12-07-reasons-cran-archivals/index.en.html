@@ -1,0 +1,499 @@
+---
+title: Reasons why packages are archived on CRAN
+author: Lluís Revilla Sancho
+date: '2021-12-07'
+slug: reasons-cran-archivals
+categories:
+  - CRAN
+  - r
+tags:
+  - CRAN
+  - packages
+  - archived
+authors: []
+description: ''
+draft: no
+editor_options:
+  chunk_output_type: console
+featured: no
+image:
+  caption: ''
+  focal_point: ''
+subtitle: ''
+summary: ''
+---
+
+<script src="{{< blogdown/postref >}}index.en_files/header-attrs/header-attrs.js"></script>
+
+
+<p>On the Repositories working group of the R Consortium Rich FitzJohn posted <a href="https://github.com/RConsortium/r-repositories-wg/issues/8#issuecomment-979486806">a comment</a> to <a href="https://cran.r-project.org/src/contrib/PACKAGES.in">a file</a> that seems to be were the CRAN team stores and uses to check the package history.</p>
+<p>The structure is not defined anywhere I could find (I haven’t looked much to be honest).</p>
+<pre><code>Package: &lt;package name&gt;
+X-CRAN-Comment: Archived on YYYY-MM-DD as &lt;reason&gt;.
+X-CRAN-History: Archived on YYYY-MM-DD as &lt;reason&gt;.
+  Unarchived on YYYY-MM-DD.
+  .
+  &lt;Optional clarification of archival reason&gt;
+&lt;Optional fields like License_restricts_use, Replaced_by, Maintainer: ORPHANED, OS_type: unix&gt;</code></pre>
+<p>The file is incomplete as it doesn’t have some archival records of some packages, but there are old records from 2013 to now so we can use it to see understand what are the reasons of removal of packages.</p>
+<div id="the-data" class="section level1">
+<h1>The data</h1>
+<p>First step is read the record.
+As it seems that it has some <code>key: value</code> structure similar to DESCRIPTION file of packages it seems it is a DCF format: Debian Control File format.</p>
+<p>A brief exploration of the data:</p>
+<table>
+<thead>
+<tr class="header">
+<th align="left">comment</th>
+<th align="left">history</th>
+<th align="right">packages</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td align="left">TRUE</td>
+<td align="left">FALSE</td>
+<td align="right">2891</td>
+</tr>
+<tr class="even">
+<td align="left">FALSE</td>
+<td align="left">TRUE</td>
+<td align="right">2195</td>
+</tr>
+<tr class="odd">
+<td align="left">TRUE</td>
+<td align="left">TRUE</td>
+<td align="right">341</td>
+</tr>
+<tr class="even">
+<td align="left">FALSE</td>
+<td align="left">FALSE</td>
+<td align="right">74</td>
+</tr>
+</tbody>
+</table>
+<p>Many package with either comments or history but relatively few with both.
+I’m not sure when either of them is used, as I would expect that all that have history would have a comment.</p>
+<table>
+<thead>
+<tr class="header">
+<th align="left">Replaced_by</th>
+<th align="right">packages</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td align="left">FALSE</td>
+<td align="right">5403</td>
+</tr>
+<tr class="even">
+<td align="left">TRUE</td>
+<td align="right">98</td>
+</tr>
+</tbody>
+</table>
+<p>Many packages are simply replaced by some other package.</p>
+<table>
+<thead>
+<tr class="header">
+<th align="left">Maintainer</th>
+<th align="right">packages</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td align="left">FALSE</td>
+<td align="right">5406</td>
+</tr>
+<tr class="even">
+<td align="left">TRUE</td>
+<td align="right">95</td>
+</tr>
+</tbody>
+</table>
+<p>Most of the packages that have a Maintainer field are orphaned.
+Does it mean that all the others are not orphaned?</p>
+<p>Now that it is in R data structure, we can extract the relevant information, dates, type of action and reasons for each archival event.</p>
+<p>I don’t know how the file is written probably it is a mix of automated tools and manual editing so there isn’t a simple way to collect all the information in a structured way.
+Simply because the structure has been changing along the years as well as the details of what is stored has changed, or there are missing events.
+However, the extracted information should be enough for our purposes.</p>
+<table>
+<thead>
+<tr class="header">
+<th align="left">action</th>
+<th align="right">events</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td align="left">archived</td>
+<td align="right">5807</td>
+</tr>
+<tr class="even">
+<td align="left">orphaned</td>
+<td align="right">121</td>
+</tr>
+<tr class="odd">
+<td align="left">removed</td>
+<td align="right">50</td>
+</tr>
+<tr class="even">
+<td align="left">renamed</td>
+<td align="right">1</td>
+</tr>
+<tr class="odd">
+<td align="left">unarchived</td>
+<td align="right">1</td>
+</tr>
+</tbody>
+</table>
+<p>As expected the most common recorded event are archivations, but there are some orphaned packages and even some removed packages.
+Also note the number of orphaned packages is greater than those with the Maintainer field, supporting my theory that the format has changed and that this shouldn’t be taken as an exhaustive and complete analysis of archivations.</p>
+<p>How are they along time?</p>
+<p><img src="{{< blogdown/postref >}}index.en_files/figure-html/plots_df-1.png" width="864" /></p>
+<p>Even if there are some events recorded from 2009 it seems that this file has been more used more recently (last commit related to <a href="https://github.com/wch/r-source/blame/trunk/src/library/tools/R/QC.R#L7778">this was on 2012</a>).
+I know that there are some old events not recorded on the file, because there are some packages currently present on CRAN that they have an archived event but not an unarchived one.
+So, this doesn’t necessarily mean that there are currently more packages archived from CRAN.</p>
+<p>Now that most of the package events are collected and we have the reasons of the actions, we can explore and classify the reasons.</p>
+<p>We can look at the most frequent error reasons for archiving packages:</p>
+<table>
+<thead>
+<tr class="header">
+<th align="left">type</th>
+<th align="right">events</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td align="left">not_corrected</td>
+<td align="right">3524</td>
+</tr>
+<tr class="even">
+<td align="left">check</td>
+<td align="right">3109</td>
+</tr>
+<tr class="odd">
+<td align="left">reminders</td>
+<td align="right">1337</td>
+</tr>
+<tr class="even">
+<td align="left">archived</td>
+<td align="right">560</td>
+</tr>
+<tr class="odd">
+<td align="left">request_maintainer</td>
+<td align="right">474</td>
+</tr>
+<tr class="even">
+<td align="left">policy</td>
+<td align="right">443</td>
+</tr>
+<tr class="odd">
+<td align="left">required</td>
+<td align="right">368</td>
+</tr>
+<tr class="even">
+<td align="left">depends</td>
+<td align="right">260</td>
+</tr>
+<tr class="odd">
+<td align="left">depends_archived</td>
+<td align="right">233</td>
+</tr>
+<tr class="even">
+<td align="left">email_error</td>
+<td align="right">185</td>
+</tr>
+<tr class="odd">
+<td align="left">install</td>
+<td align="right">144</td>
+</tr>
+<tr class="even">
+<td align="left">update</td>
+<td align="right">99</td>
+</tr>
+<tr class="odd">
+<td align="left">licence</td>
+<td align="right">18</td>
+</tr>
+<tr class="even">
+<td align="left">authorship</td>
+<td align="right">13</td>
+</tr>
+<tr class="odd">
+<td align="left">unresponsive_maintainer</td>
+<td align="right">7</td>
+</tr>
+<tr class="even">
+<td align="left">request_author</td>
+<td align="right">2</td>
+</tr>
+</tbody>
+</table>
+<p>The most frequent error is that errors are not corrected or checks, even when there are reminders.<br />
+Next are the packages archived because they depend on other packages already not on CRAN.<br />
+The third most common reason seems to be at the request of the maintainer.<br />
+There are some packages that are replaced by others and some maintainers might not want to continue supporting the package when they receive a message from CRAN about fixing an error.</p>
+<p>Policy violation makes to the top 5 but with less than 500 events.
+Dependencies problems are the sixth cause, followed by email errors (bouncing, incorrect email…) and then come very sporadic problems about license, not fixing on updates of R, authorship problems or requests from authors.</p>
+<p>Some of these errors happen at the same time for each event, but grouping these reasons together we get a similar table:</p>
+<table>
+<thead>
+<tr class="header">
+<th align="left">package_not_corrected</th>
+<th align="left">request_maintainer</th>
+<th align="left">dependencies</th>
+<th align="left">other</th>
+<th align="right">events</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td align="left">TRUE</td>
+<td align="left">FALSE</td>
+<td align="left">FALSE</td>
+<td align="left">FALSE</td>
+<td align="right">3631</td>
+</tr>
+<tr class="even">
+<td align="left">FALSE</td>
+<td align="left">FALSE</td>
+<td align="left">FALSE</td>
+<td align="left">FALSE</td>
+<td align="right">811</td>
+</tr>
+<tr class="odd">
+<td align="left">FALSE</td>
+<td align="left">FALSE</td>
+<td align="left">TRUE</td>
+<td align="left">FALSE</td>
+<td align="right">649</td>
+</tr>
+<tr class="even">
+<td align="left">FALSE</td>
+<td align="left">TRUE</td>
+<td align="left">FALSE</td>
+<td align="left">FALSE</td>
+<td align="right">467</td>
+</tr>
+<tr class="odd">
+<td align="left">FALSE</td>
+<td align="left">FALSE</td>
+<td align="left">FALSE</td>
+<td align="left">TRUE</td>
+<td align="right">203</td>
+</tr>
+<tr class="even">
+<td align="left">TRUE</td>
+<td align="left">FALSE</td>
+<td align="left">TRUE</td>
+<td align="left">FALSE</td>
+<td align="right">19</td>
+</tr>
+<tr class="odd">
+<td align="left">TRUE</td>
+<td align="left">FALSE</td>
+<td align="left">FALSE</td>
+<td align="left">TRUE</td>
+<td align="right">14</td>
+</tr>
+<tr class="even">
+<td align="left">FALSE</td>
+<td align="left">FALSE</td>
+<td align="left">TRUE</td>
+<td align="left">TRUE</td>
+<td align="right">4</td>
+</tr>
+<tr class="odd">
+<td align="left">TRUE</td>
+<td align="left">TRUE</td>
+<td align="left">FALSE</td>
+<td align="left">FALSE</td>
+<td align="right">3</td>
+</tr>
+<tr class="even">
+<td align="left">FALSE</td>
+<td align="left">TRUE</td>
+<td align="left">TRUE</td>
+<td align="left">FALSE</td>
+<td align="right">2</td>
+</tr>
+<tr class="odd">
+<td align="left">TRUE</td>
+<td align="left">FALSE</td>
+<td align="left">TRUE</td>
+<td align="left">TRUE</td>
+<td align="right">2</td>
+</tr>
+<tr class="even">
+<td align="left">FALSE</td>
+<td align="left">TRUE</td>
+<td align="left">FALSE</td>
+<td align="left">TRUE</td>
+<td align="right">1</td>
+</tr>
+<tr class="odd">
+<td align="left">TRUE</td>
+<td align="left">TRUE</td>
+<td align="left">FALSE</td>
+<td align="left">TRUE</td>
+<td align="right">1</td>
+</tr>
+</tbody>
+</table>
+<p>Surprisingly the second most frequent group of archiving actions are due to many different reasons.
+This is probably the <a href="https://en.wikipedia.org/wiki/Pareto_principle">Pareto’s principle</a> in action because they are around 15% of the archiving events but the causes are very diverse between them.</p>
+<p>However, if we look at the packages which were archived (not at the request of maintainers), most of them just happen once:</p>
+<table>
+<thead>
+<tr class="header">
+<th align="right">Events</th>
+<th align="right">Packages</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td align="right">1</td>
+<td align="right">4023</td>
+</tr>
+<tr class="even">
+<td align="right">2</td>
+<td align="right">481</td>
+</tr>
+<tr class="odd">
+<td align="right">3</td>
+<td align="right">79</td>
+</tr>
+<tr class="even">
+<td align="right">4</td>
+<td align="right">24</td>
+</tr>
+<tr class="odd">
+<td align="right">5</td>
+<td align="right">3</td>
+</tr>
+</tbody>
+</table>
+<p>This suggests that once a package is archived maintainers do not make the effort to put it back on CRAN.
+To check we can see the current available packages and see how many of those are still present on CRAN:</p>
+<table>
+<thead>
+<tr class="header">
+<th align="left">CRAN</th>
+<th align="right">Packages</th>
+<th align="left">Proportion</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td align="left">FALSE</td>
+<td align="right">2620</td>
+<td align="left">57%</td>
+</tr>
+<tr class="even">
+<td align="left">TRUE</td>
+<td align="right">1990</td>
+<td align="left">43%</td>
+</tr>
+</tbody>
+</table>
+<p>Many packages are currently on CRAN despite their past archivation but close to 60% are currently not on CRAN.</p>
+</div>
+<div id="discussion" class="section level1">
+<h1>Discussion</h1>
+<p>Most packages archived on CRAN are due to the maintainers not correcting errors found on the package by CRAN checks.
+It is clear that the checks that CRAN help packages to have a high quality but it has high cost on the maintainers and specially on CRAN team.
+Maintainers don’t seem to have enough time to fix the issues on time.
+And the CRAN team sends personalized reminders to maintainers and sometimes patches to the packages.</p>
+<p>Although the desire to have packages corrected and with no issues is the common goal there are few options on light of these:</p>
+<ul>
+<li><p>Be more restrictive</p>
+<p>Prevent a package to be accepted if it breaks dependencies or archive packages when they fail checks.
+This will make it harder to keep packages on CRAN but would lift some pressure on the CRAN team.
+This would go against the current on other languages repositories, which often they don’t check the packages/modules and even have less restrictions on dependencies (so it might be an unpopular decision).</p></li>
+<li><p>Be more permissive:</p></li>
+</ul>
+<p>One option would be to allow for more time for maintainers to fix issues. I haven’t find any report of how long does it take for a package since an error to a fix on CRAN but often it is quite long.
+I have seen packages with a warning for months if not years and they weren’t archived from CRAN.</p>
+<p>Maybe if users get a warning on installing packages that a package or one of its dependencies is not clear on all CRAN checks (without error or warnings).
+This might help to make users more conscious of their dependencies but this might add pressure to maintainers who already don’t have enough time to fix the problems of their packages.</p>
+<ul>
+<li>Provide more help or tools to maintainers</li>
+</ul>
+<p>Another option is to provide a mechanism for maintainers to receive help or fix the package.
+Currently CRAN requires that new packages that break dependencies to give enough notice in advance to other maintainers to fix their package.
+On R-pkg-devel mailing list there are often requests for help on submitting and fixing some errors detected by CRAN checks which often result on other maintainers sharing their solutions for the same problem.
+There is need for something else? How would that work?</p>
+<p>There high percentage of packages that once archived do not come back to CRAN might be a good place to start helping maintainers and an opportunity for users to step in and help maintainers of packages they have been using.</p>
+</div>
+<div id="reproducibility" class="section level1">
+<h1>Reproducibility</h1>
+<details>
+<pre><code>## ─ Session info ───────────────────────────────────────────────────────────────────────────────────────────────────────
+##  setting  value
+##  version  R version 4.1.2 (2021-11-01)
+##  os       Ubuntu 20.04.3 LTS
+##  system   x86_64, linux-gnu
+##  ui       X11
+##  language (EN)
+##  collate  en_US.UTF-8
+##  ctype    en_US.UTF-8
+##  tz       Europe/Madrid
+##  date     2021-12-08
+##  pandoc   2.14.0.3 @ /usr/lib/rstudio/bin/pandoc/ (via rmarkdown)
+## 
+## ─ Packages ───────────────────────────────────────────────────────────────────────────────────────────────────────────
+##  package     * version date (UTC) lib source
+##  assertthat    0.2.1   2019-03-21 [1] CRAN (R 4.1.2)
+##  blogdown      1.6     2021-11-09 [1] CRAN (R 4.1.2)
+##  bookdown      0.24    2021-09-02 [1] CRAN (R 4.1.2)
+##  bslib         0.3.1   2021-10-06 [1] CRAN (R 4.1.2)
+##  cli           3.1.0   2021-10-27 [1] CRAN (R 4.1.2)
+##  colorspace    2.0-2   2021-06-24 [1] CRAN (R 4.1.2)
+##  crayon        1.4.2   2021-10-29 [1] CRAN (R 4.1.2)
+##  DBI           1.1.1   2021-01-15 [1] CRAN (R 4.1.2)
+##  digest        0.6.29  2021-12-01 [1] CRAN (R 4.1.2)
+##  dplyr       * 1.0.7   2021-06-18 [1] CRAN (R 4.1.2)
+##  ellipsis      0.3.2   2021-04-29 [1] CRAN (R 4.1.2)
+##  evaluate      0.14    2019-05-28 [1] CRAN (R 4.1.2)
+##  fansi         0.5.0   2021-05-25 [1] CRAN (R 4.1.2)
+##  farver        2.1.0   2021-02-28 [1] CRAN (R 4.1.2)
+##  fastmap       1.1.0   2021-01-25 [1] CRAN (R 4.1.2)
+##  generics      0.1.1   2021-10-25 [1] CRAN (R 4.1.2)
+##  ggplot2     * 3.3.5   2021-06-25 [1] CRAN (R 4.1.2)
+##  glue          1.5.1   2021-11-30 [1] CRAN (R 4.1.2)
+##  gtable        0.3.0   2019-03-25 [1] CRAN (R 4.1.2)
+##  highr         0.9     2021-04-16 [1] CRAN (R 4.1.2)
+##  htmltools     0.5.2   2021-08-25 [1] CRAN (R 4.1.2)
+##  jquerylib     0.1.4   2021-04-26 [1] CRAN (R 4.1.2)
+##  jsonlite      1.7.2   2020-12-09 [1] CRAN (R 4.1.2)
+##  knitr         1.36    2021-09-29 [1] CRAN (R 4.1.2)
+##  labeling      0.4.2   2020-10-20 [1] CRAN (R 4.1.2)
+##  lifecycle     1.0.1   2021-09-24 [1] CRAN (R 4.1.2)
+##  magrittr      2.0.1   2020-11-17 [1] CRAN (R 4.1.2)
+##  munsell       0.5.0   2018-06-12 [1] CRAN (R 4.1.2)
+##  pillar        1.6.4   2021-10-18 [1] CRAN (R 4.1.2)
+##  pkgconfig     2.0.3   2019-09-22 [1] CRAN (R 4.1.2)
+##  purrr         0.3.4   2020-04-17 [1] CRAN (R 4.1.2)
+##  R6            2.5.1   2021-08-19 [1] CRAN (R 4.1.2)
+##  rlang         0.4.12  2021-10-18 [1] CRAN (R 4.1.2)
+##  rmarkdown     2.11    2021-09-14 [1] CRAN (R 4.1.2)
+##  rstudioapi    0.13    2020-11-12 [1] CRAN (R 4.1.2)
+##  sass          0.4.0   2021-05-12 [1] CRAN (R 4.1.2)
+##  scales        1.1.1   2020-05-11 [1] CRAN (R 4.1.2)
+##  sessioninfo   1.2.2   2021-12-06 [1] CRAN (R 4.1.2)
+##  stringi       1.7.6   2021-11-29 [1] CRAN (R 4.1.2)
+##  stringr       1.4.0   2019-02-10 [1] CRAN (R 4.1.2)
+##  tibble        3.1.6   2021-11-07 [1] CRAN (R 4.1.2)
+##  tidyselect    1.1.1   2021-04-30 [1] CRAN (R 4.1.2)
+##  utf8          1.2.2   2021-07-24 [1] CRAN (R 4.1.2)
+##  vctrs         0.3.8   2021-04-29 [1] CRAN (R 4.1.2)
+##  withr         2.4.3   2021-11-30 [1] CRAN (R 4.1.2)
+##  xfun          0.28    2021-11-04 [1] CRAN (R 4.1.2)
+##  yaml          2.2.1   2020-02-01 [1] CRAN (R 4.1.2)
+## 
+##  [1] /home/lluis/bin/R/4.1.2/lib/R/library
+## 
+## ──────────────────────────────────────────────────────────────────────────────────────────────────────────────────────</code></pre>
+</details>
+</div>
