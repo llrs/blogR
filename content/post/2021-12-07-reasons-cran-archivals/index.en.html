@@ -20,7 +20,7 @@ image:
   caption: ''
   focal_point: ''
 subtitle: ''
-summary: ''
+summary: 'Most frequent reason is due to the package not fixed on time, followed by depending on packages archived and policy violation.'
 ---
 
 <script src="{{< blogdown/postref >}}index.en_files/header-attrs/header-attrs.js"></script>
@@ -45,32 +45,62 @@ As it seems that it has some <code>key: value</code> structure similar to DESCRI
 <p>A brief exploration of the data:</p>
 <table>
 <thead>
-<tr class="header">
-<th align="left">comment</th>
-<th align="left">history</th>
-<th align="right">packages</th>
+<tr>
+<th style="text-align:left;">
+comment
+</th>
+<th style="text-align:left;">
+history
+</th>
+<th style="text-align:right;">
+packages
+</th>
 </tr>
 </thead>
 <tbody>
-<tr class="odd">
-<td align="left">TRUE</td>
-<td align="left">FALSE</td>
-<td align="right">2891</td>
+<tr>
+<td style="text-align:left;">
+TRUE
+</td>
+<td style="text-align:left;">
+FALSE
+</td>
+<td style="text-align:right;">
+2891
+</td>
 </tr>
-<tr class="even">
-<td align="left">FALSE</td>
-<td align="left">TRUE</td>
-<td align="right">2195</td>
+<tr>
+<td style="text-align:left;">
+FALSE
+</td>
+<td style="text-align:left;">
+TRUE
+</td>
+<td style="text-align:right;">
+2195
+</td>
 </tr>
-<tr class="odd">
-<td align="left">TRUE</td>
-<td align="left">TRUE</td>
-<td align="right">341</td>
+<tr>
+<td style="text-align:left;">
+TRUE
+</td>
+<td style="text-align:left;">
+TRUE
+</td>
+<td style="text-align:right;">
+341
+</td>
 </tr>
-<tr class="even">
-<td align="left">FALSE</td>
-<td align="left">FALSE</td>
-<td align="right">74</td>
+<tr>
+<td style="text-align:left;">
+FALSE
+</td>
+<td style="text-align:left;">
+FALSE
+</td>
+<td style="text-align:right;">
+74
+</td>
 </tr>
 </tbody>
 </table>
@@ -78,38 +108,62 @@ As it seems that it has some <code>key: value</code> structure similar to DESCRI
 I’m not sure when either of them is used, as I would expect that all that have history would have a comment.</p>
 <table>
 <thead>
-<tr class="header">
-<th align="left">Replaced_by</th>
-<th align="right">packages</th>
+<tr>
+<th style="text-align:left;">
+Replaced_by
+</th>
+<th style="text-align:right;">
+packages
+</th>
 </tr>
 </thead>
 <tbody>
-<tr class="odd">
-<td align="left">FALSE</td>
-<td align="right">5403</td>
+<tr>
+<td style="text-align:left;">
+FALSE
+</td>
+<td style="text-align:right;">
+5403
+</td>
 </tr>
-<tr class="even">
-<td align="left">TRUE</td>
-<td align="right">98</td>
+<tr>
+<td style="text-align:left;">
+TRUE
+</td>
+<td style="text-align:right;">
+98
+</td>
 </tr>
 </tbody>
 </table>
 <p>Many packages are simply replaced by some other package.</p>
 <table>
 <thead>
-<tr class="header">
-<th align="left">Maintainer</th>
-<th align="right">packages</th>
+<tr>
+<th style="text-align:left;">
+Maintainer
+</th>
+<th style="text-align:right;">
+packages
+</th>
 </tr>
 </thead>
 <tbody>
-<tr class="odd">
-<td align="left">FALSE</td>
-<td align="right">5406</td>
+<tr>
+<td style="text-align:left;">
+FALSE
+</td>
+<td style="text-align:right;">
+5406
+</td>
 </tr>
-<tr class="even">
-<td align="left">TRUE</td>
-<td align="right">95</td>
+<tr>
+<td style="text-align:left;">
+TRUE
+</td>
+<td style="text-align:right;">
+95
+</td>
 </tr>
 </tbody>
 </table>
@@ -125,31 +179,55 @@ Simply because the structure has been changing along the years as well as the de
 However, the extracted information should be enough for our purposes.</p>
 <table>
 <thead>
-<tr class="header">
-<th align="left">Action</th>
-<th align="right">Events</th>
+<tr>
+<th style="text-align:left;">
+Action
+</th>
+<th style="text-align:right;">
+Events
+</th>
 </tr>
 </thead>
 <tbody>
-<tr class="odd">
-<td align="left">archived</td>
-<td align="right">5807</td>
+<tr>
+<td style="text-align:left;">
+archived
+</td>
+<td style="text-align:right;">
+5807
+</td>
 </tr>
-<tr class="even">
-<td align="left">orphaned</td>
-<td align="right">121</td>
+<tr>
+<td style="text-align:left;">
+orphaned
+</td>
+<td style="text-align:right;">
+121
+</td>
 </tr>
-<tr class="odd">
-<td align="left">removed</td>
-<td align="right">50</td>
+<tr>
+<td style="text-align:left;">
+removed
+</td>
+<td style="text-align:right;">
+50
+</td>
 </tr>
-<tr class="even">
-<td align="left">renamed</td>
-<td align="right">1</td>
+<tr>
+<td style="text-align:left;">
+renamed
+</td>
+<td style="text-align:right;">
+1
+</td>
 </tr>
-<tr class="odd">
-<td align="left">unarchived</td>
-<td align="right">1</td>
+<tr>
+<td style="text-align:left;">
+unarchived
+</td>
+<td style="text-align:right;">
+1
+</td>
 </tr>
 </tbody>
 </table>
@@ -163,128 +241,262 @@ So, this doesn’t necessarily mean that there are currently more packages archi
 <p>Another source of records of archived packages might be <a href="http://dirk.eddelbuettel.com/cranberries/cran/removed/">cranberries</a>. It would be nice to compare this file with the records on the database there.</p>
 <p>Now that most of the package events are collected and we have the reasons of the actions, we can explore and classify the reasons.
 Using some simple regex I explore for key words or sentences.</p>
-<p>We can look at the most frequent error reasons for archiving packages:</p>
+<p>We can look at the most frequent error reasons for archiving packages, patterns I found with more than 100 cases:</p>
 <p><img src="{{< blogdown/postref >}}index.en_files/figure-html/reasons_top-1.png" width="864" /></p>
 <p>The most frequent error is that errors are not corrected or checks, even when there are reminders.<br />
 Next are the packages archived because they depend on other packages already not on CRAN.<br />
-The third most common reason seems to be at the request of the maintainer.<br />
 There are some packages that are replaced by others and some maintainers might not want to continue supporting the package when they receive a message from CRAN about fixing an error.</p>
 <p>Policy violation makes to the top 5 but with less than 500 events.
 Dependencies problems are the sixth cause, followed by email errors (bouncing, incorrect email…) and then come very sporadic problems about license, not fixing on updates of R, authorship problems or requests from authors.</p>
 <p>Some of these errors happen at the same time for each event, but grouping these reasons together we get a similar table:</p>
 <table>
 <thead>
-<tr class="header">
-<th align="left">package_not_corrected</th>
-<th align="left">request_maintainer</th>
-<th align="left">dependencies</th>
-<th align="left">other</th>
-<th align="right">events</th>
+<tr>
+<th style="text-align:left;">
+package_not_corrected
+</th>
+<th style="text-align:left;">
+request_maintainer
+</th>
+<th style="text-align:left;">
+dependencies
+</th>
+<th style="text-align:left;">
+other
+</th>
+<th style="text-align:right;">
+events
+</th>
 </tr>
 </thead>
 <tbody>
-<tr class="odd">
-<td align="left">TRUE</td>
-<td align="left">FALSE</td>
-<td align="left">FALSE</td>
-<td align="left">FALSE</td>
-<td align="right">3641</td>
+<tr>
+<td style="text-align:left;">
+TRUE
+</td>
+<td style="text-align:left;">
+FALSE
+</td>
+<td style="text-align:left;">
+FALSE
+</td>
+<td style="text-align:left;">
+FALSE
+</td>
+<td style="text-align:right;">
+3641
+</td>
 </tr>
-<tr class="even">
-<td align="left">FALSE</td>
-<td align="left">FALSE</td>
-<td align="left">FALSE</td>
-<td align="left">FALSE</td>
-<td align="right">1277</td>
+<tr>
+<td style="text-align:left;">
+FALSE
+</td>
+<td style="text-align:left;">
+FALSE
+</td>
+<td style="text-align:left;">
+FALSE
+</td>
+<td style="text-align:left;">
+FALSE
+</td>
+<td style="text-align:right;">
+1277
+</td>
 </tr>
-<tr class="odd">
-<td align="left">FALSE</td>
-<td align="left">FALSE</td>
-<td align="left">TRUE</td>
-<td align="left">FALSE</td>
-<td align="right">651</td>
+<tr>
+<td style="text-align:left;">
+FALSE
+</td>
+<td style="text-align:left;">
+FALSE
+</td>
+<td style="text-align:left;">
+TRUE
+</td>
+<td style="text-align:left;">
+FALSE
+</td>
+<td style="text-align:right;">
+651
+</td>
 </tr>
-<tr class="even">
-<td align="left">FALSE</td>
-<td align="left">FALSE</td>
-<td align="left">FALSE</td>
-<td align="left">TRUE</td>
-<td align="right">197</td>
+<tr>
+<td style="text-align:left;">
+FALSE
+</td>
+<td style="text-align:left;">
+FALSE
+</td>
+<td style="text-align:left;">
+FALSE
+</td>
+<td style="text-align:left;">
+TRUE
+</td>
+<td style="text-align:right;">
+197
+</td>
 </tr>
-<tr class="odd">
-<td align="left">TRUE</td>
-<td align="left">FALSE</td>
-<td align="left">TRUE</td>
-<td align="left">FALSE</td>
-<td align="right">19</td>
+<tr>
+<td style="text-align:left;">
+TRUE
+</td>
+<td style="text-align:left;">
+FALSE
+</td>
+<td style="text-align:left;">
+TRUE
+</td>
+<td style="text-align:left;">
+FALSE
+</td>
+<td style="text-align:right;">
+19
+</td>
 </tr>
-<tr class="even">
-<td align="left">TRUE</td>
-<td align="left">FALSE</td>
-<td align="left">FALSE</td>
-<td align="left">TRUE</td>
-<td align="right">14</td>
+<tr>
+<td style="text-align:left;">
+TRUE
+</td>
+<td style="text-align:left;">
+FALSE
+</td>
+<td style="text-align:left;">
+FALSE
+</td>
+<td style="text-align:left;">
+TRUE
+</td>
+<td style="text-align:right;">
+14
+</td>
 </tr>
-<tr class="odd">
-<td align="left">FALSE</td>
-<td align="left">FALSE</td>
-<td align="left">TRUE</td>
-<td align="left">TRUE</td>
-<td align="right">4</td>
+<tr>
+<td style="text-align:left;">
+FALSE
+</td>
+<td style="text-align:left;">
+FALSE
+</td>
+<td style="text-align:left;">
+TRUE
+</td>
+<td style="text-align:left;">
+TRUE
+</td>
+<td style="text-align:right;">
+4
+</td>
 </tr>
-<tr class="even">
-<td align="left">TRUE</td>
-<td align="left">FALSE</td>
-<td align="left">TRUE</td>
-<td align="left">TRUE</td>
-<td align="right">2</td>
+<tr>
+<td style="text-align:left;">
+TRUE
+</td>
+<td style="text-align:left;">
+FALSE
+</td>
+<td style="text-align:left;">
+TRUE
+</td>
+<td style="text-align:left;">
+TRUE
+</td>
+<td style="text-align:right;">
+2
+</td>
 </tr>
-<tr class="odd">
-<td align="left">TRUE</td>
-<td align="left">TRUE</td>
-<td align="left">FALSE</td>
-<td align="left">FALSE</td>
-<td align="right">1</td>
+<tr>
+<td style="text-align:left;">
+TRUE
+</td>
+<td style="text-align:left;">
+TRUE
+</td>
+<td style="text-align:left;">
+FALSE
+</td>
+<td style="text-align:left;">
+FALSE
+</td>
+<td style="text-align:right;">
+1
+</td>
 </tr>
-<tr class="even">
-<td align="left">TRUE</td>
-<td align="left">TRUE</td>
-<td align="left">FALSE</td>
-<td align="left">TRUE</td>
-<td align="right">1</td>
+<tr>
+<td style="text-align:left;">
+TRUE
+</td>
+<td style="text-align:left;">
+TRUE
+</td>
+<td style="text-align:left;">
+FALSE
+</td>
+<td style="text-align:left;">
+TRUE
+</td>
+<td style="text-align:right;">
+1
+</td>
 </tr>
 </tbody>
 </table>
+<p><img src="{{< blogdown/postref >}}index.en_files/figure-html/summary_table-1.png" width="864" /></p>
 <p>Surprisingly the second most frequent group of archiving actions are due to many different reasons.
 This is probably the <a href="https://en.wikipedia.org/wiki/Pareto_principle">Pareto’s principle</a> in action because they are around 15% of the archiving events but the causes are very diverse between them.</p>
 <p>However, if we look at the packages which were archived (not at the request of maintainers), most of them just happen once:</p>
 <table>
 <thead>
-<tr class="header">
-<th align="right">Events</th>
-<th align="right">Packages</th>
+<tr>
+<th style="text-align:right;">
+Events
+</th>
+<th style="text-align:right;">
+Packages
+</th>
 </tr>
 </thead>
 <tbody>
-<tr class="odd">
-<td align="right">1</td>
-<td align="right">4396</td>
+<tr>
+<td style="text-align:right;">
+1
+</td>
+<td style="text-align:right;">
+4396
+</td>
 </tr>
-<tr class="even">
-<td align="right">2</td>
-<td align="right">498</td>
+<tr>
+<td style="text-align:right;">
+2
+</td>
+<td style="text-align:right;">
+498
+</td>
 </tr>
-<tr class="odd">
-<td align="right">3</td>
-<td align="right">80</td>
+<tr>
+<td style="text-align:right;">
+3
+</td>
+<td style="text-align:right;">
+80
+</td>
 </tr>
-<tr class="even">
-<td align="right">4</td>
-<td align="right">24</td>
+<tr>
+<td style="text-align:right;">
+4
+</td>
+<td style="text-align:right;">
+24
+</td>
 </tr>
-<tr class="odd">
-<td align="right">5</td>
-<td align="right">3</td>
+<tr>
+<td style="text-align:right;">
+5
+</td>
+<td style="text-align:right;">
+3
+</td>
 </tr>
 </tbody>
 </table>
@@ -292,22 +504,40 @@ This is probably the <a href="https://en.wikipedia.org/wiki/Pareto_principle">Pa
 To check we can see the current available packages and see how many of those are still present on CRAN:</p>
 <table>
 <thead>
-<tr class="header">
-<th align="left">CRAN</th>
-<th align="right">Packages</th>
-<th align="left">Proportion</th>
+<tr>
+<th style="text-align:left;">
+CRAN
+</th>
+<th style="text-align:right;">
+Packages
+</th>
+<th style="text-align:left;">
+Proportion
+</th>
 </tr>
 </thead>
 <tbody>
-<tr class="odd">
-<td align="left">FALSE</td>
-<td align="right">2985</td>
-<td align="left">60%</td>
+<tr>
+<td style="text-align:left;">
+FALSE
+</td>
+<td style="text-align:right;">
+2985
+</td>
+<td style="text-align:left;">
+60%
+</td>
 </tr>
-<tr class="even">
-<td align="left">TRUE</td>
-<td align="right">2016</td>
-<td align="left">40%</td>
+<tr>
+<td style="text-align:left;">
+TRUE
+</td>
+<td style="text-align:right;">
+2016
+</td>
+<td style="text-align:left;">
+40%
+</td>
 </tr>
 </tbody>
 </table>

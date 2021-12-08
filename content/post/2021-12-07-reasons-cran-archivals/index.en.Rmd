@@ -20,14 +20,15 @@ image:
   caption: ''
   focal_point: ''
 subtitle: ''
-summary: ''
+summary: 'Most frequent reason is due to the package not fixed on time, followed by depending on packages archived and policy violation.'
 ---
 
 ```{r setup, include = FALSE}
 knitr::opts_chunk$set(collapse = TRUE, echo = FALSE, fig.width = 9, message = FALSE, warning = FALSE)
 # https://bookdown.org/yihui/rmarkdown-cookbook/opts-render.html
 knit_print.data.frame = function(x, ...) {
-  res <- paste(c("", "", knitr::kable(x)), collapse = "\n")
+  res <- paste(c( "", "", knitr::kable(x, format = "html")
+                 ), collapse = "\n")
   knitr::asis_output(res)
 }
 
@@ -228,7 +229,6 @@ hist_expand |>
 
 The most frequent error is that errors are not corrected or checks, even when there are reminders.  
 Next are the packages archived because they depend on other packages already not on CRAN.  
-The third most common reason seems to be at the request of the maintainer.   
 There are some packages that are replaced by others and some maintainers might not want to continue supporting the package when they receive a message from CRAN about fixing an error.
 
 Policy violation makes to the top 5 but with less than 500 events.
