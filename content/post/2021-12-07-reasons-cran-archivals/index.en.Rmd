@@ -247,14 +247,6 @@ hist_summary <- hist_expand |>
   count(sort = TRUE, name = "events") |> 
   ungroup()
 hist_summary
-hist_expand |> 
-  filter(action == "archived") |> 
-  select(-Package, -action, -date, -reason) |> 
-  mutate(package_not_corrected =  not_corrected | check | reminders | install | update,
-         request_maintainer = request_maintainer,
-         dependencies = required | depends | archived |depends_archived,
-         other = !package_not_corrected & !request_maintainer & !dependencies) |>
-  upset(intersect = c("package_not_corrected", "request_maintainer", "dependencies", "other"))
 ```
 
 Surprisingly the second most frequent group of archiving actions are due to many different reasons.
