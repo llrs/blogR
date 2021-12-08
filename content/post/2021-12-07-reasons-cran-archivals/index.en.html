@@ -354,7 +354,7 @@ This is probably the <a href="https://en.wikipedia.org/wiki/Pareto_principle">Pa
 <tbody>
 <tr class="odd">
 <td align="right">1</td>
-<td align="right">4023</td>
+<td align="right">4015</td>
 </tr>
 <tr class="even">
 <td align="right">2</td>
@@ -387,7 +387,7 @@ To check we can see the current available packages and see how many of those are
 <tbody>
 <tr class="odd">
 <td align="left">FALSE</td>
-<td align="right">2620</td>
+<td align="right">2612</td>
 <td align="left">57%</td>
 </tr>
 <tr class="even">
@@ -411,23 +411,20 @@ And the CRAN team sends personalized reminders to maintainers and sometimes patc
 <p>Prevent a package to be accepted if it breaks dependencies or archive packages when they fail checks.
 This will make it harder to keep packages on CRAN but would lift some pressure on the CRAN team.
 This would go against the current on other languages repositories, which often they don’t check the packages/modules and even have less restrictions on dependencies (so it might be an unpopular decision).</p></li>
-<li><p>Be more permissive:</p></li>
-</ul>
+<li><p>Be more permissive:</p>
 <p>One option would be to allow for more time for maintainers to fix issues. I haven’t find any report of how long does it take for a package since an error to a fix on CRAN but often it is quite long.
 I have seen packages with a warning for months if not years and they weren’t archived from CRAN.</p>
 <p>Maybe if users get a warning on installing packages that a package or one of its dependencies is not clear on all CRAN checks (without error or warnings).
-This might help to make users more conscious of their dependencies but this might add pressure to maintainers who already don’t have enough time to fix the problems of their packages.</p>
-<ul>
-<li>Provide more help or tools to maintainers</li>
-</ul>
+This might help to make users more conscious of their dependencies but this might add pressure to maintainers who already don’t have enough time to fix the problems of their packages.</p></li>
+<li><p>Provide more help or tools to maintainers</p>
 <p>Another option is to provide a mechanism for maintainers to receive help or fix the package.
 Currently CRAN requires that new packages that break dependencies to give enough notice in advance to other maintainers to fix their package.
-On R-pkg-devel mailing list there are often requests for help on submitting and fixing some errors detected by CRAN checks which often result on other maintainers sharing their solutions for the same problem.
+On R-pkg-devel mailing list there are often requests for help on submitting and fixing some errors detected by CRAN checks which often result on other maintainers sharing their solutions for the same problem.</p></li>
+</ul>
+<p>There high percentage of packages that once archived do not come back to CRAN might be a good place to start helping maintainers and an opportunity for users to step in and help maintainers of packages they have been using.
 There is need for something else? How would that work?</p>
-<p>There high percentage of packages that once archived do not come back to CRAN might be a good place to start helping maintainers and an opportunity for users to step in and help maintainers of packages they have been using.</p>
-</div>
-<div id="reproducibility" class="section level1">
-<h1>Reproducibility</h1>
+<div id="reproducibility" class="section level3">
+<h3>Reproducibility</h3>
 <details>
 <pre><code>## ─ Session info ───────────────────────────────────────────────────────────────────────────────────────────────────────
 ##  setting  value
@@ -496,4 +493,5 @@ There is need for something else? How would that work?</p>
 ## 
 ## ──────────────────────────────────────────────────────────────────────────────────────────────────────────────────────</code></pre>
 </details>
+</div>
 </div>

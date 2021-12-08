@@ -197,7 +197,7 @@ hist_expand <- history |>
 
 We can look at the most frequent error reasons for archiving packages:
 
-```{r}
+```{r reasons_top}
 counts <- hist_expand |> 
   filter(action == "archived") |> 
   select(-Package, -action, -date, -reason) |> 
@@ -237,9 +237,11 @@ This is probably the [Pareto's principle](https://en.wikipedia.org/wiki/Pareto_p
 
 However, if we look at the packages which were archived (not at the request of maintainers), most of them just happen once:
 
-```{r}
+```{r multiple_archivations}
+replaced <- file$Package[!is.na(file$Replaced_by)]
 pkg_event <- hist_expand |> 
-  filter(action == "archived" & !request_maintainer) |> 
+  filter(action == "archived" & !request_maintainer,
+         !Package %in% replaced) |> 
   count(Package, sort = TRUE, name = "Events")
 count(pkg_event, Events, name = "Packages")
 ```
@@ -247,10 +249,10 @@ count(pkg_event, Events, name = "Packages")
 This suggests that once a package is archived maintainers do not make the effort to put it back on CRAN. 
 To check we can see the current available packages and see how many of those are still present on CRAN:
 
-```{r}
+```{r back_to_cran}
 ap <- available.packages()
 pkg_event |> 
-  mutate(CRAN = Package %in% rownames(ap)) |> 
+  mutate(CRAN = Package %in% rownames(ap),) |> 
   group_by(CRAN) |> 
   count(name = "Packages") |>
   ungroup() |> 
@@ -276,22 +278,22 @@ Although the desire to have packages corrected and with no issues is the common 
   
 - Be more permissive:  
 
- One option would be to allow for more time for maintainers to fix issues. I haven't find any report of how long does it take for a package since an error to a fix on CRAN but often it is quite long. 
- I have seen packages with a warning for months if not years and they weren't archived from CRAN. 
+  One option would be to allow for more time for maintainers to fix issues. I haven't find any report of how long does it take for a package since an error to a fix on CRAN but often it is quite long. 
+  I have seen packages with a warning for months if not years and they weren't archived from CRAN. 
 
- Maybe if users get a warning on installing packages that a package or one of its dependencies is not clear on all CRAN checks (without error or warnings).
- This might help to make users more conscious of their dependencies but this might add pressure to maintainers who already don't have enough time to fix the problems of their packages. 
+  Maybe if users get a warning on installing packages that a package or one of its dependencies is not clear on all CRAN checks (without error or warnings).
+  This might help to make users more conscious of their dependencies but this might add pressure to maintainers who already don't have enough time to fix the problems of their packages. 
 
 - Provide more help or tools to maintainers  
 
- Another option is to provide a mechanism for maintainers to receive help or fix the package. 
- Currently CRAN requires that new packages that break dependencies to give enough notice in advance to other maintainers to fix their package. 
- On R-pkg-devel mailing list there are often requests for help on submitting and fixing some errors detected by CRAN checks which often result on other maintainers sharing their solutions for the same problem.
- There is need for something else? How would that work? 
+  Another option is to provide a mechanism for maintainers to receive help or fix the package. 
+  Currently CRAN requires that new packages that break dependencies to give enough notice in advance to other maintainers to fix their package. 
+  On R-pkg-devel mailing list there are often requests for help on submitting and fixing some errors detected by CRAN checks which often result on other maintainers sharing their solutions for the same problem.
 
- There high percentage of packages that once archived do not come back to CRAN might be a good place to start helping maintainers and an opportunity for users to step in and help maintainers of packages they have been using. 
- 
-# Reproducibility
+There high percentage of packages that once archived do not come back to CRAN might be a good place to start helping maintainers and an opportunity for users to step in and help maintainers of packages they have been using. 
+There is need for something else? How would that work? 
+  
+### Reproducibility
 
 <details>
 ```{r reproducibility, echo = FALSE}
