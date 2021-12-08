@@ -53,12 +53,12 @@ X-CRAN-History: Archived on YYYY-MM-DD as <reason>.
 <Optional fields like License_restricts_use, Replaced_by, Maintainer: ORPHANED, OS_type: unix>
 ```
 
-The file is incomplete as it doesn't have some archival records of some packages, but there are old records from 2013 to now so we can use it to see understand what are the reasons of removal of packages.
+The file doesn't have some records of archiving and unarchiving of some packages, but there are old records from 2013 to now so we can use it to see understand what are the *reasons* of archiving packages.
 
 # The data
 
 First step is read the record. 
-As it seems that it has some `key: value` structure similar to DESCRIPTION file of packages it seems it is a DCF format: Debian Control File format.
+As it seems that it has some `key: value` structure similar to DESCRIPTION file of packages it seems it is a DCF format: Debian Control File format which is easy to read with the `read.dcf` function.
 
 ```{r read}
 url <- "https://cran.r-project.org/src/contrib/PACKAGES.in"
@@ -66,6 +66,8 @@ con <- url(url)
 file <- read.dcf(con) |> 
   as.data.frame()
 ```
+
+## Exploring
 
 A brief exploration of the data:
 
@@ -97,7 +99,10 @@ count(file,
 Most of the packages that have a Maintainer field are orphaned.
 Does it mean that all the others are not orphaned? 
 
-Now that it is in R data structure, we can extract the relevant information, dates, type of action and reasons for each archival event.
+## Extracting reasons
+
+Now that it is in R data structure, we can extract the relevant information, dates, type of action and reasons for each archivation event.
+I use `strcapture` for this task with a regex to extract the action, the date and the explanation it migh have. 
 
 ```{r extract}
 proto <- data.frame(action = character(), date = Sys.Date()[0], reason = character())
@@ -143,7 +148,7 @@ However, the extracted information should be enough for our purposes.
 ```{r actions}
 history |>  
   filter(action != "cran") |> 
-  count(action, name = "events")
+  count(Action = action, name = "Events")
 ```
 
 As expected the most common recorded event are archivations, but there are some orphaned packages and even some removed packages. 
@@ -155,20 +160,28 @@ How are they along time?
 library("ggplot2")
 history |>  
   filter(action != "cran") |> 
-  group_by(action) |> 
-  count(date, sort = TRUE) |> 
+  group_by(action, month = as.Date(format(date, "%Y-%m-15"))) |> 
+  summarise(n = n()) |> 
+  ungroup() |> 
   ggplot() +
-  geom_col(aes(date, n, fill = action)) +
-  labs(y = "Events", fill = "Action") +
+  geom_col(aes(month, n, fill = action)) +
+  labs(y = element_blank(), fill = "Action", x = element_blank(),
+       title = "Events on packages", subtitle = "by month") +
+  scale_x_date(date_breaks = "1 year", date_labels = "%Y", 
+               expand = expansion()) +
+  scale_y_continuous(expand = expansion(add = c(0, 5))) +
   theme_minimal() +
   theme(legend.position = c(0.2, 0.7), text = element_text(size = 15))
 ```
 
 Even if there are some events recorded from 2009 it seems that this file has been more used more recently (last commit related to [this was on 2012](https://github.com/wch/r-source/blame/trunk/src/library/tools/R/QC.R#L7778)). 
-I know that there are some old events not recorded on the file, because there are some packages currently present on CRAN that they have an archived event but not an unarchived one.
-So, this doesn't necessarily mean that there are currently more packages archived from CRAN. 
+I know that there are some old events not recorded on the file, because there are some packages currently present on CRAN that they had been archived but do not have an unarchived action, so conversevly it could happen.
+So, this doesn't necessarily mean that there are currently more packages archived from CRAN. But it is a clear indication that now at least there is a more accurate record of archived packages on this file.
 
-Now that most of the package events are collected and we have the reasons of the actions, we can explore and classify the reasons.
+Another source of records of archived packages might be [cranberries](http://dirk.eddelbuettel.com/cranberries/cran/removed/).  It would be nice to compare this file with the records on the database there.
+
+Now that most of the package events are collected and we have the reasons of the actions, we can explore and classify the reasons. 
+Using some simple regex I explore for key words or sentences.
 
 ```{r reasons}
 hist_expand <- history |> 
@@ -176,7 +189,7 @@ hist_expand <- history |>
   mutate(not_corrected = grepl("not correct", reason, fixed = TRUE),
          request = grepl("request", reason, fixed = TRUE),
          maintainer = grepl("maintainer", reason, fixed = TRUE),
-         request_maintainer =  maintainer & request,
+         request_maintainer =  maintainer & request & grepl("from", reason, fixed = TRUE),
          request_author = grepl("author", reason, fixed = TRUE) & request,
          reminders = grepl("reminders", reason, fixed = TRUE),
          install = grepl("install", reason, fixed = TRUE),
@@ -195,7 +208,7 @@ hist_expand <- history |>
          )
 ```
 
-We can look at the most frequent error reasons for archiving packages:
+We can look at the most frequent error reasons for archiving packages, patterns I found with more than 100 cases:
 
 ```{r reasons_top}
 counts <- hist_expand |> 
@@ -205,7 +218,12 @@ counts <- hist_expand |>
 counts2 <- data.frame(type = names(counts), events = unname(counts)) |> 
   filter(!type %in% c("email", "request", "maintainer")) |> 
   arrange(-events)
-counts2
+
+library("ComplexUpset")
+hist_expand |> 
+  filter(action == "archived") |> 
+  upset(intersect = colnames(hist_expand)[-c(1:4)],
+        min_size = 100)
 ```
 
 The most frequent error is that errors are not corrected or checks, even when there are reminders.  
@@ -222,14 +240,21 @@ Some of these errors happen at the same time for each event, but grouping these 
 hist_summary <- hist_expand |> 
   filter(action == "archived") |> 
   select(-Package, -action, -date, -reason) |> 
-  mutate(package_not_corrected =  not_corrected | check | reminders | install | update,
-         request_maintainer = request_maintainer,
+  mutate(package_not_corrected =  not_corrected | check | reminders | install | update | request_maintainer | unresponsive_maintainer,
          dependencies = required | depends | archived |depends_archived,
-         other = email_error | licence | authorship | unresponsive_maintainer|  request_author) |> 
+         other = email_error | licence | authorship | request_author) |> 
   group_by(package_not_corrected, request_maintainer, dependencies, other) |> 
   count(sort = TRUE, name = "events") |> 
   ungroup()
 hist_summary
+hist_expand |> 
+  filter(action == "archived") |> 
+  select(-Package, -action, -date, -reason) |> 
+  mutate(package_not_corrected =  not_corrected | check | reminders | install | update,
+         request_maintainer = request_maintainer,
+         dependencies = required | depends | archived |depends_archived,
+         other = !package_not_corrected & !request_maintainer & !dependencies) |>
+  upset(intersect = c("package_not_corrected", "request_maintainer", "dependencies", "other"))
 ```
 
 Surprisingly the second most frequent group of archiving actions are due to many different reasons.
