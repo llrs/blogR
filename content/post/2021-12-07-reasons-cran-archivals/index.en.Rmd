@@ -2,6 +2,7 @@
 title: Reasons why packages are archived on CRAN
 author: Lluís Revilla Sancho
 date: '2021-12-07'
+updated: "`r format(Sys.time(), '%Y-%m-%d')`"
 slug: reasons-cran-archivals
 categories:
   - CRAN
@@ -53,8 +54,9 @@ X-CRAN-History: Archived on YYYY-MM-DD as <reason>.
   <Optional clarification of archival reason>
 <Optional fields like License_restricts_use, Replaced_by, Maintainer: ORPHANED, OS_type: unix>
 ```
+I think the X-CRAN-Comment is what appears on the website of an archived package, like on [radix package](https://cran.r-project.org/package=radix). However, other comments on the website do not appear on that file. 
 
-The file doesn't have some records of archiving and unarchiving of some packages, but there are old records from 2013 to now so we can use it to see understand what are the *reasons* of archiving packages.
+In addition, the file doesn't have some records of archiving and unarchiving of some packages, but there are old records from 2013 or before to now. But we can use it to see understand what are the *reasons* of archiving packages, which seems to be the main purpose of the file.
 
 # The data
 
@@ -62,6 +64,9 @@ First step is read the record.
 As it seems that it has some `key: value` structure similar to DESCRIPTION file of packages it seems it is a DCF format: Debian Control File format which is easy to read with the `read.dcf` function.
 
 ```{r read}
+logic2string <- function(x){
+  ifelse(x, "yes", "no")
+}
 url <- "https://cran.r-project.org/src/contrib/PACKAGES.in"
 con <- url(url)
 file <- read.dcf(con) |> 
@@ -75,17 +80,17 @@ A brief exploration of the data:
 ```{r basic-exploration}
 library("dplyr")
 count(file,
-      comment = !is.na(`X-CRAN-Comment`), 
-      history = !is.na(`X-CRAN-History`),
+      comment = logic2string(!is.na(`X-CRAN-Comment`)), 
+      history = logic2string(!is.na(`X-CRAN-History`)),
       sort = TRUE, name = "packages")
 ```
 
-Many package with either comments or history but relatively few with both. 
+Many packages have either comments or history but relatively few both. 
 I'm not sure when either of them is used, as I would expect that all that have history would have a comment.
 
 ```{r basic-exploration2}
 count(file,
-      Replaced_by = !is.na(`Replaced_by`), 
+      Replaced_by = logic2string(!is.na(`Replaced_by`)), 
       sort = TRUE, name = "packages")
 ```
 
@@ -93,7 +98,7 @@ Many packages are simply replaced by some other package.
 
 ```{r basic-exploration3}
 count(file,
-      Maintainer = !is.na(`Maintainer`), 
+      Maintainer = logic2string(!is.na(`Maintainer`)), 
       sort = TRUE, name = "packages")
 ```
 
@@ -175,8 +180,8 @@ history |>
   theme(legend.position = c(0.2, 0.7), text = element_text(size = 15))
 ```
 
-Even if there are some events recorded from 2009 it seems that this file has been more used more recently (last commit related to [this was on 2012](https://github.com/wch/r-source/blame/trunk/src/library/tools/R/QC.R#L7778)). 
-I know that there are some old events not recorded on the file, because there are some packages currently present on CRAN that they had been archived but do not have an unarchived action, so conversevly it could happen.
+Even if there are some events recorded from 2009 it seems that this file has been more used more recently (last commit related to [this was on 2015](https://github.com/wch/r-source/blame/trunk/src/library/tools/R/QC.R#L7778)). 
+I know that there are some old events not recorded on the file, because there are some packages currently present on CRAN that they had been archived but do not have an unarchived action, so conversely it could happen.
 So, this doesn't necessarily mean that there are currently more packages archived from CRAN. But it is a clear indication that now at least there is a more accurate record of archived packages on this file.
 
 Another source of records of archived packages might be [cranberries](http://dirk.eddelbuettel.com/cranberries/cran/removed/).  It would be nice to compare this file with the records on the database there.
@@ -240,10 +245,10 @@ Some of these errors happen at the same time for each event, but grouping these 
 hist_summary <- hist_expand |> 
   filter(action == "archived") |> 
   select(-Package, -action, -date, -reason) |> 
-  mutate(package_not_corrected =  not_corrected | check | reminders | install | update | request_maintainer | unresponsive_maintainer,
-         dependencies = required | depends | archived |depends_archived,
-         other = email_error | licence | authorship | request_author) |> 
-  group_by(package_not_corrected, request_maintainer, dependencies, other) |> 
+  mutate(package_not_corrected =  logic2string(not_corrected | check | reminders | install | update | request_maintainer | unresponsive_maintainer),
+         dependencies = logic2string(required | depends | archived |depends_archived),
+         other = logic2string(email_error | licence | authorship | request_author)) |> 
+  group_by(package_not_corrected, logic2string(request_maintainer), dependencies, other) |> 
   count(sort = TRUE, name = "events") |> 
   ungroup()
 hist_summary
@@ -269,7 +274,7 @@ To check we can see the current available packages and see how many of those are
 ```{r back_to_cran}
 ap <- available.packages()
 pkg_event |> 
-  mutate(CRAN = Package %in% rownames(ap),) |> 
+  mutate(CRAN = logic2string(Package %in% rownames(ap))) |> 
   group_by(CRAN) |> 
   count(name = "Packages") |>
   ungroup() |> 
@@ -277,6 +282,27 @@ pkg_event |>
 ```
 
 Many packages are currently on CRAN despite their past archivation but close to 60% are currently not on CRAN.
+
+Almost all that are on CRAN have now no `X-CRAN-Comment`, except for a few:
+
+```{r cran-comments}
+file |> 
+  filter(Package %in% rownames(ap)) |> 
+  filter(!is.na(`X-CRAN-Comment`)) |> 
+  select(Package, `X-CRAN-Comment`)
+```
+
+CRAN team might have missed these few packages and didn't move the comments to X-CRAN-history.
+
+There are some packages that are not archived that don't have a CRAN-history happens too, but they usually have other fields.
+
+```{r cran-history, eval = FALSE}
+file |> 
+  filter(Package %in% rownames(ap)) |> 
+  filter(is.na(`X-CRAN-History`)) |> 
+  View()
+```
+
 
 # Discussion
 
@@ -305,10 +331,14 @@ Although the desire to have packages corrected and with no issues is the common 
 
   Another option is to provide a mechanism for maintainers to receive help or fix the package. 
   Currently CRAN requires that new packages that break dependencies to give enough notice in advance to other maintainers to fix their package. 
-  On R-pkg-devel mailing list there are often requests for help on submitting and fixing some errors detected by CRAN checks which often result on other maintainers sharing their solutions for the same problem.
+  On [R-pkg-devel mailing list](https://stat.ethz.ch/mailman/listinfo/r-package-devel) there are often requests for help on submitting and fixing some errors detected by CRAN checks which often result on other maintainers sharing their solutions for the same problem.
 
 There high percentage of packages that once archived do not come back to CRAN might be a good place to start helping maintainers and an opportunity for users to step in and help maintainers of packages they have been using. 
 There is need for something else? How would that work? 
+
+At the same time it is admirable that after so many years there are few errors on the data. 
+However, the archival process might be a good process to automate, providing the reason on the webpage and add it to X-CRAN-Comment and moving the comments to X-CRAN-History once it is unarchived.
+Knowing more about how these actions are performed by the CRAN team and how the community could help on the process will be beneficial to all. 
   
 ### Reproducibility
 

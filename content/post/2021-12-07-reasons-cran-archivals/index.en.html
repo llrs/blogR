@@ -2,6 +2,7 @@
 title: Reasons why packages are archived on CRAN
 author: Lluís Revilla Sancho
 date: '2021-12-07'
+updated: "2021-12-11"
 slug: reasons-cran-archivals
 categories:
   - CRAN
@@ -35,7 +36,8 @@ X-CRAN-History: Archived on YYYY-MM-DD as &lt;reason&gt;.
   .
   &lt;Optional clarification of archival reason&gt;
 &lt;Optional fields like License_restricts_use, Replaced_by, Maintainer: ORPHANED, OS_type: unix&gt;</code></pre>
-<p>The file doesn’t have some records of archiving and unarchiving of some packages, but there are old records from 2013 to now so we can use it to see understand what are the <em>reasons</em> of archiving packages.</p>
+<p>I think the X-CRAN-Comment is what appears on the website of an archived package, like on <a href="https://cran.r-project.org/package=radix">radix package</a>. However, other comments on the website do not appear on that file.</p>
+<p>In addition, the file doesn’t have some records of archiving and unarchiving of some packages, but there are old records from 2013 or before to now. But we can use it to see understand what are the <em>reasons</em> of archiving packages, which seems to be the main purpose of the file.</p>
 <div id="the-data" class="section level1">
 <h1>The data</h1>
 <p>First step is read the record.
@@ -60,51 +62,51 @@ packages
 <tbody>
 <tr>
 <td style="text-align:left;">
-TRUE
+yes
 </td>
 <td style="text-align:left;">
-FALSE
+no
 </td>
 <td style="text-align:right;">
-2891
+2892
 </td>
 </tr>
 <tr>
 <td style="text-align:left;">
-FALSE
+no
 </td>
 <td style="text-align:left;">
-TRUE
+yes
 </td>
 <td style="text-align:right;">
-2195
+2198
 </td>
 </tr>
 <tr>
 <td style="text-align:left;">
-TRUE
+yes
 </td>
 <td style="text-align:left;">
-TRUE
+yes
 </td>
 <td style="text-align:right;">
-341
+342
 </td>
 </tr>
 <tr>
 <td style="text-align:left;">
-FALSE
+no
 </td>
 <td style="text-align:left;">
-FALSE
+no
 </td>
 <td style="text-align:right;">
-74
+73
 </td>
 </tr>
 </tbody>
 </table>
-<p>Many package with either comments or history but relatively few with both.
+<p>Many packages have either comments or history but relatively few both.
 I’m not sure when either of them is used, as I would expect that all that have history would have a comment.</p>
 <table>
 <thead>
@@ -120,15 +122,15 @@ packages
 <tbody>
 <tr>
 <td style="text-align:left;">
-FALSE
+no
 </td>
 <td style="text-align:right;">
-5403
+5407
 </td>
 </tr>
 <tr>
 <td style="text-align:left;">
-TRUE
+yes
 </td>
 <td style="text-align:right;">
 98
@@ -151,15 +153,15 @@ packages
 <tbody>
 <tr>
 <td style="text-align:left;">
-FALSE
+no
 </td>
 <td style="text-align:right;">
-5406
+5410
 </td>
 </tr>
 <tr>
 <td style="text-align:left;">
-TRUE
+yes
 </td>
 <td style="text-align:right;">
 95
@@ -194,7 +196,7 @@ Events
 archived
 </td>
 <td style="text-align:right;">
-5807
+5814
 </td>
 </tr>
 <tr>
@@ -235,8 +237,8 @@ unarchived
 Also note the number of orphaned packages is greater than those with the Maintainer field, supporting my theory that the format has changed and that this shouldn’t be taken as an exhaustive and complete analysis of archivations.</p>
 <p>How are they along time?</p>
 <p><img src="{{< blogdown/postref >}}index.en_files/figure-html/plots_df-1.png" width="864" /></p>
-<p>Even if there are some events recorded from 2009 it seems that this file has been more used more recently (last commit related to <a href="https://github.com/wch/r-source/blame/trunk/src/library/tools/R/QC.R#L7778">this was on 2012</a>).
-I know that there are some old events not recorded on the file, because there are some packages currently present on CRAN that they had been archived but do not have an unarchived action, so conversevly it could happen.
+<p>Even if there are some events recorded from 2009 it seems that this file has been more used more recently (last commit related to <a href="https://github.com/wch/r-source/blame/trunk/src/library/tools/R/QC.R#L7778">this was on 2015</a>).
+I know that there are some old events not recorded on the file, because there are some packages currently present on CRAN that they had been archived but do not have an unarchived action, so conversely it could happen.
 So, this doesn’t necessarily mean that there are currently more packages archived from CRAN. But it is a clear indication that now at least there is a more accurate record of archived packages on this file.</p>
 <p>Another source of records of archived packages might be <a href="http://dirk.eddelbuettel.com/cranberries/cran/removed/">cranberries</a>. It would be nice to compare this file with the records on the database there.</p>
 <p>Now that most of the package events are collected and we have the reasons of the actions, we can explore and classify the reasons.
@@ -256,7 +258,7 @@ Dependencies problems are the sixth cause, followed by email errors (bouncing, i
 package_not_corrected
 </th>
 <th style="text-align:left;">
-request_maintainer
+logic2string(request_maintainer)
 </th>
 <th style="text-align:left;">
 dependencies
@@ -272,50 +274,50 @@ events
 <tbody>
 <tr>
 <td style="text-align:left;">
-TRUE
+yes
 </td>
 <td style="text-align:left;">
-FALSE
+no
 </td>
 <td style="text-align:left;">
-FALSE
+no
 </td>
 <td style="text-align:left;">
-FALSE
+no
 </td>
 <td style="text-align:right;">
-3641
+3647
 </td>
 </tr>
 <tr>
 <td style="text-align:left;">
-FALSE
+no
 </td>
 <td style="text-align:left;">
-FALSE
+no
 </td>
 <td style="text-align:left;">
-FALSE
+no
 </td>
 <td style="text-align:left;">
-FALSE
+no
 </td>
 <td style="text-align:right;">
-1277
+1278
 </td>
 </tr>
 <tr>
 <td style="text-align:left;">
-FALSE
+no
 </td>
 <td style="text-align:left;">
-FALSE
+no
 </td>
 <td style="text-align:left;">
-TRUE
+yes
 </td>
 <td style="text-align:left;">
-FALSE
+no
 </td>
 <td style="text-align:right;">
 651
@@ -323,16 +325,16 @@ FALSE
 </tr>
 <tr>
 <td style="text-align:left;">
-FALSE
+no
 </td>
 <td style="text-align:left;">
-FALSE
+no
 </td>
 <td style="text-align:left;">
-FALSE
+no
 </td>
 <td style="text-align:left;">
-TRUE
+yes
 </td>
 <td style="text-align:right;">
 197
@@ -340,16 +342,16 @@ TRUE
 </tr>
 <tr>
 <td style="text-align:left;">
-TRUE
+yes
 </td>
 <td style="text-align:left;">
-FALSE
+no
 </td>
 <td style="text-align:left;">
-TRUE
+yes
 </td>
 <td style="text-align:left;">
-FALSE
+no
 </td>
 <td style="text-align:right;">
 19
@@ -357,16 +359,16 @@ FALSE
 </tr>
 <tr>
 <td style="text-align:left;">
-TRUE
+yes
 </td>
 <td style="text-align:left;">
-FALSE
+no
 </td>
 <td style="text-align:left;">
-FALSE
+no
 </td>
 <td style="text-align:left;">
-TRUE
+yes
 </td>
 <td style="text-align:right;">
 14
@@ -374,16 +376,16 @@ TRUE
 </tr>
 <tr>
 <td style="text-align:left;">
-FALSE
+no
 </td>
 <td style="text-align:left;">
-FALSE
+no
 </td>
 <td style="text-align:left;">
-TRUE
+yes
 </td>
 <td style="text-align:left;">
-TRUE
+yes
 </td>
 <td style="text-align:right;">
 4
@@ -391,16 +393,16 @@ TRUE
 </tr>
 <tr>
 <td style="text-align:left;">
-TRUE
+yes
 </td>
 <td style="text-align:left;">
-FALSE
+no
 </td>
 <td style="text-align:left;">
-TRUE
+yes
 </td>
 <td style="text-align:left;">
-TRUE
+yes
 </td>
 <td style="text-align:right;">
 2
@@ -408,16 +410,16 @@ TRUE
 </tr>
 <tr>
 <td style="text-align:left;">
-TRUE
+yes
 </td>
 <td style="text-align:left;">
-TRUE
+yes
 </td>
 <td style="text-align:left;">
-FALSE
+no
 </td>
 <td style="text-align:left;">
-FALSE
+no
 </td>
 <td style="text-align:right;">
 1
@@ -425,16 +427,16 @@ FALSE
 </tr>
 <tr>
 <td style="text-align:left;">
-TRUE
+yes
 </td>
 <td style="text-align:left;">
-TRUE
+yes
 </td>
 <td style="text-align:left;">
-FALSE
+no
 </td>
 <td style="text-align:left;">
-TRUE
+yes
 </td>
 <td style="text-align:right;">
 1
@@ -462,7 +464,7 @@ Packages
 1
 </td>
 <td style="text-align:right;">
-4396
+4400
 </td>
 </tr>
 <tr>
@@ -470,7 +472,7 @@ Packages
 2
 </td>
 <td style="text-align:right;">
-498
+499
 </td>
 </tr>
 <tr>
@@ -478,7 +480,7 @@ Packages
 3
 </td>
 <td style="text-align:right;">
-80
+79
 </td>
 </tr>
 <tr>
@@ -486,7 +488,7 @@ Packages
 4
 </td>
 <td style="text-align:right;">
-24
+25
 </td>
 </tr>
 <tr>
@@ -518,10 +520,10 @@ Proportion
 <tbody>
 <tr>
 <td style="text-align:left;">
-FALSE
+no
 </td>
 <td style="text-align:right;">
-2985
+2987
 </td>
 <td style="text-align:left;">
 60%
@@ -529,10 +531,10 @@ FALSE
 </tr>
 <tr>
 <td style="text-align:left;">
-TRUE
+yes
 </td>
 <td style="text-align:right;">
-2016
+2019
 </td>
 <td style="text-align:left;">
 40%
@@ -541,6 +543,74 @@ TRUE
 </tbody>
 </table>
 <p>Many packages are currently on CRAN despite their past archivation but close to 60% are currently not on CRAN.</p>
+<p>Almost all that are on CRAN have now no <code>X-CRAN-Comment</code>, except for a few:</p>
+<table>
+<thead>
+<tr>
+<th style="text-align:left;">
+Package
+</th>
+<th style="text-align:left;">
+X-CRAN-Comment
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:left;">
+mfp
+</td>
+<td style="text-align:left;">
+<p>Orphaned on 2021-12-02 at the request of one of the authors.</p>
+The maintainer being unresponsive.
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+RandomFieldsUtils
+</td>
+<td style="text-align:left;">
+<p>Version 1.0.11 rolled back 2021-12-02.</p>
+failed to install on M1mac and Solaris and segfaulted on Fedora.
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+cairoDevice
+</td>
+<td style="text-align:left;">
+Orphaned on 2021-10-11 as check problems were not corrected in time.
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+RGtk2
+</td>
+<td style="text-align:left;">
+Orphaned on 2021-10-11 as check problems were not corrected in time.
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+bibtex
+</td>
+<td style="text-align:left;">
+Orphaned and corrected on 2020-09-19 as check problems were not corrected in time.
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+RRF
+</td>
+<td style="text-align:left;">
+<p>Orphaned and corrected on 2019-07-02 as installation issues were not addressed.</p>
+LTO, mismatching C unsigned int to INTEGER.
+</td>
+</tr>
+</tbody>
+</table>
+<p>CRAN team might have missed these few packages and didn’t move the comments to X-CRAN-history.</p>
+<p>There are some packages that are not archived that don’t have a CRAN-history happens too, but they usually have other fields.</p>
 </div>
 </div>
 <div id="discussion" class="section level1">
@@ -563,10 +633,13 @@ This might help to make users more conscious of their dependencies but this migh
 <li><p>Provide more help or tools to maintainers</p>
 <p>Another option is to provide a mechanism for maintainers to receive help or fix the package.
 Currently CRAN requires that new packages that break dependencies to give enough notice in advance to other maintainers to fix their package.
-On R-pkg-devel mailing list there are often requests for help on submitting and fixing some errors detected by CRAN checks which often result on other maintainers sharing their solutions for the same problem.</p></li>
+On <a href="https://stat.ethz.ch/mailman/listinfo/r-package-devel">R-pkg-devel mailing list</a> there are often requests for help on submitting and fixing some errors detected by CRAN checks which often result on other maintainers sharing their solutions for the same problem.</p></li>
 </ul>
 <p>There high percentage of packages that once archived do not come back to CRAN might be a good place to start helping maintainers and an opportunity for users to step in and help maintainers of packages they have been using.
 There is need for something else? How would that work?</p>
+<p>At the same time it is admirable that after so many years there are few errors on the data.
+However, the archival process might be a good process to automate, providing the reason on the webpage and add it to X-CRAN-Comment and moving the comments to X-CRAN-History once it is unarchived.
+Knowing more about how these actions are performed by the CRAN team and how the community could help on the process will be beneficial to all.</p>
 <div id="reproducibility" class="section level3">
 <h3>Reproducibility</h3>
 <details>
@@ -580,7 +653,7 @@ There is need for something else? How would that work?</p>
 ##  collate  en_US.UTF-8
 ##  ctype    en_US.UTF-8
 ##  tz       Europe/Madrid
-##  date     2021-12-08
+##  date     2021-12-11
 ##  pandoc   2.14.0.3 @ /usr/lib/rstudio/bin/pandoc/ (via rmarkdown)
 ## 
 ## ─ Packages ───────────────────────────────────────────────────────────────────────────────────────────────────────────
