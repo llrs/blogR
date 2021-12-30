@@ -1,9 +1,12 @@
+# https://docs.netlify.com/routing/redirects/#syntax-for-the-redirects-file
 http://llrs.dev/*    https://llrs.dev/:splat  301!
 http://llrs.netlify.com/*   https://llrs.dev/:splat  301!
 https://dreamy-leakey-30bb2a.netlify.com/*   https://llrs.dev/:splat  301!
 https://naughty-goldstine-ab40e9.netlify.com/*   https://llrs.dev/:splat  301!
 # To account for a change on the permalinks
-https://llrs.dev/2019/*    https://llrs.dev/post/2019/*  301!
-https://llrs.dev/2020/*    https://llrs.dev/post/2020/*  301!
-https://llrs.dev/2021/*    https://llrs.dev/post/2021/*  301!
-https://llrs.dev/talks/*    https://llrs.dev/talk/*  301!
+# :splat is to copy the remiaing url and append there
+# https://docs.netlify.com/routing/redirects/rewrites-proxies/#shadowing
+/2019/*    /post/2019/:splat  301!
+/2020/*    /post/2020/:splat  301!
+/2021/*    /post/2021/:splat  301!
+/talks/*    /talk/:splat  301!
