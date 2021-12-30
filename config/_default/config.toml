@@ -44,7 +44,7 @@ preserveTaxonomyNames = true
   home = [ "HTML", "RSS", "JSON",  "WebAppManifest"]
   section = [ "HTML", "RSS" ]
 
-rssLimit = 20
+rssLimit = 10
 
 [mediaTypes."application/manifest+json"]
   suffixes = ["webmanifest"]
