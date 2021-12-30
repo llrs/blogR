@@ -24,7 +24,7 @@ all_day: false
 # Schedule page publish date (NOT talk date).
 publishDate: {{ .Date }}
 
-authors: []
+authors: [-admin]
 tags: []
 
 # Is this a featured talk? (true/false)
@@ -36,7 +36,7 @@ featured: false
 image:
   caption: ""
   focal_point: ""
-  preview_only: false
+#  preview_only: false
 
 # Custom links (optional).
 #   Uncomment and edit lines below to show custom links.
