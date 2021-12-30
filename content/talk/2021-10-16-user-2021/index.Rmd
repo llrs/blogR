@@ -24,8 +24,7 @@ publishDate: '2021-06-05'
 authors: [-admin]
 image:
   caption: 'First slide of the talk'
-  focal_point: 'Center'
-  preview_only: no
+  focal_point: Right
 links:
 - icon: images
   icon_pack: fas
