@@ -40,30 +40,12 @@ categories = []
   
 [editor_options]
   chunk_output_type = "console"
-
 +++
 
 ```{r setup, include = FALSE}
-knitr::opts_chunk$set(collapse = TRUE)
+knitr::opts_chunk$set(collapse = TRUE, fig.retina = 2)
 ```
 
-
-### References
-
-```{r bibsetup, echo=FALSE, message=FALSE, warning=FALSE}
-## Load knitcitations with a clean bibliography
-library('knitcitations')
-cleanbib()
-cite_options(hyperlink = 'to.doc', citation_format = 'text', style = 'html')
-pi <- sessioninfo::package_info()
-packages <- c(pi$package[pi$attached], 'knitcitations')
-l <- sapply(packages, function(x){citation(x)[1]}, simplify = FALSE)
-bib <- c(l, 'blogdown' = citation('blogdown')[2])
-```
-
-```{r results = 'asis', echo = FALSE, cache = FALSE}
-bibliography(style = 'html')
-```
 
 ### Reproducibility
 
