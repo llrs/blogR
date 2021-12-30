@@ -53,8 +53,11 @@ rssLimit = 20
   mediaType = "application/manifest+json"
   rel = "manifest"
 
+# Be mindful to links and redirects https://github.com/llrs/blogR/issues/59
 [permalinks]
-  post = "/:year/:month/:slug/"
+  # The actual url were post ends up.
+  # post = "post/:year/:month/:day/:slug/"
+  post = ":year/:month/:day/:slug/"
 
 # Configure BlackFriday Markdown rendering.
 #   See: https://gohugo.io/getting-started/configuration/#configure-blackfriday
@@ -75,6 +78,7 @@ rssLimit = 20
   category = "categories"
   publication_type = "publication_types"
   author = "authors"
+  talk = "talks"
 
 [markup]
   defaultMarkdownHandler = "goldmark"
@@ -87,16 +91,43 @@ rssLimit = 20
     startLevel = 2
     endLevel = 3
 
-# Following the r-hub privacy policy: https://docs.r-hub.io/#privacy
-[privacy.googleAnalytics]
-  anonymizeIP = true # IP addresses are anonymized within Google Analytics
-  disable = false # use of Cookies is disabled,
-  useSessionStorage = true # instead Session Storage is used
-  respectDoNotTrack = true # respect the “Do Not Track” HTTP header
-
-
 [params]
 
     # Custom favicon param. See layouts/partials/favicon.html for use
     # Add favicon.png to static/ and it will be copied to public/ on build
     favicon = "/favicon-32x32.png"
+
+# Following https://gohugo.io/templates/sitemap-template/
+# [sitemap]
+#   changefreq = 'monthly' # Change if the site is update more frequently (weekly or so)
+#   filename = 'sitemap.xml'
+#   priority = 0.5
+
+
+# Privacy: https://gohugo.io/about/hugo-and-gdpr/
+[privacy]
+  [privacy.disqus]
+    disable = false
+
+    # Following the r-hub privacy policy: https://docs.r-hub.io/#privacy
+
+  [privacy.googleAnalytics]
+    anonymizeIP = true # IP addresses are anonymized within Google Analytics
+    disable = false # use of Cookies is disabled,
+    useSessionStorage = true # instead Session Storage is used
+    respectDoNotTrack = true # respect the “Do Not Track” HTTP header
+  [privacy.instagram]
+    disable = true
+    simple = true
+  [privacy.twitter]
+    disable = true
+    enableDNT = false
+    simple = false
+  [privacy.vimeo]
+    disable = true
+    enableDNT = false
+    simple = false
+  [privacy.youtube]
+    disable = true
+    privacyEnhanced = false
+
