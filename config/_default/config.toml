@@ -56,8 +56,8 @@ rssLimit = 20
 # Be mindful to links and redirects https://github.com/llrs/blogR/issues/59
 [permalinks]
   # The actual url were post ends up.
-  # post = "post/:year/:month/:day/:slug/"
-  post = ":year/:month/:day/:slug/"
+  post = "post/:year/:month/:day/:slug/"
+  # post = ":year/:month/:day/:slug/"
 
 # Configure BlackFriday Markdown rendering.
 #   See: https://gohugo.io/getting-started/configuration/#configure-blackfriday
@@ -78,7 +78,7 @@ rssLimit = 20
   category = "categories"
   publication_type = "publication_types"
   author = "authors"
-  talk = "talks"
+  # talk = "talks" It creates a conflict and no talk is show if the taxonomy is used.
 
 [markup]
   defaultMarkdownHandler = "goldmark"
