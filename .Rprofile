@@ -5,7 +5,7 @@ if (interactive()) {
   options(blogdown.author = "Lluís Revilla Sancho",
         blogdown.ext = ".Rmd",
         blogdown.knit.on_save = TRUE,
-        blogdown.hugo.version = "0.66.0",
+        blogdown.hugo.version = "0.91.2",
         bitmapType = "cairo",
         xfun.bg_process.verbose = TRUE,
         blogdown.use.processx = FALSE)
