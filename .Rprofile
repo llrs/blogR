@@ -1,6 +1,7 @@
 if (interactive()) {
   source("~/.Rprofile", local = TRUE)
   message("Loading .Rprofile")
+  library("blogdown")
   options(blogdown.author = "Lluís Revilla Sancho",
         blogdown.ext = ".Rmd",
         blogdown.knit.on_save = TRUE,
