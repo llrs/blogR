@@ -1,6 +1,6 @@
 ---
 title: Talks and Workshops
-subtitle: "Slides, recording and comments"
+subtitle: "Slides, recording and comments ([RSS](/talk/index.xml))"
 summary: "Talks, workshops"
 type: "talks"
 
