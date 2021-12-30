@@ -11,3 +11,4 @@ static/post/2019*
 Thumbs.db
 /public/
 /resources/
+.hugo_build.lock
