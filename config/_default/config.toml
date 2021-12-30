@@ -91,11 +91,11 @@ rssLimit = 20
     startLevel = 2
     endLevel = 3
 
-[params]
+#[params]
 
     # Custom favicon param. See layouts/partials/favicon.html for use
     # Add favicon.png to static/ and it will be copied to public/ on build
-    favicon = "/favicon-32x32.png"
+    #favicon = "/favicon-32x32.png"
 
 # Following https://gohugo.io/templates/sitemap-template/
 # [sitemap]
