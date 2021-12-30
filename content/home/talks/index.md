@@ -1,5 +1,5 @@
 ---
-active: false
+active: true
 advanced:
   css_class: ""
   css_style: ""
@@ -18,8 +18,8 @@ content:
 design:
   background: {}
   view: 2
-subtitle: ""
-title: Recent & Upcoming Talks
+subtitle: "My talks"
+title: Last talks
 weight: 70
 widget: pages
 headless: true
