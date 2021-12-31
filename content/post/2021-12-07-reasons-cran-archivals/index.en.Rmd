@@ -11,6 +11,7 @@ tags:
   - CRAN
   - packages
   - archived
+  - r
 authors: []
 description: ''
 draft: no
@@ -248,7 +249,7 @@ hist_summary <- hist_expand |>
   mutate(package_not_corrected =  logic2string(not_corrected | check | reminders | install | update | request_maintainer | unresponsive_maintainer),
          dependencies = logic2string(required | depends | archived |depends_archived),
          other = logic2string(email_error | licence | authorship | request_author)) |> 
-  group_by(package_not_corrected, logic2string(request_maintainer), dependencies, other) |> 
+  group_by(package_not_corrected, request_maintainer = logic2string(request_maintainer), dependencies, other) |> 
   count(sort = TRUE, name = "events") |> 
   ungroup()
 hist_summary
@@ -272,16 +273,21 @@ This suggests that once a package is archived maintainers do not make the effort
 To check we can see the current available packages and see how many of those are still present on CRAN:
 
 ```{r back_to_cran}
-ap <- available.packages()
-pkg_event |> 
+# From the help page of ?available.packages
+download.file("https://cran.r-project.org/web/packages/packages.rds", 
+              destfile = "../../../static/post/packages.RDS") 
+ap <- readRDS("packages.RDS") 
+rownames(ap) <- ap[, "Package"]
+tables_pkg <- pkg_event |> 
   mutate(CRAN = logic2string(Package %in% rownames(ap))) |> 
   group_by(CRAN) |> 
   count(name = "Packages") |>
   ungroup() |> 
   mutate(Proportion = scales::percent(Packages/sum(Packages)))
+tables_pkg
 ```
 
-Many packages are currently on CRAN despite their past archivation but close to 60% are currently not on CRAN.
+Many packages are currently on CRAN despite their past archivation but close to `r tables_pkg$Proportion[tables_pkg$CRAN == "no"]` are currently not on CRAN.
 
 Almost all that are on CRAN have now no `X-CRAN-Comment`, except for a few:
 
