@@ -2,7 +2,7 @@
 title: Reasons why packages are archived on CRAN
 author: Lluís Revilla Sancho
 date: '2021-12-07'
-updated: "2021-12-31"
+updated: "2022-01-02"
 slug: reasons-cran-archivals
 categories:
   - CRAN
@@ -170,7 +170,7 @@ yes
 </tr>
 </tbody>
 </table>
-<p>Most of the packages that have a Maintainer field are orphaned.
+<p>Most of the packages that have a Maintainer field are orphaned/archived.
 Does it mean that all the others are not orphaned?</p>
 </div>
 <div id="extracting-reasons" class="section level2">
@@ -197,7 +197,7 @@ Events
 archived
 </td>
 <td style="text-align:right;">
-5836
+5989
 </td>
 </tr>
 <tr>
@@ -205,7 +205,7 @@ archived
 orphaned
 </td>
 <td style="text-align:right;">
-121
+337
 </td>
 </tr>
 <tr>
@@ -213,7 +213,7 @@ orphaned
 removed
 </td>
 <td style="text-align:right;">
-50
+106
 </td>
 </tr>
 <tr>
@@ -221,7 +221,15 @@ removed
 renamed
 </td>
 <td style="text-align:right;">
-1
+2
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+replaced
+</td>
+<td style="text-align:right;">
+4
 </td>
 </tr>
 <tr>
@@ -229,7 +237,7 @@ renamed
 unarchived
 </td>
 <td style="text-align:right;">
-1
+2668
 </td>
 </tr>
 </tbody>
@@ -287,7 +295,7 @@ no
 no
 </td>
 <td style="text-align:right;">
-3660
+3727
 </td>
 </tr>
 <tr>
@@ -304,7 +312,7 @@ no
 no
 </td>
 <td style="text-align:right;">
-1284
+1410
 </td>
 </tr>
 <tr>
@@ -321,7 +329,7 @@ yes
 no
 </td>
 <td style="text-align:right;">
-653
+595
 </td>
 </tr>
 <tr>
@@ -338,24 +346,7 @@ no
 yes
 </td>
 <td style="text-align:right;">
-198
-</td>
-</tr>
-<tr>
-<td style="text-align:left;">
-yes
-</td>
-<td style="text-align:left;">
-no
-</td>
-<td style="text-align:left;">
-yes
-</td>
-<td style="text-align:left;">
-no
-</td>
-<td style="text-align:right;">
-19
+202
 </td>
 </tr>
 <tr>
@@ -372,7 +363,24 @@ no
 yes
 </td>
 <td style="text-align:right;">
-14
+15
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+yes
+</td>
+<td style="text-align:left;">
+no
+</td>
+<td style="text-align:left;">
+yes
+</td>
+<td style="text-align:left;">
+no
+</td>
+<td style="text-align:right;">
+13
 </td>
 </tr>
 <tr>
@@ -389,7 +397,7 @@ yes
 yes
 </td>
 <td style="text-align:right;">
-4
+2
 </td>
 </tr>
 <tr>
@@ -423,7 +431,7 @@ no
 no
 </td>
 <td style="text-align:right;">
-1
+2
 </td>
 </tr>
 <tr>
@@ -455,7 +463,7 @@ This is probably the <a href="https://en.wikipedia.org/wiki/Pareto_principle">Pa
 Events
 </th>
 <th style="text-align:right;">
-Packages
+packages
 </th>
 </tr>
 </thead>
@@ -465,7 +473,7 @@ Packages
 1
 </td>
 <td style="text-align:right;">
-4409
+4475
 </td>
 </tr>
 <tr>
@@ -473,7 +481,7 @@ Packages
 2
 </td>
 <td style="text-align:right;">
-505
+506
 </td>
 </tr>
 <tr>
@@ -481,7 +489,7 @@ Packages
 3
 </td>
 <td style="text-align:right;">
-79
+94
 </td>
 </tr>
 <tr>
@@ -489,7 +497,7 @@ Packages
 4
 </td>
 <td style="text-align:right;">
-25
+29
 </td>
 </tr>
 <tr>
@@ -502,7 +510,7 @@ Packages
 </tr>
 </tbody>
 </table>
-<p>This suggests that once a package is archived maintainers do not make the effort to put it back on CRAN.
+<p>This suggests that once a package is archived maintainers do not make the effort to put it back on CRAN except on very few cases were there are multiple attempts.
 To check we can see the current available packages and see how many of those are still present on CRAN:</p>
 <table>
 <thead>
@@ -524,7 +532,7 @@ Proportion
 no
 </td>
 <td style="text-align:right;">
-2996
+3067
 </td>
 <td style="text-align:left;">
 60%
@@ -535,7 +543,7 @@ no
 yes
 </td>
 <td style="text-align:right;">
-2025
+2040
 </td>
 <td style="text-align:left;">
 40%
@@ -595,7 +603,7 @@ LTO, mismatching C unsigned int to INTEGER.
 </tbody>
 </table>
 <p>CRAN team might have missed these few packages and didn’t move the comments to X-CRAN-history.</p>
-<p>There are some packages that are not archived that don’t have a CRAN-history happens too, but they usually have other fields.</p>
+<p>There are some packages that are not archived that don’t have a CRAN-history happens too, but they usually have other fields changed.</p>
 </div>
 </div>
 <div id="discussion" class="section level1">
@@ -625,6 +633,7 @@ There is need for something else? How would that work?</p>
 <p>At the same time it is admirable that after so many years there are few errors on the data.
 However, the archival process might be a good process to automate, providing the reason on the webpage and add it to X-CRAN-Comment and moving the comments to X-CRAN-History once it is unarchived.
 Knowing more about how these actions are performed by the CRAN team and how the community could help on the process will be beneficial to all.</p>
+<p><strong>Note</strong>: This blog was updated on 2022/01/02 to improve the parsing of actions and dates on packages. Resulting on a change on the first plot to include unarchived which slightly modified the second plot of reasons why packages are archived. This overall only affected the numbers of the plots not the conclusions or discussion.</p>
 <div id="reproducibility" class="section level3">
 <h3>Reproducibility</h3>
 <details>
@@ -638,7 +647,7 @@ Knowing more about how these actions are performed by the CRAN team and how the 
 ##  collate  en_US.UTF-8
 ##  ctype    en_US.UTF-8
 ##  tz       Europe/Madrid
-##  date     2021-12-31
+##  date     2022-01-02
 ##  pandoc   2.14.0.3 @ /usr/lib/rstudio/bin/pandoc/ (via rmarkdown)
 ## 
 ## ─ Packages ───────────────────────────────────────────────────────────────────────────────────────────────────────────

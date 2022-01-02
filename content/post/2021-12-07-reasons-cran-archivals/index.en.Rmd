@@ -103,7 +103,7 @@ count(file,
       sort = TRUE, name = "packages")
 ```
 
-Most of the packages that have a Maintainer field are orphaned.
+Most of the packages that have a Maintainer field are orphaned/archived.
 Does it mean that all the others are not orphaned? 
 
 ## Extracting reasons
@@ -112,40 +112,49 @@ Now that it is in R data structure, we can extract the relevant information, dat
 I use `strcapture` for this task with a regex to extract the action, the date and the explanation it migh have. 
 
 ```{r extract}
-proto <- data.frame(action = character(), date = Sys.Date()[0], reason = character())
-regex <- "^([[:alpha:]]+) \\w+ ([0-9]{4}-[0-9]{2}-[0-9]{2}) \\w+ (.+)"
+# Extract multiline comments
 comments_l <- lapply(file$`X-CRAN-Comment`, function(x) {
   unlist(strsplit(x, "[\n]+"), FALSE, FALSE)
 })
 comments_c <- unlist(comments_l)
-comments_df <- cbind(Package = rep(file$Package, lengths(comments_l)), 
-           strcapture(pattern = regex, x = comments_c, proto = proto))
+df <- data.frame(package = rep(file$Package, lengths(comments_l)),
+           comment = comments_c)
+regex_date <- "([0-9]{4}-[0-9]{2}-[0-9]{2})"
+regex_action <- "([Uu]narchived?|[Aa]rchived?|[Rr]enamed?|[Oo]rphaned?|[Rr]eplaced?|[Rr]emoved?)"
+comments_df <- cbind(df, 
+           strcapture(pattern = regex_date, x = df$comment, 
+                      proto = data.frame(date = Sys.Date()[0])),
+           strcapture(pattern = regex_action, x = df$comment,
+                      proto = data.frame(action = character()))
+           ) |> 
+  filter(!is.na(comment)) |> 
+  mutate(action = tolower(action))
+# Check that count(comments_df, !is.na(date), !is.na(action), sort = TRUE) makes sense
+# Handle rolled and no keyword used
+comments_df$action[!is.na(comments_df$date) & is.na(comments_df$action)] <- c(NA_character_, "archived", "archived")
 
+# Handle CRAN-history
 history_l <- lapply(file$`X-CRAN-History`, function(x) {
   unlist(strsplit(x, "[\n]+"), FALSE, FALSE)
 })
 history_c <- unlist(history_l)
-history_df <- cbind(Package = rep(file$Package, lengths(history_l)), 
-           strcapture(pattern = regex, x = history_c, proto = proto))
 
-regex2 <- "Versions? .+ (\\w+) \\w+ ([0-9]{4}-[0-9]{2}-[0-9]{2}) ?\\w+ (.+)"
-history_df2 <- cbind(Package = rep(file$Package, lengths(history_l)), 
-           strcapture(pattern = regex2, x = history_c, proto = proto))
-comments_df2 <- cbind(Package = rep(file$Package, lengths(comments_l)), 
-           strcapture(pattern = regex2, x = comments_c, proto = proto))
-regex3 <- "Versions? .+ (\\w+) \\w+ ([0-9]{4}-[0-9]{2}-[0-9]{2}) ?\\w+ (.+)"
-history_df3 <- cbind(Package = rep(file$Package, lengths(history_l)), 
-           strcapture(pattern = regex3, x = history_c, proto = proto))
-comments_df3 <- cbind(Package = rep(file$Package, lengths(comments_l)), 
-           strcapture(pattern = regex3, x = comments_c, proto = proto))
+history_df <- data.frame(package = rep(file$Package, lengths(history_l)),
+                    comment = history_c) |> 
+  filter(!is.na(comment))
 
-history <- rbind(comments_df, history_df,
-                 comments_df2, history_df2,
-                 comments_df3, history_df3) |> 
-  filter(!is.na(action)) |> 
-  mutate(action = tolower(action),
-         action = gsub(pattern = "e$", replacement = "ed", action)) |> 
-  arrange(Package)
+history_df <- cbind(history_df,
+                    strcapture(pattern = regex_date, x = history_df$comment, 
+                               proto = data.frame(date = Sys.Date()[0])),
+                    strcapture(pattern = regex_action, x = history_df$comment,
+                               proto = data.frame(action = character()))
+           ) |> 
+  mutate(action = tolower(action))
+history_df$action[!is.na(history_df$date) & is.na(history_df$action)] <- c(NA_character_, "unarchived", "unarchived", "unarchived", "unarchived", NA_character_, "unarchived", NA_character_, NA_character_, NA_character_, "unarchived", "unarchived", "unarchived", "unarchived", "unarchived", "unarchived")
+
+history <- rbind(comments_df, history_df) |> 
+  mutate(action = gsub(pattern = "e$", replacement = "ed", action)) |> 
+  arrange(package)
 ```
 
 I don't know how the file is written probably it is a mix of automated tools and manual editing so there isn't a simple way to collect all the information in a structured way.
@@ -166,7 +175,7 @@ How are they along time?
 ```{r plots_df}
 library("ggplot2")
 history |>  
-  filter(action != "cran") |> 
+  filter(!is.na(date)) |> 
   group_by(action, month = as.Date(format(date, "%Y-%m-15"))) |> 
   summarise(n = n()) |> 
   ungroup() |> 
@@ -193,43 +202,48 @@ Using some simple regex I explore for key words or sentences.
 ```{r reasons}
 hist_expand <- history |> 
   filter(!is.na(date)) |> 
-  mutate(not_corrected = grepl("not correct", reason, fixed = TRUE),
-         request = grepl("request", reason, fixed = TRUE),
-         maintainer = grepl("maintainer", reason, fixed = TRUE),
-         request_maintainer =  maintainer & request & grepl("from", reason, fixed = TRUE),
-         request_author = grepl("author", reason, fixed = TRUE) & request,
-         reminders = grepl("reminders", reason, fixed = TRUE),
-         install = grepl("install", reason, fixed = TRUE),
-         email = grepl("email", reason, fixed = TRUE),
-         email_error = email & grepl("undeliverable|bounce[sd]?|returned|rejected|refused", reason),
-         depends = grepl("depends", reason, fixed = TRUE),
-         unresponsive_maintainer = grepl("uncontactable|unresponsive", reason) & maintainer,
-         check = grepl("check", reason, fixed = TRUE),
-         licence = grepl("licen[cs]e", reason),
-         update = grepl("updated?", reason),
-         required = grepl("require[sd]?", reason),
-         policy = grepl("policy violation", reason, fixed = TRUE),
-         archived = grepl("archived?", reason),
-         authorship = grepl("authorship", reason, fixed = TRUE),
-         depends_archived = depends & archived,
+  mutate(not_corrected = grepl("not correct", comment, fixed = TRUE),
+         request = grepl("request", comment, fixed = TRUE),
+         maintainer = grepl("maintainer", comment, fixed = TRUE),
+         request_maintainer =  maintainer & request & grepl("from", comment, fixed = TRUE),
+         request_author = grepl("author", comment, fixed = TRUE) & request,
+         reminders = grepl("reminders", comment, fixed = TRUE),
+         install = grepl("install", comment, fixed = TRUE),
+         email = grepl("email", comment, fixed = TRUE),
+         email_error = email & grepl("undeliverable|bounce[sd]?|returned|rejected|refused", comment),
+         unresponsive_maintainer = grepl("uncontactable|unresponsive", comment) & maintainer,
+         check = grepl("check", comment, fixed = TRUE),
+         licence = grepl("licen[cs]e", comment),
+         update = grepl("updated?", comment),
+         required = grepl("require[sd]?", comment),
+         policy = grepl("policy violation", comment, fixed = TRUE),
+         authorship = grepl("authorship", comment, fixed = TRUE),
+         depends_archived = grepl("depends?", comment) & grepl("archived?", comment),
          )
 ```
 
 We can look at the most frequent error reasons for archiving packages, patterns I found with more than 100 cases:
 
 ```{r reasons_top}
+archived_packages <- history |> 
+  group_by(package) |> 
+  filter(!is.na(date) & action == "archived") |> 
+  pull(package) |> 
+  unique()
+
 counts <- hist_expand |> 
-  filter(action == "archived") |> 
-  select(-Package, -action, -date, -reason) |> 
+  filter(package %in% archived_packages,
+         action != "unarchived") |> 
+  select(-package, -action, -date, -comment) |> 
   colSums()
 counts2 <- data.frame(type = names(counts), events = unname(counts)) |> 
   filter(!type %in% c("email", "request", "maintainer")) |> 
   arrange(-events)
-
 library("ComplexUpset")
 hist_expand |> 
-  filter(action == "archived") |> 
-  upset(intersect = colnames(hist_expand)[-c(1:4)],
+  filter(package %in% archived_packages,
+         action != "unarchived") |> 
+  upset(intersect = c("not_corrected", "check", "reminders", "maintainer", "request", "policy", "depends_archived", "email_error"),
         min_size = 100)
 ```
 
@@ -245,9 +259,9 @@ Some of these errors happen at the same time for each event, but grouping these 
 ```{r summary_table}
 hist_summary <- hist_expand |> 
   filter(action == "archived") |> 
-  select(-Package, -action, -date, -reason) |> 
+  select(-package, -action, -date, -comment) |> 
   mutate(package_not_corrected =  logic2string(not_corrected | check | reminders | install | update | request_maintainer | unresponsive_maintainer),
-         dependencies = logic2string(required | depends | archived |depends_archived),
+         dependencies = logic2string(required | depends_archived),
          other = logic2string(email_error | licence | authorship | request_author)) |> 
   group_by(package_not_corrected, request_maintainer = logic2string(request_maintainer), dependencies, other) |> 
   count(sort = TRUE, name = "events") |> 
@@ -263,23 +277,31 @@ However, if we look at the packages which were archived (not at the request of m
 ```{r multiple_archivations}
 replaced <- file$Package[!is.na(file$Replaced_by)]
 pkg_event <- hist_expand |> 
-  filter(action == "archived" & !request_maintainer,
-         !Package %in% replaced) |> 
-  count(Package, sort = TRUE, name = "Events")
-count(pkg_event, Events, name = "Packages")
+  filter(package %in% archived_packages,
+         !request_maintainer,
+         !package %in% replaced,
+         action == "archived") |> 
+  count(package, sort = TRUE, name = "Events")
+count(pkg_event, Events, name = "packages")
 ```
 
-This suggests that once a package is archived maintainers do not make the effort to put it back on CRAN. 
+This suggests that once a package is archived maintainers do not make the effort to put it back on CRAN except on very few cases were there are multiple attempts. 
 To check we can see the current available packages and see how many of those are still present on CRAN:
 
 ```{r back_to_cran}
 # From the help page of ?available.packages
 download.file("https://cran.r-project.org/web/packages/packages.rds", 
-              destfile = "../../../static/post/packages.RDS") 
-ap <- readRDS("packages.RDS") 
-rownames(ap) <- ap[, "Package"]
+              destfile = "static/post/packages.RDS") 
+ap <- as.data.frame(readRDS("static/post/packages.RDS"))
+ap <- distinct(ap, Package, .keep_all = TRUE)
+rownames(ap) <- ap$Package
+replaced <- file$Package[!is.na(file$Replaced_by)]
+pkg_event <- hist_expand |> 
+  filter(action == "archived" & !request_maintainer,
+         !package %in% replaced) |> 
+  count(package, sort = TRUE, name = "Events")
 tables_pkg <- pkg_event |> 
-  mutate(CRAN = logic2string(Package %in% rownames(ap))) |> 
+  mutate(CRAN = logic2string(package %in% rownames(ap))) |> 
   group_by(CRAN) |> 
   count(name = "Packages") |>
   ungroup() |> 
@@ -300,12 +322,12 @@ file |>
 
 CRAN team might have missed these few packages and didn't move the comments to X-CRAN-history.
 
-There are some packages that are not archived that don't have a CRAN-history happens too, but they usually have other fields.
+There are some packages that are not archived that don't have a CRAN-history happens too, but they usually have other fields changed.
 
 ```{r cran-history, eval = FALSE}
 file |> 
   filter(Package %in% rownames(ap)) |> 
-  filter(is.na(`X-CRAN-History`)) |> 
+  filter(is.na(`X-CRAN-History`) & !is.na(`X-CRAN-Comment`)) |> 
   View()
 ```
 
@@ -345,6 +367,8 @@ There is need for something else? How would that work?
 At the same time it is admirable that after so many years there are few errors on the data. 
 However, the archival process might be a good process to automate, providing the reason on the webpage and add it to X-CRAN-Comment and moving the comments to X-CRAN-History once it is unarchived.
 Knowing more about how these actions are performed by the CRAN team and how the community could help on the process will be beneficial to all. 
+
+**Note**: This blog was updated on 2022/01/02 to improve the parsing of actions and dates on packages. Resulting on a change on the first plot to include unarchived which slightly modified the second plot of reasons why packages are archived. This overall only affected the numbers of the plots not the conclusions or discussion. 
   
 ### Reproducibility
 
