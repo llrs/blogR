@@ -2,7 +2,7 @@
 http://llrs.dev/*    https://llrs.dev/:splat  301!
 http://llrs.netlify.com/*   https://llrs.dev/:splat  301!
 https://dreamy-leakey-30bb2a.netlify.com/*   https://llrs.dev/:splat  301!
-https://naughty-goldstine-ab40e9.netlify.com/*   https://llrs.dev/:splat  301!
+# https://naughty-goldstine-ab40e9.netlify.com/*   https://llrs.dev/:splat  301!
 # To account for a change on the permalinks
 # :splat is to copy the remiaing url and append there
 # https://docs.netlify.com/routing/redirects/rewrites-proxies/#shadowing
