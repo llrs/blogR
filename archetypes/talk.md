@@ -41,18 +41,18 @@ image:
 # Custom links (optional).
 #   Uncomment and edit lines below to show custom links.
 links:
-- icon: images
-  icon_pack: fas
-  name: slides
-  url:
-- icon: github
-  icon_pack: fab
-  name: code
-  url:
-- icon: youtube
-  icon_pack: fab
-  name: video
-  url: 
+  - icon: images
+    icon_pack: fas
+    name: slides
+    url:
+  - icon: github
+    icon_pack: fab
+    name: code
+    url:
+  - icon: youtube
+    icon_pack: fab
+    name: video
+    url: 
 
 # Markdown Slides (optional).
 #   Associate this talk with Markdown slides.

@@ -1,0 +1,61 @@
+---
+title: "Releasing packages"
+author: "Lluís Revilla Sancho"
+date: '2022-01-16'
+slug: releasing-packages
+categories: []
+tags: []
+subtitle: ~
+event: "R User Group Ghana 3rd anniversary" 
+event_url: ~
+location: "online"
+address:
+  street: ~
+  city: ~
+  region: ~
+  postcode: ~
+  country: ~
+summary: |
+  Package development, release and maintenance process based on several other 
+  posts and presentations on this blog. 
+abstract: ~
+date_end: '2022-01-29'
+all_day: no
+publishDate: '2022-01-29'
+authors:
+  - admin
+featured: yes
+image:
+  caption: 'First slide of the talk'
+  focal_point: 'left'
+links:
+  - icon: images
+    icon_pack: fas
+    name: slides
+    url: https://packages2archives.llrs.dev
+  - icon: github
+    icon_pack: fab
+    name: code
+    url: https://github.com/llrs/packages2archives/
+projects: []
+---
+
+On this presentation invited by the R User Group Ghana on the celebration of their 3rd anniversary. 
+I presented a mix of data from previous work:
+
+ - from the [workshop](talk/workshop-creating-packages/) I did for them for how to create packages.
+ - from the [useR!2021 talk](talk/user-2021/) about submitting packages to CRAN
+ - About keeping packages on CRAN based on a [previous blog post](post/2021/12/07/reasons-cran-archivals/).
+ 
+ The slides are on the link on the top and here below as embedded:
+
+```{r embeded, echo=FALSE}
+xaringanExtra::embed_xaringan(
+  url = "https://packages2archives.llrs.dev",
+  ratio = "16:9"
+)
+
+```
+
+
+
