@@ -1,0 +1,138 @@
+---
+title: Concepts around open source/free software
+author: Lluís Revilla Sancho
+date: '2022-03-16'
+slug: concepts-around-open-source-free-software
+categories:
+  - OSS
+tags:
+  - software
+  - concepts
+authors: [admin]
+description: ''
+draft: no
+editor_options:
+  chunk_output_type: console
+featured: no
+image:
+  caption: ''
+  focal_point: ''
+subtitle: ''
+summary: ''
+---
+
+```{r setup, include = FALSE}
+knitr::opts_chunk$set(collapse = TRUE, fig.retina = 2)
+```
+
+This post is to lay out some concepts I picked up after reading ["The Making and maintenance of open source software"](https://www.amazon.com/Working-Public-Making-Maintenance-Software/dp/0578675862).
+Having these concepts in mind might help me on my contributions to R and OSS in general.
+I write these thought to come back to in future posts.
+
+The book classify projects by two axis, contribution growth and user growth:
+
+|                             | High user growth | low user growth |
+|-----------------------------|------------------|-----------------|
+| **High contributor growth** | Federations      | Clubs           |
+| **Low contributor growth**  | Stadiums         | Toys            |
+
+And classify projects according to the following characteristics :
+
+-   Technical
+
+-   Support
+
+-   Ease of participation
+
+-   User adoption
+
+-   Contributor growth
+
+Code seems like a common good which require the following characteristics:
+
+-   Intrinsic motivation
+
+-   Modular
+
+-   Granular
+
+-   Low cost of coordination
+
+On the author's opinion only maintainers are interested in the success of the whole community and need to make trade off between different interest of the community around the project.
+
+Motivation is very important and I classify based on the source of motivation and the sign of it:
+
+|               | Positive        | Negative                      |
+|---------------|-----------------|-------------------------------|
+| **Intrinsic** | Learn skills    | Burn out                      |
+| **Extrinsic** | Social benefits | Friction, or lack of feedback |
+
+Following the book, contributors can be grouped in two:
+
+-   Invested: Lurk before making a contribution, learn the quirks of the community
+
+-   Casual: Adding value to themselves and other
+
+Contributors might spend many time learning about the community before making their first contribution (or show themselves).
+That's why only knowing if this is the first contribution of someone doesn't mean they will continue contributing on the project.
+
+Users, can be classified in two groups: passive, they use the software and nothing else, or active.
+Active users might do one of the following:
+
+-   Educate others: write a blog post, or material
+
+-   Spread the word: Announce they use the software
+
+-   Support: Solve other's users questions
+
+-   Fill bug reports
+
+The health of the project depends on the popularity dependencies and active and future maintenance of the software.
+
+However, the book says that one contributor is not the same as the other.
+For instance removing a maintainer causes more harm than a casual contributor.
+
+The source of this is that software is like a puppy.
+The value of the code is how live it is, static code has null value.
+but once it is being used it is very valuable.
+
+For this reason the maintenance costs once there are users is very high.
+However, in general there are few ways to know how many users does a piece of software have.
+
+This produces marginal costs to maintainer, which are driven by how are these goods:
+
+|                   | Excludable    | Non-Excludable |
+|-------------------|---------------|----------------|
+| **Rivalrous**     | Private goods | Commons good   |
+| **Non-Rivalrous** | Club goods    | Public goods   |
+
+Costs are mainly attention from the maintainers from the users and contributors.
+Users are like a cars in a highway initially there is no problem, but at high levels of traffic adding new lanes don't solve traffic jam.
+
+However, the cost increase with more request, the bandwidth to download software and hosting
+
+More users leads to more requests, which lead to a competition for maintainers to do less proactive work and do more reactive work.
+
+This leads to start on very simple organiztion and evolve to more disorganized complexity and then to a organized complexity to just cope with the costs of the project.
+On this organization complexity relationships with maintainers become important.
+
+`Value = usage+dependencies-maintenance+substitutability+switching cost+enabling` while `Cost = development +maintenance+attention`.
+
+The common (and scarce) good is the attention of both maintainers and developers.
+Which requires judgement call on which kind of requests dedicate their time: extractive or non-extractive requests.
+
+The benefit for maintainers once the reputation/recognition is enough is almost non existent.
+
+The book cites several communities Python, ruby, Linux, javascript, java, but I don't think they used R community as a source. So what are the implication of these concepts to the R community? How do we help maintainers to keep up with their work or let in new maintainers?
+
+### Reproducibility
+
+<details>
+
+```{r reproducibility, echo = FALSE}
+## Reproducibility info
+options(width = 120)
+sessioninfo::session_info()
+```
+
+</details>

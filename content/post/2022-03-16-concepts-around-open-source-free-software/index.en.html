@@ -1,0 +1,191 @@
+---
+title: Concepts around open source/free software
+author: Lluís Revilla Sancho
+date: '2022-03-16'
+slug: concepts-around-open-source-free-software
+categories:
+  - OSS
+tags:
+  - software
+  - concepts
+authors: [admin]
+description: ''
+draft: no
+editor_options:
+  chunk_output_type: console
+featured: no
+image:
+  caption: ''
+  focal_point: ''
+subtitle: ''
+summary: ''
+---
+
+<script src="{{< blogdown/postref >}}index.en_files/header-attrs/header-attrs.js"></script>
+
+
+<p>This post is to lay out some concepts I picked up after reading <a href="https://www.amazon.com/Working-Public-Making-Maintenance-Software/dp/0578675862">“The Making and maintenance of open source software”</a>.
+Having these concepts in mind might help me on my contributions to R and OSS in general.
+I write these thought to come back to in future posts.</p>
+<p>The book classify projects by two axis, contribution growth and user growth:</p>
+<table>
+<thead>
+<tr class="header">
+<th></th>
+<th>High user growth</th>
+<th>low user growth</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td><strong>High contributor growth</strong></td>
+<td>Federations</td>
+<td>Clubs</td>
+</tr>
+<tr class="even">
+<td><strong>Low contributor growth</strong></td>
+<td>Stadiums</td>
+<td>Toys</td>
+</tr>
+</tbody>
+</table>
+<p>And classify projects according to the following characteristics :</p>
+<ul>
+<li><p>Technical</p></li>
+<li><p>Support</p></li>
+<li><p>Ease of participation</p></li>
+<li><p>User adoption</p></li>
+<li><p>Contributor growth</p></li>
+</ul>
+<p>Code seems like a common good which require the following characteristics:</p>
+<ul>
+<li><p>Intrinsic motivation</p></li>
+<li><p>Modular</p></li>
+<li><p>Granular</p></li>
+<li><p>Low cost of coordination</p></li>
+</ul>
+<p>On the author’s opinion only maintainers are interested in the success of the whole community and need to make trade off between different interest of the community around the project.</p>
+<p>Motivation is very important and I classify based on the source of motivation and the sign of it:</p>
+<table>
+<thead>
+<tr class="header">
+<th></th>
+<th>Positive</th>
+<th>Negative</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td><strong>Intrinsic</strong></td>
+<td>Learn skills</td>
+<td>Burn out</td>
+</tr>
+<tr class="even">
+<td><strong>Extrinsic</strong></td>
+<td>Social benefits</td>
+<td>Friction, or lack of feedback</td>
+</tr>
+</tbody>
+</table>
+<p>Following the book, contributors can be grouped in two:</p>
+<ul>
+<li><p>Invested: Lurk before making a contribution, learn the quirks of the community</p></li>
+<li><p>Casual: Adding value to themselves and other</p></li>
+</ul>
+<p>Contributors might spend many time learning about the community before making their first contribution (or show themselves).
+That’s why only knowing if this is the first contribution of someone doesn’t mean they will continue contributing on the project.</p>
+<p>Users, can be classified in two groups: passive, they use the software and nothing else, or active.
+Active users might do one of the following:</p>
+<ul>
+<li><p>Educate others: write a blog post, or material</p></li>
+<li><p>Spread the word: Announce they use the software</p></li>
+<li><p>Support: Solve other’s users questions</p></li>
+<li><p>Fill bug reports</p></li>
+</ul>
+<p>The health of the project depends on the popularity dependencies and active and future maintenance of the software.</p>
+<p>However, the book says that one contributor is not the same as the other.
+For instance removing a maintainer causes more harm than a casual contributor.</p>
+<p>The source of this is that software is like a puppy.
+The value of the code is how live it is, static code has null value.
+but once it is being used it is very valuable.</p>
+<p>For this reason the maintenance costs once there are users is very high.
+However, in general there are few ways to know how many users does a piece of software have.</p>
+<p>This produces marginal costs to maintainer, which are driven by how are these goods:</p>
+<table>
+<thead>
+<tr class="header">
+<th></th>
+<th>Excludable</th>
+<th>Non-Excludable</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td><strong>Rivalrous</strong></td>
+<td>Private goods</td>
+<td>Commons good</td>
+</tr>
+<tr class="even">
+<td><strong>Non-Rivalrous</strong></td>
+<td>Club goods</td>
+<td>Public goods</td>
+</tr>
+</tbody>
+</table>
+<p>Costs are mainly attention from the maintainers from the users and contributors.
+Users are like a cars in a highway initially there is no problem, but at high levels of traffic adding new lanes don’t solve traffic jam.</p>
+<p>However, the cost increase with more request, the bandwidth to download software and hosting</p>
+<p>More users leads to more requests, which lead to a competition for maintainers to do less proactive work and do more reactive work.</p>
+<p>This leads to start on very simple organiztion and evolve to more disorganized complexity and then to a organized complexity to just cope with the costs of the project.
+On this organization complexity relationships with maintainers become important.</p>
+<p><code>Value = usage+dependencies-maintenance+substitutability+switching cost+enabling</code> while <code>Cost = development +maintenance+attention</code>.</p>
+<p>The common (and scarce) good is the attention of both maintainers and developers.
+Which requires judgement call on which kind of requests dedicate their time: extractive or non-extractive requests.</p>
+<p>The benefit for maintainers once the reputation/recognition is enough is almost non existent.</p>
+<p>The book cites several communities Python, ruby, Linux, javascript, java, but I don’t think they used R community as a source. So what are the implication of these concepts to the R community? How do we help maintainers to keep up with their work or let in new maintainers?</p>
+<div id="reproducibility" class="section level3">
+<h3>Reproducibility</h3>
+<details>
+<pre><code>## ─ Session info ───────────────────────────────────────────────────────────────────────────────────────────────────────
+##  setting  value
+##  version  R version 4.1.2 (2021-11-01)
+##  os       Ubuntu 20.04.4 LTS
+##  system   x86_64, linux-gnu
+##  ui       X11
+##  language (EN)
+##  collate  en_US.UTF-8
+##  ctype    en_US.UTF-8
+##  tz       Europe/Madrid
+##  date     2022-03-16
+##  pandoc   2.17.1.1 @ /usr/lib/rstudio/bin/quarto/bin/ (via rmarkdown)
+## 
+## ─ Packages ───────────────────────────────────────────────────────────────────────────────────────────────────────────
+##  package     * version date (UTC) lib source
+##  blogdown      1.8.1   2022-02-19 [1] Github (rstudio/blogdown@9af7733)
+##  bookdown      0.24    2021-09-02 [1] CRAN (R 4.1.2)
+##  bslib         0.3.1   2021-10-06 [1] CRAN (R 4.1.2)
+##  cli           3.2.0   2022-02-14 [1] CRAN (R 4.1.2)
+##  digest        0.6.29  2021-12-01 [1] CRAN (R 4.1.2)
+##  evaluate      0.15    2022-02-18 [1] CRAN (R 4.1.2)
+##  fastmap       1.1.0   2021-01-25 [1] CRAN (R 4.1.2)
+##  htmltools     0.5.2   2021-08-25 [1] CRAN (R 4.1.2)
+##  jquerylib     0.1.4   2021-04-26 [1] CRAN (R 4.1.2)
+##  jsonlite      1.8.0   2022-02-22 [1] CRAN (R 4.1.2)
+##  knitr         1.37    2021-12-16 [1] CRAN (R 4.1.2)
+##  magrittr      2.0.2   2022-01-26 [1] CRAN (R 4.1.2)
+##  R6            2.5.1   2021-08-19 [1] CRAN (R 4.1.2)
+##  rlang         1.0.2   2022-03-04 [1] CRAN (R 4.1.2)
+##  rmarkdown     2.13    2022-03-10 [1] CRAN (R 4.1.2)
+##  rstudioapi    0.13    2020-11-12 [1] CRAN (R 4.1.2)
+##  sass          0.4.0   2021-05-12 [1] CRAN (R 4.1.2)
+##  sessioninfo   1.2.2   2021-12-06 [1] CRAN (R 4.1.2)
+##  stringi       1.7.6   2021-11-29 [1] CRAN (R 4.1.2)
+##  stringr       1.4.0   2019-02-10 [1] CRAN (R 4.1.2)
+##  xfun          0.30    2022-03-02 [1] CRAN (R 4.1.2)
+##  yaml          2.3.5   2022-02-21 [1] CRAN (R 4.1.2)
+## 
+##  [1] /home/lluis/bin/R/4.1.2/lib/R/library
+## 
+## ──────────────────────────────────────────────────────────────────────────────────────────────────────────────────────</code></pre>
+</details>
+</div>
