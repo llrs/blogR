@@ -9,16 +9,15 @@ tags:
   - R
   - bookdown
 authors: []
-description: ''
-draft: no
+description: 'Tips and leasons learned while writing a PhD thesis with bookdown.'
 editor_options:
   chunk_output_type: console
-featured: no
+featured: yes
 image:
-  caption: ''
-  focal_point: ''
-subtitle: ''
-summary: ''
+  caption: 'Pen writing in a sheet'
+  focal_point: 'left'
+subtitle: 'Learning latex tweaks with bookdown'
+summary: 'Tips and leasons learned while writing a PhD thesis with bookdown.'
 ---
 
 ```{r setup, include = FALSE}
