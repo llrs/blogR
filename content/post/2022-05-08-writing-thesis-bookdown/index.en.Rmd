@@ -8,11 +8,11 @@ categories:
 tags:
   - R
   - bookdown
-authors: []
+authors: [admin]
 description: 'Tips and leasons learned while writing a PhD thesis with bookdown.'
 editor_options:
   chunk_output_type: console
-featured: yes
+featured: no
 image:
   caption: 'Pen writing in a sheet'
   focal_point: 'left'
