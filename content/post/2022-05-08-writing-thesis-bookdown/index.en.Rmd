@@ -24,8 +24,6 @@ summary: 'Tips and leasons learned while writing a PhD thesis with bookdown.'
 knitr::opts_chunk$set(collapse = TRUE, fig.retina = 2)
 ```
 
-## Starting
-
 On this post I am documenting the experiences I had writing my [PhD thesis](https://thesis.llrs.dev) with bookdown.
 I made the thesis in web and pdf format (and epub) to make more available the thesis.
 Most of the experiences and advise I'll share here are based on my experiences to improve the pdf format.
@@ -36,14 +34,44 @@ If yours is there, or if you want to learn how are they you can have a look at t
 On my case I didn't have any template and the university guidelines are not long, (have two compulsory pages at the beginning and have 5 sections).
 That's why I tweaked the default format inspired by the recent thesis defended on my group.
 
-Well, without further delay let's dive in things I learned
+Well, without further delay let's dive in things I learned:
+
+-   [Captions]
+
+-   [Chapter thumb]
+
+-   [Placing options]
+
+-   [Indexes](#index)
+
+-   [Table of figures and tables]
+
+-   [Acronyms]
+
+-   [Placing floats]
+
+-   [Github actions]
+
+-   [Empty pages]
+
+-   [Title pages]
+
+-   [Page numbers]
+
+-   [Include pdfs]
+
+-   [Running titles]
+
+-   [Merging pdfs]
+
+-   [Reducing pdf size]
 
 ## Important
 
 ### Captions
 
 `knitr::kable` places the captions on tables at the top (by design, see [issue #1189](https://github.com/yihui/knitr/issues/1189)), while knitr places the captions on the bottom of figures.
-So if you want to have all the captions below the element you'll need to use a different formatter for it (booktable, or others).
+So if you want to have all the captions below the element you'll need to use a different package for it (`booktable`, or others).
 
 If you want to have short captions for an easy readable table of figures and table of tables you'll need to use `kable(short.caption = "TOC", caption = "Long caption below the table").`
 
@@ -115,7 +143,7 @@ The once I included are:
 
 -   `fontfamily` and `fontsize` decide which font and size will be used.
 
--   `papersize` this chooses the available space and greatly affects the position of figures and tables, which can float on the text according to LaTex algorithm.
+-   `papersize` this chooses the available space and greatly affects the position of figures and tables, which can float on the text according to LaTeX algorithm.
 
 -   `acronyms` Configuration of the [acronyms]
 
@@ -187,7 +215,7 @@ I ended up using [this solution](https://tex.stackexchange.com/questions/262950/
 }
 ```
 
-This code basically means that I need to add `\ChapFrame` when I want the chapter thumb (I didn't know the namb before searching this).
+This code basically means that I need to add `\ChapFrame` when I want the chapter thumb (I didn't know the name before searching this).
 Once started it changes colors according to `\chapshift` which is automatically incremented by `\ChapFrame`.
 I also set to change position according to `\thechapshift` so that they make a stair.
 
@@ -195,10 +223,10 @@ The code basically changes the position of the mark if the page is even or odd, 
 The size is `width=1cm, height=3cm` with text inside it.
 If you want text I recommend either short titles or the chapter number `\chapter` to ensure it is readable.
 
-A tiny trick I learned was to reset the counter with `\afterpage{\setcounter{chapshift}{0}}` after the biblography so that the appendix would use the same mark from the beginning.
+A tiny trick I learned was to reset the counter with `\afterpage{\setcounter{chapshift}{0}}` after the bibliography so that the appendix would use the same mark from the beginning.
 If you want different colors for the appendix you could just create a new counter and a new `\BoxColor`
 
-### Index with index on it
+### Index with index on it {#index}
 
 I wanted to have the table of contents to show were it began, simply because with all the added page on the front and white pages it might be hard to find it.
 It is also handy when using the outline of the pdf version to go back the the index to then move to another section.
@@ -209,14 +237,21 @@ Simply loading the `\tocbibind` packages was enough:
 \usepackage{tocbibind}
 ```
 
-### Table of figures and tables
+![Screenshot of the outline and the real index.
+The outline has the same content as the real index.](images/screenshot_index.png)
+
+Note: I found a "bug" were the appendix link goes to the bibliography (the previous chapter) instead of the correctly displayed page.
+
+### Table of figures and tables {#toft}
 
 It was not required but I wanted a table of tables and a table of figures, to make it easier go to results of the thesis.
-To add them I used the tocbibind package that automatically adds it (wasn't sure from the [answer](https://tex.stackexchange.com/a/48512/178206) I found online).
+To add them I used the `tocbibind` package that automatically adds it (and the options on `index.Rmd` wasn't sure from the [answer](https://tex.stackexchange.com/a/48512/178206) I found online).
 
 ``` latex
 \usepackage{tocbibind}
 ```
+
+![Screenshot of the first lines of the list of figures, with a short caption for each figure](images/lof.png)
 
 ### Acronyms
 
@@ -243,7 +278,7 @@ To avoid them going after the subsection I added this command before the title o
 
 Probably it could be done automatically renewing the subsection title format, but as I only had to do this 5 times is manageable.
 
-Following an [answer](From%20https://stackoverflow.com/a/33801326/2886003), the figure floating algorithm was set with these preferences:
+Following an [answer](https://stackoverflow.com/a/33801326/2886003), the figure floating algorithm was set with these preferences:
 
 ``` latex
 \usepackage{float}
@@ -257,14 +292,18 @@ Following an [answer](From%20https://stackoverflow.com/a/33801326/2886003), the 
 }
 ```
 
+![A figure and a table on the same page, the label is in bold and the text in italics, on the right side (the page is odd) the blue chapter thumb](images/figure_table_thumb.png)
+
 ### Github actions
 
 To render I initially used my [r-lib/actions](htts://github.com/r-lib/actions) but without using any package structure.
 However, once I set a DESCRIPTION file with all the package dependencies it was much faster, as I could use the [setup-r-dependencies](https://github.com/r-lib/actions/tree/v2/setup-r-dependencies) action.
 
-Probably there is also a faster way directly installing binaries with the help of bspm or the system package manager, but this was convenient enough.
+Probably there is also a faster way directly installing binaries with the help of `bspm` or the system package manager, but this was convenient enough.
 
 Also the action to install [tinytex](https://github.com/r-lib/actions/tree/v2/setup-tinytex) made my job for the pdf to render much faster (from 15 minutes to 5 minutes).
+
+![Screenshot of the github actions (on push) were bookdown-web takes \~3 minutes, bookdown-epub \~2 minutes and bookdown-pdf \~5 minutes.](images/gha.png)
 
 ### Empty pages
 
@@ -292,9 +331,13 @@ Where to place titles, format it with `titlesec`:
 The first line load the package.
 Then we set the format of the chapters option display and the format of text and what appears on that page.
 `\thechapter` is the title of the chapter (while `\chatper` is the number).
-`\chapFrame` is the new command defined to set [chapter thumb](#Chatper-thumb).
+`\chapFrame` is the new command defined to set [chapter thumb].
 
 The other benefit this had was that the title page had no page number.
+
+![A screenshot of the introduction title page.
+There is a number 1 and Introduction a couple of lines below.
+On the right side a red box 3 cm below the top.](images/chapter.png)
 
 ### Page numbers
 
@@ -322,6 +365,8 @@ I had to tweak the size were it was placed to keep the page numbers and running 
 The last curly brackets indicate the location of the pdf to include.
 
 The benefit of this is that these pages now are also numbered with the thesis style and the title.
+
+![Screenshot of the pdf included showing the page number of the thesis and the content of the article "Multi-omic modelling of inflammatory bowel disease with regularized canonical correlation analysis"](images/pdf_included.png)
 
 ### Running titles
 

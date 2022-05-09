@@ -22,8 +22,6 @@ summary: 'Tips and leasons learned while writing a PhD thesis with bookdown.'
 
 
 
-<div id="starting" class="section level2">
-<h2>Starting</h2>
 <p>On this post I am documenting the experiences I had writing my <a href="https://thesis.llrs.dev">PhD thesis</a> with bookdown.
 I made the thesis in web and pdf format (and epub) to make more available the thesis.
 Most of the experiences and advise I’ll share here are based on my experiences to improve the pdf format.
@@ -32,14 +30,30 @@ It is the most important format as ultimately is what I’m going to use for pri
 If yours is there, or if you want to learn how are they you can have a look at the files.<br />
 On my case I didn’t have any template and the university guidelines are not long, (have two compulsory pages at the beginning and have 5 sections).
 That’s why I tweaked the default format inspired by the recent thesis defended on my group.</p>
-<p>Well, without further delay let’s dive in things I learned</p>
-</div>
+<p>Well, without further delay let’s dive in things I learned:</p>
+<ul>
+<li><p><a href="#captions">Captions</a></p></li>
+<li><p><a href="#chapter-thumb">Chapter thumb</a></p></li>
+<li><p><a href="#placing-options">Placing options</a></p></li>
+<li><p><a href="#index">Indexes</a></p></li>
+<li><p><a href="#toft">Table of figures and tables</a></p></li>
+<li><p><a href="#acronyms">Acronyms</a></p></li>
+<li><p><a href="#placing-floats">Placing floats</a></p></li>
+<li><p><a href="#github-actions">Github actions</a></p></li>
+<li><p><a href="#empty-pages">Empty pages</a></p></li>
+<li><p><a href="#title-pages">Title pages</a></p></li>
+<li><p><a href="#page-numbers">Page numbers</a></p></li>
+<li><p><a href="#include-pdfs">Include pdfs</a></p></li>
+<li><p><a href="#running-titles">Running titles</a></p></li>
+<li><p><a href="#merging-pdfs">Merging pdfs</a></p></li>
+<li><p><a href="#reducing-pdf-size">Reducing pdf size</a></p></li>
+</ul>
 <div id="important" class="section level2">
 <h2>Important</h2>
 <div id="captions" class="section level3">
 <h3>Captions</h3>
 <p><code>knitr::kable</code> places the captions on tables at the top (by design, see <a href="https://github.com/yihui/knitr/issues/1189">issue #1189</a>), while knitr places the captions on the bottom of figures.
-So if you want to have all the captions below the element you’ll need to use a different formatter for it (booktable, or others).</p>
+So if you want to have all the captions below the element you’ll need to use a different package for it (<code>booktable</code>, or others).</p>
 <p>If you want to have short captions for an easy readable table of figures and table of tables you’ll need to use <code>kable(short.caption = "TOC", caption = "Long caption below the table").</code></p>
 <p>In addition, on <code>kable</code> if you use something like Häsler you’ll need to convert this “ä” to “\u00E4”.</p>
 <p>I also wanted to highlight and differentiate the captions.
@@ -94,7 +108,7 @@ lof: yes</code></pre>
 <li><p><code>links-as-notes</code> Instead of having hyperlinks have them included as notes.
 It is useful for printing where the reader doesn’t have the option to click a link but might be interested in knowing more.</p></li>
 <li><p><code>fontfamily</code> and <code>fontsize</code> decide which font and size will be used.</p></li>
-<li><p><code>papersize</code> this chooses the available space and greatly affects the position of figures and tables, which can float on the text according to LaTex algorithm.</p></li>
+<li><p><code>papersize</code> this chooses the available space and greatly affects the position of figures and tables, which can float on the text according to LaTeX algorithm.</p></li>
 <li><p><code>acronyms</code> Configuration of the <a href="#acronyms">acronyms</a></p></li>
 <li><p><code>geometry</code> Defines the margins, consider that on books the central zone will not be readable.
 The <code>bindingoffset</code> adds some space to make it easier reading.</p></li>
@@ -158,27 +172,37 @@ I ended up using <a href="https://tex.stackexchange.com/questions/262950/modify-
 \BgMaterial}%
 \stepcounter{chapshift}
 }</code></pre>
-<p>This code basically means that I need to add <code>\ChapFrame</code> when I want the chapter thumb (I didn’t know the namb before searching this).
+<p>This code basically means that I need to add <code>\ChapFrame</code> when I want the chapter thumb (I didn’t know the name before searching this).
 Once started it changes colors according to <code>\chapshift</code> which is automatically incremented by <code>\ChapFrame</code>.
 I also set to change position according to <code>\thechapshift</code> so that they make a stair.</p>
 <p>The code basically changes the position of the mark if the page is even or odd, so that it is always on the outer side of the booklet.
 The size is <code>width=1cm, height=3cm</code> with text inside it.
 If you want text I recommend either short titles or the chapter number <code>\chapter</code> to ensure it is readable.</p>
-<p>A tiny trick I learned was to reset the counter with <code>\afterpage{\setcounter{chapshift}{0}}</code> after the biblography so that the appendix would use the same mark from the beginning.
+<p>A tiny trick I learned was to reset the counter with <code>\afterpage{\setcounter{chapshift}{0}}</code> after the bibliography so that the appendix would use the same mark from the beginning.
 If you want different colors for the appendix you could just create a new counter and a new <code>\BoxColor</code></p>
 </div>
-<div id="index-with-index-on-it" class="section level3">
+<div id="index" class="section level3">
 <h3>Index with index on it</h3>
 <p>I wanted to have the table of contents to show were it began, simply because with all the added page on the front and white pages it might be hard to find it.
 It is also handy when using the outline of the pdf version to go back the the index to then move to another section.</p>
 <p>Simply loading the <code>\tocbibind</code> packages was enough:</p>
 <pre class="latex"><code>\usepackage{tocbibind}</code></pre>
+<div class="figure">
+<img src="images/screenshot_index.png" alt="" />
+<p class="caption">Screenshot of the outline and the real index.
+The outline has the same content as the real index.</p>
 </div>
-<div id="table-of-figures-and-tables" class="section level3">
+<p>Note: I found a “bug” were the appendix link goes to the bibliography (the previous chapter) instead of the correctly displayed page.</p>
+</div>
+<div id="toft" class="section level3">
 <h3>Table of figures and tables</h3>
 <p>It was not required but I wanted a table of tables and a table of figures, to make it easier go to results of the thesis.
-To add them I used the tocbibind package that automatically adds it (wasn’t sure from the <a href="https://tex.stackexchange.com/a/48512/178206">answer</a> I found online).</p>
+To add them I used the <code>tocbibind</code> package that automatically adds it (and the options on <code>index.Rmd</code> wasn’t sure from the <a href="https://tex.stackexchange.com/a/48512/178206">answer</a> I found online).</p>
 <pre class="latex"><code>\usepackage{tocbibind}</code></pre>
+<div class="figure">
+<img src="images/lof.png" alt="" />
+<p class="caption">Screenshot of the first lines of the list of figures, with a short caption for each figure</p>
+</div>
 </div>
 <div id="acronyms" class="section level3">
 <h3>Acronyms</h3>
@@ -198,7 +222,7 @@ While it can be forced, I didn’t want that but neither I wanted them too far a
 <p>To avoid them going after the subsection I added this command before the title of the next subsection:</p>
 <pre><code>\FloatBarrier</code></pre>
 <p>Probably it could be done automatically renewing the subsection title format, but as I only had to do this 5 times is manageable.</p>
-<p>Following an <a href="From%20https://stackoverflow.com/a/33801326/2886003">answer</a>, the figure floating algorithm was set with these preferences:</p>
+<p>Following an <a href="https://stackoverflow.com/a/33801326/2886003">answer</a>, the figure floating algorithm was set with these preferences:</p>
 <pre class="latex"><code>\usepackage{float}
 \usepackage{colortbl}
 \let\origfigure\figure
@@ -208,13 +232,21 @@ While it can be forced, I didn’t want that but neither I wanted them too far a
 } {
     \endorigfigure
 }</code></pre>
+<div class="figure">
+<img src="images/figure_table_thumb.png" alt="" />
+<p class="caption">A figure and a table on the same page, the label is in bold and the text in italics, on the right side (the page is odd) the blue chapter thumb</p>
+</div>
 </div>
 <div id="github-actions" class="section level3">
 <h3>Github actions</h3>
 <p>To render I initially used my <a href="htts://github.com/r-lib/actions">r-lib/actions</a> but without using any package structure.
 However, once I set a DESCRIPTION file with all the package dependencies it was much faster, as I could use the <a href="https://github.com/r-lib/actions/tree/v2/setup-r-dependencies">setup-r-dependencies</a> action.</p>
-<p>Probably there is also a faster way directly installing binaries with the help of bspm or the system package manager, but this was convenient enough.</p>
+<p>Probably there is also a faster way directly installing binaries with the help of <code>bspm</code> or the system package manager, but this was convenient enough.</p>
 <p>Also the action to install <a href="https://github.com/r-lib/actions/tree/v2/setup-tinytex">tinytex</a> made my job for the pdf to render much faster (from 15 minutes to 5 minutes).</p>
+<div class="figure">
+<img src="images/gha.png" alt="" />
+<p class="caption">Screenshot of the github actions (on push) were bookdown-web takes ~3 minutes, bookdown-epub ~2 minutes and bookdown-pdf ~5 minutes.</p>
+</div>
 </div>
 <div id="empty-pages" class="section level3">
 <h3>Empty pages</h3>
@@ -235,8 +267,14 @@ To have a completely blank page I <a href="https://tex.stackexchange.com/a/1684/
 <p>The first line load the package.
 Then we set the format of the chapters option display and the format of text and what appears on that page.
 <code>\thechapter</code> is the title of the chapter (while <code>\chatper</code> is the number).
-<code>\chapFrame</code> is the new command defined to set <a href="#Chatper-thumb">chapter thumb</a>.</p>
+<code>\chapFrame</code> is the new command defined to set <a href="#chapter-thumb">chapter thumb</a>.</p>
 <p>The other benefit this had was that the title page had no page number.</p>
+<div class="figure">
+<img src="images/chapter.png" alt="" />
+<p class="caption">A screenshot of the introduction title page.
+There is a number 1 and Introduction a couple of lines below.
+On the right side a red box 3 cm below the top.</p>
+</div>
 </div>
 <div id="page-numbers" class="section level3">
 <h3>Page numbers</h3>
@@ -256,6 +294,10 @@ To do so I used the following code modified from the <a href="https://stackoverf
 <p>I had to tweak the size were it was placed to keep the page numbers and running titles.
 The last curly brackets indicate the location of the pdf to include.</p>
 <p>The benefit of this is that these pages now are also numbered with the thesis style and the title.</p>
+<div class="figure">
+<img src="images/pdf_included.png" alt="" />
+<p class="caption">Screenshot of the pdf included showing the page number of the thesis and the content of the article “Multi-omic modelling of inflammatory bowel disease with regularized canonical correlation analysis”</p>
+</div>
 </div>
 <div id="running-titles" class="section level3">
 <h3>Running titles</h3>
