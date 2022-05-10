@@ -1,7 +1,7 @@
 ---
 title: Creating an RSS feed for r-bloggers for my blogdown
 author: Lluís Revilla Sancho
-date: '2022-12-30'
+date: '2021-12-30'
 slug: r-blogger-blogdown
 categories:
   - r
@@ -20,7 +20,6 @@ subtitle: ''
 summary: 'To avoid post with incorrect XML on full content you can limit the post served on the pages.'
 ---
 
-<script src="{{< blogdown/postref >}}index.en_files/header-attrs/header-attrs.js"></script>
 
 
 <p>I am following <a href="https://yongfu.name/2018/12/13/hugo_rss.html">Yongfu’s blog</a>:
@@ -59,43 +58,43 @@ There is only one problem. The <a href="https://llrs.dev/tags/twitter/index.xml"
 <details>
 <pre><code>## ─ Session info ───────────────────────────────────────────────────────────────────────────────────────────────────────
 ##  setting  value
-##  version  R version 4.1.2 (2021-11-01)
-##  os       Ubuntu 20.04.3 LTS
+##  version  R version 4.2.0 (2022-04-22)
+##  os       Ubuntu 20.04.4 LTS
 ##  system   x86_64, linux-gnu
 ##  ui       X11
 ##  language (EN)
 ##  collate  en_US.UTF-8
 ##  ctype    en_US.UTF-8
 ##  tz       Europe/Madrid
-##  date     2021-12-30
-##  pandoc   2.14.0.3 @ /usr/lib/rstudio/bin/pandoc/ (via rmarkdown)
+##  date     2022-05-09
+##  pandoc   2.17.1.1 @ /usr/lib/rstudio/bin/quarto/bin/ (via rmarkdown)
 ## 
 ## ─ Packages ───────────────────────────────────────────────────────────────────────────────────────────────────────────
 ##  package     * version date (UTC) lib source
-##  blogdown      1.7     2021-12-19 [1] CRAN (R 4.1.2)
-##  bookdown      0.24    2021-09-02 [1] CRAN (R 4.1.2)
-##  bslib         0.3.1   2021-10-06 [1] CRAN (R 4.1.2)
-##  cli           3.1.0   2021-10-27 [1] CRAN (R 4.1.2)
-##  digest        0.6.29  2021-12-01 [1] CRAN (R 4.1.2)
-##  evaluate      0.14    2019-05-28 [1] CRAN (R 4.1.2)
-##  fastmap       1.1.0   2021-01-25 [1] CRAN (R 4.1.2)
-##  htmltools     0.5.2   2021-08-25 [1] CRAN (R 4.1.2)
-##  jquerylib     0.1.4   2021-04-26 [1] CRAN (R 4.1.2)
-##  jsonlite      1.7.2   2020-12-09 [1] CRAN (R 4.1.2)
-##  knitr         1.37    2021-12-16 [1] CRAN (R 4.1.2)
-##  magrittr      2.0.1   2020-11-17 [1] CRAN (R 4.1.2)
-##  R6            2.5.1   2021-08-19 [1] CRAN (R 4.1.2)
-##  rlang         0.4.12  2021-10-18 [1] CRAN (R 4.1.2)
-##  rmarkdown     2.11    2021-09-14 [1] CRAN (R 4.1.2)
-##  rstudioapi    0.13    2020-11-12 [1] CRAN (R 4.1.2)
-##  sass          0.4.0   2021-05-12 [1] CRAN (R 4.1.2)
-##  sessioninfo   1.2.2   2021-12-06 [1] CRAN (R 4.1.2)
-##  stringi       1.7.6   2021-11-29 [1] CRAN (R 4.1.2)
-##  stringr       1.4.0   2019-02-10 [1] CRAN (R 4.1.2)
-##  xfun          0.29    2021-12-14 [1] CRAN (R 4.1.2)
-##  yaml          2.2.1   2020-02-01 [1] CRAN (R 4.1.2)
+##  blogdown      1.9     2022-03-28 [1] CRAN (R 4.2.0)
+##  bookdown      0.26    2022-04-15 [1] CRAN (R 4.2.0)
+##  bslib         0.3.1   2021-10-06 [1] CRAN (R 4.2.0)
+##  cli           3.3.0   2022-04-25 [1] CRAN (R 4.2.0)
+##  digest        0.6.29  2021-12-01 [1] CRAN (R 4.2.0)
+##  evaluate      0.15    2022-02-18 [1] CRAN (R 4.2.0)
+##  fastmap       1.1.0   2021-01-25 [1] CRAN (R 4.2.0)
+##  htmltools     0.5.2   2021-08-25 [1] CRAN (R 4.2.0)
+##  jquerylib     0.1.4   2021-04-26 [1] CRAN (R 4.2.0)
+##  jsonlite      1.8.0   2022-02-22 [1] CRAN (R 4.2.0)
+##  knitr         1.39    2022-04-26 [1] CRAN (R 4.2.0)
+##  magrittr      2.0.3   2022-03-30 [1] CRAN (R 4.2.0)
+##  R6            2.5.1   2021-08-19 [1] CRAN (R 4.2.0)
+##  rlang         1.0.2   2022-03-04 [1] CRAN (R 4.2.0)
+##  rmarkdown     2.14    2022-04-25 [1] CRAN (R 4.2.0)
+##  rstudioapi    0.13    2020-11-12 [1] CRAN (R 4.2.0)
+##  sass          0.4.1   2022-03-23 [1] CRAN (R 4.2.0)
+##  sessioninfo   1.2.2   2021-12-06 [1] CRAN (R 4.2.0)
+##  stringi       1.7.6   2021-11-29 [1] CRAN (R 4.2.0)
+##  stringr       1.4.0   2019-02-10 [1] CRAN (R 4.2.0)
+##  xfun          0.30    2022-03-02 [1] CRAN (R 4.2.0)
+##  yaml          2.3.5   2022-02-21 [1] CRAN (R 4.2.0)
 ## 
-##  [1] /home/lluis/bin/R/4.1.2/lib/R/library
+##  [1] /home/lluis/bin/R/4.2.0/lib/R/library
 ## 
 ## ──────────────────────────────────────────────────────────────────────────────────────────────────────────────────────</code></pre>
 </details>

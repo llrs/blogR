@@ -14,7 +14,7 @@ tags:
   - r
 authors: []
 description: ''
-draft: no
+draft: false
 editor_options:
   chunk_output_type: console
 featured: no
@@ -290,9 +290,8 @@ To check we can see the current available packages and see how many of those are
 
 ```{r back_to_cran}
 # From the help page of ?available.packages
-download.file("https://cran.r-project.org/web/packages/packages.rds", 
-              destfile = "static/post/packages.RDS") 
-ap <- as.data.frame(readRDS("static/post/packages.RDS"))
+url <- "https://cran.r-project.org/web/packages/packages.rds"
+ap <- as.data.frame(readRDS(url(url)))
 ap <- distinct(ap, Package, .keep_all = TRUE)
 rownames(ap) <- ap$Package
 replaced <- file$Package[!is.na(file$Replaced_by)]
