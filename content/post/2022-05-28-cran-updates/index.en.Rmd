@@ -1,0 +1,334 @@
+---
+title: CRAN updates
+author: Lluís Revilla Sancho
+date: '2022-05-28'
+slug: cran-updates
+categories:
+  - CRAN
+  - r
+tags:
+  - R
+authors: []
+description: ''
+draft: no
+editor_options:
+  chunk_output_type: console
+featured: no
+image:
+  caption: ''
+  focal_point: ''
+subtitle: ''
+summary: ''
+---
+
+```{r setup, include = FALSE}
+knitr::opts_chunk$set(collapse = TRUE, fig.retina = 2)
+```
+
+
+There are many great things in base R, one of them is the tools package. 
+Looking into it I found some internal functions that access freely available files with information about CRAN packages.
+These private functions are at the CRANtools.R file.
+
+```{r}
+# issues <- tools:::CRAN_check_issues()
+packages <- tools:::CRAN_package_db()
+# alias <- tools:::CRAN_aliases_db()
+archive <- tools:::CRAN_archive_db()
+current <- tools:::CRAN_current_db()
+# rdxrefs <- tools:::CRAN_rdxrefs_db()
+```
+
+
+```{r}
+packages$Published <- as.Date(packages$Published, format = "%Y-%m-%d", tz = "UTC")
+packages$Packaged_by <- gsub(".*; (.*)", "\\1", packages$Packaged)
+packages$Packaged <- as.POSIXct(packages$Packaged, 
+                                format = "%Y-%m-%d %H:%M:%S", tz = "UTC")
+
+p <- packages |> 
+  mutate(p =  as.Date(Packaged),
+         diff = round(difftime(p, Published, units = "days"), 0)) |> 
+  mutate(with_archives = Package %in% names(archive)) |> 
+  filter(diff <= 0) |> # 3 Packages built after published!
+  mutate(diff = abs(diff)) |> 
+  filter(diff <= 50) # Few packages waited several months
+```
+
+## Acceptance rate
+
+```{r}
+p3 <- p |> 
+  group_by(p) |> 
+  summarize(m = median(diff),
+            n = n())
+library("ggplot2")
+p3 |> 
+  ggplot(aes(p, n)) +
+  # geom_point(aes(size = n)) +
+  geom_smooth(span = 1/24) +
+  scale_y_continuous( limits = c(0, NA), expand = expansion(0, add = 0.5)) +
+  scale_x_date(date_breaks = "years", date_labels = "%Y") +
+  labs(y = "Packages ", 
+       x = element_blank(),
+       title = "Daily packages accepted in CRAN") +
+  theme_minimal()
+```
+
+```{r}
+library("lubridate")
+p |> 
+  count(p = floor_date(p, "month")) |> 
+  ggplot(aes(p, n)) +
+  # geom_point(aes(size = n)) +
+  geom_smooth(span = 1/12) +
+  scale_y_continuous(limits = c(0, NA), expand = expansion(0, add = 0.5), 
+                      position = "right") +
+  scale_x_date(date_breaks = "years", date_labels = "%Y") +
+  labs(y = "Packages ", 
+       x = element_blank(),
+       title = "Monthly packages accepted in CRAN") +
+  theme_minimal()
+```
+
+
+```{r}
+p2 |> 
+  mutate(nt = cumsum(n)) |> 
+  ggplot(aes(p, nt)) +
+  # geom_point(aes(size = n)) +
+  geom_smooth(span = 1/24) +
+  geom_hline(yintercept = nrow(packages), col = "black") +
+  scale_y_continuous( limits = c(0, NA), expand = expansion(0, add = 0.5)) +
+  scale_x_date(date_breaks = "years", date_labels = "%Y") +
+  labs(y = "Packages ", 
+       x = element_blank(),
+       title = "Daily packages accepted in CRAN") +
+  theme_minimal()
+```
+
+
+
+```{r}
+yesno <- function(x) {
+  k <- x
+  k[x] <- "Yes"
+  k[!x] <- "No"
+  k
+}
+ggplot(p) +
+  geom_point(aes(p, Published, col = as.numeric(diff))) +
+  scale_color_viridis_c(trans = "log10")
+```
+
+## Developer delays
+
+Difference between packages and build.
+
+```{r}
+library("ggpattern")
+ggplot(p) +
+  geom_histogram(aes(as.numeric(diff), fill = yesno(with_archives))) +
+  # facet_wrap(~yesno(with_archives), scales = "free") +
+  scale_y_log10(expansion(), limits = c(1, NA)) +
+  scale_x_continuous(expand = expansion()) +
+  labs(y = "Packages", 
+       x = "Time (days)",
+       title = "Time from build to publication",
+       fill = "First time?") +
+  theme_minimal() +
+  theme(legend.position = c(0.7, 0.7))
+```
+
+
+```{r}
+p2 <- p |> 
+  group_by(p, with_archives) |> 
+  summarize(m = median(diff),
+            n = n()) |> 
+  ungroup()
+
+p2 |> 
+  ggplot(aes(p, m, col = yesno(with_archives))) +
+  # geom_point(aes(size = n)) +
+  geom_smooth(span = 1/24) +
+  scale_y_continuous( limits = c(0, NA), expand = expansion()) +
+  scale_x_date(date_breaks = "years", date_labels = "%y") +
+  labs(y = "Time (days)", 
+       x = element_blank(),
+       col = "Archives?",
+       title = "Time between building and in CRAN") +
+  theme_minimal()
+```
+
+## Archives
+
+The archives of CRAN is a true treasure too.
+
+```{r}
+archive_df <- do.call("rbind", archive)
+archives <- vapply(archive, nrow, numeric(1))
+pkg <- rep(names(archive), times = archives)
+archive_df$package <- pkg
+
+version <- gsub(".*_(.*)\\.tar\\.gz$", "\\1", rownames(archive_df))
+archive_df$version <- version
+archive_df$version[archive_df$version == archive_df$package] <- NA
+archive_df$status <- "archived"
+
+# Make sure they match
+current$package <- rownames(current)
+current$version <- packages$version[match(current$package, packages$package)]
+current$status <- "available"
+all_packages <- rbind(archive_df, current)
+library("dplyr")
+all_packages2 <- all_packages[, c("Package", "mtime", "Version", "uname", "grname", "size")] |> 
+  mutate(date = as.Date(mtime)) |> 
+  select(-mtime) |> 
+  arrange(package, date) |> 
+  group_by(package) |> 
+  mutate(trelative = difftime(date, min(date), units = "weeks"),
+         tprevious = t_relative - lag(trelative, default = 0)
+         n = n(),
+         release = 1:n()) |> 
+  ungroup()
+rownames(all_packages2) <- NULL
+```
+
+```{r}
+count(all_packages2, package, sort = TRUE, name = "Releases") |> 
+  head(20)
+count(all_packages2, uname, sort = TRUE)
+```
+
+
+```{r}
+
+a <- archive_df2 |> 
+  group_by(Package) |> 
+  filter(trelative != 0) |> 
+  filter(trelative == min(trelative)) |>
+  ungroup()
+all_packages2 |> 
+  filter(release == 2) |> 
+  ggplot() +
+  geom_histogram(aes(trelative)) +
+  labs(x = "Time (weeks)",
+       y = "Packages",
+       title = "Time since first release") +
+  scale_x_continuous(expand = expansion()) +
+  scale_y_log10(expand = expansion()) +
+  theme_minimal()
+  
+all_packages2 |> 
+  mutate(versions = as.character(release)) |>
+  ggplot() +
+  geom_point(aes(x = as.numeric(trelative), y = release, col = package)) +
+  guides(col = "none") +
+  labs(y = "Archived versions", 
+       x = "Time since first release (weeks)", 
+       title = "Time since the first releast to the second archival") +
+  scale_x_continuous(expand = expansion(), limits = c(0, NA)) +
+  theme_minimal() 
+```
+
+
+```{r}
+all_packages2 |> 
+  ggplot() +
+  geom_line(aes(x = date, y = release, group = package))
+  guides(col = "none") +
+  labs(y = "Archived versions", 
+       x = "Time since first release (weeks)", 
+       title = "Time since the first releast to the second archival") +
+  theme_minimal() 
+```
+
+
+```{r}
+all_packages2 |> 
+  ggplot() +
+  # geom_point(aes(date, trelative), alpha = 0.5) +
+  geom_smooth(aes(date, trelative), span = "1 month") +
+  scale_x_date(date_breaks = "years", date_labels = "%Y") +
+  labs(x = element_blank(), 
+       y = "Time since first archival (days)",
+       title = "Tendency of time to update the package") +
+  theme_minimal()
+```
+
+
+```{r}
+
+```
+
+## Oldest package
+
+Given the archives and the current packages on CRAN.
+Which are the oldest packages?
+
+```{r}
+packages |> 
+  ggplot() +
+  geom_histogram(aes(p))
+```
+
+## Best conserved package
+
+Looking at packages with just 1 release but still one package which are those?
+
+```{r}
+never_archived <- all_packages2 |> 
+  group_by(package) |> 
+  filter(max(release) == 1) |> 
+  ungroup() |> 
+  pull(package)
+never_archived <- never_archived[never_archived %in% current$Package]
+
+direct_dep <- package_dependencies(never_archived, db = p)
+deps <- lengths(direct_dep)
+recurs_dep <- package_dependencies(never_archived, db = p, recursive = TRUE)
+r_deps <- lengths(recurs_dep)
+r_deps <- r_deps[names(deps)]
+deps_all <- data.frame(direct_deps = deps,
+                       r_deps)
+deps_all |> 
+  count(direct_deps, r_deps) |> 
+  ggplot() + 
+  geom_point(aes(direct_deps, r_deps, col = n)) +
+  # geom_abline(slope = 1, intercept = 0) +
+  scale_color_continuous(trans = "log10") +
+  labs(x = "Direct dependencies",
+       y = "Recursive dependencies",
+       title = "Dependenecies of packages never archived",
+       col = "Packages") +
+  theme_minimal()
+```
+
+Now that we know that there is a wide range of packages never archived/updated maybe those packages are recent
+
+```{r}
+packages_k <- intersect(never_archived, p$Package)
+p |> 
+  filter(Package %in% packages_k) |> 
+  count(p) |> 
+  ggplot() +
+  geom_point(aes(p, n))
+```
+
+This shows the date of the packages in relation to their recursive dependencies. 
+
+### Dependencies make unstable packages
+
+There are much to say about packages and their dependencies but CRAN test them. 
+
+
+### Reproducibility
+
+<details>
+```{r reproducibility, echo = FALSE}
+## Reproducibility info
+options(width = 120)
+sessioninfo::session_info()
+```
+</details>
