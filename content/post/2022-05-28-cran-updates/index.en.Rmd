@@ -613,7 +613,10 @@ This has been explore in a previous post about [packages archived by CRAN](https
 
 ## Seasonal effects
 
-
+TODO: really use seasonal effects like this one https://stackoverflow.com/questions/46797884/can-i-estimate-a-time-varying-seasonal-effect-in-r-with-gamm
+or this one
+https://www.idrisstsafack.com/post/arma-models-with-r-the-ultimate-practical-guide-with-bitcoin-data
+OR: https://www.datascienceinstitute.net/blog/time-series-decomposition-in-r
 
 ```{r}
 dates_approval <- all_packages2 |> 
@@ -665,13 +668,158 @@ dates_approval |>
   coord_cartesian(ylim = c(0, 21)) +
   scale_x_continuous(expand = expansion(), breaks = dmonth_breaks,
                        position = "top") +
-  scale_y_continuous(expand = expansion()) 
+  scale_y_continuous(expand = expansion())
+```
+
+
+```{r}
 dates_approval |> 
   count(type, year, yday) |> 
   ggplot() +
-  geom_smooth(aes(yday, n, col = type, linetype = type)) +
+  geom_smooth(aes(yday, n, col = type, linetype = type)) + 
+  annotate(geom = "text", x = 100, y = 12, label = "April") +
+  annotate(geom = "text", x = 200, y = 12, label = "July") +
+  annotate(geom = "text", x = 300, y = 12, label = "November") +
   coord_cartesian(ylim = c(0, 21))
 ```
+
+
+At the end of the year, beginning of the next there the submission queue is closed, [for example in 2017](https://stat.ethz.ch/pipermail/r-devel/2017-December/075215.html).
+I also [collected](https://github.com/llrs/blogR/issues/57) other dates when the submission queue was closed.
+There doesn't seem to be a regular site to announce this, sometimes is on the home page of CRAN sometimes is announced on the mailing lists. 
+
+This doesn't include some [unexpected downtime](https://stat.ethz.ch/pipermail/r-devel/2022-May/081751.html), which recently happened for the first time in my short exposure. 
+
+
+### Admins
+
+CRAN is not run by bots, some volunteers with their own work and hobbies 
+
+```{r}
+people <- dates_approval |> 
+  count(uname) |> 
+  filter(n > 1000) |> 
+  pull(uname)
+dates_approval |> 
+  filter(uname %in% people) |>
+  group_by(uname) |> 
+  summarise(min = min(date),
+            max = max(date),
+            n = n()) |> 
+  arrange(min)
+```
+
+We can see that there are three users active for more than 10 years
+
+```{r}
+dates_approval |> 
+  count(year, uname) |> 
+  ggplot() +
+  geom_line(aes(year, n, 
+                col = forcats::fct_other(uname, keep = people, other_level = "other"))) +
+  labs(col = "Users") +
+  theme_minimal() +
+  theme(legend.position = c(0.3, 0.7))
+  scale_colour_viridis_d()
+```
+
+
+There are some patterns here on people volunteering on CRAN.
+Uwe Ligges has been doing the shear work of accepting and updating the packages since 2015.
+Initially it was done by other volunteers, but lately they don't seem to perform this action.
+Notable is the Kurt Hornik case were he did most of the work around 2010, later reduced the activity and came back before 2015 to stop shortly after.
+Probably he was doing the same under the root username 
+Brian Ripely was very active between 2010 and 2015.
+
+Previous Volunteers
+
+
+```{r}
+dates_approval |> 
+  count(year, month, uname) |> 
+  ggplot() +
+  geom_smooth(aes(month, n, col = forcats::fct_other(uname, keep = people, other_level = "other"))) +
+  labs(col = "Users")
+```
+
+
+```{r}
+dates_approval |>  
+  count(year, week, uname) |> 
+  ggplot() +
+  geom_smooth(aes(week, n, col = forcats::fct_other(uname, keep = people, other_level = "other"))) +
+  labs(col = "Users")
+  facet_wrap(~type, scales = "free")
+```
+
+
+```{r}
+dates_approval |>  
+  count(year, month, week, wday, uname) |> 
+  ggplot() +
+  geom_smooth(aes(wday, n,  col = forcats::fct_other(uname, keep = people, other_level = "other")), method = "glm") + 
+  labs(col = "Users")
+```
+
+
+```{r}
+dates_approval |> 
+  count(year, month, mday, uname) |> 
+  ggplot() +
+  geom_smooth(aes(mday, n, col = forcats::fct_other(uname, keep = people, other_level = "other"))) +
+  labs(col = "Users") +
+  coord_cartesian(ylim = c(0, NA)) +
+  scale_x_continuous(expand = expansion(), breaks = dmonth_breaks,
+                       position = "top") +
+  scale_y_continuous(expand = expansion())
+```
+
+
+```{r}
+dates_approval |> 
+  count(year, yday, uname) |> 
+  ggplot() +
+  geom_smooth(aes(yday, n, col = forcats::fct_other(uname, keep = people, other_level = "other"))) + 
+  labs(col = "Users") +
+  annotate(geom = "text", x = 100, y = 12, label = "April") +
+  annotate(geom = "text", x = 200, y = 12, label = "July") +
+  annotate(geom = "text", x = 300, y = 12, label = "November") +
+  coord_cartesian(ylim = c(0, NA))
+```
+
+
+### Holidays
+
+See general days without acceptance of packages
+
+```{r}
+d1 <- min(all_packages2$date)
+d2 <- max(all_packages2$date)
+s <- seq(from = d1, to = d2, by = 1)
+holiday <- s[!s %in% unique(all_packages2$date)]
+holiday <- data.frame(holiday = holiday) |> 
+  mutate(year = year(holiday),
+         month = month(holiday),
+         week = week(holiday),
+         yday = yday(holiday),
+         mday = mday(holiday),
+         wday = wday(holiday, week_start = 1, label = FALSE))
+```
+
+
+```{r}
+holiday |>  
+  count(year, week) |> 
+  ggplot() +
+  geom_smooth(aes(week, n))
+```
+```{r}
+holiday |>  
+  count(year, yday) |> 
+  ggplot() +
+  geom_count(aes(yday, n))
+```
+
 
 
 ## Oldest package
