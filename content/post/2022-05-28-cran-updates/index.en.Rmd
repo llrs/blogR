@@ -90,10 +90,23 @@ Let me know if you explore this data with a different question or the same and y
 ```{r libraries}
 library("dplyr")
 library("ggplot2")
+library("ggrepel")
 library("lubridate")
 library("tools")
 library("forcats")
 library("flextable")
+library("rversions")
+```
+
+First of all some preparation; as it 
+
+```{r}
+df <- data.frame(major = integer(), minor = integer(), patch = integer())
+r_versions <- r_versions() |> 
+  mutate(date = as.Date(date),
+         strcapture("([0-9])\\.([0-9]*)\\.?([0-9]*)", 
+                    r_versions$version, proto = df),
+         equal = major == lag(major, default = TRUE) & minor == lag(minor, default = TRUE))
 ```
 
 ## Acceptad packages {#accepted}
@@ -119,14 +132,17 @@ packages2 <- packages |>
 According to this file the oldest current package added was in 2010:
 
 ```{r daily-cran}
+minor_changes0 <- filter(r_versions, !equal)
+minor_changes <- filter(minor_changes0, date >= min(packages2$date, 
+                                                    na.rm = TRUE))
+
 packages2 |> 
-  group_by(date) |> 
-  summarize(m = median(diff),
-            n = n()) |> 
-  ungroup() |> 
-  ggplot(aes(date, n)) +
+  count(date) |> 
+  ggplot() +
   # geom_point(aes(size = n)) +
-  geom_smooth(span = "1 month") +
+  geom_text_repel(aes(x = date, y = 25, label = version),
+                  data = minor_changes, nudge_x = 0, angle = 90) +
+  geom_smooth(aes(date, n), span = "1 month") +
   scale_y_continuous(expand = expansion(0, add = 0.5)) +
   coord_cartesian(ylim = c(0, NA)) +
   scale_x_date(date_breaks = "years", date_labels = "%Y") +
@@ -145,8 +161,11 @@ packages2 |>
   ggplot(aes(month, n)) +
   # geom_point(aes(size = n)) +
   geom_smooth(span = 1/12) +
+  geom_text_repel(aes(x = date, y = 600, label = version), 
+                  data = minor_changes, nudge_x = 0, angle = 90) +
   scale_y_continuous(expand = expansion(0, add = 0.5), position = "right") +
-  coord_cartesian(ylim = c(0, NA)) +
+  coord_cartesian(ylim = c(0, NA),
+                  xlim = c(as.Date("2010-01-01"), NA)) +
   scale_x_date(date_breaks = "years", date_labels = "%Y") +
   labs(y = "Packages ", 
        x = element_blank(),
@@ -167,8 +186,10 @@ packages2 |>
   mutate(nt = cumsum(n)) |> 
   ggplot(aes(date, nt)) +
   # geom_point(aes(size = n)) +
+  geom_text_repel(aes(x = date, y = 10000, label = version),
+                  data = minor_changes, nudge_x = 0, angle = 90) +
   geom_smooth(span = "1 week") +
-  geom_hline(yintercept = nrow(packages), col = "black") +
+  # geom_hline(yintercept = nrow(packages), col = "black") +
   scale_y_continuous(expand = expansion(0, add = 0.5)) +
   coord_cartesian(ylim = c(0, NA)) +
   scale_x_date(date_breaks = "years", date_labels = "%Y") +
@@ -247,10 +268,12 @@ packages2 |>
   summarize(m = median(diff),
             n = n()) |> 
   ungroup() |> 
-  ggplot(aes(date, m, col = yesno(with_archives), 
-             linetype = yesno(with_archives), weight = n)) +
+  ggplot() +
   # geom_point(aes(size = n)) +
-  geom_smooth(span = "1 month") +
+  geom_smooth(aes(date, m, col = yesno(with_archives), 
+             linetype = yesno(with_archives), weight = n), span = "1 month") +
+  geom_text_repel(aes(x = date, y = 10, label = version),
+                  data = minor_changes, nudge_x = 0, angle = 90) +
   scale_y_continuous(expand = expansion()) +
   scale_x_date(date_breaks = "2 years", date_labels = "%Y", 
                expand = expansion(add = 0.5)) +
@@ -358,16 +381,18 @@ all_packages2 |>
   count() |> 
   ungroup() |> 
   mutate(nt = cumsum(n)) |> 
-  ggplot(aes(date, nt)) +
+  ggplot() +
   # geom_point(aes(size = n)) +
-  geom_smooth(span = "1 week") +
+  geom_smooth(aes(date, nt), span = "1 week") +
+  geom_text_repel(aes(x = date, y = 100000, label = version),
+                  data = minor_changes0, nudge_x = 0, max.overlaps = 15, angle = 90) +
   # geom_hline(yintercept = nrow(packages), col = "black") +
   scale_y_continuous(expand = expansion(0, add = 0.5)) +
   coord_cartesian(ylim = c(0, NA)) +
   scale_x_date(date_breaks = "2 years", date_labels = "%Y") +
   labs(y = "Packages ", 
        x = element_blank(),
-       title = "Accumulative packages on CRAN archive.") +
+       title = "Accumulative packages on CRAN archive") +
   theme_minimal()
 ```
 
@@ -432,6 +457,8 @@ all_packages2 |>
   ggplot() +
   geom_smooth(aes(date, s, col = available, linetype = status, weight = n),
               method = "gam") +
+  geom_text_repel(aes(x = date, y = 500000, label = version),
+                  data = minor_changes0, nudge_x = 0, max.overlaps = 15, angle = 90) +
   labs(x = element_blank(),
        y = "Package size (B)",
        col = "Package on CRAN?",
@@ -763,7 +790,7 @@ ggplot(packages_updates) +
   theme_minimal() +
   scale_y_continuous(
     "Updates per week",
-    sec.axis = sec_axis(~ . / 4, name = "Updates per month")
+    sec.axis = sec_axis(~ . * 4, name = "Updates per month")
   ) +
   labs(x = element_blank(),
        title = "")
@@ -781,7 +808,7 @@ ggplot(packages_updates) +
   theme_minimal() +
   scale_y_continuous(
     "Updates per week",
-    sec.axis = sec_axis(~ . / 4, name = "Updates per month")
+    sec.axis = sec_axis(~ . * 4, name = "Updates per month")
   ) +
   labs(x = element_blank(),
        title = "New packages require more updates")
