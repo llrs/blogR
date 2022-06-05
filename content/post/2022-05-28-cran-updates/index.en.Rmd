@@ -26,24 +26,82 @@ knitr::opts_chunk$set(collapse = TRUE, cache= TRUE, fig.retina = 2)
 Sys.setlocale("LC_ALL", "C")
 ```
 
-There are many great things in base R, one of them is the tools package.
-Looking into it I found some internal functions that access freely available files with information about CRAN packages.
+There are many great things in base R, one of them is the [tools package](https://search.r-project.org/R/refmans/tools/html/00Index.html).
+
+Looking into the source code and exploring how it is used by CRAN I found some internal functions that access freely available files with information about CRAN packages.
 These private functions are at the CRANtools.R file.
 
 ```{r internal-functions}
-# issues <- tools:::CRAN_check_issues()
 packages <- tools:::CRAN_package_db()
-# alias <- tools:::CRAN_aliases_db()
-archive <- tools:::CRAN_archive_db()
 current <- tools:::CRAN_current_db()
+archive <- tools:::CRAN_archive_db()
+# issues <- tools::CRAN_check_issues()
+# alias <- tools:::CRAN_aliases_db()
 # rdxrefs <- tools:::CRAN_rdxrefs_db()
 ```
 
-Using these files and other information available about CRAN (like [PACKAGES.in](https://llrs.dev/post/2021/12/07/reasons-cran-archivals/) or [submission records](https://llrs.dev/post/2021/01/31/cran-review/))
+I will focus on the first three functions as they have information about current packages and previous packages on CRAN.
 
-## Acceptance rate
+First of all a very brief exploration of what is in this packages
 
-CRAN was set up in 1997, since them there have been many changes but how fast have been packages accepted?
+```{r package-head}
+packages[1, 1:10]
+```
+
+Packages has similar information as `available.packages()` but with many more columns with published date, reverse dependencies, X-CRAN-Comment, who packaged...
+Also note that all this packages are not filtered to match R version, OS_type, subarch and duplicates (I learned about this filtering while reading the great documentation of available.packages and also finding some mentions online). 
+
+The current database has different data, it has the package size, dates of modification, which I assume is date added to CRAN and user name of who last modified it.
+This is the same information returned by [`file.info`](https://search.r-project.org/R/refmans/base/html/file.info.html)
+
+```{r current-head}
+current[1, 1:10]
+```
+
+
+The archive database returns the same information, but as you might guess by the name it doesn't provide information about current packages but for packages not longer available by default.
+
+```{r archive-head}
+archive[[1]]
+```
+
+The date matches that available on the [Old sources](https://cran.r-project.org/src/contrib/Archive/A3/).
+However, as I was not sure of the information I asked on [R-devel](https://stat.ethz.ch/pipermail/r-devel/2022-May/081770.html) but recieved no answer. 
+
+
+Now that we know what is there let's explore the data. 
+Some ideas, and questions to explore:
+
+- When were the current [packages accepted on CRAN?](#accepted)
+- There is the dates of all packages accepted on CRAN (except those removed): [Are more packages accepted now than in previous years?](#releases)
+- There is the date when a package is build and when it is published: How long does it take between a [developer builds the package till it is published on CRAN?](#delays)
+- Using the user information; who is [accepting packages on CRAN?](#admins)
+- Given the dates, is there some [seasonal patterns in CRAN acceptance?](#season)
+- What are the [**oldest** packages on CRAN?](#oldest) 
+- What are the [**biggest** packages on CRAN?](#biggest) 
+- Are there difference in [size between old and new packages?](#size) 
+- Given the dates and versions of packages, [are dependencies related with newer packages or updates?](#dependencies)
+
+This is only using these files wihout cross checking with other information available about CRAN (like [PACKAGES.in](https://llrs.dev/post/2021/12/07/reasons-cran-archivals/) or [submission records](https://llrs.dev/post/2021/01/31/cran-review/)).
+Using together all this data will provide a much complete picture and might help answer many more questions.
+
+Let me know if you explore this data with a different question or the same and you find something different/interesting!
+
+```{r libraries}
+library("dplyr")
+library("ggplot2")
+library("lubridate")
+library("tools")
+library("forcats")
+library("flextable")
+```
+
+## Acceptad packages {#accepted}
+
+[CRAN was set up in 1997](https://stat.ethz.ch/pipermail/r-announce/1997/000001.html)(Right after the r-testers mailing list was split in [three mailing list](https://stat.ethz.ch/pipermail/r-announce/1997/000000.html)), since then there have been many additions of packages but how fast have been packages accepted? We will use the packages database to answer this. 
+
+First of all some clean up to have all the dates in UTC (not that it will affect much but  better to have uniform data), store all the version of packages and add some columns to make it easy relate it with the other files.
+
 
 ```{r packages-setup}
 packages$Published <- as.Date(packages$Published, format = "%Y-%m-%d",
@@ -51,7 +109,6 @@ packages$Published <- as.Date(packages$Published, format = "%Y-%m-%d",
 packages$Packaged_by <- gsub(".*; (.*)", "\\1", packages$Packaged)
 packages$Packaged <- as.POSIXct(packages$Packaged, 
                                 format = "%Y-%m-%d %H:%M:%S", tz = "UTC")
-library("dplyr")
 packages2 <- packages |> 
   mutate(date =  as.Date(Packaged),
          diff = round(difftime(Published, date, units = "days"), 0)) |> 
@@ -59,10 +116,9 @@ packages2 <- packages |>
   distinct(Package, .keep_all = TRUE)
 ```
 
-If we look at the current packages, according to this file they were added in 2010 at earliest.
+According to this file the oldest current package added was in 2010:
 
 ```{r daily-cran}
-library("ggplot2")
 packages2 |> 
   group_by(date) |> 
   summarize(m = median(diff),
@@ -80,10 +136,10 @@ packages2 |>
   theme_minimal()
 ```
 
-The daily rate of acceptance has increase from less than 10 a day till 2020 to more than 30 this year 2022.
+The daily rate of acceptance has increased from less than 10 a day till 2020 to more than 30 this year 2022.
+If we summarize that information for month we see the same, but the little bump in 2020 disappears but we see other patterns:
 
 ```{r monthly-cran}
-library("lubridate")
 packages2 |> 
   count(month = floor_date(date, "month")) |> 
   ggplot(aes(month, n)) +
@@ -98,9 +154,10 @@ packages2 |>
   theme_minimal()
 ```
 
-The monthly tally of packages shows some waves with less packages on CRAN accepted late in the year.
+Instead of just one bump we see some waves with less packages on CRAN accepted late in the year and an increase of packages the first months of the year.
+We'll explore this [temporal patterns later](#seasonal).
 
-If we look at the accumulated packages on CRAN that still remain on CRAN (packages might have been accepted but later removed), we see an exponential growth:
+If we look at the accumulated packages on CRAN we see an exponential growth:
 
 ```{r cran-cumsum}
 packages2 |> 
@@ -120,6 +177,17 @@ packages2 |>
        title = "Daily packages accepted on CRAN") +
   theme_minimal()
 ```
+
+In conclusions, more packages are being accepted now than ever in the past.
+
+## Developer delays {#delays}
+
+Next question is how fast is the process for developers of packages? 
+
+We can compare the Published date with the build date to answer this.
+The build date is done by the developer to create the tar.gz file submitted to CRAN while the Published date is set by CRAN once the packages is accepted on CRAN.
+
+A first exploration of this dates:
 
 ```{r cran-built}
 yesno <- function(x) {
@@ -142,16 +210,17 @@ ggplot(packages2) +
        title = "Time between building a package and being published")
 ```
 
-## Developer delays
+We can see some point that it was build much later than published (published in 2017 but built in 2017), this might indicate that the CRAN team had to rebuilt the package a problem with the date settings of the computer or other causes.
 
-Difference between packages and build.
+To better visualize the differences we can focus on only those with some positive difference between publish date and build.
+I will also compare if there is some difference with new packages and packages that were already on CRAN:
 
 ```{r cran-delays}
 packages2 |> 
   filter(as.numeric(diff) >= 0) |> 
   ggplot() +
   geom_histogram(aes(as.numeric(diff), 
-                     fill = forcats::fct_relevel(yesno(with_archives), c("Yes", "No"))),
+                     fill = fct_relevel(yesno(with_archives), c("Yes", "No"))),
                  position = "identity", alpha = 0.5, binwidth = 7) +
   # facet_wrap(~yesno(with_archives), scales = "free_x") +
   scale_y_log10(expand = expansion()) +
@@ -167,18 +236,19 @@ packages2 |>
 
 There doesn't seem to be much difference between date of building and date of publication according to if it is the first release or not.
 The times are short and usually well below 50 days.
-This doesn't mean that the packages first time accepted on CRAN didn't had previous submissions and builts, but when they finally built and pass the checks they are handled as with the other packages already on CRAN.
+This doesn't mean that the packages first time accepted on CRAN didn't had previous submissions, but when they finally built and pass the checks and manual review they are handled as with the other packages already on CRAN.
 
-However, if we look at the same time difference along dates we have a different picture:
+However, this might have changed with time:
 
 ```{r cran-delays2}
 packages2 |> 
+  filter(as.numeric(diff) >= 0) |> 
   group_by(date, with_archives) |> 
   summarize(m = median(diff),
             n = n()) |> 
   ungroup() |> 
   ggplot(aes(date, m, col = yesno(with_archives), 
-             linetype = yesno(with_archives))) +
+             linetype = yesno(with_archives), weight = n)) +
   # geom_point(aes(size = n)) +
   geom_smooth(span = "1 month") +
   scale_y_continuous(expand = expansion()) +
@@ -194,15 +264,57 @@ packages2 |>
   theme(legend.position = c(0.7, 0.7))
 ```
 
-New packages take longer to appear.
-This is consistent with the process were packages are manually reviewed.
-It means also that there is a huge variation of time about how are packages handled.
+Here we clearly see that those already on CRAN are handled faster than new packages which take longer to be published.
+This is consistent with the manual review process (For more information see [this other blog post](https://llrs.dev/post/2021/01/31/cran-review/)).
+It means also that there is a huge variation of time about how packages are handled.
+However this seems to be reducing: while in 2010 it took around 2 weeks nowadays it takes less than a week and getting closer to time an already on CRAN package takes: a 1 day of median time  between a package being built and appearing on CRAN that takes for existing packages.
+Maybe the delay in 2020 was due the huge volume of submissions CRAN received.
+
+<details>
+<summary>More packages mean further delays? No, but I'm not sure </summary>
+
+```{r cran-reasons}
+packages2 |> 
+  filter(as.numeric(diff) >= 0) |> 
+  group_by(date, with_archives) |> 
+  summarize(m = median(diff),
+            n = n()) |> 
+  ungroup() |> 
+  ggplot() +
+  # geom_point(aes(size = n)) +
+  geom_smooth(aes(n, m, col = yesno(with_archives), 
+             linetype = yesno(with_archives), weight = n)) +
+  scale_y_continuous(limits = c(0, NA)) +
+  labs(y = "Time (days)", 
+       x = "Packages accepted the same day",
+       col = "Archives?",
+       linetype = "Archives?",
+       title = "Delay relationship with packages accepted the same day") +
+  theme_minimal() +
+  theme(legend.position = c(0.7, 0.7))
+```
+
+As expected we see a lot of variation on the delay of packages going through manual review.
+Surprisingly it seems that the more new packages accepted the same day the less delay there is. 
+I think this just means that when reviewers get to it several packages might be approved. 
+This might also mean that packages have already been built several times before finally being accepted and now the errors, warnings and notes have been solved.
+
+For packages already accepted comparing days of delay is not informative as they typically take less than a day.
+However, comparing hours of delay would be misleading as it can simply be the developer taking some time to double check before submission or a time zone difference.
+
+</details>
+
 
 ## Archives
 
-There are some files about the archives of CRAN.
+As we have seen there are some files about the archives of CRAN.
 These include information about date of modification (moving/editing) and user who did it and of course name and sometimes version of the package.
 These archives are the great treasure of CRAN even if we don't have the same information about them as current packages on CRAN.
+
+Note that I'm not sure that this archives contains the full record of packages, some initial packages might be missing and I'm aware of some packages removed by CRAN which do not longer appear on this records. 
+
+Nevertheless this should provide an accurate picture of packages available. 
+Also as there is no information when a package is archived (here, [there is on PACKAGES.in](https://llrs.dev/post/2021/12/07/reasons-cran-archivals/)), we might slightly overestimate the packages available at a given moment.
 
 ```{r archives-setup}
 archive_df <- do.call("rbind", archive)
@@ -237,31 +349,64 @@ all_packages2 <- all_packages[, keep_columns] |>
   ungroup()
 ```
 
+Remember the plot about [acceptance of packages on CRAN?](#accepted)
+That plot only looked at current packages available, let's check it with all the archive:
+
+```{r}
+all_packages2 |> 
+   group_by(date) |> 
+  count() |> 
+  ungroup() |> 
+  mutate(nt = cumsum(n)) |> 
+  ggplot(aes(date, nt)) +
+  # geom_point(aes(size = n)) +
+  geom_smooth(span = "1 week") +
+  # geom_hline(yintercept = nrow(packages), col = "black") +
+  scale_y_continuous(expand = expansion(0, add = 0.5)) +
+  coord_cartesian(ylim = c(0, NA)) +
+  scale_x_date(date_breaks = "2 years", date_labels = "%Y") +
+  labs(y = "Packages ", 
+       x = element_blank(),
+       title = "Accumulative packages on CRAN archive.") +
+  theme_minimal()
+```
+
+To have an overview of the data we can see some output
 If we look at some basics tally to find which packages have more releases:
 
 ```{r archives-release}
 count(all_packages2, package, sort = TRUE, name = "Releases") |> 
-  head(20)
+  head(20) |> 
+  flextable() |> 
+  autofit()
 ```
 
-And which user has been moving more packages:
+Surprisingly there are packages with more than 200 versions on CRAN!
+
+And which CRAN amdin has been moving more packages:
 
 ```{r archives-managers}
-count(all_packages2, uname, sort = TRUE)
+count(all_packages2, uname, sort = TRUE) |> 
+  flextable() |> 
+  autofit()
 ```
 
 Not surprisingly the three top users is dominated by known names associated with CRAN, followed by the root user, perhaps there is an automated script run as root. 
 What surprised me more are finding some names, that I associate less with CRAN.
-Althought Zileis also signs the R-journal sections about CRAN. 
+Although Zileis also signs the R-journal sections about CRAN, there are other surnames from people that is not on the R Core. 
 
 ```{r packages-available}
 all_packages2 |> 
   distinct(package, available) |> 
   count(available, name = "packages", sort = TRUE) |> 
-  mutate(proportion = scales::percent(packages/sum(packages)))
+  mutate(proportion = scales::percent(packages/max(packages))) |> 
+  flextable() |> 
+  autofit()
 ```
 
-The number of packages currently on CRAN `r nrow(current)` and those currently not on CRAN is very different.
+The number of packages currently on CRAN `r nrow(current)` and those not on CRAN are around a 15% of that.
+
+Given all this different versions of packages how big are all the packages on CRAN?
 
 ### CRAN size
 
@@ -269,22 +414,85 @@ CRAN source packages are approximately:
 
 ```{r}
 k <- sum(all_packages2$size)
+class(all_packages2$size) <- "object_size"
 class(k) <- "object_size"
 format(k, units = "auto")
 ```
 
-This doesn't include binaries for multiple architectures and OS. 
+This doesn't include binaries for multiple architectures and OS, but it is a good indicator of the source file and if the package has some considerable amount of data.
+
+Looking back to the size of the packages along time we can see this pattern:
+
+```{r}
+all_packages2 |> 
+  group_by(date, available, status) |> 
+  summarise(s = median(size),
+            n = n()) |> 
+  ungroup() |> 
+  ggplot() +
+  geom_smooth(aes(date, s, col = available, linetype = status, weight = n),
+              method = "gam") +
+  labs(x = element_blank(),
+       y = "Package size (B)",
+       col = "Package on CRAN?",
+       linetype = "Version available?",
+       title = "Median size of packages in CRAN") +
+  scale_y_continuous(expand = expansion(), limits = c(0, NA)) +
+  scale_x_date(expand = expansion()) +
+  theme_minimal() +
+  theme(legend.position = c(0.2, 0.8))
+```
+
+Packages available on CRAN are smaller than those no longer on CRAN. 
+Even versions of packages on CRAN that got archived are usually bigger than current versions. 
+Median size of packages is increasing quickly. 
+
+```{r}
+all_packages2 |> 
+  group_by(release) |> 
+  summarise(s = median(size), n = n()) |> 
+  ungroup() |> 
+  ggplot() +
+  geom_smooth(aes(release, s, weight = n)) +
+  scale_y_log10() +
+  geom_hline(yintercept = 5*1000^2) +
+  labs(x = "Release number",
+       y = "Size (B)",
+       title = "Package size with release number")
+```
+
+Typically packages increase their size with new releases up to when they reach 50 releases.
+
+```{r eval=FALSE, include=FALSE}
+aps <- all_packages2 |> 
+  group_by(package) |> 
+  summarise(m = median(size),
+            n = n()) |> 
+  ungroup() |> 
+  arrange(-m)
+```
+
 
 ## Releases
 
-As CRAN is not static and there are new releases in a continous way let's explore other releases.
+As CRAN is not static and there are new releases in a continuous way let's explore other releases.
 
 ```{r cran-turnover}
-all_packages2 |> 
-  group_by(year = floor_date(date, "year")) |> 
-  count(type = ifelse(release == 1, "new", "update"), name = "packages") |> 
+type_updates <- all_packages2 |> 
+  group_by(year = floor_date(date, "year"), package) |> 
+  summarise(type = case_when(any(release == 1) & any(release > 1) ~ "new & update",
+                             any(release > 1) ~ "update",
+                             release == 1 ~ "new",
+                             TRUE ~ "update"),
+            n = n()) |> 
   ungroup() |> 
-  # filter(year < as.Date("2022-01-01")) |>
+  distinct(.keep_all = TRUE) |> 
+  group_by(year) |> 
+  count(type, name = "packages") |> 
+  mutate(prop = packages/sum(packages)) |> 
+  ungroup()
+
+type_updates |> 
   ggplot() +
   geom_col(aes(year, packages, fill = type), position = "stack") +
   scale_x_date(date_breaks = "2 years", date_labels = "%Y", 
@@ -299,26 +507,21 @@ all_packages2 |>
 ```
 
 There is an increase number of work on CRAN to update and add new packages.
-Note that this does not include packages removed or archived from CRAN.
+I counted as new & updated those packages that were inlcuded on CRAN and in the same year they were updated.
+This is to keep in mind that [CRAN policies](https://cran.r-project.org/web/packages/policies.html#Submission) says: 
 
-Also note that in 2021 there was the first reduction in packages approvals. 
+> Once a package is established (which may take several rounds), “no more than every 1–2 months” seems appropriate. 
+
+To it is kind of expected for new packages to take some time to establish themselves. 
+
+Note that this does not include packages removed from CRAN.
+
+Also note that in 2021 there was the first reduction in packages approvals (around 160). 
 This was also noted in the [R journal: changes on CRAN](https://journal.r-project.org/archive/2021-2/cran.pdf) mentioning a reduction in submissions.
-It is also worth mentioning that big increase in packages approved for inclusion on CRAN in 2020 (effect of the COVID pandemic?).
+It is also worth mentioning the big increase in packages approved for inclusion on CRAN in 2020 (effect of the COVID pandemic?).
+Perhaps some packages that would be submitted later got sooner to CRAN?
 
 ```{r cran-proportion}
-type_updates <- all_packages2 |> 
-  group_by(year = floor_date(date, "year"), package) |> 
-  summarise(type = case_when(any(release == 1) & any(release > 1) ~ "new & update",
-                             any(release > 1) ~ "update",
-                             release == 1 ~ "new",
-                             TRUE ~ "update")) |> 
-  ungroup() |> 
-  distinct(.keep_all = TRUE) |> 
-  group_by(year) |> 
-  count(type, name = "packages") |> 
-  mutate(prop = packages/sum(packages)) |> 
-  ungroup()
-
 ggplot(type_updates) +
   geom_col(aes(year, prop, fill = type)) +
   scale_y_continuous(labels = scales::label_percent(), expand = expansion(), n.breaks = 10, limits = c(0, 1)) +
@@ -333,11 +536,50 @@ ggplot(type_updates) +
 ```
 
 Very early on, since 2000, the most frequent action on CRAN is updating a package.
-This has remained more or less stable with time close to 90%. 
+This has remained more or less stable with time close to 80% if we take into account also the new packages that are updated the same year. 
 
 This is consistent with language updates and the increasing requirements to keep a package on CRAN.
 
 Given that updates is the most pressing matter to the CRAN team, let's explore them.
+
+Percentage of packages updated on CRAN: 
+```{r}
+CRAN_till_then <- all_packages2 |> 
+  arrange(date) |> 
+  group_by(date, package) |> 
+  mutate(type = case_when(any(release > 1) ~ "update",
+                             release == 1 ~ "new",
+                             TRUE ~ "update")) |> 
+  ungroup() |> 
+  arrange(date) |> 
+  mutate(CRAN = cumsum(type == "new"),
+         actions = 1:n(),
+         updates_cum = cumsum(type == "update")/actions,
+         new_cum = CRAN/actions,
+         )
+CRAN_till_then |>
+  ggplot() +
+  geom_smooth(aes(date, updates_cum), linetype = 2) +
+  geom_smooth(aes(date, new_cum), col = "orange")  +
+  scale_y_continuous(expand = expansion(), labels = scales::percent_format()) +
+  labs(x = element_blank(),
+       y = "CRAN updates",
+       title = "Acumulative percentage of actions") +
+  theme_minimal()
+CRAN_till_then |>
+  group_by(date) |> 
+  summarise(updates_cran = sum(type == "update")/max(CRAN)) |> 
+  ggplot() +
+  geom_smooth(aes(date, updates_cran), linetype = 2) +
+  scale_y_continuous(labels = scales::percent_format()) +
+  labs(x = element_blank(),
+       y = "% of CRAN",
+       title = "Percentage of packages on CRAN updated") +
+  theme_minimal()
+```
+
+It seems that 0.2% of packages of CRAN is updated daily!
+There has been a slow down on packages updated on CRAN since the beginning.
 
 ## Updates
 
@@ -366,7 +608,7 @@ all_packages2 |>
   ggplot() +
   # geom_vline(xintercept = 52*c(1:15), linetype = 2) +
   geom_histogram(aes(trelative, 
-                     fill = forcats::fct_relevel(available, "Yes", "No")), 
+                     fill = fct_relevel(available, "Yes", "No")), 
                  binwidth = 26, position = "identity", alpha = 0.5) +
   labs(x = "Time (weeks)",
        y = "Packages",
@@ -389,7 +631,7 @@ all_packages2 |>
   ggplot() +
   # geom_vline(xintercept = 52*c(1:15), linetype = 2) +
   geom_histogram(aes(tprevious, 
-                     fill = forcats::fct_relevel(available, "Yes", "No")), 
+                     fill = fct_relevel(available, "Yes", "No")), 
                  binwidth = 26, position = "identity", alpha = 0.5) +
   facet_wrap(~release, scales = "free_x") +
   labs(x = "Time (weeks)",
@@ -414,7 +656,7 @@ all_packages2 |>
   ggplot() +
   # geom_vline(xintercept = 52*c(1:13), linetype = 2) +
   geom_histogram(aes(tprevious, 
-                     fill = forcats::fct_relevel(status, c("available", "archived"))), 
+                     fill = fct_relevel(status, c("available", "archived"))), 
                  binwidth = 26, position = "identity") +
   labs(x = "Time (weeks)",
        y = "Packages",
@@ -432,7 +674,7 @@ prop_packages <- all_packages2 |>
   mutate(prop_release = n/sum(n)) |> 
   ungroup() |> 
   group_by(available) |> 
-  mutate(prop_available = n/ifelse(available == "Yes", nrow(current), 4743)) |> 
+  mutate(prop_available = n/max(n)) |> 
   ungroup()
 prop_packages |> 
   ggplot() +
@@ -446,6 +688,11 @@ prop_packages |>
        fill = "Packages",
        title = "Package updates") +
   theme(legend.position = c(0.2, 0.8))
+```
+
+By the gradation of colors and length there is a clear sense that packages on CRAN are updated much more and have more releases (even if those pacakges with more than 150 releases are very few).
+
+```{r}
 prop_packages |> 
   ggplot() +
   geom_line(aes(release, prop_available, col = available, linetype = available)) +
@@ -455,12 +702,15 @@ prop_packages |>
        y = "Proportion",
        linetype = "On CRAN?",
        col = "On CRAN?",
-       title = "Packages updated"
+       title = "Packages on CRAN are updated more."
        ) +
   theme_minimal() +
   coord_cartesian(xlim = c(0, 50)) +
   theme(legend.position = c(0.7, 0.7))
 ```
+
+From this plot we can see that packages on CRAN make update more than those who are no longer on CRAN. 
+Maybe packages removed are only updated on other platforms (Bioconductor, Github, R-forge), or are no longer maintained.
 
 Similarly the speed of release of each version might be important
 
@@ -493,29 +743,52 @@ all_packages2 |>
   theme_minimal() 
 ```
 
-```{r}
-median_rates <- all_packages2 |> 
-  mutate(prop = trelative/release) |> 
-  group_by(package) |> 
-  mutate(median = median(tprevious[tprevious != 0]),
-         mean = mean(tprevious[tprevious != 0])) |> 
-  ungroup()
+Looking at time since first release and time since previous release we don't see any pattern.
+Some packages have few updates but distributed in time while some seem to have more constant distributions but there isn't a clear pattern. 
 
-median_rates |> 
+```{r}
+packages_updates <- all_packages2 |> 
+  filter(n > 1,
+         available == "Yes") |> 
   group_by(package) |> 
-  summarize(troubles = yesno(any(prop > 30)),
-            available = unique(available)) |> 
-  count(troubles, available) |> 
-  group_by(available) |> 
-  mutate(prop_available = n/sum(n)) |> 
+  summarise(d =min(date),
+            max = as.numeric(difftime(Sys.Date(), d), units = "weeks"),
+            releases = unique(n),
+            m = releases/max) |> 
   ungroup() |> 
-  group_by(troubles) |> 
-  mutate(prop_trouble = n/sum(n)) |> 
-  ungroup() |> 
-  mutate(prop = n/sum(n))
+  mutate(troubles = yesno(m >= 1/8)) |> 
+  filter(max > 8)
+ggplot(packages_updates) +
+  geom_smooth(aes(d, m)) +
+  theme_minimal() +
+  scale_y_continuous(
+    "Updates per week",
+    sec.axis = sec_axis(~ . / 4, name = "Updates per month")
+  ) +
+  labs(x = element_blank(),
+       title = "")
 ```
 
-Developers despite troubles keep pushing to keep packages on CRAN.
+Developers lately seem to have to update packages more frequently. 
+This plot is packages 2 months old on CRAN and the number of releases in their lifetime.
+Clearly now there are some packages that need to update if faster.
+
+If we split between those that have more troubles (more than 1 updates per 8 weeks as in code), we see that this is happening to all packages recently accepted: 
+
+```{r}
+ggplot(packages_updates) +
+  geom_smooth(aes(d, m, col = troubles, linetype = troubles)) +
+  theme_minimal() +
+  scale_y_continuous(
+    "Updates per week",
+    sec.axis = sec_axis(~ . / 4, name = "Updates per month")
+  ) +
+  labs(x = element_blank(),
+       title = "New packages require more updates")
+```
+
+This could indicate problems following CRAN policies, keeping up to date wit changes in R code and checks.
+Despite troubles keep pushing to keep packages on CRAN.
 Some succeed some don't and do not longer submit new releases.
 
 ```{r releases-dates}
@@ -529,6 +802,7 @@ all_packages2 |>
   theme_minimal() 
 ```
 
+
 ```{r}
 all_packages2 |> 
   ggplot() +
@@ -539,6 +813,13 @@ all_packages2 |>
        y = "Time since first archival (days)",
        title = "Tendency of time to update the package") +
   theme_minimal()
+```
+
+
+```{r}
+a <- all_packages2 |> filter(n !=1) |> group_by(package) |> summarise(d = (max(date) -min(date)), m = d/max(n),  n = max(n))
+ggplot(a, aes(d, n)) + geom_point() +
+  geom_abline(slope = c(1/30, 1/15), intercept = 0, col = "red")
 ```
 
 ```{r}
@@ -574,7 +855,7 @@ block |>
   filter(release <= 6) |> 
   ggplot() +
   geom_smooth(aes(month, n, size = n, col = as.factor(release),
-                  linetype = as.factor(release)), 
+                  linetype = as.factor(release), weight = n), 
               alpha = 0.25)  +
   scale_x_date(expand = expansion(), date_breaks = "2 year", date_labels = "%Y") +
   scale_y_continuous(expand = expansion()) +
@@ -593,7 +874,7 @@ block |>
   filter(release <= 6) |> 
   ggplot() +
   geom_smooth(aes(month, t, size = n, col = as.factor(release),
-                  linetype = as.factor(release)), 
+                  linetype = as.factor(release), weight = n), 
               alpha = 0.25)  +
   scale_x_date(expand = expansion(), date_breaks = "2 year", date_labels = "%Y") +
   scale_y_continuous(expand = expansion()) +
@@ -611,7 +892,7 @@ The reasons of this longer updates might be multiple, it might be that packages 
 It could also mean that maintainers are no longer updating packages and abandoning them. 
 This has been explore in a previous post about [packages archived by CRAN](https://llrs.dev/post/2021/12/07/reasons-cran-archivals/)  (using another file)
 
-## Seasonal effects
+## Seasonal effects {#season}
 
 TODO: really use seasonal effects like this one https://stackoverflow.com/questions/46797884/can-i-estimate-a-time-varying-seasonal-effect-in-r-with-gamm
 or this one
@@ -637,7 +918,8 @@ dmonth_breaks[1] <- 1
 dates_approval |> 
   count(type, year, month) |> 
   ggplot() +
-  geom_smooth(aes(month, n, col = type, linetype = type))
+  geom_smooth(aes(month, n, col = type, linetype = type)) +
+  theme_minimal()
 ```
 
 
@@ -645,7 +927,8 @@ dates_approval |>
 dates_approval |>  
   count(type, year, week) |> 
   ggplot() +
-  geom_smooth(aes(week, n, col = type, linetype = type))
+  geom_smooth(aes(week, n, col = type, linetype = type)) +
+  theme_minimal()
 ```
 
 
@@ -716,7 +999,7 @@ dates_approval |>
   count(year, uname) |> 
   ggplot() +
   geom_line(aes(year, n, 
-                col = forcats::fct_other(uname, keep = people, other_level = "other"))) +
+                col = fct_other(uname, keep = people, other_level = "other"))) +
   labs(col = "Users") +
   theme_minimal() +
   theme(legend.position = c(0.3, 0.7))
@@ -738,7 +1021,7 @@ Previous Volunteers
 dates_approval |> 
   count(year, month, uname) |> 
   ggplot() +
-  geom_smooth(aes(month, n, col = forcats::fct_other(uname, keep = people, other_level = "other"))) +
+  geom_smooth(aes(month, n, col = fct_other(uname, keep = people, other_level = "other"))) +
   labs(col = "Users")
 ```
 
@@ -747,7 +1030,7 @@ dates_approval |>
 dates_approval |>  
   count(year, week, uname) |> 
   ggplot() +
-  geom_smooth(aes(week, n, col = forcats::fct_other(uname, keep = people, other_level = "other"))) +
+  geom_smooth(aes(week, n, col = fct_other(uname, keep = people, other_level = "other"))) +
   labs(col = "Users")
   facet_wrap(~type, scales = "free")
 ```
@@ -757,7 +1040,7 @@ dates_approval |>
 dates_approval |>  
   count(year, month, week, wday, uname) |> 
   ggplot() +
-  geom_smooth(aes(wday, n,  col = forcats::fct_other(uname, keep = people, other_level = "other")), method = "glm") + 
+  geom_smooth(aes(wday, n,  col = fct_other(uname, keep = people, other_level = "other")), method = "glm") + 
   labs(col = "Users")
 ```
 
@@ -766,7 +1049,7 @@ dates_approval |>
 dates_approval |> 
   count(year, month, mday, uname) |> 
   ggplot() +
-  geom_smooth(aes(mday, n, col = forcats::fct_other(uname, keep = people, other_level = "other"))) +
+  geom_smooth(aes(mday, n, col = fct_other(uname, keep = people, other_level = "other"))) +
   labs(col = "Users") +
   coord_cartesian(ylim = c(0, NA)) +
   scale_x_continuous(expand = expansion(), breaks = dmonth_breaks,
@@ -779,7 +1062,7 @@ dates_approval |>
 dates_approval |> 
   count(year, yday, uname) |> 
   ggplot() +
-  geom_smooth(aes(yday, n, col = forcats::fct_other(uname, keep = people, other_level = "other"))) + 
+  geom_smooth(aes(yday, n, col = fct_other(uname, keep = people, other_level = "other"))) + 
   labs(col = "Users") +
   annotate(geom = "text", x = 100, y = 12, label = "April") +
   annotate(geom = "text", x = 200, y = 12, label = "July") +
@@ -822,7 +1105,7 @@ holiday |>
 
 
 
-## Oldest package
+## Oldest package {#oldest}
 
 Given the archives and the current packages on CRAN.
 Which are the oldest packages?
@@ -895,14 +1178,13 @@ all_packages2 |>
 ```
 
 
-## Dependencies current packages
+## Dependencies current packages {#dependencies}
 
 Looking at packages with just 1 release but still one package which are those?
 
 This shows the date of the packages in relation to their recursive dependencies.
 
 ```{r}
-library("tools")
 direct_dep <- package_dependencies(packages2$Package, db = packages2)
 deps <- lengths(direct_dep)
 recurs_dep <- package_dependencies(packages2$Package, db = packages2, recursive = TRUE)
