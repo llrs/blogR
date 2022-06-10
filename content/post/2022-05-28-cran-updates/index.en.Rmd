@@ -90,6 +90,7 @@ Let me know if you explore this data with a different question or the same and y
 ```{r libraries}
 library("dplyr")
 library("ggplot2")
+library("tidyr")
 library("ggrepel")
 library("lubridate")
 library("tools")
@@ -105,13 +106,13 @@ df <- data.frame(major = integer(), minor = integer(), patch = integer())
 r_versions <- r_versions() |> 
   mutate(date = as.Date(date),
          strcapture("([0-9])\\.([0-9]*)\\.?([0-9]*)", 
-                    r_versions$version, proto = df),
+                    version, proto = df),
          equal = major == lag(major, default = TRUE) & minor == lag(minor, default = TRUE))
 ```
 
-## Acceptad packages {#accepted}
+## Accepted packages {#accepted}
 
-[CRAN was set up in 1997](https://stat.ethz.ch/pipermail/r-announce/1997/000001.html)(Right after the r-testers mailing list was split in [three mailing list](https://stat.ethz.ch/pipermail/r-announce/1997/000000.html)), since then there have been many additions of packages but how fast have been packages accepted? We will use the packages database to answer this. 
+[CRAN was set up in 1997](https://stat.ethz.ch/pipermail/r-announce/1997/000001.html) (Right after the r-testers mailing list was split in [three mailing list](https://stat.ethz.ch/pipermail/r-announce/1997/000000.html)), since then there have been many additions of packages but how fast have been packages accepted? We will use the packages database to answer this. 
 
 First of all some clean up to have all the dates in UTC (not that it will affect much but  better to have uniform data), store all the version of packages and add some columns to make it easy relate it with the other files.
 
@@ -195,7 +196,7 @@ packages2 |>
   scale_x_date(date_breaks = "years", date_labels = "%Y") +
   labs(y = "Packages ", 
        x = element_blank(),
-       title = "Daily packages accepted on CRAN") +
+       title = "Cumulative sum of packages accepted on CRAN") +
   theme_minimal()
 ```
 
@@ -203,7 +204,7 @@ In conclusions, more packages are being accepted now than ever in the past.
 
 ## Developer delays {#delays}
 
-Next question is how fast is the process for developers of packages? 
+Next question is: how fast is the process for developers of packages? 
 
 We can compare the Published date with the build date to answer this.
 The build date is done by the developer to create the tar.gz file submitted to CRAN while the Published date is set by CRAN once the packages is accepted on CRAN.
@@ -211,12 +212,15 @@ The build date is done by the developer to create the tar.gz file submitted to C
 A first exploration of this dates:
 
 ```{r cran-built}
+#' Convert TRUE, FALSE to Yes, No for easier reading
+#' @param x Logical vector
 yesno <- function(x) {
   k <- x
   k[x] <- "Yes"
   k[!x] <- "No"
   k
 }
+
 ggplot(packages2) +
   geom_point(aes(date, Published, col = as.numeric(diff))) +
   scale_color_viridis_c(trans = "log10") +
@@ -256,7 +260,7 @@ packages2 |>
 ```
 
 There doesn't seem to be much difference between date of building and date of publication according to if it is the first release or not.
-The times are short and usually well below 50 days.
+The times are short and usually well below 50 days and too short to notice in this scale.
 This doesn't mean that the packages first time accepted on CRAN didn't had previous submissions, but when they finally built and pass the checks and manual review they are handled as with the other packages already on CRAN.
 
 However, this might have changed with time:
@@ -270,8 +274,8 @@ packages2 |>
   ungroup() |> 
   ggplot() +
   # geom_point(aes(size = n)) +
-  geom_smooth(aes(date, m, col = yesno(with_archives), 
-             linetype = yesno(with_archives), weight = n), span = "1 month") +
+  geom_smooth(aes(date, m, col = yesno(!with_archives), 
+             linetype = yesno(!with_archives), weight = n), span = "1 month") +
   geom_text_repel(aes(x = date, y = 10, label = version),
                   data = minor_changes, nudge_x = 0, angle = 90) +
   scale_y_continuous(expand = expansion()) +
@@ -280,8 +284,8 @@ packages2 |>
   coord_cartesian(ylim =  c(0, NA)) +
   labs(y = "Time (days)", 
        x = element_blank(),
-       col = "Archives?",
-       linetype = "Archives?",
+       col = "New?",
+       linetype = "New?",
        title = "Time between building and on CRAN") +
   theme_minimal() +
   theme(legend.position = c(0.7, 0.7))
@@ -774,23 +778,32 @@ Looking at time since first release and time since previous release we don't see
 Some packages have few updates but distributed in time while some seem to have more constant distributions but there isn't a clear pattern. 
 
 ```{r}
+rle_weeks <- function(x, y) {
+  x <- x[y > 8] # Wait two months to have established package
+  rle <- rle(x < 4)
+  rle$lengths[rle$values ] >= 2
+}
+
 packages_updates <- all_packages2 |> 
   filter(n > 1,
          available == "Yes") |> 
   group_by(package) |> 
-  summarise(d =min(date),
+  summarise(d = min(date),
             max = as.numeric(difftime(Sys.Date(), d), units = "weeks"),
             releases = unique(n),
-            m = releases/max) |> 
+            m = releases/max,
+            trouble2 = rle_weeks(tprevious, trelative)) |> 
   ungroup() |> 
-  mutate(troubles = yesno(m >= 1/8)) |> 
-  filter(max > 8)
+  filter(max > 8) |> 
+  mutate(troubles = yesno(m >= 1/8),
+         troubles2 = yesno(trouble2))
+
 ggplot(packages_updates) +
   geom_smooth(aes(d, m)) +
   theme_minimal() +
   scale_y_continuous(
     "Updates per week",
-    sec.axis = sec_axis(~ . * 4, name = "Updates per month")
+    sec.axis = sec_axis(~ . / 4, name = "Updates per month")
   ) +
   labs(x = element_blank(),
        title = "")
@@ -805,18 +818,45 @@ If we split between those that have more troubles (more than 1 updates per 8 wee
 ```{r}
 ggplot(packages_updates) +
   geom_smooth(aes(d, m, col = troubles, linetype = troubles)) +
+  geom_text_repel(aes(x = date, y = 0.1, label = version),
+                  data = minor_changes0, nudge_x = 0, angle = 90) +
   theme_minimal() +
   scale_y_continuous(
     "Updates per week",
-    sec.axis = sec_axis(~ . * 4, name = "Updates per month")
+    sec.axis = sec_axis(~ . / 4, name = "Updates per month")
+  ) +
+  labs(x = element_blank(),
+       title = "New packages require more updates")
+ggplot(packages_updates) +
+  geom_smooth(aes(d, m, col = troubles2, linetype = troubles2)) +
+  geom_text_repel(aes(x = date, y = 0.1, label = version),
+                  data = minor_changes0, nudge_x = 0, angle = 90) +
+  theme_minimal() +
+  scale_y_continuous(
+    "Updates per week",
+    sec.axis = sec_axis(~ . / 4, name = "Updates per month")
+  ) +
+  labs(x = element_blank(),
+       title = "New packages require more updates")
+packages_updates |> 
+  mutate(troubles_all = troubles2 == "Yes" & troubles == "Yes") |> 
+ggplot() +
+  geom_smooth(aes(d, m, col = troubles_all, linetype = troubles_all)) +
+  geom_text_repel(aes(x = date, y = 0.1, label = version),
+                  data = minor_changes0, nudge_x = 0, angle = 90) +
+  theme_minimal() +
+  scale_y_continuous(
+    "Updates per week",
+    sec.axis = sec_axis(~ . / 4, name = "Updates per month")
   ) +
   labs(x = element_blank(),
        title = "New packages require more updates")
 ```
 
-This could indicate problems following CRAN policies, keeping up to date wit changes in R code and checks.
+This could indicate problems following CRAN policies, keeping up to date with changes in R code and checks.
 Despite troubles keep pushing to keep packages on CRAN.
 Some succeed some don't and do not longer submit new releases.
+
 
 ```{r releases-dates}
 all_packages2 |> 
@@ -1100,7 +1140,8 @@ dates_approval |>
 
 ### Holidays
 
-See general days without acceptance of packages
+Given the height rate of package added and updated in CRAN let's see days without acceptance of packages. 
+First some transformation:
 
 ```{r}
 d1 <- min(all_packages2$date)
@@ -1116,21 +1157,30 @@ holiday <- data.frame(holiday = holiday) |>
          wday = wday(holiday, week_start = 1, label = FALSE))
 ```
 
+Then some plots by week:
 
 ```{r}
 holiday |>  
   count(year, week) |> 
   ggplot() +
-  geom_smooth(aes(week, n))
+  geom_smooth(aes(week, n)) +
+  labs(title = "Weeks without packages updates",
+       y = "Years")
 ```
+
+Similarly we can see the days of the year without additions:
+
 ```{r}
 holiday |>  
   count(year, yday) |> 
   ggplot() +
-  geom_count(aes(yday, n))
+  geom_count(aes(yday, n))  +
+  labs(title = "Weeks without packages updates",
+       y = "Years")
 ```
 
-
+Clearly at the end and beginning of the year there is a tendency to not accept packages.
+Which is usually when the CRAN closes the submission queue for holidays. 
 
 ## Oldest package {#oldest}
 
@@ -1212,12 +1262,20 @@ Looking at packages with just 1 release but still one package which are those?
 This shows the date of the packages in relation to their recursive dependencies.
 
 ```{r}
-direct_dep <- package_dependencies(packages2$Package, db = packages2)
+direct_dep <- tools::package_dependencies(packages2$Package, 
+                                          db = packages2)
+
+base_packages <- rownames(installed.packages(priority = "base"))
+deps0 <- vapply(direct_dep, function(x){sum(!x %in% base_packages)}, numeric(1L))
 deps <- lengths(direct_dep)
-recurs_dep <- package_dependencies(packages2$Package, db = packages2, recursive = TRUE)
+recurs_dep <- tools::package_dependencies(packages2$Package, 
+                                          db = packages2, recursive = TRUE)
+r_deps0 <- vapply(recurs_dep, function(x){sum(!x %in% base_packages)}, numeric(1L))
+
+
 r_deps <- lengths(recurs_dep)
-r_deps <- r_deps[names(deps)]
-deps_all <- data.frame(direct_deps = deps,
+r_deps <- r_deps0[names(deps0)]
+deps_all <- data.frame(direct_deps = deps0,
                        r_deps)
 deps_all$Package <- rownames(deps_all)
 deps_all |> 
@@ -1239,7 +1297,7 @@ packages2 |>
   merge(deps_all, by = "Package", all = TRUE) |> 
   mutate(archived = yesno(Package %in% never_archived)) |> 
   select(date, direct_deps, r_deps, archived) |> 
-  tidyr::pivot_longer(c(direct_deps, r_deps), names_to = "dependency") |> 
+  pivot_longer(c(direct_deps, r_deps), names_to = "dependency") |> 
   mutate(dependency = ifelse(dependency == "direct_deps", "direct", "recursive")) |> 
   ggplot() +
   geom_smooth(aes(date, value, col = archived, linetype = dependency), span = 1/24) +
@@ -1252,7 +1310,8 @@ packages2 |>
        col = "Updated?",
        y = "Dependencies",
        linetype = "Type of dependencies",
-       title = "More dependencies lead to archive?") +
+       title = "More dependencies lead to archive?",
+       subtitle = "Packages dependencies, without base packages by date published on CRAN.") +
   theme(legend.position = c(0.3, 0.8))
 ```
 
@@ -1262,6 +1321,267 @@ More recent packages have more direct dependencies and even more indirect depend
 This can also lead to a different lecture, to avoid problems packages reduce their (direct) dependencies. 
 
 Without knowing the history of dependencies of CRAN or what actually lead to being archived it might be hard to solve this question. 
+
+### Date
+
+When I asked online about more question Jonathan Carroll suggested to look up if we are using newer packages or more of the older ones:
+
+```{r echo=FALSE}
+blogdown::shortcode('tweet', '1533744129695330304')
+```
+
+```{r}
+dates_deps <- function(dependencies, dates, base_packages = NULL) {
+  if (is.null(base_packages)) {
+    base_packages <- rownames(installed.packages(priority = "base"))
+  }
+  deps <- dependencies[!dependencies %in% base_packages]
+  d <- dates[deps]
+  if (length(d) == 0) {
+    return(data.frame(min = NA_Date_, median = NA_Date_, max = NA_Date_, n = 0))
+  }
+  data.frame(min = min(d, na.rm = TRUE), 
+             median = median(d, na.rm = TRUE), 
+             max = max(d, na.rm = TRUE),
+             n = length(d))
+}
+
+first_release_dates <- all_packages2 |> 
+  group_by(package) |> 
+  summarise(date = min(date))
+dates <- first_release_dates$date
+names(dates) <- first_release_dates$package
+l <- lapply(direct_dep, dates_deps, dates, base_packages)
+# First date of releas of a package and current date of publication of packages
+deps_dates <- do.call("rbind", l) 
+deps_dates$package <- names(direct_dep)
+deps_dates <- left_join(deps_dates, packages2, by = c("package" = "Package"))
+
+deps_dates |> 
+  pivot_longer(cols = c(min, median, max)) |> 
+  filter(!is.na(value)) |> 
+  ggplot() +
+  geom_smooth(aes(date, value, weight = n, col = name))+
+  geom_abline(slope = 1, intercept = 0) +
+  labs(x = "Published date",
+       y = "Dependencies date",
+       title = "Min, median and max date of direct direct dependencies") +
+  theme_minimal()
+```
+
+
+```{r}
+deps_dates |> 
+  pivot_longer(cols = c(min, median, max)) |> 
+  mutate(difftime = as.numeric(difftime(date, value, units = "weeks"))) |> 
+  mutate(difftime = if_else(is.na(difftime), 0, difftime)) |> 
+  ggplot() +
+  geom_smooth(aes(date, difftime, col = name)) +
+  geom_abline(slope = 1/52, intercept = 0) +
+  scale_y_continuous(sec.axis = sec_axis( ~ ./52, 
+                                          name = "Dependencies years of difference")) +
+  scale_x_continuous(expand = expansion()) +
+  labs(x = "Published date",
+       y = "Dependencies weeks of difference",
+       title = "Min, median and max date of direct dependencies") +
+  theme_minimal()
+```
+
+
+```{r}
+deps_dates |> 
+  pivot_longer(cols = c(min, median, max)) |> 
+  mutate(difftime = as.numeric(difftime(date, value, units = "weeks"))) |> 
+  ggplot() +
+  geom_smooth(aes(date, difftime, col = name, linetype = yesno(with_archives))) +
+  geom_abline(slope = 1/52, intercept = 0) +
+  scale_y_continuous(sec.axis = sec_axis( ~ ./52, 
+                                          name = "Dependencies years of difference")) +
+  scale_x_date(expand = expansion()) +
+  facet_wrap(~ifelse(with_archives, "New", "Already on CRAN"), scales = "free_x") +
+  labs(x = "Published date",
+       y = "Dependencies weeks of difference",
+       linetype = "Already on CRAN?",
+       col = "Dependencies date",
+       title = "Min, median and max date of direct dependencies") +
+  theme_minimal() +
+  theme(panel.spacing = unit(1, "lines"))
+```
+
+
+There is around a median of 10 year gap between publishing a package and getting a package depending on it according to the first release of packages currently on CRAN.
+At earliest there is a median of 6 year gap and sometimes dependencies are up to 16 years older than the new package.
+For reference a new packages today depending, importing or enhancing dplyr, which first release was in 2014-01-29, is around 8 years and depending on the first packages on CRAN means at most 25 years of release differences.
+
+If we take the dependency with the less difference on each day we see the fastest dependency tend to be 2 years
+
+```{r}
+deps_dates |> 
+  pivot_longer(cols = c(min, median, max)) |> 
+  mutate(difftime = as.numeric(difftime(date, value, units = "weeks"))) |> 
+  filter(name == "max") |> 
+  group_by(date, with_archives) |> 
+  summarise(value = min(date, na.rm = TRUE),
+            difftime = min(difftime, na.rm = TRUE)) |> 
+  ungroup() |> 
+  ggplot() +
+  geom_smooth(aes(date, difftime, linetype = yesno(with_archives))) +
+  geom_abline(slope = 1/52, intercept = 0) +
+  scale_y_continuous(sec.axis = sec_axis( ~ ./52, 
+                                          name = "Dependencies years of difference")) +
+  scale_x_date(expand = expansion()) +
+  # facet_wrap(~ifelse(with_archives, "New", "Already on CRAN"), scales = "free_x") +
+  labs(x = "Published date",
+       y = "Dependencies weeks of difference",
+       linetype = "Already on CRAN?",
+       col = "Dependencies date",
+       title = "Min, median and max date of direct dependencies") +
+  theme_minimal() +
+  theme(panel.spacing = unit(1, "lines"), legend.position = c(0.3, 0.4))
+```
+
+
+### Looking by day
+
+The plots above are about the packages published that date.
+It can be confusing but it is not the median time difference of the day.
+
+If we summarise the time difference we can do the difference by min value, max value and median.
+
+<details><summary>If we take the minimum difference on each day:</summary>
+
+
+```{r}
+deps_dates |> 
+  pivot_longer(cols = c(min, median, max)) |> 
+  mutate(difftime = as.numeric(difftime(date, value, units = "weeks"))) |> 
+  group_by(date, name, with_archives) |> 
+  summarise(value = min(date, na.rm = TRUE),
+            difftime = min(difftime, na.rm = TRUE)) |> 
+  ungroup() |> 
+  ggplot() +
+  geom_smooth(aes(date, difftime, col = name, linetype = yesno(with_archives))) +
+  geom_abline(slope = 1/52, intercept = 0) +
+  scale_y_continuous(sec.axis = sec_axis( ~ ./52, 
+                                          name = "Dependencies years of difference")) +
+  scale_x_date(expand = expansion()) +
+  facet_wrap(~ifelse(with_archives, "New", "Already on CRAN"), scales = "free_x") +
+  # facet_zoom(x = date >= as.Date("2021/01/01"),
+  #            xlim = c(as.Date("2021/01/01"), Sys.Date())) +
+  labs(x = "Published date",
+       y = "Dependencies weeks of difference",
+       linetype = "Already on CRAN?",
+       col = "Dependencies date",
+       title = "Min, median and max date of direct dependencies") +
+  theme_minimal() +
+  theme(panel.spacing = unit(1, "lines"))
+```
+</details>
+
+<details><summary>If we take the maximum difference on each day:</summary>
+
+
+```{r}
+deps_dates |> 
+  pivot_longer(cols = c(min, median, max)) |> 
+  mutate(difftime = as.numeric(difftime(date, value, units = "weeks"))) |> 
+  group_by(date, name, with_archives) |> 
+  summarise(value = max(date, na.rm = TRUE),
+            difftime = max(difftime, na.rm = TRUE)) |> 
+  ungroup() |> 
+  ggplot() +
+  geom_smooth(aes(date, difftime, col = name, linetype = yesno(with_archives))) +
+  geom_abline(slope = 1/52, intercept = 0) +
+  scale_y_continuous(sec.axis = sec_axis( ~ ./52, 
+                                          name = "Dependencies years of difference")) +
+  scale_x_date(expand = expansion()) +
+  facet_wrap(~ifelse(with_archives, "New", "Already on CRAN"), scales = "free_x") +
+  # facet_zoom(x = date >= as.Date("2021/01/01"),
+  #            xlim = c(as.Date("2021/01/01"), Sys.Date())) +
+  labs(x = "Published date",
+       y = "Dependencies weeks of difference",
+       linetype = "Already on CRAN?",
+       col = "Dependencies date",
+       title = "Min, median and max date of direct dependencies") +
+  theme_minimal() +
+  theme(panel.spacing = unit(1, "lines"))
+```
+
+</details>
+
+With the median daily difference:
+
+```{r}
+deps_dates |> 
+  pivot_longer(cols = c(min, median, max)) |> 
+  mutate(difftime = as.numeric(difftime(date, value, units = "weeks"))) |> 
+  group_by(date, name, with_archives) |> 
+  summarise(value = median(date, na.rm = TRUE),
+            difftime = median(difftime, na.rm = TRUE),
+            n = n()) |> 
+  ungroup() |> 
+  ggplot() +
+  geom_smooth(aes(date, difftime, col = name, linetype = yesno(with_archives),
+                  weight = n)) +
+  geom_abline(slope = 1/52, intercept = 0) +
+  scale_y_continuous(sec.axis = sec_axis( ~ ./52, 
+                                          name = "Dependencies years of difference")) +
+  scale_x_date(expand = expansion()) +
+  facet_wrap(~ifelse(with_archives, "New", "Already on CRAN"), scales = "free_x") +
+  # facet_zoom(x = date >= as.Date("2021/01/01"),
+  #            xlim = c(as.Date("2021/01/01"), Sys.Date())) +
+  labs(x = "Published date",
+       y = "Dependencies weeks of difference",
+       linetype = "Already on CRAN?",
+       col = "Dependencies date",
+       title = "Daily time difference of direct dependencies") +
+  theme_minimal() +
+  theme(panel.spacing = unit(1, "lines"))
+```
+
+We can see that in 2012 new packages tended to depend on newer packages than now, while now they tend to depend around 12 years and close to 6 years at least.
+Reminder that this is only for those with dependencies outside base packages.
+
+Looking at the number of packages without dependencies we see a constant number o
+
+```{r}
+deps_dates |> 
+  filter(n == 0) |> 
+  count(date, with_archives) |> 
+  ggplot() +
+  geom_smooth(aes(date, n, 
+                  col = yesno(!with_archives), linetype = yesno(!with_archives)),
+              span = "1 month") +
+  # facet_wrap(~with_archives, scales = "free") +
+  scale_y_continuous(expand = expansion(add = c(NA_integer_, NA_integer_))) +
+  scale_x_date(expand = expansion()) +
+  labs(col = "New on CRAN?", linetype = "New on CRAN?", y = "Packages",
+       title = "Packages without dependencies") +
+  theme_minimal() +
+  theme(legend.position = c(0.2, 0.7))
+```
+
+
+
+```{r eval=FALSE, include=FALSE}
+deps_dates |> 
+  pivot_longer(cols = c(min, median, max)) |> 
+  mutate(difftime = as.numeric(difftime(date, value, units = "weeks"))) |> 
+  group_by(name) |>
+  summarise(weeks = median(difftime, na.rm = TRUE),
+            months = weeks/4,
+            years = weeks/52) |> 
+  ungroup()
+deps_dates |> 
+  pivot_longer(cols = c(min, median, max)) |> 
+  mutate(difftime = as.numeric(difftime(date, value, units = "weeks"))) |> 
+  group_by(with_archives, name) |>
+  summarise(weeks = median(difftime, na.rm = TRUE),
+            months = weeks/4,
+            years = weeks/52) |> 
+  ungroup()
+```
+
 
 ### Reproducibility
 
