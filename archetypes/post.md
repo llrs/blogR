@@ -9,7 +9,7 @@ date = {{ .Date }}
 draft = false
 
 # Authors. Comma separated list, e.g. `["Bob Smith", "David Jones"]`.
-authors = []
+authors = [admin]
 description = ""
 
 # Is this a featured post? (true/false)
