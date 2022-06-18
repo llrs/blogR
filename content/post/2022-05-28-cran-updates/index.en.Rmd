@@ -25,7 +25,7 @@ summary: 'Exploration of the CRAN archive: First package on CRAN, dependencies w
 ## Introduction
 
 ```{r setup, include = FALSE}
-knitr::opts_chunk$set(collapse = TRUE, cache = TRUE, fig.retina = 2)
+knitr::opts_chunk$set(collapse = TRUE, fig.retina = 2)
 Sys.setlocale("LC_ALL", "C")
 ```
 
@@ -35,7 +35,7 @@ This package has the functions that are used to build, check and create packages
 Looking into the source code and exploring how it is used by CRAN I found some internal functions that access freely available files with information about CRAN packages.
 These private functions are at the [CRANtools.R file](https://svn.r-project.org/R/trunk/src/library/tools/R/CRANtools.R).
 
-```{r internal-functions}
+```{r internal-functions, cache = TRUE}
 packages <- tools:::CRAN_package_db()
 current <- tools:::CRAN_current_db()
 archive <- tools:::CRAN_archive_db()
@@ -89,7 +89,6 @@ Some ideas, and questions to explore:
 - Using the user information; who is [accepting packages on CRAN?](#admins)
 - Given the dates, is there some [seasonal patterns in CRAN acceptance?](#season)
 - What are the [**oldest** packages on CRAN?](#oldest) 
-- What are the [**biggest** packages on CRAN?](#biggest) 
 - Are there difference in [size between old and new packages?](#size) 
 - Given the dates and versions of packages, [are dependencies related with newer packages or updates?](#dependencies)
 
@@ -124,7 +123,12 @@ minor_changes0[, c("version", "date")] |>
   autofit()
 ```
 
-With everything ready let's explore the data:
+With everything ready let's explore the data!
+
+```{r include=FALSE, cache = TRUE}
+months_middle <- c("2022-04-15", "2022-07-15", "2022-11-15")
+```
+
 
 ## Accepted packages {#accepted}
 
@@ -133,7 +137,7 @@ With everything ready let's explore the data:
 First of all some clean up to have all the dates in UTC (not that it will affect much but better to have uniform data), store all the version of packages and add some columns to make it easy relate it with the other files.
 
 
-```{r packages-setup}
+```{r packages-setup, cache = TRUE}
 packages$Published <- as.Date(packages$Published, format = "%Y-%m-%d",
                               tz = "UTC")
 packages$Packaged_by <- gsub(".*; (.*)", "\\1", packages$Packaged)
@@ -361,7 +365,7 @@ Note that I'm not sure that this archives contains the full record of packages, 
 Nevertheless this should provide an accurate picture of packages available. 
 Also as there is no information when a package is archived (here, [there is on PACKAGES.in](https://llrs.dev/post/2021/12/07/reasons-cran-archivals/)), we might slightly overestimate the packages available at a given moment.
 
-```{r archives-setup}
+```{r archives-setup, cache = TRUE}
 archive_df <- do.call("rbind", archive)
 archives <- vapply(archive, nrow, numeric(1))
 pkg <- rep(names(archive), times = archives)
@@ -458,7 +462,7 @@ Given all this different versions of packages how big are all the packages on CR
 ### CRAN size
 
 
-```{r format-size, include=FALSE}
+```{r format-size, include=FALSE, cache = TRUE}
 k <- sum(all_packages2$size)
 class(all_packages2$size) <- "object_size"
 class(k) <- "object_size"
@@ -806,7 +810,7 @@ Looking at packages that have updated more might indicate problems with packages
 
 To identify those packages we can look at the general frequency they are updated (if they were ever updated) and if there is any release less than two months apart.
 
-```{r setup-updates}
+```{r setup-updates, cache = TRUE}
 rle_weeks <- function(x, y) {
   # Wait two months (8 weeks) to have established package
   x <- x[y > 8] 
@@ -927,7 +931,7 @@ Some succeed some don't and do not longer submit new releases.
 
 ```{r updates-percentage}
 packages_updates |> 
-  group_by(d) |> 
+  group_by(month = floor_date(d, "month")) |> 
   count(quick_releases, frequent_releases) |> 
   mutate(p = n/sum(n)) |> 
   ungroup() |> 
@@ -936,20 +940,27 @@ packages_updates |>
     quick_releases == "Yes" & frequent_releases == "No" ~ "Quick",
     quick_releases == "No" & frequent_releases == "Yes" ~ "Frequent",
     quick_releases == "No" & frequent_releases == "No" ~ "Ideal",
-    TRUE ~ "weird"))
+    TRUE ~ "weird")) |> 
   ggplot() +
-  geom_smooth(aes(d, p, fill = type), span = "1 month") +
+  geom_smooth(aes(month, p, 
+                  col = fct_relevel(type, c("Quick & frequent", "Quick", "Frequent", "Ideal"))), span = "1 year") +
   theme_minimal() +
   scale_x_date(date_breaks = "2 years", date_labels = "%Y") +
-  scale_y_continuous(labels = scales::percent) +
+  scale_y_continuous(labels = scales::percent, limits = c(NA, 1),
+                     sec.axis = dup_axis()) +
   labs(x = element_blank(),
        fill = "Type updates",
+       col = "Type updates", 
+       y = element_blank(),
        title = "Type of packages by their updates",
        subtitle = "By their release date")
 ```
 
 
 Here we can see the proportion of packages that end up on each category of updates by their release date.
+
+Usually 80% of the packages submitted each day follow the policies without troubles.
+Around 40%
 
 ## Updates by release
 
@@ -986,7 +997,7 @@ We can see the raw numbers of packages updated by month according to their relea
 ```{r updates-summaries}
 block <- all_packages2 |> 
   filter(release != 1) |> 
-  group_by(month = floor_date(date, "halfyear"),
+  group_by(month = floor_date(date, "month"),
            release) |> 
   summarise(t = median(tprevious),
             n = n()) |> 
@@ -997,7 +1008,7 @@ block |>
   ggplot() +
   geom_smooth(aes(month, n, size = n, col = as.factor(release),
                   linetype = as.factor(release), weight = n), 
-              alpha = 0.25)  +
+              alpha = 0.25, span = "1 year")  +
   scale_x_date(expand = expansion(), date_breaks = "2 year", date_labels = "%Y") +
   scale_y_continuous(expand = expansion()) +
   coord_cartesian(ylim = c(0, NA)) +
@@ -1005,12 +1016,14 @@ block |>
        y = "Packages",
        title = "Updates",
        subtitle = "Release <= 6",
-       col = "Releases",
-       linetype = "Releases") +
+       col = "Release",
+       linetype = "Release") +
   theme_minimal()
 ```
 
 As expected by the increase in new packages the number of packages updated decrease with the number of releases.
+
+If we look at the time since the previous release we might get some clues:
 
 ```{r releases-filtered2}
 block |> 
@@ -1018,21 +1031,28 @@ block |>
   ggplot() +
   geom_smooth(aes(month, t, size = n, col = as.factor(release),
                   linetype = as.factor(release), weight = n), 
-              alpha = 0.25)  +
+              alpha = 0.25, span = "1 year")  +
   scale_x_date(expand = expansion(), date_breaks = "2 year", date_labels = "%Y") +
-  scale_y_continuous(expand = expansion()) +
+  scale_y_continuous(expand = expansion(),
+                     sec.axis = sec_axis( ~ ./52, 
+                                          name = "Dependencies years of difference")) +
   coord_cartesian(ylim = c(0, NA)) +
   labs(x = element_blank(),
        y = "Median time since previous release (weeks)",
        title = "Speed of updates",
        subtitle = "Release <= 6",
-       col = "Releases",
-       linetype = "Releases") +
+       col = "Release",
+       linetype = "Release") +
   theme_minimal()
   
 ```
 
-The reasons of this longer updates might be multiple, it might be that packages have become better and require less updates to keep up with the more strict CRAN rules.
+We see that currently the second update is sooner than previously but after the second update the time between releases is similar and higher than the first update. (Note that here we didn't remove the first weeks before a package is established on CRAN.).
+This has been happening since 2007 with a similar gap between the first and second update (second and third release). 
+
+However, since 2013 there is an increase in time till the next release. 
+The reasons of this longer updates might be multiple, it might be that packages have become better and require less updates to keep up with the CRAN policies.
+
 It could also mean that maintainers are no longer updating packages and abandoning them, as there are some evidence that lately there have been lots of packages removed from CRAN because they were not keeping up with CRAN policies. 
 
 ```{r tweet, echo=FALSE}
@@ -1178,7 +1198,7 @@ dates_approval |>
 Here we can see the different actions by each one.
 To have a better view of the changes on who is moving CRAN packages we can make this other visualization:
 
-```{r people-active}
+```{r people-active2}
 theme(legend.position = c(0.3, 0.7))
 dates_approval |> 
   count(year, uname) |> 
@@ -1202,8 +1222,6 @@ Brian Ripley moved most of the packages between 2010 and 2015.
 Around that time Uwe Ligges started moving the packages and has been doing the shear work of moving them since 2015 (Although Kurt Hornik participated more in 2015 to 2017 than on the previous years 2010 - 2015).
 There is also an account of herbrandt which briefly moved packages around 2017.
 
-Previous Volunteers
-
 
 ```{r user-month}
 dates_approval |> 
@@ -1211,7 +1229,8 @@ dates_approval |>
   ggplot() +
   geom_textsmooth(aes(month, n, 
                   col = fct_other(uname, keep = people, other_level = "other"),
-              linetype = fct_other(uname, keep = people, other_level = "other"))) +
+              linetype = fct_other(uname, keep = people, other_level = "other"),
+              label = fct_other(uname, keep = people, other_level = "other"))) +
   labs(col = "Users",
        linetype = "Users",
        y = "Moves",
@@ -1261,10 +1280,9 @@ dates_approval |>
 
 
 ```{r user-yday}
-months_middle <- c("2022-04-15", "2022-07-15", "2022-11-15")
 dates_approval |> 
   count(year, yday, uname) |> 
-  mutate(uname_other = fct_other(uname, keep = people, other_level = "other")) +
+  mutate(uname_other = fct_other(uname, keep = people, other_level = "other")) |> 
   ggplot() +
   geom_smooth(aes(yday, n, col = uname_other)) + 
   labs(col = "Users") +
@@ -1281,7 +1299,7 @@ dates_approval |>
 Given the high rate of package added and updated in CRAN let's see days without acceptance of packages. 
 First some transformation:
 
-```{r setup-holidays}
+```{r setup-holidays, warning=FALSE}
 d1 <- min(all_packages2$date)
 d2 <- max(all_packages2$date)
 s <- seq(from = d1, to = d2, by = 1)
@@ -1338,7 +1356,9 @@ all_packages2 |>
   filter(release == 1) |> 
   arrange(date) |> 
   select(package, version, size, date) |> 
-  head(10)
+  head(10) |> 
+  flextable() |> 
+  autofit()
 ```
 
 Which are the oldest packages without any update?
@@ -1351,7 +1371,9 @@ all_packages2 |>
   ungroup() |> 
   arrange(date) |> 
   select(package, version, size, date) |> 
-  head(10)
+  head(10) |> 
+  flextable() |> 
+  autofit()
 ```
 
 These are the oldest 10 packages released and without any further release on CRAN. 
@@ -1364,7 +1386,9 @@ all_packages2 |>
   filter(available == "Yes" & status == "available") |> 
   arrange(date) |> 
   select(package, version, size, date, release) |> 
-  head(10)
+  head(10) |> 
+  flextable() |> 
+  autofit()
 ```
 
 A couple of the top 10 repeats from those without any update!
@@ -1398,13 +1422,13 @@ all_packages2 |>
 ```
 
 
-## Dependencies current packages {#dependencies}
+## Dependencies packages {#dependencies}
 
-Looking at packages with just 1 release but still one package which are those?
+Looking at the current packages on CRAN with just 1 release but still on CRAN, are differences in the dependencies with packages with more than 1 release?
 
 This shows the date of the packages in relation to their recursive dependencies.
 
-```{r setup-dependencies}
+```{r setup-dependencies, cache = TRUE}
 direct_dep <- tools::package_dependencies(packages2$Package, 
                                           db = packages2)
 
@@ -1523,7 +1547,7 @@ deps_dates |>
 ```
 
 
-```{r dependencies-dates-weeks}
+```{r dependencies-dates-weeks, warning=FALSE}
 deps_dates |> 
   mutate(difftime = as.numeric(difftime(date, value, units = "weeks"))) |> 
   mutate(difftime = if_else(is.na(difftime), 0, difftime)) |> 
@@ -1566,7 +1590,7 @@ For reference a new packages today depending, importing or enhancing dplyr, whic
 
 If we take the dependency with the less difference on each day we see the earliest dependency tend to be 2 years after publication of the package.
 
-```{r dependencies-dates-fastest}
+```{r dependencies-dates-fastest, warning=FALSE}
 deps_dates |> 
   mutate(difftime = as.numeric(difftime(date, value, units = "weeks"))) |> 
   filter(name == "max") |> 
