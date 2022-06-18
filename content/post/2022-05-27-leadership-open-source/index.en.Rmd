@@ -1,5 +1,5 @@
 ---
-title: Leadershin in open source projects
+title: Leadership in open source projects
 author: Lluís Revilla Sancho
 date: '2022-05-27'
 slug: leadership-open-source
@@ -7,8 +7,9 @@ categories:
   - OSS
 tags:
   - concepts
-authors: []
-description: ''
+  - OSS
+authors: [admin]
+description: 'Some comments on two imporant in OSS discussions'
 draft: no
 editor_options:
   chunk_output_type: console
@@ -78,6 +79,8 @@ It might have similar effects than the upgrade from perl4 to perl5, which (besid
 
 Probably the best indicator is the relationship between users, contributors and maintainers.
 If these are three different groups of people, there are more users than contributors and less maintainers while the dynamics are good and the software is in good healthy status.
+
+## End
 
 I haven't touch much the status of code but this is also important it can be status as in quality of code and status of the software and community.
 The first is easier to measure and compare while the second one is much harder, more subjective and thus less general.
