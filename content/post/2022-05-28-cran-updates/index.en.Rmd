@@ -1760,9 +1760,15 @@ deps_dates |>
 ## Future ideas
 
 
-This is only using these files wihout cross checking with other information available about CRAN (like [PACKAGES.in](https://llrs.dev/post/2021/12/07/reasons-cran-archivals/) or [submission records](https://llrs.dev/post/2021/01/31/cran-review/)).
-Using together all this data will provide a much complete picture and might help answer many more questions.
-Like knowing the time between last submission and archival and/or checking the CRAN checks issues before archival.
+This is only using these files without cross checking with other information available about CRAN (like [PACKAGES.in](https://llrs.dev/post/2021/12/07/reasons-cran-archivals/) or [submission records](https://llrs.dev/post/2021/01/31/cran-review/)).
+Using together all this data will provide a much complete picture and might help answer many more questions:
+- Knowing the time between last submission and archival and/or checking the CRAN checks issues before archival.
+- Detecting how many successful submissions did [cransays](https://r-hub.github.io/cransays/articles/dashboard.html) miss.
+
+Compare the archives records with MRAN via [checkpoint](https://cran.r-project.org/package=checkpoint). Perhaps also to provide further data about packages before the start of MRAN (2014-09-17).
+This would imply detecting when packages were archived on CRAN. 
+
+Provide reverse dependency along time as done with [revdepcheck.extras](https://github.com/HenrikBengtsson/revdepcheck.extras/blob/master/R/revdep_over_time.R). This would mean recreating a file with the right structure for `tools::packages_dependencies()` for each date. 
 
 Let me know if you explore this data with a different question or the same and you find something different/interesting!
 
