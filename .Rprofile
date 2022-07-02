@@ -10,3 +10,8 @@ if (interactive()) {
         xfun.bg_process.verbose = TRUE,
         blogdown.use.processx = FALSE)
   }
+# Attempt 1
+# https://tinyheero.github.io/2015/09/15/semi-transparency-r.html
+setHook(packageEvent("grDevices", "onLoad"),
+				function(...) grDevices::X11.options(type='cairo'))
+options(device='x11')
