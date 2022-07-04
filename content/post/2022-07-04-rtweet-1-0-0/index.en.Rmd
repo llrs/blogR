@@ -1,0 +1,248 @@
+---
+title: Upgrading rtweet to 1.0.0
+author: Lluís Revilla Sancho
+date: '2022-07-04'
+slug: rtweet-1-0-0
+categories:
+  - Bioconductor
+tags:
+  - r
+  - rtweet
+  - packages
+authors:
+  - admin
+description: ''
+draft: no
+editor_options:
+  chunk_output_type: console
+featured: no
+image:
+  caption: ''
+  focal_point: ''
+subtitle: ''
+summary: ''
+---
+
+```{r setup, include = FALSE}
+knitr::opts_chunk$set(collapse = TRUE, fig.retina = 2)
+```
+
+In this post I will provide some examples of what has changed between rtweet 0.7.0 and rtweet 1.0.0. 
+I hope both the changes and this guide will help all users.
+I won't provide a full list of changes but you can consult it on the [NEWS](https://docs.ropensci.org/rtweet/news/index.html).
+
+## Big breaking change
+
+::: {#hello .r style="background: orange;"}
+Hello **world**!
+:::
+
+
+### More consistent output
+
+This is probably what will affect more users: All functions that return data about tweets return the different columns. 
+
+```r
+> tweets <- search_tweets("weather")
+> colnames(tweets)
+ [1] "user_id"                 "status_id"              
+ [3] "created_at"              "screen_name"            
+ [5] "text"                    "source"                 
+ [7] "display_text_width"      "reply_to_status_id"     
+ [9] "reply_to_user_id"        "reply_to_screen_name"   
+[11] "is_quote"                "is_retweet"             
+[13] "favorite_count"          "retweet_count"          
+[15] "quote_count"             "reply_count"            
+[17] "hashtags"                "symbols"                
+[19] "urls_url"                "urls_t.co"              
+[21] "urls_expanded_url"       "media_url"              
+[23] "media_t.co"              "media_expanded_url"     
+[25] "media_type"              "ext_media_url"          
+[27] "ext_media_t.co"          "ext_media_expanded_url" 
+[29] "ext_media_type"          "mentions_user_id"       
+[31] "mentions_screen_name"    "lang"                   
+[33] "quoted_status_id"        "quoted_text"            
+[35] "quoted_created_at"       "quoted_source"          
+[37] "quoted_favorite_count"   "quoted_retweet_count"   
+[39] "quoted_user_id"          "quoted_screen_name"     
+[41] "quoted_name"             "quoted_followers_count" 
+[43] "quoted_friends_count"    "quoted_statuses_count"  
+[45] "quoted_location"         "quoted_description"     
+[47] "quoted_verified"         "retweet_status_id"      
+[49] "retweet_text"            "retweet_created_at"     
+[51] "retweet_source"          "retweet_favorite_count" 
+[53] "retweet_retweet_count"   "retweet_user_id"        
+[55] "retweet_screen_name"     "retweet_name"           
+[57] "retweet_followers_count" "retweet_friends_count"  
+[59] "retweet_statuses_count"  "retweet_location"       
+[61] "retweet_description"     "retweet_verified"       
+[63] "place_url"               "place_name"             
+[65] "place_full_name"         "place_type"             
+[67] "country"                 "country_code"           
+[69] "geo_coords"              "coords_coords"          
+[71] "bbox_coords"             "status_url"             
+[73] "name"                    "location"               
+[75] "description"             "url"                    
+[77] "protected"               "followers_count"        
+[79] "friends_count"           "listed_count"           
+[81] "statuses_count"          "favourites_count"       
+[83] "account_created_at"      "verified"               
+[85] "profile_url"             "profile_expanded_url"   
+[87] "account_lang"            "profile_banner_url"     
+[89] "profile_background_url"  "profile_image_url"   
+```
+
+::: {#hello2 .r  style="background: green;"}
+
+hi
+
+:::
+
+```r
+> tweets <- search_tweets("weather")
+> colnames(tweets)
+ [1] "created_at"                    "id"                           
+ [3] "id_str"                        "full_text"                    
+ [5] "truncated"                     "display_text_range"           
+ [7] "entities"                      "metadata"                     
+ [9] "source"                        "in_reply_to_status_id"        
+[11] "in_reply_to_status_id_str"     "in_reply_to_user_id"          
+[13] "in_reply_to_user_id_str"       "in_reply_to_screen_name"      
+[15] "geo"                           "coordinates"                  
+[17] "place"                         "contributors"                 
+[19] "is_quote_status"               "retweet_count"                
+[21] "favorite_count"                "favorited"                    
+[23] "retweeted"                     "lang"                         
+[25] "quoted_status_id"              "quoted_status_id_str"         
+[27] "quoted_status"                 "possibly_sensitive"           
+[29] "retweeted_status"              "text"                         
+[31] "favorited_by"                  "scopes"                       
+[33] "display_text_width"            "quoted_status_permalink"      
+[35] "quote_count"                   "timestamp_ms"                 
+[37] "reply_count"                   "filter_level"                 
+[39] "query"                         "withheld_scope"               
+[41] "withheld_copyright"            "withheld_in_countries"        
+[43] "possibly_sensitive_appealable"
+```
+
+rtweet now minimizes the processing of tweets and only returns the same data as provided.
+However, due to the nested nature of the data returned some fields are now nested inside other or not provided by default.
+At the same time it provides with new information fields about each tweet like the `withheld_*` columns.
+
+If you scanned through the text column fields you might have noticed that there aren't `"user_id"` or `"screen_name"` columns returned: users data is now provided different.
+To access users data you need to use `users_data()` (and if you look up for a user and want to know about their tweets you can use `tweets_data()`).
+
+```r
+> colnames(users_data(tweets))
+ [1] "id"                      "id_str"                 
+ [3] "name"                    "screen_name"            
+ [5] "location"                "description"            
+ [7] "url"                     "protected"              
+ [9] "followers_count"         "friends_count"          
+[11] "listed_count"            "created_at"             
+[13] "favourites_count"        "verified"               
+[15] "statuses_count"          "profile_image_url_https"
+[17] "profile_banner_url"      "default_profile"        
+[19] "default_profile_image"   "withheld_in_countries"  
+[21] "derived"                 "withheld_scope"         
+[23] "entities" 
+```
+
+Even then there is more nested data in the entities column (which is present in both tweets and users!).
+
+ ```r
+> names(tweets$entities[[1]])
+[1] "hashtags"      "symbols"       "user_mentions" "urls"         
+[5] "media" 
+ ```
+
+### More consistent interface
+
+All paginated functions that don't return tweets now use a consistent pagination interface (except the premium endpoints). 
+They all store the "next cursor" in an `rtweet_cursor` attribute, which will be automatically retrieved when you use the `cursor` argument.
+They all support `max_id` and `since_id` to find earlier and later tweets respectively, as well as `retryonratelimit` to wait as long as needed when rate limited
+
+`get_friends()` and `get_followers()`
+
+### Saving data
+
+An unexpected consequence of returning more data as in the API is that it is now harder to save it in a tabular format.
+For instance one tweet might have one media, two user mention and three hasthags.
+There isn't a simple way to saved it in a single row uniformly for all tweets.
+
+This resulted in deprecating `save_as_csv`, `read_twitter_csv` and related functions. 
+They will be removed in later versions but at the moment it is not possible to use `save_as_csv` with the new data structure and it won't be possible to load it from a csv. 
+There are other packages that provide similar functionality such as [{tidytags}](https://docs.ropensci.org/tidytags/) and users should decide how to use it.
+
+## Other breaking changes
+
+If you tweet via `post_tweet()` and add an image, gif or video you'll need to provide the media alternative text. 
+
+`tweet_shot()` has been hard deprecated as it did no longer work correctly. 
+There might be possible to bring it back, but I don't understand the code provided and can't maintain it (see the long discussion about it [here](https://github.com/ropensci/rtweet/issues/458)). 
+  
+emojis, langs and stopwordslangs data provided with rtweet is no longer available.
+I don't think it is the right place to provide this kind of data and I don't want to be responsible to update them. 
+
+
+The functions like `suggested_*()` have been removed as they didn't work since 2019.
+
+## Easier authentication
+
+If you just want to test the package use the default authentication `auth_setup_default()` that comes with rtweet.
+
+If you want to use the package more than 1 day, set up your own token via `rtweet_user()`.
+It will open a window to authenticate via the account you have opened in your default browser.
+This authentication won't allow you to do everything but for most use cases it will work. 
+
+If you want to make a heavier usage of the package I recommend to register yourself as developer and use one of the following two mechanisms for different use cases:
+
+- Collect data and analyze: `rtweet_app()`.
+- Set up a bot: `rtweet_bot()`
+
+Find more information on the [Authentication with rtweet vignette](https://docs.ropensci.org/rtweet/articles/auth.html).
+
+Previously rtweet saved each token created, if you don't use the default token you'll need to save them manually via `save_as(token, "my_app")`. 
+Bonus, if you name your token as default (`save_as(token, "default")`) it will be used since loading the library.
+
+To check which credentials you have stored use `auth_list()` and load them via `auth_as("my_app")`.
+All the rtweet functions will use the latest token loaded with `auth_as` (unless you manually specify one when calling it).
+If you are not sure which token you are using you can use `auth_get()` it will return the token in use, list them or ask you to authenticate.
+
+If you have previous tokens saved or problems identifying which token is which use `auth_sitrep()`.
+This will provides clues to which tokens might be duplicated or misconfigurated but it won't check if they work. 
+
+## Future
+
+Twitter API v2 is being released and soon it will replace API v1. 
+rtweet uses API v1 so it will need to adapt to the new endpoints and new data returned.
+
+First will be the streaming endpoints in November, so expect more breaking changes around those dates.
+
+I would also like to provide some classes to make it easier for dependencies and the package itself to handle the outputs.
+Specifically I would like to provide functions to make it easier to reply to previous tweets, 
+provide shortcuts to find out some nested information and make it easier to handle.
+
+
+## Conclusions
+
+While I made many breaking changes I hope this helps both users and the maintainers.
+
+Feel free to ask on the [rOpenSci community](https://discuss.ropensci.org/tag/rtweet) if you have questions about the transition or find something amiss. 
+Probably I overlooked something, let me know and I'll try to fix it or answer.
+
+In case you find a bug, check the open issues and if not reported previously open an [issue on github](https://github.com/ropensci/rtweet/issue/). 
+Don't forget to make a [reprex](https://cran.r-project.org/web/packages/reprex/readme/README.html) and if possible provide the id of the tweets you are having trouble or when I came to look at it I might not be able to find them.
+
+Happy tweeting!
+
+
+### Reproducibility
+
+<details>
+```{r reproducibility, echo = FALSE}
+## Reproducibility info
+options(width = 120)
+sessioninfo::session_info()
+```
+</details>

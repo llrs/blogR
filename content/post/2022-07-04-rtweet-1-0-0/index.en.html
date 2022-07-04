@@ -1,0 +1,246 @@
+---
+title: Upgrading rtweet to 1.0.0
+author: Lluís Revilla Sancho
+date: '2022-07-04'
+slug: rtweet-1-0-0
+categories:
+  - Bioconductor
+tags:
+  - r
+  - rtweet
+  - packages
+authors:
+  - admin
+description: ''
+draft: no
+editor_options:
+  chunk_output_type: console
+featured: no
+image:
+  caption: ''
+  focal_point: ''
+subtitle: ''
+summary: ''
+---
+
+
+
+<p>In this post I will provide some examples of what has changed between rtweet 0.7.0 and rtweet 1.0.0.
+I hope both the changes and this guide will help all users.
+I won’t provide a full list of changes but you can consult it on the <a href="https://docs.ropensci.org/rtweet/news/index.html">NEWS</a>.</p>
+<div id="big-breaking-change" class="section level2">
+<h2>Big breaking change</h2>
+<div id="hello" class="r" style="background: orange;">
+<p>Hello <strong>world</strong>!</p>
+</div>
+<div id="more-consistent-output" class="section level3">
+<h3>More consistent output</h3>
+<p>This is probably what will affect more users: All functions that return data about tweets return the different columns.</p>
+<pre class="r"><code>&gt; tweets &lt;- search_tweets(&quot;weather&quot;)
+&gt; colnames(tweets)
+ [1] &quot;user_id&quot;                 &quot;status_id&quot;              
+ [3] &quot;created_at&quot;              &quot;screen_name&quot;            
+ [5] &quot;text&quot;                    &quot;source&quot;                 
+ [7] &quot;display_text_width&quot;      &quot;reply_to_status_id&quot;     
+ [9] &quot;reply_to_user_id&quot;        &quot;reply_to_screen_name&quot;   
+[11] &quot;is_quote&quot;                &quot;is_retweet&quot;             
+[13] &quot;favorite_count&quot;          &quot;retweet_count&quot;          
+[15] &quot;quote_count&quot;             &quot;reply_count&quot;            
+[17] &quot;hashtags&quot;                &quot;symbols&quot;                
+[19] &quot;urls_url&quot;                &quot;urls_t.co&quot;              
+[21] &quot;urls_expanded_url&quot;       &quot;media_url&quot;              
+[23] &quot;media_t.co&quot;              &quot;media_expanded_url&quot;     
+[25] &quot;media_type&quot;              &quot;ext_media_url&quot;          
+[27] &quot;ext_media_t.co&quot;          &quot;ext_media_expanded_url&quot; 
+[29] &quot;ext_media_type&quot;          &quot;mentions_user_id&quot;       
+[31] &quot;mentions_screen_name&quot;    &quot;lang&quot;                   
+[33] &quot;quoted_status_id&quot;        &quot;quoted_text&quot;            
+[35] &quot;quoted_created_at&quot;       &quot;quoted_source&quot;          
+[37] &quot;quoted_favorite_count&quot;   &quot;quoted_retweet_count&quot;   
+[39] &quot;quoted_user_id&quot;          &quot;quoted_screen_name&quot;     
+[41] &quot;quoted_name&quot;             &quot;quoted_followers_count&quot; 
+[43] &quot;quoted_friends_count&quot;    &quot;quoted_statuses_count&quot;  
+[45] &quot;quoted_location&quot;         &quot;quoted_description&quot;     
+[47] &quot;quoted_verified&quot;         &quot;retweet_status_id&quot;      
+[49] &quot;retweet_text&quot;            &quot;retweet_created_at&quot;     
+[51] &quot;retweet_source&quot;          &quot;retweet_favorite_count&quot; 
+[53] &quot;retweet_retweet_count&quot;   &quot;retweet_user_id&quot;        
+[55] &quot;retweet_screen_name&quot;     &quot;retweet_name&quot;           
+[57] &quot;retweet_followers_count&quot; &quot;retweet_friends_count&quot;  
+[59] &quot;retweet_statuses_count&quot;  &quot;retweet_location&quot;       
+[61] &quot;retweet_description&quot;     &quot;retweet_verified&quot;       
+[63] &quot;place_url&quot;               &quot;place_name&quot;             
+[65] &quot;place_full_name&quot;         &quot;place_type&quot;             
+[67] &quot;country&quot;                 &quot;country_code&quot;           
+[69] &quot;geo_coords&quot;              &quot;coords_coords&quot;          
+[71] &quot;bbox_coords&quot;             &quot;status_url&quot;             
+[73] &quot;name&quot;                    &quot;location&quot;               
+[75] &quot;description&quot;             &quot;url&quot;                    
+[77] &quot;protected&quot;               &quot;followers_count&quot;        
+[79] &quot;friends_count&quot;           &quot;listed_count&quot;           
+[81] &quot;statuses_count&quot;          &quot;favourites_count&quot;       
+[83] &quot;account_created_at&quot;      &quot;verified&quot;               
+[85] &quot;profile_url&quot;             &quot;profile_expanded_url&quot;   
+[87] &quot;account_lang&quot;            &quot;profile_banner_url&quot;     
+[89] &quot;profile_background_url&quot;  &quot;profile_image_url&quot;   </code></pre>
+<div id="hello2" class="r" style="background: green;">
+<p>hi</p>
+</div>
+<pre class="r"><code>&gt; tweets &lt;- search_tweets(&quot;weather&quot;)
+&gt; colnames(tweets)
+ [1] &quot;created_at&quot;                    &quot;id&quot;                           
+ [3] &quot;id_str&quot;                        &quot;full_text&quot;                    
+ [5] &quot;truncated&quot;                     &quot;display_text_range&quot;           
+ [7] &quot;entities&quot;                      &quot;metadata&quot;                     
+ [9] &quot;source&quot;                        &quot;in_reply_to_status_id&quot;        
+[11] &quot;in_reply_to_status_id_str&quot;     &quot;in_reply_to_user_id&quot;          
+[13] &quot;in_reply_to_user_id_str&quot;       &quot;in_reply_to_screen_name&quot;      
+[15] &quot;geo&quot;                           &quot;coordinates&quot;                  
+[17] &quot;place&quot;                         &quot;contributors&quot;                 
+[19] &quot;is_quote_status&quot;               &quot;retweet_count&quot;                
+[21] &quot;favorite_count&quot;                &quot;favorited&quot;                    
+[23] &quot;retweeted&quot;                     &quot;lang&quot;                         
+[25] &quot;quoted_status_id&quot;              &quot;quoted_status_id_str&quot;         
+[27] &quot;quoted_status&quot;                 &quot;possibly_sensitive&quot;           
+[29] &quot;retweeted_status&quot;              &quot;text&quot;                         
+[31] &quot;favorited_by&quot;                  &quot;scopes&quot;                       
+[33] &quot;display_text_width&quot;            &quot;quoted_status_permalink&quot;      
+[35] &quot;quote_count&quot;                   &quot;timestamp_ms&quot;                 
+[37] &quot;reply_count&quot;                   &quot;filter_level&quot;                 
+[39] &quot;query&quot;                         &quot;withheld_scope&quot;               
+[41] &quot;withheld_copyright&quot;            &quot;withheld_in_countries&quot;        
+[43] &quot;possibly_sensitive_appealable&quot;</code></pre>
+<p>rtweet now minimizes the processing of tweets and only returns the same data as provided.
+However, due to the nested nature of the data returned some fields are now nested inside other or not provided by default.
+At the same time it provides with new information fields about each tweet like the <code>withheld_*</code> columns.</p>
+<p>If you scanned through the text column fields you might have noticed that there aren’t <code>"user_id"</code> or <code>"screen_name"</code> columns returned: users data is now provided different.
+To access users data you need to use <code>users_data()</code> (and if you look up for a user and want to know about their tweets you can use <code>tweets_data()</code>).</p>
+<pre class="r"><code>&gt; colnames(users_data(tweets))
+ [1] &quot;id&quot;                      &quot;id_str&quot;                 
+ [3] &quot;name&quot;                    &quot;screen_name&quot;            
+ [5] &quot;location&quot;                &quot;description&quot;            
+ [7] &quot;url&quot;                     &quot;protected&quot;              
+ [9] &quot;followers_count&quot;         &quot;friends_count&quot;          
+[11] &quot;listed_count&quot;            &quot;created_at&quot;             
+[13] &quot;favourites_count&quot;        &quot;verified&quot;               
+[15] &quot;statuses_count&quot;          &quot;profile_image_url_https&quot;
+[17] &quot;profile_banner_url&quot;      &quot;default_profile&quot;        
+[19] &quot;default_profile_image&quot;   &quot;withheld_in_countries&quot;  
+[21] &quot;derived&quot;                 &quot;withheld_scope&quot;         
+[23] &quot;entities&quot; </code></pre>
+<p>Even then there is more nested data in the entities column (which is present in both tweets and users!).</p>
+<pre class="r"><code>&gt; names(tweets$entities[[1]])
+[1] &quot;hashtags&quot;      &quot;symbols&quot;       &quot;user_mentions&quot; &quot;urls&quot;         
+[5] &quot;media&quot; </code></pre>
+</div>
+<div id="more-consistent-interface" class="section level3">
+<h3>More consistent interface</h3>
+<p>All paginated functions that don’t return tweets now use a consistent pagination interface (except the premium endpoints).
+They all store the “next cursor” in an <code>rtweet_cursor</code> attribute, which will be automatically retrieved when you use the <code>cursor</code> argument.
+They all support <code>max_id</code> and <code>since_id</code> to find earlier and later tweets respectively, as well as <code>retryonratelimit</code> to wait as long as needed when rate limited</p>
+<p><code>get_friends()</code> and <code>get_followers()</code></p>
+</div>
+<div id="saving-data" class="section level3">
+<h3>Saving data</h3>
+<p>An unexpected consequence of returning more data as in the API is that it is now harder to save it in a tabular format.
+For instance one tweet might have one media, two user mention and three hasthags.
+There isn’t a simple way to saved it in a single row uniformly for all tweets.</p>
+<p>This resulted in deprecating <code>save_as_csv</code>, <code>read_twitter_csv</code> and related functions.
+They will be removed in later versions but at the moment it is not possible to use <code>save_as_csv</code> with the new data structure and it won’t be possible to load it from a csv.
+There are other packages that provide similar functionality such as <a href="https://docs.ropensci.org/tidytags/">{tidytags}</a> and users should decide how to use it.</p>
+</div>
+</div>
+<div id="other-breaking-changes" class="section level2">
+<h2>Other breaking changes</h2>
+<p>If you tweet via <code>post_tweet()</code> and add an image, gif or video you’ll need to provide the media alternative text.</p>
+<p><code>tweet_shot()</code> has been hard deprecated as it did no longer work correctly.
+There might be possible to bring it back, but I don’t understand the code provided and can’t maintain it (see the long discussion about it <a href="https://github.com/ropensci/rtweet/issues/458">here</a>).</p>
+<p>emojis, langs and stopwordslangs data provided with rtweet is no longer available.
+I don’t think it is the right place to provide this kind of data and I don’t want to be responsible to update them.</p>
+<p>The functions like <code>suggested_*()</code> have been removed as they didn’t work since 2019.</p>
+</div>
+<div id="easier-authentication" class="section level2">
+<h2>Easier authentication</h2>
+<p>If you just want to test the package use the default authentication <code>auth_setup_default()</code> that comes with rtweet.</p>
+<p>If you want to use the package more than 1 day, set up your own token via <code>rtweet_user()</code>.
+It will open a window to authenticate via the account you have opened in your default browser.
+This authentication won’t allow you to do everything but for most use cases it will work.</p>
+<p>If you want to make a heavier usage of the package I recommend to register yourself as developer and use one of the following two mechanisms for different use cases:</p>
+<ul>
+<li>Collect data and analyze: <code>rtweet_app()</code>.</li>
+<li>Set up a bot: <code>rtweet_bot()</code></li>
+</ul>
+<p>Find more information on the <a href="https://docs.ropensci.org/rtweet/articles/auth.html">Authentication with rtweet vignette</a>.</p>
+<p>Previously rtweet saved each token created, if you don’t use the default token you’ll need to save them manually via <code>save_as(token, "my_app")</code>.
+Bonus, if you name your token as default (<code>save_as(token, "default")</code>) it will be used since loading the library.</p>
+<p>To check which credentials you have stored use <code>auth_list()</code> and load them via <code>auth_as("my_app")</code>.
+All the rtweet functions will use the latest token loaded with <code>auth_as</code> (unless you manually specify one when calling it).
+If you are not sure which token you are using you can use <code>auth_get()</code> it will return the token in use, list them or ask you to authenticate.</p>
+<p>If you have previous tokens saved or problems identifying which token is which use <code>auth_sitrep()</code>.
+This will provides clues to which tokens might be duplicated or misconfigurated but it won’t check if they work.</p>
+</div>
+<div id="future" class="section level2">
+<h2>Future</h2>
+<p>Twitter API v2 is being released and soon it will replace API v1.
+rtweet uses API v1 so it will need to adapt to the new endpoints and new data returned.</p>
+<p>First will be the streaming endpoints in November, so expect more breaking changes around those dates.</p>
+<p>I would also like to provide some classes to make it easier for dependencies and the package itself to handle the outputs.
+Specifically I would like to provide functions to make it easier to reply to previous tweets,
+provide shortcuts to find out some nested information and make it easier to handle.</p>
+</div>
+<div id="conclusions" class="section level2">
+<h2>Conclusions</h2>
+<p>While I made many breaking changes I hope this helps both users and the maintainers.</p>
+<p>Feel free to ask on the <a href="https://discuss.ropensci.org/tag/rtweet">rOpenSci community</a> if you have questions about the transition or find something amiss.
+Probably I overlooked something, let me know and I’ll try to fix it or answer.</p>
+<p>In case you find a bug, check the open issues and if not reported previously open an <a href="https://github.com/ropensci/rtweet/issue/">issue on github</a>.
+Don’t forget to make a <a href="https://cran.r-project.org/web/packages/reprex/readme/README.html">reprex</a> and if possible provide the id of the tweets you are having trouble or when I came to look at it I might not be able to find them.</p>
+<p>Happy tweeting!</p>
+<div id="reproducibility" class="section level3">
+<h3>Reproducibility</h3>
+<details>
+<pre><code>## ─ Session info ───────────────────────────────────────────────────────────────────────────────────────────────────────
+##  setting  value
+##  version  R version 4.2.1 (2022-06-23)
+##  os       Ubuntu 20.04.4 LTS
+##  system   x86_64, linux-gnu
+##  ui       X11
+##  language (EN)
+##  collate  en_US.UTF-8
+##  ctype    en_US.UTF-8
+##  tz       Europe/Madrid
+##  date     2022-07-04
+##  pandoc   2.17.1.1 @ /usr/lib/rstudio/bin/quarto/bin/ (via rmarkdown)
+## 
+## ─ Packages ───────────────────────────────────────────────────────────────────────────────────────────────────────────
+##  package     * version date (UTC) lib source
+##  blogdown      1.10    2022-05-10 [1] RSPM (R 4.2.0)
+##  bookdown      0.27    2022-06-14 [1] RSPM (R 4.2.0)
+##  bslib         0.3.1   2021-10-06 [1] RSPM (R 4.2.0)
+##  cli           3.3.0   2022-04-25 [1] RSPM (R 4.2.0)
+##  digest        0.6.29  2021-12-01 [1] RSPM (R 4.2.0)
+##  evaluate      0.15    2022-02-18 [1] RSPM (R 4.2.0)
+##  fastmap       1.1.0   2021-01-25 [1] RSPM (R 4.2.0)
+##  htmltools     0.5.2   2021-08-25 [1] RSPM (R 4.2.0)
+##  jquerylib     0.1.4   2021-04-26 [1] RSPM (R 4.2.0)
+##  jsonlite      1.8.0   2022-02-22 [1] RSPM (R 4.2.0)
+##  knitr         1.39    2022-04-26 [1] RSPM (R 4.2.0)
+##  magrittr      2.0.3   2022-03-30 [1] RSPM (R 4.2.0)
+##  R6            2.5.1   2021-08-19 [1] RSPM (R 4.2.0)
+##  rlang         1.0.3   2022-06-27 [1] RSPM (R 4.2.0)
+##  rmarkdown     2.14    2022-04-25 [1] RSPM (R 4.2.0)
+##  rstudioapi    0.13    2020-11-12 [1] RSPM (R 4.2.0)
+##  sass          0.4.1   2022-03-23 [1] RSPM (R 4.2.0)
+##  sessioninfo   1.2.2   2021-12-06 [1] RSPM (R 4.2.0)
+##  stringi       1.7.6   2021-11-29 [1] RSPM (R 4.2.0)
+##  stringr       1.4.0   2019-02-10 [1] RSPM (R 4.2.0)
+##  xfun          0.31    2022-05-10 [1] RSPM (R 4.2.0)
+##  yaml          2.3.5   2022-02-21 [1] RSPM (R 4.2.0)
+## 
+##  [1] /usr/lib/R/site-library
+##  [2] /usr/lib/R/library
+## 
+## ──────────────────────────────────────────────────────────────────────────────────────────────────────────────────────</code></pre>
+</details>
+</div>
+</div>
