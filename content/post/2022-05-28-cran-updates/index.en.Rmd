@@ -458,7 +458,7 @@ count(all_packages2, package, sort = TRUE, name = "Releases") |>
 
 Surprisingly there are packages with more than 200 versions on CRAN!
 
-And which CRAN amdin has been moving more packages:
+And which CRAN admin has been moving more packages:
 
 ```{r archives-managers}
 count(all_packages2, uname, sort = TRUE) |> 
