@@ -28,6 +28,7 @@ theme = "hugo-academic"
 # Get last modified date for content from Git?
 enableGitInfo = false
 
+
 # Default language to use (if you setup multilingual support)
 defaultContentLanguage = "en"
 hasCJKLanguage = false  # Set `true` for Chinese/Japanese/Korean languages.
@@ -93,11 +94,10 @@ preserveTaxonomyNames = true
     startLevel = 2
     endLevel = 3
 
-#[params]
-
-    # Custom favicon param. See layouts/partials/favicon.html for use
-    # Add favicon.png to static/ and it will be copied to public/ on build
-    #favicon = "/favicon-32x32.png"
+[params]
+  # Custom favicon param. See layouts/partials/favicon.html for use |>
+  # Add favicon.png to static/ and it will be copied to public/ on build
+  favicon = "icon.png"
 
 # Following https://gohugo.io/templates/sitemap-template/
 # [sitemap]
