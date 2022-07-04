@@ -5,11 +5,11 @@ subtitle = ""
 # Add a summary to display on homepage (optional).
 summary = ""
 
-date = {{ .Date }}
+date = "\"`r Sys.Date()`\""
 draft = false
 
 # Authors. Comma separated list, e.g. `["Bob Smith", "David Jones"]`.
-authors = [admin]
+authors = ["admin"]
 description = ""
 
 # Is this a featured post? (true/false)
