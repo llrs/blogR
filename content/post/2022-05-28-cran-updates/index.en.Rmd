@@ -59,7 +59,7 @@ packages[1, 1:10]
 ```
 
 Packages has similar information as `available.packages()` but with many more columns with published date, reverse dependencies, X-CRAN-Comment, who packaged...
-Also note that all this packages are not filtered to match R version, OS_type, subarch and duplicates (I learned about this filtering while reading the great documentation of available.packages and also finding some mentions online). 
+Also note that all these packages are not filtered to match R version, OS_type, subarch and duplicates (I learned about this filtering while reading the great documentation of available.packages and also finding some mentions online). 
 
 ### current file
 
