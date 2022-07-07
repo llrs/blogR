@@ -33,21 +33,21 @@ I won't provide a full list of changes but you can consult it on the [NEWS](http
 
 ## Big breaking change
 
-::: {#hello .r style="background: orange;"}
-Hello **world**!
+::: {#hello .rare-block}
+Hello **world**!!
 :::
 
 
 ### More consistent output
 
-This is probably what will affect more users: All functions that return data about tweets return the different columns. 
+This is probably what will affect more users: All functions that return data about tweets return the same columns.
 
 ```r
 > tweets <- search_tweets("weather")
 > colnames(tweets)
  [1] "user_id"                 "status_id"              
  [3] "created_at"              "screen_name"            
- [5] "text"                    "source"                 
+ [5] "text"                    "source"
  [7] "display_text_width"      "reply_to_status_id"     
  [9] "reply_to_user_id"        "reply_to_screen_name"   
 [11] "is_quote"                "is_retweet"             
