@@ -1,7 +1,7 @@
 ---
 title: Creating an RSS feed for r-bloggers for my blogdown
 author: Lluís Revilla Sancho
-date: '2022-12-30'
+date: '2021-12-30'
 slug: r-blogger-blogdown
 categories:
   - r
