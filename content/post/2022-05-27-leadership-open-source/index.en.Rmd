@@ -8,7 +8,8 @@ categories:
 tags:
   - concepts
   - OSS
-authors: [admin]
+authors: 
+  - admin
 description: 'Some comments on two imporant in OSS discussions'
 draft: no
 editor_options:
