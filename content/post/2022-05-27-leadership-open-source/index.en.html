@@ -1,0 +1,73 @@
+---
+title: Leadership in open source projects
+author: Lluís Revilla Sancho
+date: '2022-05-27'
+slug: leadership-open-source
+categories:
+  - OSS
+tags:
+  - concepts
+  - OSS
+authors: 
+  - admin
+description: 'Some comments on two imporant in OSS discussions'
+draft: no
+editor_options:
+  chunk_output_type: console
+featured: no
+image:
+  caption: ''
+  focal_point: ''
+subtitle: ''
+summary: ''
+---
+
+
+
+<p>This is the second part of the previous post about <a href="https://llrs.dev/post/2022/03/16/concepts-around-open-source-free-software/">concepts around open source/free software</a>.</p>
+<p>Since last book, I also read <a href="https://un.curl.dev">Uncurled</a> which recommended <a href="https://www.amazon.com/Working-Public-Making-Maintenance-Software/dp/0578675862">“The Making and maintenance of open source software”</a> (I will short it to MMOSS) and “<a href="https://producingoss.com/">Producing Open Source Software</a>” (POSS), which provide first hand experiences about how those maintainers handled different projects.</p>
+<p>This post is about projects, growth and management of the project (I don’t want to make them about R but I will also use my experience within R to reflect on these ideas).</p>
+<div id="projects" class="section level2">
+<h2>Projects</h2>
+<p>It is common to say refer to open source as projects.
+While it is true that open source/free software is a project with limited resources it doesn’t have a fixed end date.
+I don’t think they fit the criteria of the <a href="https://en.wikipedia.org/wiki/Project_Management_Body_of_Knowledge" title="Project Management Body of Knowledge">PMBOK</a>.</p>
+<p>Software “projects” run from the usefulness for the maintainer and the feedback received.
+If a maintainer does no longer use a piece of software and doesn’t receive any feedback they might choose to not update the public version.
+The software is still up there but the valuable resource (maintenance) is no longer there.</p>
+<p>This explains why it is so common to look up for activity on a “project”.
+If a developer/maintainer hasn’t committed or reacted in a long time the “project” is no longer active.
+The code might still be used, it might have more users, but it is no longer a project.</p>
+<p>Another characteristics of projects is that there is a leadership.
+It might be a team or an individual like a benevolent dictator for life as explained by POSS.
+This leadership most important role is communication.
+It is not enough to have commit access or a foundation but to communicate and steward the community towards a direction or following some guidelines.</p>
+<p>This communication is usually done by NEWS and changelog, in bug reports feedback on mailing list (and by the lack of communication too).</p>
+<p>These leaders are those who can steward with contributor growth, support, ease of participation and technical improvements.
+Particularly POSS mentions the distinction between commit access and maintainer; also considering maintainers those that organize conferences, set up infrastructure and participate even if not committing code.</p>
+<p>All the activities of the maintainers (and others) help with the project status and growth.</p>
+</div>
+<div id="growth" class="section level2">
+<h2>Growth?</h2>
+<p>There seems to be in the MMOSS book a tendency to only mention growth, which is very hard to measure.
+Just fo give an example focusing on users: Is LAPACK user base growing or not?
+I would say it is, because R uses it and more people is using R.
+But there isn’t, to my knowledge, a growth on users claiming to be experts on LAPACK, although there are several LAPACK optimizations.</p>
+<p>MMOSS mentions that the (long term) contributors tend to lurk and just chime in when they can propose something of value or given the room.
+This is echoed by POSS, which even says that one of the roles of maintainers is to encourage other contributors to become maintainers.</p>
+<p>Casual contributors post when they have an issue/bug while using it but they are not interested on the long term health of the software.
+Presumably on the classification on table 1 of the <a href="https://llrs.dev/post/2022/03/16/concepts-around-open-source-free-software/">previous post</a> refers to both.
+However, as acknowledge by the author it is hard to measure users and contributors.</p>
+<p>The books always focus on the very positive outcome growth, not stagnation or reduction of users/contributors.
+I think it is important to acknowledge this happens too and find the causes to avoid them.</p>
+<p>On python the support of python 2.7 had to be extended multiple times due to slow uptake of python 3.x.
+It might have similar effects than the upgrade from perl4 to perl5, which (besides many other reasons) left perl outside the curriculum of the universities, so without many new users.</p>
+<p>Probably the best indicator is the relationship between users, contributors and maintainers.
+If these are three different groups of people, there are more users than contributors and less maintainers while the dynamics are good and the software is in good healthy status.</p>
+</div>
+<div id="end" class="section level2">
+<h2>End</h2>
+<p>I haven’t touch much the status of code but this is also important it can be status as in quality of code and status of the software and community.
+The first is easier to measure and compare while the second one is much harder, more subjective and thus less general.</p>
+<p>Whatever the status of a software is don’t forget to be nice to users, contributors and help them become more familiar with the code in a friendly manner.</p>
+</div>
