@@ -179,7 +179,7 @@ While it is version compatible it has also some new functions that are important
 <p>If you just want to test the package use the default authentication <code>auth_setup_default()</code> that comes with rtweet.
 If you use it for one or two days you won’t notice any problem.</p>
 <p>If you want to use the package more than a couple of days, I recommend you to set up your own token via <code>rtweet_user()</code>.
-It will open a window to authenticate via the account you have opened in your default browser.
+It will open a window to authenticate via the authenticated account in your default browser.
 This authentication won’t allow you to do everything but it will avoid running out of requests and being rate-limited.</p>
 <p>If you want to make a heavier usage of the package I recommend to register yourself as developer and use one of the following two mechanisms for different use cases:</p>
 <ul>
@@ -187,13 +187,15 @@ This authentication won’t allow you to do everything but it will avoid running
 <li>Set up a bot: <code>rtweet_bot()</code></li>
 </ul>
 <p>Find more information on the <a href="https://docs.ropensci.org/rtweet/articles/auth.html">Authentication with rtweet vignette</a>.</p>
-<p>Previously rtweet saved each token created, if you don’t use the default token you’ll need to save them manually via <code>save_as(token, "my_app")</code>.
-Bonus, if you name your token as default (<code>save_as(token, "default")</code>) it will be used since loading the library.</p>
+<p>Previously rtweet saved each token created, if you don’t use the default token you’ll need to save them manually via <code>auth_save(token, "my_app")</code>.
+Bonus, if you name your token as default (<code>auth_save(token, "default")</code>) it will be used since loading the library.</p>
+<p>The tokens are now not saved on your home directory but via <code>tools::R_user_dir("rtweet", "config")</code>.
+If you have previous tokens saved or problems identifying which token is which use <code>auth_sitrep()</code>.
+This will provides clues to which tokens might be duplicated or misconfigurated but it won’t check if they work.
+It will also automatically move your tokens to the new path.</p>
 <p>To check which credentials you have stored use <code>auth_list()</code> and load them via <code>auth_as("my_app")</code>.
 All the rtweet functions will use the latest token loaded with <code>auth_as</code> (unless you manually specify one when calling it).
 If you are not sure which token you are using you can use <code>auth_get()</code> it will return the token in use, list them or ask you to authenticate.</p>
-<p>If you have previous tokens saved or problems identifying which token is which use <code>auth_sitrep()</code>.
-This will provides clues to which tokens might be duplicated or misconfigurated but it won’t check if they work.</p>
 </div>
 <div id="other-changes" class="section level2">
 <h2><strong>Other changes</strong></h2>

@@ -225,7 +225,7 @@ If you just want to test the package use the default authentication `auth_setup_
 If you use it for one or two days you won't notice any problem.
 
 If you want to use the package more than a couple of days, I recommend you to set up your own token via `rtweet_user()`.
-It will open a window to authenticate via the account you have opened in your default browser.
+It will open a window to authenticate via the authenticated account in your default browser.
 This authentication won't allow you to do everything but it will avoid running out of requests and being rate-limited. 
 
 If you want to make a heavier usage of the package I recommend to register yourself as developer and use one of the following two mechanisms for different use cases:
@@ -235,15 +235,20 @@ If you want to make a heavier usage of the package I recommend to register yours
 
 Find more information on the [Authentication with rtweet vignette](https://docs.ropensci.org/rtweet/articles/auth.html).
 
-Previously rtweet saved each token created, if you don't use the default token you'll need to save them manually via `save_as(token, "my_app")`. 
-Bonus, if you name your token as default (`save_as(token, "default")`) it will be used since loading the library.
+Previously rtweet saved each token created, if you don't use the default token you'll need to save them manually via `auth_save(token, "my_app")`. 
+Bonus, if you name your token as default (`auth_save(token, "default")`) it will be used since loading the library.
+
+The tokens are now not saved on your home directory but via `tools::R_user_dir("rtweet", "config")`. 
+If you have previous tokens saved or problems identifying which token is which use `auth_sitrep()`.
+This will provides clues to which tokens might be duplicated or misconfigurated but it won't check if they work. 
+It will also automatically move your tokens to the new path.
 
 To check which credentials you have stored use `auth_list()` and load them via `auth_as("my_app")`.
 All the rtweet functions will use the latest token loaded with `auth_as` (unless you manually specify one when calling it).
 If you are not sure which token you are using you can use `auth_get()` it will return the token in use, list them or ask you to authenticate.
 
-If you have previous tokens saved or problems identifying which token is which use `auth_sitrep()`.
-This will provides clues to which tokens might be duplicated or misconfigurated but it won't check if they work. 
+
+
 
 ## **Other changes**
 
