@@ -36,11 +36,7 @@ I won't provide a full list of changes but you can consult it on the [NEWS](http
 ### More consistent output
 
 This is probably what will affect more users.
-All functions that return data about tweets return the same columns.
-Specifically these:`get_favorites()`, `get_favorites_user()`, `get_mentions()`,
-`get_my_timeline()`, `get_retweets()`, `get_timeline()`, `get_timeline_user()`, 
-`lists_statuses()`, `lookup_statuses()`, `lookup_tweets()`, `search_30day()`, 
-`search_fullarchive()`, `search_tweets()`, `tweet_shot()` and `tweet_threading()`.
+All functions that return data about tweets[^1] return the same columns.
 
 For example if we search some tweets we'll get the following columns:
 
@@ -209,7 +205,7 @@ If you tweet via `post_tweet()` and add an image, gif or video you'll need to pr
 Without `media_alt_text` it will not allow you to post.
 
 `tweet_shot()` has been deprecated as it did no longer work correctly. 
-There might be possible to bring it back, but I don't understand the code provided and can't maintain it (see the long discussion about it [here](https://github.com/ropensci/rtweet/issues/458)). 
+There might be possible to bring it back, but I don't understand the code provided and can't maintain it (see the long discussion about it [on the issue](https://github.com/ropensci/rtweet/issues/458)). 
   
 emojis, langs and stopwordslangs data provided with rtweet is no longer available.
 I don't think it is the right place to provide this kind of data and I don't want to be responsible to update them. 
@@ -218,7 +214,7 @@ The functions like `suggested_*()` have been removed as they didn't work since 2
 
 ## **Easier authentication**
 
-As part of this release there have been a big rewritte of the authentication protocol.
+As part of this release there have been a big rewrite of the authentication protocol.
 While it is version compatible it has also some new functions that are important as these functions make it easier for different use cases to work with rtweet and the  API.
 
 If you just want to test the package use the default authentication `auth_setup_default()` that comes with rtweet.
@@ -246,9 +242,6 @@ It will also automatically move your tokens to the new path.
 To check which credentials you have stored use `auth_list()` and load them via `auth_as("my_app")`.
 All the rtweet functions will use the latest token loaded with `auth_as` (unless you manually specify one when calling it).
 If you are not sure which token you are using you can use `auth_get()` it will return the token in use, list them or ask you to authenticate.
-
-
-
 
 ## **Other changes**
 
@@ -305,10 +298,15 @@ It is also possible that I overlooked something and I thought the code is workin
 For example, after several months of changing the way the API is parsed several users found it wasn't handling some elements. 
 Let me know of such or similar cases and I'll try to fix it.
 
-In case you find a bug, check the open issues and if not reported previously open an [issue on github](https://github.com/ropensci/rtweet/issue/). 
+In case you find a bug, check the open issues and if not reported previously open an [issue on github](https://github.com/ropensci/rtweet/issues/). 
 Don't forget to make a [reprex](https://cran.r-project.org/web/packages/reprex/readme/README.html) and if possible provide the id of the tweets you are having trouble with.
 In some occasions when I came to look at a bug I couldn't reproduce it as I wasn't finding which tweet caused the error. 
 
 Finally, you can read the whole [NEWS online](https://docs.ropensci.org/rtweet/news/index.html) and the examples.
 
 Happy tweeting!
+
+[^1]: Specifically these: `get_favorites()`, `get_favorites_user()`, `get_mentions()`,
+`get_my_timeline()`, `get_retweets()`, `get_timeline()`, `get_timeline_user()`, 
+`lists_statuses()`, `lookup_statuses()`, `lookup_tweets()`, `search_30day()`, 
+`search_fullarchive()`, `search_tweets()`, `tweet_shot()` and `tweet_threading()`.
