@@ -1,5 +1,5 @@
 ---
-title: Upgrading rtweet to 1.0.0
+title: Upgrading rtweet to 1.0.2
 author: Lluís Revilla Sancho
 date: '2022-07-04'
 slug: rtweet-1-0-0
@@ -9,6 +9,7 @@ tags:
   - r
   - rtweet
   - packages
+  - api
 authors:
   - admin
 description: ''
@@ -25,19 +26,15 @@ summary: ''
 
 
 
-<p>In this post I will provide some examples of what has changed between rtweet 0.7.0 and rtweet 1.0.0.
+<p>In this post I will provide some examples of what has changed between rtweet 0.7.0 and rtweet 1.0.2.
 I hope both the changes and this guide will help all users.
-I won’t provide a full list of changes but you can consult it on the <a href="https://docs.ropensci.org/rtweet/news/index.html">NEWS</a>.</p>
-<div id="big-breaking-change" class="section level2">
-<h2><strong>Big breaking change</strong></h2>
+I highlight the most important and interesting changes in this blog post, and for a full list of changes you can consult it on the <a href="https://docs.ropensci.org/rtweet/news/index.html">NEWS</a>.</p>
+<div id="big-breaking-changes" class="section level2">
+<h2><strong>Big breaking changes</strong></h2>
 <div id="more-consistent-output" class="section level3">
 <h3>More consistent output</h3>
-<p>This is probably what will affect more users.
-All functions that return data about tweets return the same columns.
-Specifically these:<code>get_favorites()</code>, <code>get_favorites_user()</code>, <code>get_mentions()</code>,
-<code>get_my_timeline()</code>, <code>get_retweets()</code>, <code>get_timeline()</code>, <code>get_timeline_user()</code>,
-<code>lists_statuses()</code>, <code>lookup_statuses()</code>, <code>lookup_tweets()</code>, <code>search_30day()</code>,
-<code>search_fullarchive()</code>, <code>search_tweets()</code>, <code>tweet_shot()</code> and <code>tweet_threading()</code>.</p>
+<p>This is probably what will affect the most users.
+All functions that return data about tweets<a href="#fn1" class="footnote-ref" id="fnref1"><sup>1</sup></a> now return the same columns.</p>
 <p>For example if we search some tweets we’ll get the following columns:</p>
 <pre class="r"><code>&gt; tweets &lt;- search_tweets(&quot;weather&quot;)
 &gt; colnames(tweets)
@@ -63,11 +60,12 @@ Specifically these:<code>get_favorites()</code>, <code>get_favorites_user()</cod
 [39] &quot;query&quot;                         &quot;withheld_scope&quot;               
 [41] &quot;withheld_copyright&quot;            &quot;withheld_in_countries&quot;        
 [43] &quot;possibly_sensitive_appealable&quot;</code></pre>
-<p>rtweet now minimizes the processing of tweets and only returns the same data as provided by the API but making it easier to handle by R.
+<p>rtweet now minimizes the processing of tweets and only returns the same data as provided by the API while making it easier to handle by R.
 However, to preserve the nested nature of the data returned some fields are now nested inside other.
-Some columns previously provided by rtweet are now not returned.
-At the same time it provides with new columns about each tweet like the <code>withheld_*</code> columns.</p>
-<p>If you scanned through the columns you might have noticed that there aren’t <code>"user_id"</code> or <code>"screen_name"</code> columns returned.
+For example, previously fields <code>"bbpx_coords"</code>, <code>"geo_coords"</code>, <code>"coords_coords"</code> were returned as separate columns, but they are now nested inside <code>"place"</code>, <code>"coordinates"</code> or <code>"geo"</code> depending where they are provided.
+Some columns previously calculated by rtweet are now not returned, like <code>"rtweet_favorite_count"</code>.
+At the same time it provides with new columns about each tweet like the <code>"withheld_*"</code> columns.</p>
+<p>If you scanned through the columns you might have noticed that columns <code>"user_id"</code> and <code>"screen_name"</code> are no longer returned.
 This data is still returned by the API but it is now made available to the rtweet users via <code>users_data()</code>:</p>
 <pre class="r"><code>&gt; colnames(users_data(tweets))
  [1] &quot;id&quot;                      &quot;id_str&quot;                 
@@ -82,12 +80,13 @@ This data is still returned by the API but it is now made available to the rtwee
 [19] &quot;default_profile_image&quot;   &quot;withheld_in_countries&quot;  
 [21] &quot;derived&quot;                 &quot;withheld_scope&quot;         
 [23] &quot;entities&quot; </code></pre>
-<p>This should help finding the right columns of data but if you don’t find what you are looking for it might be nested inside a column.
-For example the entities column (which is present in both tweets and users!) have the following useful columns:</p>
+<p>This blog post should help you find the right data columns, but if you don’t find what you are looking for it might be nested inside a column.<br />
+Try using <code>dplyr::glimpse()</code> to explore the data and locate nested columns.
+For example the entities column (which is present in both tweets and users) have the following useful columns:</p>
 <pre class="r"><code>&gt; names(tweets$entities[[1]])
 [1] &quot;hashtags&quot;      &quot;symbols&quot;       &quot;user_mentions&quot; &quot;urls&quot;         
 [5] &quot;media&quot; </code></pre>
-<p>Similarly if you look up for a user via <code>search_users()</code> or <code>lookup_users()</code> you’ll get similar data:</p>
+<p>Similarly if you look up a user via <code>search_users()</code> or <code>lookup_users()</code> you’ll get consistent data:</p>
 <pre class="r"><code>&gt; users &lt;- lookup_users(c(&quot;twitter&quot;, &quot;rladiesglobal&quot;, &quot;_R_Foundation&quot;))
 &gt; colnames(users)
  [1] &quot;id&quot;                      &quot;id_str&quot;                 
@@ -126,12 +125,15 @@ For example the entities column (which is present in both tweets and users!) hav
 [39] &quot;metadata&quot;                      &quot;query&quot;                        
 [41] &quot;withheld_scope&quot;                &quot;withheld_copyright&quot;           
 [43] &quot;withheld_in_countries&quot;         &quot;possibly_sensitive_appealable&quot;</code></pre>
-<p>Now <code>get_followers()</code> and <code>get_friends()</code> return the same columns:</p>
+<p>You can merge them via:</p>
+<pre><code>users_and_last_tweets &lt;- cbind(users, id_str = tweets_data(users)[, &quot;id_str&quot;])</code></pre>
+<p>In the future (<a href="#future">see below</a>), with helper functions managing the output of rtweet will become easier.</p>
+<p>Finally, <code>get_followers()</code> and <code>get_friends()</code> now return the same columns:</p>
 <pre class="r"><code>&gt; colnames(get_followers(&quot;_R_Foundation&quot;))
 [1] &quot;from_id&quot; &quot;to_id&quot;  
 &gt; colnames(get_friends(&quot;_R_Foundation&quot;))
 [1] &quot;from_id&quot; &quot;to_id&quot;  </code></pre>
-<p>This will make it easier to build networks of connections (Although you might want to convert screen names to ids or viceversa).</p>
+<p>This will make it easier to build networks of connections (although you might want to convert screen names to ids or vice versa).</p>
 </div>
 <div id="more-consistent-interface" class="section level3">
 <h3>More consistent interface</h3>
@@ -154,52 +156,63 @@ older &lt;- search_tweets(&quot;weather&quot;, max_id = tweets)</code></pre>
 </div>
 <div id="saving-data" class="section level3">
 <h3>Saving data</h3>
-<p>An unexpected consequence of returning more data as in the API is that it is now harder to save it in a tabular format.
-For instance one tweet might have one media, mention two user and have three hasthags.
-There isn’t a simple way to saved it in a single row uniformly for all tweets or
+<p>An unexpected consequence of returning more data (now matching that returned by the API) is that it is harder to save it in a tabular format.
+For instance one tweet might have one media, mention two users and have three hashtags.
+There isn’t a simple way to save it in a single row uniformly for all tweets or
 it could lead to confusion.</p>
-<p>This resulted in deprecating <code>save_as_csv</code>, <code>read_twitter_csv</code> and related functions because it doesn’t work with the new data structure and it won’t be possible to load it from a csv.
+<p>This resulted in deprecating <code>save_as_csv</code>, <code>read_twitter_csv</code> and related functions because they don’t work with the new data structure and it won’t be possible to load the complete data from a csv.
 They will be removed in later versions.</p>
+<p>Many users will benefit from saving to RDS (e.g., <code>saveRDS()</code> or <code>readr::write_rds()</code>), and those wanting to export to tabular format can simplify the data to include only that of interest before saving with generic R functions (e.g., <code>write.csv()</code> or <code>readr::write_csv()</code>).</p>
 </div>
 </div>
 <div id="other-breaking-changes" class="section level2">
 <h2><strong>Other breaking changes</strong></h2>
-<p>If you tweet via <code>post_tweet()</code> and add an image, gif or video you’ll need to provide the media alternative text.
-Without <code>media_alt_text</code> it will not allow you to post.</p>
-<p><code>tweet_shot()</code> has been deprecated as it did no longer work correctly.
-There might be possible to bring it back, but I don’t understand the code provided and can’t maintain it (see the long discussion about it <a href="https://github.com/ropensci/rtweet/issues/458">here</a>).</p>
-<p>emojis, langs and stopwordslangs data provided with rtweet is no longer available.
-I don’t think it is the right place to provide this kind of data and I don’t want to be responsible to update them.</p>
-<p>The functions like <code>suggested_*()</code> have been removed as they didn’t work since 2019.</p>
+<ul>
+<li><p>Accessibility is important and for this reason if you tweet via <code>post_tweet()</code> and add an image, gif or video you’ll need to provide the media alternative text.
+Without <code>media_alt_text</code> it will not allow you to post.</p></li>
+<li><p><code>tweet_shot()</code> has been deprecated as it no longer works correctly.
+It might be possible to bring it back, but the code is complex and I do not understand enough to maintain it.
+If you’re interested in seeing this feature return, checkout the discussion about this <a href="https://github.com/ropensci/rtweet/issues/458">issue</a> and let me know if you have any suggestions.</p></li>
+<li><p>rtweet also used to provide functions for data on <code>emojis</code>, <code>langs</code> and <code>stopwordslangs</code>.
+These are useful resources for text mining in general - not only in tweets - however they need to be updated to be helpful and would be better placed in other packages, for instance emojis is now on the <a href="https://cran.r-project.org/package=bdpar">bdpar package</a>.
+Therefore they are no longer available in rtweet.</p></li>
+<li><p>The functions like <code>suggested_*()</code> have been removed as they have been broken since 2019.</p></li>
+</ul>
 </div>
 <div id="easier-authentication" class="section level2">
 <h2><strong>Easier authentication</strong></h2>
-<p>As part of this release there have been a big rewritte of the authentication protocol.
-While it is version compatible it has also some new functions that are important as these functions make it easier for different use cases to work with rtweet and the API.</p>
-<p>If you just want to test the package use the default authentication <code>auth_setup_default()</code> that comes with rtweet.
+<p>An exciting part of this release has been a big rewrite of the authentication protocol.
+While it is compatible with previous rtweet authentication methods it has also some important new functions which make it easier to work with rtweet and the twitter API in different ways.</p>
+<div id="different-ways-to-authenticate" class="section level3">
+<h3>Different ways to authenticate</h3>
+<p>If you just want to test the package, use the default authentication <code>auth_setup_default()</code> that comes with rtweet.
 If you use it for one or two days you won’t notice any problem.</p>
-<p>If you want to use the package more than a couple of days, I recommend you to set up your own token via <code>rtweet_user()</code>.
+<p>If you want to use the package for more than a couple of days, I recommend you set up your own token via <code>rtweet_user()</code>.
 It will open a window to authenticate via the authenticated account in your default browser.
 This authentication won’t allow you to do everything but it will avoid running out of requests and being rate-limited.</p>
-<p>If you want to make a heavier usage of the package I recommend to register yourself as developer and use one of the following two mechanisms for different use cases:</p>
+<p>If you plan to make heavy use of the package, I recommend registering yourself as developer and using one of the following two mechanisms, depending on your plans:</p>
 <ul>
 <li>Collect data and analyze: <code>rtweet_app()</code>.</li>
 <li>Set up a bot: <code>rtweet_bot()</code></li>
 </ul>
-<p>Find more information on the <a href="https://docs.ropensci.org/rtweet/articles/auth.html">Authentication with rtweet vignette</a>.</p>
-<p>Previously rtweet saved each token created, if you don’t use the default token you’ll need to save them manually via <code>auth_save(token, "my_app")</code>.
-Bonus, if you name your token as default (<code>auth_save(token, "default")</code>) it will be used since loading the library.</p>
-<p>The tokens are now not saved on your home directory but via <code>tools::R_user_dir("rtweet", "config")</code>.
+<p>Find more information in the <a href="https://docs.ropensci.org/rtweet/articles/auth.html">Authentication with rtweet vignette</a>.</p>
+</div>
+<div id="storing-credentials" class="section level3">
+<h3>Storing credentials</h3>
+<p>Previously rtweet saved each token created, but now non-default tokens are only saved if you ask. You can save them manually via <code>auth_save(token, "my_app")</code>.
+Bonus, if you name your token as default (<code>auth_save(token, "default")</code>) it will be used automatically upon loading the library.</p>
+<p>Further, tokens are now saved in the location output by <code>tools::R_user_dir("rtweet", "config")</code>, rather than in your home directory.
 If you have previous tokens saved or problems identifying which token is which use <code>auth_sitrep()</code>.
-This will provides clues to which tokens might be duplicated or misconfigurated but it won’t check if they work.
+This will provides clues to which tokens might be duplicated or misconfigured but it won’t check if they work.
 It will also automatically move your tokens to the new path.</p>
 <p>To check which credentials you have stored use <code>auth_list()</code> and load them via <code>auth_as("my_app")</code>.
 All the rtweet functions will use the latest token loaded with <code>auth_as</code> (unless you manually specify one when calling it).
 If you are not sure which token you are using you can use <code>auth_get()</code> it will return the token in use, list them or ask you to authenticate.</p>
 </div>
-<div id="other-changes" class="section level2">
-<h2><strong>Other changes</strong></h2>
-<p>Some other changes aren’t too big to be worth their own section or are not breaking changes but are worthy enough of a mention:</p>
+</div>
+<div id="other-changes-of-note" class="section level2">
+<h2><strong>Other changes of note</strong></h2>
+<p>This is a list of other changes that aren’t too big or are not breaking changes but are worthy enough of a mention:</p>
 <div id="iteration-and-continuation-of-requests" class="section level3">
 <h3>Iteration and continuation of requests</h3>
 <p>Using cursors, pagination or waiting until you can make more queries is now easier.
@@ -215,8 +228,8 @@ more_users &lt;- get_followers(&quot;_R_Foundation&quot;, cursor = users)</code>
 <p>There is now a function to find a thread of a user.
 You can start from any tweet and it will find all the tweets of the thread:
 <code>tweet_threading("1461776330584956929")</code>.</p>
-<p>The interest on download and keep track of interactions in twitter is big.
-It is big enough that Twitter is releasing a new API to provide more information about this.</p>
+<p>There is a lot of interest in downloading and keeping track of interactions on Twitter.
+The amount of interest is big enough that Twitter is releasing a new API to provide more information of this nature.</p>
 </div>
 </div>
 <div id="future" class="section level2">
@@ -226,22 +239,38 @@ rtweet up to now, including this release, uses API v1 so it will need to adapt t
 <p>First will be the streaming endpoints in November, so expect more (breaking?) changes around those dates if not earlier.</p>
 <p>I would also like to make it easier for users, dependencies and the package itself to handle the outputs.
 To this regard I would like to provide some classes to handle the different type of objects it returns.</p>
-<p>This would help to avoid some current shortcomings.
+<p>This will help avoid some of the current shortcomings.
 Specifically I would like to provide functions to make it easier to reply to previous tweets,
-provide shortcuts to find out some nested information and subset tweets and the accompanying user information.</p>
+extract nested data, and subset tweets and the accompanying user information.</p>
 </div>
 <div id="conclusions" class="section level2">
 <h2><strong>Conclusions</strong></h2>
-<p>While I made many breaking changes I hope this helps both users and maintainers.</p>
+<p>While I made many breaking changes I hope these changes will smooth future development and help both users and maintainers.</p>
 <p>Feel free to ask on the <a href="https://discuss.ropensci.org/tag/rtweet">rOpenSci community</a> if you have questions about the transition or find something amiss.
-Please let me know, it will help me prioritize which endpoints I are more relevant to the community.
-Yes, the academic archive endpoint is on the radar.</p>
-<p>It is also possible that I overlooked something and I thought the code is working but it isn’t.
-For example, after several months of changing the way the API is parsed several users found it wasn’t handling some elements.
+Please let me know! It will help me prioritize which endpoints are more relevant to the community.
+(And yes, the academic archive endpoint is on the radar.)</p>
+<p>It is also possible that I overlooked something and I thought the code is working when it isn’t.
+For example, after several months of changing the way the API is parsed, several users found it wasn’t handling some elements.
 Let me know of such or similar cases and I’ll try to fix it.</p>
-<p>In case you find a bug, check the open issues and if not reported previously open an <a href="https://github.com/ropensci/rtweet/issue/">issue on github</a>.
+<p>In case you find a bug, check the open issues and if it has not already been reported, open an <a href="https://github.com/ropensci/rtweet/issues/">issue on GitHub</a>.
 Don’t forget to make a <a href="https://cran.r-project.org/web/packages/reprex/readme/README.html">reprex</a> and if possible provide the id of the tweets you are having trouble with.
-In some occasions when I came to look at a bug I couldn’t reproduce it as I wasn’t finding which tweet caused the error.</p>
+Unfortunately it has happened that when I came to look at a bug I couldn’t reproduce it as I wasn’t able to find the tweet which caused the error.</p>
+<p>This release includes contributions from Hadely Wicham, Bob Rudis, Alex Hayes, Simon Heß, Diego Hernán, Michael Chirico, Jonathan Sidi, Jon Harmon, Andrew Fraser and many other that reported bugs or provided feedback.
+Many thanks all for using it, your interest to keep it working and improving rtweet for all.</p>
 <p>Finally, you can read the whole <a href="https://docs.ropensci.org/rtweet/news/index.html">NEWS online</a> and the examples.</p>
 <p>Happy tweeting!</p>
+</div>
+<div id="acknowledgements" class="section level2">
+<h2>Acknowledgements</h2>
+<p>This is a repost of the <a href="https://ropensci.org/blog/2022/07/21/rtweet-1-0-0/">entry for rOpenSci</a>.
+The post was edited and improved by Yanina Bellini Saibene and Steffi LaZerte, the community manager and assistant. Many thanks</p>
+</div>
+<div class="footnotes footnotes-end-of-document">
+<hr />
+<ol>
+<li id="fn1"><p>Specifically these: <code>get_favorites()</code>, <code>get_favorites_user()</code>, <code>get_mentions()</code>,
+<code>get_my_timeline()</code>, <code>get_retweets()</code>, <code>get_timeline()</code>, <code>get_timeline_user()</code>,
+<code>lists_statuses()</code>, <code>lookup_statuses()</code>, <code>lookup_tweets()</code>, <code>search_30day()</code>,
+<code>search_fullarchive()</code>, <code>search_tweets()</code>, <code>tweet_shot()</code> and <code>tweet_threading()</code>.<a href="#fnref1" class="footnote-back">↩︎</a></p></li>
+</ol>
 </div>
