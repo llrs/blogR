@@ -243,7 +243,7 @@ yesno <- function(x) {
   k
 }
 packages2 |> 
-  count(`First release` = yesno(with_archives), name = "Packages",
+  count(`First release` = yesno(!with_archives), name = "Packages",
         sort = TRUE) |> 
   flextable() |> 
   autofit()
@@ -405,6 +405,10 @@ On future posts I'll explore:
 - the relation between dependencies, initial release and updates.
 
 Other suggestions?
+
+
+**Edit**: Many thanks to [Maëlle Salmon](https://masalmon.eu/) and [Dirk Eddelbuettel](https://dirk.eddelbuettel.com/) for their feedback on an initial version of this series of posts. 
+
 
 ### Reproducibility
 
