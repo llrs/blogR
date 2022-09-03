@@ -1,0 +1,352 @@
+---
+title: "Exploring CRAN's files: part 2"
+author: Lluís Revilla Sancho
+date: '2022-07-28'
+slug: cran-files-2
+categories:
+  - CRAN
+  - r
+tags:
+  - r
+  - packages
+  - cran-files
+authors:
+  - admin
+description: ''
+editor_options:
+  chunk_output_type: console
+featured: no
+image:
+  caption: ''
+  focal_point: ''
+subtitle: ''
+summary: ''
+---
+
+```{r setup, include = FALSE}
+knitr::opts_chunk$set(collapse = TRUE, fig.retina = 2, cache = TRUE, 
+                      include = TRUE, echo = FALSE, warning = FALSE, 
+                      error = FALSE, message = FALSE, eval = TRUE)
+Sys.setlocale("LC_ALL", "C")
+Sys.setenv(R_CRAN_WEB = "https://cloud.r-project.org")
+```
+
+
+## Introduction
+
+In the [first post](https://llrs.dev/post/2022/07/23/cran-files-1/) of the series we briefly explored packages available on CRAN. 
+Now I'll focus on history of the packages and its size using the following files:
+
+```{r internal-functions, echo=TRUE}
+packages <- tools::CRAN_package_db()
+current <- tools:::CRAN_current_db()
+archive <- tools:::CRAN_archive_db()
+```
+
+In this part we will use two files: The `current` and the `archive`, let's see why.
+
+### current file
+
+The current database has has the package size, dates of modification, which I assume is date added to CRAN and user name of who last modified it.
+This is the same information returned by [`file.info`](https://search.r-project.org/R/refmans/base/html/file.info.html)
+
+```{r current-head, echo=TRUE}
+current[1, 1:10]
+```
+
+### archive file
+
+The archive database returns the same information, but as you might guess by the name it doesn't provide information about current packages but for packages in the archive and no longer available by default.
+
+```{r archive-head, echo=TRUE}
+archive[[1]]
+```
+
+The date matches that available on the [web's old sources](https://cran.r-project.org/src/contrib/Archive/A3/), so we can be confident of it's meaning.
+
+```{r libraries}
+library("dplyr")
+library("ggplot2")
+library("tidyr")
+library("ggrepel")
+library("lubridate")
+library("tools")
+library("forcats")
+library("flextable")
+library("rversions")
+library("geomtextpath")
+set_flextable_defaults(digits =  4)
+#' Convert TRUE, FALSE to Yes, No for easier reading
+#' @param x Logical vector
+yesno <- function(x) {
+  k <- x
+  k[x] <- "Yes"
+  k[!x] <- "No"
+  k
+}
+```
+
+```{r releases-r}
+df <- data.frame(major = integer(), minor = integer(), patch = integer())
+r_versions <- r_versions() |> 
+  mutate(date = as.Date(date),
+         strcapture("([0-9])\\.([0-9]*)\\.?([0-9]*)", 
+                    version, proto = df),
+         equal = major == lag(major, default = TRUE) & minor == lag(minor, default = TRUE))
+minor_changes0 <- filter(r_versions, !equal)
+```
+
+
+## CRAN history
+
+As we have seen there are some files about the archives of CRAN.
+These include information about date of modification (moving/editing) and user who did it and of course name and sometimes version of the package.
+These archives are the great treasure of CRAN because they help to make reproducible long time ago run experiments or analysis.
+
+Note that I'm not totally sure that this archive contains the full record of packages, some initial packages might be missing.
+I'm also aware of some packages removed by CRAN which do not longer appear on this records. 
+
+Nevertheless, this should provide an accurate picture of packages available through time. 
+Also as there is no information when a package is archived (here, [there is on PACKAGES.in](https://llrs.dev/post/2021/12/07/reasons-cran-archivals/)) so I might overestimate the packages available at any given moment.
+
+```{r archives-setup}
+archive_df <- do.call("rbind", archive)
+archives <- vapply(archive, nrow, numeric(1))
+pkg <- rep(names(archive), times = archives)
+archive_df$package <- pkg
+version <- gsub(".*_(.*)\\.tar\\.gz$", "\\1", rownames(archive_df))
+archive_df$version <- version
+archive_df$version[archive_df$version == archive_df$package] <- NA
+archive_df$status <- "archived"
+# Make sure they match
+current$package <- rownames(current)
+current$version <- packages$Version[match(current$package, packages$Package)]
+current$status <- "available"
+all_packages <- rbind(archive_df, current)
+# Arrange dates and data
+all_packages$mtime <- with_tz(all_packages$mtime, tzone = "UTC")
+keep_columns <- c("package", "mtime", "version", "uname", "size", "status")
+all_packages2 <- all_packages[, keep_columns] |> 
+  mutate(date = as.Date(mtime)) |> 
+  select(-mtime) |> 
+  arrange(package, date) |> 
+  group_by(package) |> 
+  mutate(trelative = difftime(date, min(date), units = "weeks"),
+         tprevious = trelative - lag(as.numeric(trelative), default = 0),
+         n = n(),
+         release = 1:n(),
+         available = yesno(any(status == "available"))) |> 
+  ungroup()
+```
+
+Remember the plot about [acceptance of packages on CRAN?](#accepted)
+That plot only looked at current packages available, let's check it with all the archive:
+
+```{r accumulative-packages}
+#| fig.cap: "*Packages on CRAN archive by their addition to it.* There are over 125000 archives on CRAN."
+all_packages2 |> 
+  group_by(date) |> 
+  count() |> 
+  ungroup() |> 
+  mutate(nt = cumsum(n)) |> 
+  ggplot() +
+  # geom_point(aes(size = n)) +
+  geom_smooth(aes(date, nt), span = "1 week") +
+  geom_text_repel(aes(x = date, y = 100000, label = version),
+                  data = minor_changes0, nudge_x = 0, max.overlaps = 15, angle = 90) +
+  # geom_hline(yintercept = nrow(packages), col = "black") +
+  scale_y_continuous(expand = expansion(0, add = 0.5), labels = scales::label_number_auto()) +
+  coord_cartesian(ylim = c(0, NA)) +
+  scale_x_date(date_breaks = "2 years", date_labels = "%Y") +
+  labs(y = "Packages ", 
+       x = element_blank(),
+       title = "Accumulative packages on CRAN archive") +
+  theme_minimal()
+```
+
+All these packages come from packages with few releases and packages with many releases.
+If we look at which packages had the most releases:
+
+```{r archives-release}
+count(all_packages2, package, sort = TRUE, name = "Releases") |> 
+  head(20) |> 
+  flextable() |> 
+  autofit()
+```
+
+Surprisingly there are packages with more than 200 versions on CRAN!
+
+```{r release-distribution}
+#| fig.cap: "*Releases distirbution*. Packages and number of releases"
+count(all_packages2, package, sort = TRUE, name = "Releases") |> 
+  ggplot() +
+  geom_bar(aes(Releases), width = 0.35) +
+  scale_x_log10(n.breaks = 10, limits = c(0.55, NA), expand = expansion()) + 
+  scale_y_continuous(expand = expansion()) +
+  labs(title = "Package releases", y = "Packages") +
+  theme_minimal()
+```
+
+```{r release-distribution-2}
+m <- count(all_packages2, package, sort = TRUE, name = "Releases")
+```
+
+Most packages have 1 release, usually packages have `r median(m$Releases)`, but the mean is around `r round(mean(m$Releases))`.
+
+Given all this different versions of packages how big are all the packages on CRAN?
+
+### CRAN size
+
+
+```{r format-size, include=FALSE}
+k <- sum(all_packages2$size)
+class(all_packages2$size) <- "object_size"
+class(k) <- "object_size"
+```
+
+Have you ever wondered how big is CRAN? According to the memory size of the source packages all CRAN source packages are approximately `r format(k, units = "auto")`.
+
+This doesn't include binaries for multiple architectures and OS. 
+The package size might indicate whether the package has considerable amount of data.
+
+Looking back to the size of the packages along time we can see this pattern:
+
+```{r packages-size}
+#| fig.cap: "*Package and their median size.* Archived packages have become 
+#|  bigger since 2014. Packages on CRAN have been getting bigger since 2017."
+all_packages2 |> 
+  group_by(date, available, status) |> 
+  summarise(s = median(size),
+            n = n()) |> 
+  ungroup() |> 
+  ggplot() +
+  geom_smooth(aes(date, s, col = available, linetype = status, weight = n),
+              method = "gam") +
+  geom_text_repel(aes(x = date, y = 750000, label = version),
+                  data = minor_changes0, nudge_x = 0, max.overlaps = 15, angle = 90) +
+  labs(x = element_blank(),
+       y = "Package size (B)",
+       col = "Package on CRAN?",
+       linetype = "Type?",
+       title = "Median size of packages on CRAN") +
+  scale_y_continuous(expand = expansion(), limits = c(0, NA), 
+  									 labels = scales::label_number_auto()) +
+  scale_x_date(expand = expansion(), date_breaks = "2 years", date_labels = "%Y") +
+  theme_minimal() +
+  theme(legend.position = c(0.2, 0.8))
+```
+
+Packages available on CRAN are smaller than those no longer on CRAN. 
+But versions of packages on CRAN that got archived are usually bigger than current versions. 
+Packages no longer on CRAN are usually bigger.
+Median size of packages is increasing (quickly). 
+
+```{r release-size}
+#| fig.cap: "*Size of package with releases.* Package are usually small but 
+#|  seem to gain weight when updating."
+
+current_size_d <- all_packages2 |> 
+  filter(available == "Yes" & status == "available")
+# current_size_d |> 
+#   group_by(release) |> 
+#   summarize(size = median(size), n = n()) |> 
+#   ggplot() +
+#   geom_point(aes(release, size, size = n)) +
+#   scale_y_log10() +
+#   scale_size(trans = "sqrt") +
+#   geom_hline(yintercept = current_size)
+current_size <- current_size_d |> 
+  pull(size) |> 
+  median()
+all_packages2 |> 
+  group_by(release) |> 
+  summarise(s = median(size), n = n()) |> 
+  ungroup() |> 
+  ggplot() +
+  geom_smooth(aes(release, s, weight = n, linewidth = n)) +
+  scale_y_log10() +
+  geom_hline(yintercept = 5*1000^2) +
+  geom_hline(yintercept = current_size, linetype = 2) +
+  labs(x = "Release number",
+       y = "Size (B)",
+       title = "Package size with release number") +
+  theme_minimal()
+```
+
+Typically packages increase their size with each new release up to when they reach 50 releases.
+For higher releases this plot depends on very few packages and might not be representative.
+
+```{r release-size2}
+#| fig.cap: "*Size of package with releases by availability.* Packages no 
+#|  longer in CRAN are usually smaller than those in it. 
+#|  The continous black line is CRAN's current threshold, while the discontinous
+#|  black line is current median size."
+
+all_packages2 |> 
+  ggplot() +
+  geom_smooth(aes(release, size, col = available, linetype = available), method = "gam") +
+  scale_y_log10() +
+  geom_hline(yintercept = 5*1000^2) +
+  geom_hline(yintercept = current_size, linetype = 2) +
+  labs(x = "Release number",
+       y = "Size (B)",
+       col = "Available",
+       linetype = "Available",
+       title = "Package size with release number") +
+  theme_minimal() +
+  theme(legend.position = c(0.2, 0.75))
+```
+
+Here we can appreciate better how packages tend to be below the CRAN threshold. 
+There isn't much of a difference between packages available on CRAN and those archived. 
+
+If we look at the size of package of the first release over time we'll see a representative view:
+
+```{r size-time}
+#| fig.cap: "*Size of the first release by time*. Package size increases with 
+#|  time with a peak around 2010 and increasing again since 2014 but still 
+#|  hasn't surprased the previous record."
+all_packages2 |> 
+  filter(release == 1) |> 
+  ggplot() +
+  geom_smooth(aes(date, size), method = "gam") +
+  geom_text_repel(aes(x = date, y = 500000, label = version),
+                  data = minor_changes0[c(FALSE, TRUE), ], nudge_x = 0, 
+                  max.overlaps = 15, angle = 90) +
+  labs(x = element_blank(),
+       y = "Package size (B)",
+       linetype = "Package on CRAN?",
+       title = "Size of first release of packages on CRAN") +
+  geom_hline(yintercept = current_size, linetype = 2) +
+  scale_y_continuous(expand = expansion(), limits = c(0, NA), 
+  									 labels = scales::label_number_auto()) +
+  scale_x_date(expand = expansion(), date_breaks = "2 years", date_labels = "%Y") +
+  theme_minimal() +
+  theme(legend.position = c(0.2, 0.8))
+```
+
+Package size tends to increase except for the brief period 2010-2014. 
+Currently it increases less than before that period but is close to its maximum.
+
+## Conclusions
+
+ - Most packages are not updated too much, between 1 and 3 times. 
+  But there are packages that are updated quite a lot, this might mean they are data packages and not software packages or that they have frequent minor and major updates.
+
+- Most current packages have smaller size than those archived.
+ Packages no longer available usually had bigger size than those packages still on CRAN.
+ 
+ - Surprisingly packages increase their size a lot till the 25 release.
+ But also with time except for a period in 2010 and 2014.
+ This decreasing period might be due to a change in CRAN policy. 
+
+
+## Future parts
+
+On future posts I’ll explore:
+
+ - patterns accepting packages and updates in packages.
+
+ - the relation between dependencies, initial release and updates.
+
+ - who handled the packages.
