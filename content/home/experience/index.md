@@ -2,9 +2,18 @@
 active: true
 date_format: January 2006
 experience:
+- company: IDIBAPS
+  company_url: https://www.clinicbarcelona.org/en/idibaps
+  date_end: ""
+  date_start: "2022-07-04"
+  description: "Responsibilities include:\n  \n * Analysing RNA-seq and microbiome
+    data (16S)\n * Modelling relation between microbiome and mucosal intestine\n
+    \ * Building reports\n * Assessing design of sequencing experiments\n * Managing the group server"
+  location: Barcelona
+  title: Bioinformatician/PostDoc
 - company: CIBEREHD
   company_url: https://www.ciberehd.org/en
-  date_end: ""
+  date_end: "2022-06-03"
   date_start: "2018-04-03"
   description: "  Responsibilities include:\n  \n  * Analysing RNA-seq and microbiome
     data (16S)\n  * Modelling relation between microbiome and mucosal intestine\n

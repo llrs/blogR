@@ -18,8 +18,12 @@ bio: Bioinformatician with interests in functional enrichment, data integration 
 interests:
 - Functional enrichment
 - Data integration
-- Improve process
+- Improving process
 education:
+  courses:
+  - course: PhD in Bioinformatics
+    institution: Universitat de Barcelona
+    year: 2022
   courses:
   - course: MSc in Bioinformatics for Health Science
     institution: Universitat Pompeu Fabra
@@ -51,7 +55,10 @@ user_groups:
 - Researchers
 ---
 
-I am a bioinformatician currently doing a PhD at the [IBD](https://ibd-bcn.org) lab of Dr. [Julian Panès](https://orcid.org/0000-0002-4971-6902) under the joint supervision of [Azucena Salas](https://orcid.org/0000-0003-4572-2907) and [Juanjo Lozano](https://orcid.org/0000-0001-7613-3908). My research interests include data integration (my PhD topic) and functional enrichment.  
-Other interest are helping with data to make better decisions and improve processes,  from transparency, lawyer activities, media handling to open source activities.
-To be more effective at this I'm in touch with some organizations and I created some packages deposited in [Bioconductor](https://bioconductor.org/packages/BioCor/), [CRAN](https://cran.r-project.org/web/checks/check_results_lluis.revilla_at_gmail.com.html), [rOpenSci](https://ropensci.org/), [rOpenSpain](https://ropenspain.es/) and [GitHub](https://github.com/llrs).  
+I am a bioinformatician currently at the [IBD](https://ibd-bcn.org) lab of [Azucena Salas](https://orcid.org/0000-0003-4572-2907). 
+I use [R](https://r-project.org) to gather data and answer questions to provide insights and make a more informed decisions.
+My academic research interests include data integration (my PhD topic) and functional enrichment.
+
+Besides research in biomedicine I use my skills to make data transparency accessible.
+To be more effective at this I collaborate with some organizations [R Foundation](https://www.r-project.org/foundation/), [R Consortium](https://www.r-consortium.org/) and I created some packages deposited in [Bioconductor](https://bioconductor.org/packages/BioCor/), [CRAN](https://cran.r-project.org/web/checks/check_results_lluis.revilla_at_gmail.com.html), [rOpenSci](https://ropensci.org/), [rOpenSpain](https://ropenspain.es/) and [GitHub](https://github.com/llrs).  
 Outside programming I enjoy hiking, jumping rope and diabolo as hobbies. 
