@@ -24,7 +24,6 @@ education:
   - course: PhD in Bioinformatics
     institution: Universitat de Barcelona
     year: 2022
-  courses:
   - course: MSc in Bioinformatics for Health Science
     institution: Universitat Pompeu Fabra
     year: 2017
@@ -42,6 +41,9 @@ social:
 - icon: twitter
   icon_pack: fab
   link: https://twitter.com/Lluis_Revilla
+- icon: mastodon
+  icon_pack: fab
+  link: https://fosstodon.org/@Lluis_Revilla
 - icon: github
   icon_pack: fab
   link: https://github.com/llrs
@@ -55,10 +57,11 @@ user_groups:
 - Researchers
 ---
 
-I am a bioinformatician currently at the [IBD](https://ibd-bcn.org) lab of [Azucena Salas](https://orcid.org/0000-0003-4572-2907). 
-I use [R](https://r-project.org) to gather data and answer questions to provide insights and make a more informed decisions.
-My academic research interests include data integration (my PhD topic) and functional enrichment.
+I am a bioinformatician currently at the [Host genetics and cellular immunity group](https://www.irsicaixa.es/en/host-genetics-and-cellular-immunity) led by [Christian Brander](https://orcid.org/0000-0002-0548-5778) at [IrsiCaixa](https://www.irsicaixa.es/en).
+My academic research interests include data integration (my Ph.D. topic) and functional enrichment.
 
-Besides research in biomedicine I use my skills to make data transparency accessible.
-To be more effective at this I collaborate with some organizations [R Foundation](https://www.r-project.org/foundation/), [R Consortium](https://www.r-consortium.org/) and I created some packages deposited in [Bioconductor](https://bioconductor.org/packages/BioCor/), [CRAN](https://cran.r-project.org/web/checks/check_results_lluis.revilla_at_gmail.com.html), [rOpenSci](https://ropensci.org/), [rOpenSpain](https://ropenspain.es/) and [GitHub](https://github.com/llrs).  
-Outside programming I enjoy hiking, jumping rope and diabolo as hobbies. 
+
+Besides my work in biomedicine, I use my skills to make data transparency accessible.
+I mainly use [R](https://r-project.org)  to gather data and answer questions to provide insights and make informed decisions. 
+I collaborate with some organizations [R Foundation](https://www.r-project.org/foundation/), [R Consortium](https://www.r-consortium.org/) and I created some packages deposited in [Bioconductor](https://bioconductor.org/packages/BioCor/), [CRAN](https://cran.r-project.org/web/checks/check_results_lluis.revilla_at_gmail.com.html), [rOpenSci](https://ropensci.org/), [rOpenSpain](https://ropenspain.es/), and [GitHub](https://github.com/llrs).  
+Outside programming I enjoy hiking, jumping rope, and diabolo as hobbies. 

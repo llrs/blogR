@@ -2,9 +2,17 @@
 active: true
 date_format: January 2006
 experience:
+- company: IrsiCaixa
+  company_url: https://www.irsicaixa.es/en
+  date_end: ""
+  date_start: "2022-12-01"
+  description: "Responsibilities include:\n  \n * Analysing RNA-seq \n 
+    \n * Building reports and provide statistical support\n * Assessing design of sequencing experiments\n"
+  location: Barcelona
+  title: PostDoc Bioinformatician
 - company: IDIBAPS
   company_url: https://www.clinicbarcelona.org/en/idibaps
-  date_end: ""
+  date_end: "2022-11-30"
   date_start: "2022-07-04"
   description: "Responsibilities include:\n  \n * Analysing RNA-seq and microbiome
     data (16S)\n * Modelling relation between microbiome and mucosal intestine\n
