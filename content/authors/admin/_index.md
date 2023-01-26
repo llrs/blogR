@@ -21,7 +21,7 @@ interests:
 - Improving process
 education:
   courses:
-  - course: PhD in Bioinformatics
+  - course: PhD in Biomedicnie (Bioinformatics)
     institution: Universitat de Barcelona
     year: 2022
   - course: MSc in Bioinformatics for Health Science
@@ -57,11 +57,11 @@ user_groups:
 - Researchers
 ---
 
-I am a bioinformatician currently at the [Host genetics and cellular immunity group](https://www.irsicaixa.es/en/host-genetics-and-cellular-immunity) led by [Christian Brander](https://orcid.org/0000-0002-0548-5778) at [IrsiCaixa](https://www.irsicaixa.es/en).
+I am a bioinformatician currently at the [T-cell immunogenicity virus (TIV) group](https://www.irsicaixa.es/en/host-genetics-and-cellular-immunity) led by [Christian Brander](https://orcid.org/0000-0002-0548-5778) at [IrsiCaixa](https://www.irsicaixa.es/en).
 My academic research interests include data integration (my Ph.D. topic) and functional enrichment.
 
 
 Besides my work in biomedicine, I use my skills to make data transparency accessible.
 I mainly use [R](https://r-project.org)  to gather data and answer questions to provide insights and make informed decisions. 
-I collaborate with some organizations [R Foundation](https://www.r-project.org/foundation/), [R Consortium](https://www.r-consortium.org/) and I created some packages deposited in [Bioconductor](https://bioconductor.org/packages/BioCor/), [CRAN](https://cran.r-project.org/web/checks/check_results_lluis.revilla_at_gmail.com.html), [rOpenSci](https://ropensci.org/), [rOpenSpain](https://ropenspain.es/), and [GitHub](https://github.com/llrs).  
+I collaborate with several organizations [R Foundation](https://www.r-project.org/foundation/), [R Consortium](https://www.r-consortium.org/) and  [Bioconductor](https://bioconductor.org/packages/BioCor/), where I maintain some packages, [CRAN](https://cran.r-project.org/web/checks/check_results_lluis.revilla_at_gmail.com.html), [rOpenSci](https://ropensci.org/), [rOpenSpain](https://ropenspain.es/), and [GitHub](https://github.com/llrs).  
 Outside programming I enjoy hiking, jumping rope, and diabolo as hobbies. 
