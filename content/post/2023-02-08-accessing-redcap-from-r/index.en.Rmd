@@ -16,7 +16,7 @@ description: 'Summarize packages related to REDCap'
 draft: no
 editor_options:
   chunk_output_type: console
-featured: yes
+featured: no
 image:
   caption: ''
   focal_point: ''
@@ -30,8 +30,6 @@ knitr::opts_chunk$set(collapse = TRUE, fig.retina = 2)
 
 In this post, I want to summarize some of the packages to connect to [REDCap](https://www.project-redcap.org/). 
 For those who don't know, REDCap is a database designed for clinical usage, which allows easy data collection of patients' responses by clinicians and interactions with the patients via surveys. 
-
-![REDCap logo: Research Electronic Data Capture](images/REDCap-logo-1024x357.png)
 
 It has specific features such as scheduling surveys sent to patients, compatibility with tablets and mobile phones for data entry while visiting patients, grouping data in instruments (for repeating the same questions multiple times), multiple choice and check buttons, and different arms (like paths for patients).
 Most importantly is relatively easy to manage by clinical administrators.
