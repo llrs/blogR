@@ -1,0 +1,102 @@
+---
+title: Accessing REDCap from R
+author: Lluís Revilla Sancho
+date: '2023-02-08'
+slug: accessing-redcap-from-r
+categories:
+  - r
+tags:
+  - r
+  - packages
+  - software
+  - REDCap
+authors:
+  - admin
+description: 'Summarize packages related to REDCap'
+draft: no
+editor_options:
+  chunk_output_type: console
+featured: yes
+image:
+  caption: ''
+  focal_point: ''
+subtitle: ''
+summary: 'Summarize packages related to REDCap'
+---
+
+
+
+<p>In this post, I want to summarize some of the packages to connect to <a href="https://www.project-redcap.org/">REDCap</a>.
+For those who don’t know, REDCap is a database designed for clinical usage, which allows easy data collection of patients’ responses by clinicians and interactions with the patients via surveys.</p>
+<div class="figure">
+<img src="images/REDCap-logo-1024x357.png" alt="" />
+<p class="caption">REDCap logo: Research Electronic Data Capture</p>
+</div>
+<p>It has specific features such as scheduling surveys sent to patients, compatibility with tablets and mobile phones for data entry while visiting patients, grouping data in instruments (for repeating the same questions multiple times), multiple choice and check buttons, and different arms (like paths for patients).
+Most importantly is relatively easy to manage by clinical administrators.</p>
+<p>In CRAN there are ~11 <a href="https://search.r-project.org/?P=REDCap&amp;SORT=&amp;HITSPERPAGE=10&amp;DB=cran-info&amp;DEFAULTOP=and&amp;FMT=query&amp;xDB=all&amp;xFILTERS=.%7E%7E">packages mentioning it</a> at the time of writing it.
+The purpose of this post is to help decide which packages can be helpful in which situations.
+This post won’t be a deep analysis or comparison of capabilities, it describes some of the best and worse features of each package.</p>
+<div id="redcapr" class="section level2">
+<h2>REDCapR</h2>
+<p><a href="https://cran.r-project.org/package=REDCapR">REDCapR</a> is the official package to connect to the database.
+It allows you to read, write and filter the requests.
+It has some security-related functions.</p>
+</div>
+<div id="redcaptidier" class="section level2">
+<h2>REDCapTidieR</h2>
+<p><a href="https://cran.r-project.org/package=REDCapTidieR">REDCapTidieR</a> is a package that provides summaries of tables and helps with nested tibbles data by arm.
+It depends on REDCapR.</p>
+</div>
+<div id="tidyredcap" class="section level2">
+<h2>tidyREDCap</h2>
+<p><a href="https://cran.r-project.org/package=tidyREDCap">tidyREDCap</a> is a package that simplifies the tables for instruments and choose-all or choose-one question types.
+It is easy to make tables and it depends on REDCapR.
+It requires the first and last columns to make instruments.</p>
+<div class="figure">
+<img src="images/redcap_design.jpg" alt="" />
+<p class="caption">Screenshot of a design with several instruments in a single arm (from <a href="https://www.project-redcap.org/" class="uri">https://www.project-redcap.org/</a>)</p>
+</div>
+</div>
+<div id="redcapexporter" class="section level2">
+<h2>REDCapExporter</h2>
+<p><a href="https://cran.r-project.org/package=REDCapExporter">REDCapExporter</a> is a package to build a data package from a database for redistribution.
+It does not depend on REDCapR.</p>
+</div>
+<div id="redcapapi" class="section level2">
+<h2>redcapAPI</h2>
+<p><a href="https://cran.r-project.org/package=redcapAPI">redcapAPI</a> is a package for making data accessible and analysis-ready as quickly as possible with huge documentation in a wiki but has no vignette or examples and it does not depend on REDCapR.</p>
+</div>
+<div id="redcapdm" class="section level2">
+<h2>REDCapDM</h2>
+<p><a href="https://cran.r-project.org/package=REDCapDM">REDCapDM</a> is a package that provides functions to read and manage REDCap data and identify missing or extreme values as well as transform the data provided by the API.
+It depends on REDCapR.</p>
+</div>
+<div id="reviewr" class="section level2">
+<h2>ReviewR</h2>
+<p><a href="https://cran.r-project.org/package=ReviewR">ReviewR</a> is a package that creates a shiny website with data from the database to explore it.
+It uses the REDCapR to connect to your instance.</p>
+</div>
+<div id="rccola" class="section level2">
+<h2>rccola</h2>
+<p><a href="https://cran.r-project.org/package=rccola">rccola</a> is a package to provide a secure connection to the database but it doesn’t provide any handling of the data.
+It uses redcapAPI to connect to the database.</p>
+<p><img src="{{< blogdown/postref >}}index.en_files/figure-html/unnamed-chunk-1-1.png" alt="Barplot with the dependencies: from less to more: REDCapExporter, rccola, redcapAPI, REDCapR, tidyREDCap, REDCapDM, REDCapTidieR, ReviewR" width="672" /></p>
+</div>
+<div id="other-packages" class="section level2">
+<h2>Other packages</h2>
+<p>Other packages mention REDCap:</p>
+<ul>
+<li><a href="https://cran.r-project.org/package=nmadb">nmadb</a>: which implements its own connection procedure for a specific REDCap database of network meta-analyses.</li>
+<li><a href="https://cran.r-project.org/package=distcomp">distcomp</a>: Allows to do computation on a distributed data also in REDCap.</li>
+<li><a href="https://cran.r-project.org/package=cgmanalysis">cgmanalysis</a>: which mentions that data produced is compatible with REDCap.</li>
+</ul>
+</div>
+<div id="conclusion" class="section level1">
+<h1>Conclusion</h1>
+<p>I’m sure that many packages briefly described here can do much more than what I understood from a glance at their documentation and DESCRIPTION.</p>
+<p>Most packages provide some data for the examples (and probably tests), while others do not.
+This is a technical problem that might impact users if there are no examples in the functions.</p>
+<p>REDCapR is used by most packages to access the database, but most of the packages focus on transforming the data provided by the API (or data exported) or the exported data.
+It highlights that the data exported is useful but that depending on the preferences of the users it needs to be transformed for easy usage.</p>
+</div>
