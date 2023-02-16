@@ -53,6 +53,9 @@ social:
 - icon: orcid
   icon_pack: ai
   link: https://orcid.org/0000-0001-9747-2570
+- icon: pizza-slice
+  icon_pack: fas
+  link: https://www.buymeacoffee.com/llrs
 user_groups:
 - Researchers
 ---

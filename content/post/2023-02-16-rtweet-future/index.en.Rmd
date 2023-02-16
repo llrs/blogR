@@ -50,7 +50,7 @@ Another developer gained access to repository and contributed with their experti
 Despite all (breaking) changes, we tried to make the package easier to maintain.
 After waiting some time, for further community feedback, I released a new version through CRAN. 
 
-Shortly after, for unclear reasons my bot got less exposure. 
+Shortly after, for some reasons my bot got less views and engagement.
 It made me realize that it might be an opportunity to start a professional project around the content of what this bot did.
 In addition, although I learn a lot from the online communities I decided to connect more with the local community.
 I am currently involved with re-launching the [Barcelona R user group](https://barcelonar.org) and organizing the [Spanish R conference](http://r-es.org/2023/02/09/las-xiii-jornadas-congreso-r-hispano-2023-seran-en-barcelona/).
