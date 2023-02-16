@@ -25,7 +25,8 @@ summary: 'How support for rtweet will continue going forward.'
 ```{r setup, include = FALSE}
 knitr::opts_chunk$set(collapse = TRUE, fig.retina = 2)
 ```
-## Background
+
+## Background: how I became the maintainer of rtweet
 
 I didn't want to maintain rtweet. 
 It might sound strange coming from its maintainer, but I didn't want the responsibility of writting software 12k people install it monthly. 
@@ -33,7 +34,7 @@ My offer was always to help with it so that the users could benefit from improve
 I initially thought that having permissions to close issues, label them would help the community and the maintainer.
 
 I was not totally altruistic.
-As [recently recommended by Maëlle and Steffy](https://ropensci.org/blog/2022/10/17/maintain-or-co-maintain-an-ropensci-package/), I had some interest in the package.
+As [recently recommended by Maëlle and Steffi](https://ropensci.org/blog/2022/10/17/maintain-or-co-maintain-an-ropensci-package/), I had some interest in the package.
 I had a bot posting some plots daily. 
 I wanted to have alt text in the tweets. 
 There was a pending PR for just that. 
@@ -53,12 +54,12 @@ Shortly after, for unclear reasons my bot got less exposure.
 It made me realize that it might be an opportunity to start a professional project around the content of what this bot did.
 In addition, although I learn a lot from the online communities I decided to connect more with the local community.
 I am currently involved with re-launching the [Barcelona R user group](https://barcelonar.org) and organizing the [Spanish R conference](http://r-es.org/2023/02/09/las-xiii-jornadas-congreso-r-hispano-2023-seran-en-barcelona/).
-These activities take time an energy from package maintenance (not just rtweet). 
+These activities take time an energy away from package maintenance (not just rtweet). 
 However, **my support for the users of rtweet remains**.
 
 ![The community support I received was great. I hope to pass on it. CC-BY-4.0  [Artwork by @allison_horst.](https://twitter.com/allison_horst) ](images/allison_community_support.png)
 
-# Current situation
+## Current situation: supporting the v1 and adding support to the v2 API
 
 To maintain rtweet I needed to adapt and understand the Twitter's API (v1) documentation.
 The documentation didn't always match the functionality.
@@ -80,7 +81,7 @@ As you have guessed, between releases I had been thinking and working to support
 The foundations to support the new endpoints were already set and easily expanded to new endpoints.
 In the development version of the package (in the devel branch), it is possible to retrieve bookmarks, retrieve the archive if you have academic access, among other endpoints.
 
-## Going forward
+## Going forward: supporting rtweet users of v2 API
 
 Recently (~3 weeks), there have been [anouncements](https://twitter.com/TwitterDev) of future changes in who and how will be able to access the API.
 Simultaneously, there have been unannounced restrictions affecting other tools using the API.
@@ -98,13 +99,16 @@ Get in touch with me in [this issue](https://github.com/ropensci/rtweet/issues/7
 
 From time to time, I receive bug reports and petitions from premium API users.
 Currently, premium users get access to more data, elevated request rates and other endpoints. 
-Helping them is usually challenging, and developing support for these endpoints will be difficult.  
-With these jobs and funding I will be able to support them and implement new endpoints for all the users.
-There is scarce information about the API changes and prices.
+Helping them is usually challenging, and developing support for these endpoints will be difficult.
+To continue supporting these users I've set up a [`r emo::ji("coffee")` buymeacoffee](https://www.buymeacoffee.com/llrs) and I, and my co-maintainer, will be open to consulting jobs about rtweet.
+With these jobs and funding we will be able to support them and implement new endpoints for all the users.
 
-To continue supporting rtweet I will set up a way to sponsors the account via github and I will be open for consulting jobs about rtweet.
-
+There is scarce information about the API changes and prices. 
+Changes might come suddenly.
+We'll do our best to keep up and inform all users.
 I hope this will be a good way to **continue supporting the package an the community** of users.
 Let me know if you have other suggestions. 
 
 ![Decorating/contributing to R. CC-BY-4.0 [artwork by @allison_horst.](https://twitter.com/allison_horst)](images/decorated_r.png)
+
+*Thanks Maëlle for your support and reviewing the post.*

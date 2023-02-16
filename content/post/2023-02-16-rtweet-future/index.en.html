@@ -24,14 +24,14 @@ summary: 'How support for rtweet will continue going forward.'
 
 
 
-<div id="background" class="section level2">
-<h2>Background</h2>
+<div id="background-how-i-became-the-maintainer-of-rtweet" class="section level2">
+<h2>Background: how I became the maintainer of rtweet</h2>
 <p>I didn’t want to maintain rtweet.
 It might sound strange coming from its maintainer, but I didn’t want the responsibility of writting software 12k people install it monthly.
 My offer was always to help with it so that the users could benefit from improvements and bug fixes on the package.
 I initially thought that having permissions to close issues, label them would help the community and the maintainer.</p>
 <p>I was not totally altruistic.
-As <a href="https://ropensci.org/blog/2022/10/17/maintain-or-co-maintain-an-ropensci-package/">recently recommended by Maëlle and Steffy</a>, I had some interest in the package.
+As <a href="https://ropensci.org/blog/2022/10/17/maintain-or-co-maintain-an-ropensci-package/">recently recommended by Maëlle and Steffi</a>, I had some interest in the package.
 I had a bot posting some plots daily.
 I wanted to have alt text in the tweets.
 There was a pending PR for just that.
@@ -48,15 +48,15 @@ After waiting some time, for further community feedback, I released a new versio
 It made me realize that it might be an opportunity to start a professional project around the content of what this bot did.
 In addition, although I learn a lot from the online communities I decided to connect more with the local community.
 I am currently involved with re-launching the <a href="https://barcelonar.org">Barcelona R user group</a> and organizing the <a href="http://r-es.org/2023/02/09/las-xiii-jornadas-congreso-r-hispano-2023-seran-en-barcelona/">Spanish R conference</a>.
-These activities take time an energy from package maintenance (not just rtweet).
+These activities take time an energy away from package maintenance (not just rtweet).
 However, <strong>my support for the users of rtweet remains</strong>.</p>
 <div class="figure">
 <img src="images/allison_community_support.png" alt="" />
 <p class="caption">The community support I received was great. I hope to pass on it. CC-BY-4.0 <a href="https://twitter.com/allison_horst">Artwork by <span class="citation">@allison_horst</span>.</a></p>
 </div>
 </div>
-<div id="current-situation" class="section level1">
-<h1>Current situation</h1>
+<div id="current-situation-supporting-the-v1-and-adding-support-to-the-v2-api" class="section level2">
+<h2>Current situation: supporting the v1 and adding support to the v2 API</h2>
 <p>To maintain rtweet I needed to adapt and understand the Twitter’s API (v1) documentation.
 The documentation didn’t always match the functionality.
 rtweet follows the API tightly, any change might break the package.
@@ -73,8 +73,9 @@ So the new release included support for the replacement endpoint in v2.</p>
 <p>As you have guessed, between releases I had been thinking and working to support API v2.
 The foundations to support the new endpoints were already set and easily expanded to new endpoints.
 In the development version of the package (in the devel branch), it is possible to retrieve bookmarks, retrieve the archive if you have academic access, among other endpoints.</p>
-<div id="going-forward" class="section level2">
-<h2>Going forward</h2>
+</div>
+<div id="going-forward-supporting-rtweet-users-of-v2-api" class="section level2">
+<h2>Going forward: supporting rtweet users of v2 API</h2>
 <p>Recently (~3 weeks), there have been <a href="https://twitter.com/TwitterDev">anouncements</a> of future changes in who and how will be able to access the API.
 Simultaneously, there have been unannounced restrictions affecting other tools using the API.
 Recent changes and announcements are driven by need of money to sustain Twitter.
@@ -89,15 +90,17 @@ But given that I will have less time and energy for rtweet, I am looking for a <
 <p>Get in touch with me in <a href="https://github.com/ropensci/rtweet/issues/763">this issue</a>.</p>
 <p>From time to time, I receive bug reports and petitions from premium API users.
 Currently, premium users get access to more data, elevated request rates and other endpoints.
-Helping them is usually challenging, and developing support for these endpoints will be difficult.<br />
-With these jobs and funding I will be able to support them and implement new endpoints for all the users.
-There is scarce information about the API changes and prices.</p>
-<p>To continue supporting rtweet I will set up a way to sponsors the account via github and I will be open for consulting jobs about rtweet.</p>
-<p>I hope this will be a good way to <strong>continue supporting the package an the community</strong> of users.
+Helping them is usually challenging, and developing support for these endpoints will be difficult.
+To continue supporting these users I’ve set up a <a href="https://www.buymeacoffee.com/llrs">☕ buymeacoffee</a> and I, and my co-maintainer, will be open to consulting jobs about rtweet.
+With these jobs and funding we will be able to support them and implement new endpoints for all the users.</p>
+<p>There is scarce information about the API changes and prices.
+Changes might come suddenly.
+We’ll do our best to keep up and inform all users.
+I hope this will be a good way to <strong>continue supporting the package an the community</strong> of users.
 Let me know if you have other suggestions.</p>
 <div class="figure">
 <img src="images/decorated_r.png" alt="" />
 <p class="caption">Decorating/contributing to R. CC-BY-4.0 <a href="https://twitter.com/allison_horst">artwork by <span class="citation">@allison_horst</span>.</a></p>
 </div>
-</div>
+<p><em>Thanks Maëlle for your support and reviewing the post.</em></p>
 </div>
