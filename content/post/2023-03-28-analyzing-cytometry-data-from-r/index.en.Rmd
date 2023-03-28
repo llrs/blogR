@@ -1,0 +1,109 @@
+---
+title: Analyzing cytometry data from R
+author: ''
+date: '2023-03-28'
+slug: []
+categories:
+  - bioinformatics
+tags:
+  - bioinformatics
+authors:
+  - admin
+description: ''
+draft: no
+editor_options:
+  chunk_output_type: console
+featured: no
+image:
+  caption: ''
+  focal_point: ''
+subtitle: ''
+summary: ''
+---
+
+```{r setup, include = FALSE}
+knitr::opts_chunk$set(collapse = TRUE, fig.retina = 2)
+```
+
+These are my notes of starting analyzing [flow cytometry](https://en.wikipedia.org/wiki/Flow_cytometry "Flow cytometry in Wikipedia") data in R.
+Most of these packages are in [Bioconductor](https://bioconductor.org) under the [BiocView of Cytometry](https://bioconductor.org/packages/release/BiocViews.html#___FlowCytometry).
+Currently it lists 66 software packages ranging from basic I/O packages to visualization packages and interactive websites to analyze the data.
+
+Note: I will just use cytometry instead of flow cytometry from now on, but some of these packages might apply to other cytometry data or even mass spectromy 
+
+In cytometry there is a flow and detectors to measure what has gone through it.
+Depending on the signal detected subpopulations are sorted or analyzed separately. 
+The process of setting each threshold of is called gating. 
+
+Traditionally a reduced number of fluorochromes could be used at the same time.
+The spectral cytometry, which instead of just a few Hz it can measure the full light spectrum, provides a powerful method with higher observations.
+
+A common transformation of the data is the `arcsinh`/logicle method. 
+Data is also compensated for cells' autoflorecence, using a SPILL matrix.
+With spectral this compensation can be done differently given the spectrum of light of the cells. 
+If the FCS file is already compensated the $P1E and similar keywords is "0,0".
+
+I will focus on the input and QC of the data, so I won't cover the 70 packages.
+And probably, I will only cover ~10 of them.
+There is a workflow for this data: [cytofWorkflow](https://bioconductor.org/packages/cytofWorkflow).
+
+# flowCore
+
+The core package is [flowCore](https://bioconductor.org/packages/flowCore) which provides the functionality to read (and write) the flow cytometry files (aka .fcs files).
+It also provides two important classes: `flowFrame` and `flowSet`.
+A `flowFrame` is a single FCS file while `flowSet` is a container of multiple `flowFrame`.
+
+These classes are used by many packages. 
+
+
+# flowViz
+
+This is the old package for visualizing the cytometry
+
+# ggcyto
+
+Another package to plot data using [ggplot2](https://cran.r-project.org/package=ggplot2) as backend.
+
+# FlowSOM
+
+This package provide a method to create self-organizing map (SOM) which provides unsupervised cell classification.
+
+# flowAI
+
+The [flowAI](https://bioconductor.org/packages/flowAI) package provides a function to check a flowSet.
+
+# PeacoQC
+
+The [PeacoQC](https://bioconductor.org/packages/PeacoQC) package provides four functions:
+ - To do peak-based detection
+ - Remove doublet events
+ - Remove margins events
+ - To visually overview the quality control analysis.
+
+I found that in some samples it filters out all the cells of a sample. 
+
+# FlowClean
+
+[FlowClean](https://bioconductor.org/packages/FlowClean)
+
+# Outside Bioconductor
+
+ - [sekalylab/unsupflowhelper](https://github.com/sekalylab/unsupflowhelper) provides a workflow to find cofactors and cluster cells. 
+ - [JinmiaoChenLab/Rphenograph](https://github.com/JinmiaoChenLab/Rphenograph)
+
+
+
+
+## Summary
+
+Nice support a bit unclear
+
+### Reproducibility
+
+<details>
+```{r reproducibility, echo = FALSE}
+## Reproducibility info
+options(width = 120)
+sessioninfo::session_info()
+```
+</details>
