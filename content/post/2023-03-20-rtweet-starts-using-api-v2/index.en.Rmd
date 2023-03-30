@@ -1,0 +1,154 @@
+---
+title: "rtweet 1.2.0"
+author: Lluís Revilla Sancho
+date: '2023-03-20'
+slug: rtweet-starts-using-api-v2
+categories:
+  - r
+tags:
+  - rtweet
+authors:
+  - admin
+description: ''
+draft: no
+editor_options:
+  chunk_output_type: console
+featured: no
+image:
+  caption: ''
+  focal_point: ''
+subtitle: ''
+summary: ''
+---
+
+```{r setup, include = FALSE}
+knitr::opts_chunk$set(collapse = TRUE, fig.retina = 2)
+```
+
+I'm very excited to announce that rtweet 1.2.0 is now available on GitHub! Install it by running:
+
+```r
+devtools::install_github("ropensci/rtweet")
+```
+
+Then load it in a fresh session with:
+
+```r
+library(rtweet)
+```
+
+# New features 
+
+This version adds many new endpoints to retrieve data from twitter:
+
+- From lists
+  
+- From tweets
+
+- About users
+  
+- Also, about statistics of your own content.
+
+You can read about them in the [NEWS](https://docs.ropensci.org/rtweet/news/index.html).
+
+
+# Authentication
+
+Besides fixing a problem preventing new users to use `auth_setup_default()`, in this release there is a new authentication mechanism.
+
+Some endpoints require a new authentication method not previously used by rtweet.
+This authentication mechanism requires setting up a client.  
+To support it, I have added some functions to create it, save it, and use it modelling the functions from `auth_*`.
+There is now one client provided by rtweet if you don't want to configure your own:
+
+```r
+client_setup_default()
+```
+
+Additionally, I briefly expanded the authentication vignette (`vignette("auth", "rtweet")`) to include a section about how to obtain the required credentials. 
+Once you get them is pretty straight forward:
+
+```r
+auth_oauth2 <- rtweet_oauth2(app = "my_awesome_app")
+```
+
+This mechanism is required by some functions which are of special interest: `user_self()`, `tweet_bookmarked()`, `user_blocked()`, and `user_timeline()`.
+
+Note that due to upstream reasons, the authentication is only valid for 2 hours.
+You will be asked to approve the client again after the 2 hours (and save it again!). 
+
+We can set the authentication as we usually do:
+
+```r
+auth_as(auth_oauth2)
+```
+
+And start retrieving our data in Twitter!
+
+# New functions
+
+```r
+me <- user_self()
+bookmarked <- user_bookmarks(me$id, n = 120)
+```
+
+rtweet will make as many requests as needed and automatically paginate the results.
+However, if you try this you might realize that the queries are slow.
+These are the limits imposed by Twitter.
+
+If you want to keep track of the progress of your query, you can use `verbose = TRUE`:
+
+```r
+blocked <- user_blocked(me$id, n = Inf, verbose = TRUE)
+timeline <- user_timeline(me$id, n = 800, verbose = TRUE)
+```
+
+It will also store the data of the requests in a temporary file, in case you lose the connection you can still recover it. 
+
+Some endpoints have a length limit on the accepted input:
+
+```r
+bioconductor <- user_by_username("Bioconductor")
+bioconductor_followers <- user_followers(bioconductor$id, n = 200)
+us <- user_search(ids = bioconductor_followers$id)
+```
+
+Errors are, in principle, easier to understand in these new functions, thanks to the messages provided:
+
+```r
+user_blocked(bioconductor$id, n = Inf, verbose = TRUE)
+```
+
+# Other
+
+These new endpoints provide access to many data which only the default information is converted to a nice table.
+If you request more data, via expansions and fields: replies, information about the user of a tweet, ... you will have to wait next release.  
+You can already get them but with `parse = FALSE`.
+My intention was to provide more parsing support in this release, but I think it is better to make more releases more often.
+
+The API also provides an endpoint to check if data stored is compliant with the Terms of Service.
+I started working on these endpoints after the streaming endpoints because they are important.
+
+# Side story
+
+With the deprecation of the streaming endpoints and the function `stream_tweets` I implemented the first three functions using Twitter's API v2. 
+They use a bearer token as authentication mechanism.
+
+Many endpoints of API v2 also use this authentication mechanism and made it easy  to support them.
+
+But there was a petition to retrieve the bookmarked tweets.
+That endpoint required OAuth2 mechanism and didn't allow the use of the bearer token. 
+It is relevant because bookmarks are not provided with the data dump you can request from Twitter.
+This endpoint is the only automatic way to retrieve them from Twitter if you used them!
+
+# Final
+
+This update is the last update of rtweet.
+The [new API plans](https://twitter.com/TwitterDev/status/1641222782594990080) make it impossible to continue developing and testing software like rtweet without substantial financial investment (at least USD$100/month).  
+
+More importantly, this will restrict who can use the package.
+I think those few users still using rtweet might also afford to pay for support or development of new features.
+If you are one of them you can [sponsor my work](https://www.buymeacoffee.com/llrs) in rtweet.
+
+I will remove the package from CRAN one month after the new API enters into effect (~ 1st July). 
+Farewell Twitter. 
