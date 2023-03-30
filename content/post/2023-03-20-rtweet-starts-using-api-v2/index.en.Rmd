@@ -9,7 +9,7 @@ tags:
   - rtweet
 authors:
   - admin
-description: ''
+description: 'News about rtweet in the latest release: Using API v2 and other improvements. Side stories and future plans for rtweet too.'
 draft: no
 editor_options:
   chunk_output_type: console
@@ -18,7 +18,7 @@ image:
   caption: ''
   focal_point: ''
 subtitle: ''
-summary: ''
+summary: 'News about rtweet 1.2.0 and its future.'
 ---
 
 ```{r setup, include = FALSE}
