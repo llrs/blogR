@@ -1,0 +1,164 @@
+---
+title: 'experDesign: follow up'
+author: Lluís Revilla Sancho
+date: '2023-04-09'
+slug: experdesign-follow-up
+categories:
+  - bioinformatics
+  - news
+tags:
+  - r
+  - packages
+  - experDesign
+authors:
+  - admin
+description: 'Summary of the check_data and follow_up functions and how to use them'
+draft: no
+editor_options:
+  chunk_output_type: console
+featured: yes
+image:
+  caption: ''
+  focal_point: ''
+subtitle: ''
+summary: 'Explains the new updates of the experDesign 0.2.0 package'
+---
+
+
+
+<p>I am happy to announce a new release of experDesign.
+Install it from CRAN with:</p>
+<pre class="r"><code>install.packages(&quot;experDesign&quot;)
+library(&quot;experDesign&quot;)</code></pre>
+<p>This new release has focused in more tricky aspects when designing an experiment:</p>
+<ul>
+<li>Checking the samples of your experiment.</li>
+<li>How to continue stratifying your conditions after some initial batch.</li>
+</ul>
+<p>These functions should be used before carrying out anything once you have your samples collected.
+You can use these functions and make an informed decision of what might happen with your experiment.</p>
+<div id="checking-your-samples" class="section level1">
+<h1>Checking your samples</h1>
+<p>The new function <code>check_data()</code> will warn you if it finds some known issues with your data.</p>
+<pre class="r"><code>library(&quot;experDesign&quot;)
+library(&quot;MASS&quot;)</code></pre>
+<p>If we take the survey dataset from the MASS package we can see that it has some issues:</p>
+<pre class="r"><code>data(survey, package = &quot;MASS&quot;)
+check_data(survey)
+## Warning: Two categorical variables don&#39;t have all combinations.
+## Warning: Some values are missing.
+## Warning: There is a combination of categories with no replicates; i.e. just one
+## sample.
+## [1] FALSE</code></pre>
+<p>While if we fabricate our own dataset we might realize we have a problem</p>
+<pre class="r"><code>rdata &lt;- expand.grid(sex = c(&quot;M&quot;, &quot;F&quot;), class = c(&quot;lower&quot;, &quot;median&quot;, &quot;high&quot;))
+stopifnot(&quot;Same samples/rows as combinations of classes&quot; = nrow(rdata) == 2*3)
+check_data(rdata)
+## Warning: There is a combination of categories with no replicates; i.e. just one
+## sample.
+## [1] FALSE
+# We create some new samples with the same conditions
+rdata2 &lt;- rbind(rdata, rdata)
+check_data(rdata2)
+## [1] TRUE</code></pre>
+<p>One might decide to go ahead with what is available or use only some of those samples or wait to collect more samples for the experiment</p>
+</div>
+<div id="follow-up" class="section level1">
+<h1>Follow up</h1>
+<p>Imagine you have 100 samples that you distribute in 4 batches of 25 samples each.
+Later, you collect 80 more samples to analyze.
+You want these new samples to be analyzed together with those previous 100 samples.
+Will it be possible? How should you distribute your new samples in groups of 25?</p>
+<p>Using the same dataset from <code>MASS</code> imagine if we first collected 118 observations and later 119 more:</p>
+<pre class="r"><code>survey1 &lt;- survey[1:118, ]
+survey2 &lt;- survey[119:nrow(survey), ]
+# Using low number of iterations to speed the process 
+# you should even use higher number than the default
+fu &lt;- follow_up(survey1, survey2, size_subset = 50, iterations = 10)
+## Warning: There are some problems with the data.
+## Warning: There are some problems with the new samples and the batches.
+## Warning: There are some problems with the new data.
+## Warning: There are some problems with the old data.</code></pre>
+<p>Following the previous new function it reports if there are problems with the observations.
+One can check each collection with <code>check_data</code> to know more about the problems found.</p>
+<p>If you have already performed the experiment on your observations you can also check the distribution:</p>
+<pre class="r"><code># Create the first batch
+variables &lt;- c(&quot;Sex&quot;, &quot;Smoke&quot;, &quot;Age&quot;)
+survey1 &lt;- survey1[, variables]
+index1 &lt;- design(survey1, size_subset = 50, iterations = 10)
+## Warning: There might be some problems with the data use check_data().
+r_survey &lt;- inspect(index1, survey1)
+# Create the second batch with &quot;new&quot; students
+survey2 &lt;- survey2[, variables]
+survey2$batch &lt;- NA
+# Prepare the follow up
+all_classroom &lt;- rbind(r_survey, survey2)
+fu2 &lt;- follow_up2(all_classroom, size_subset = 50, iterations = 10)
+## Warning: There are some problems with the data.
+## Warning: There are some problems with the new samples and the batches.
+## Warning: There are some problems with the new data.
+## Warning: There are some problems with the old data.
+tail(fu2)
+## [1] &quot;NewSubset2&quot; &quot;NewSubset2&quot; &quot;NewSubset2&quot; &quot;NewSubset2&quot; &quot;NewSubset2&quot;
+## [6] &quot;NewSubset3&quot;</code></pre>
+<p>Using this function will help to decide which new observations go to which new batches.</p>
+</div>
+<div id="closing-remarks" class="section level1">
+<h1>Closing remarks</h1>
+<p>The famous quote from Fisher goes:</p>
+<blockquote>
+<p>“To consult the statistician after an experiment is finished is often merely to ask him to conduct a <em>post mortem</em> examination. He can perhaps say what the experiment died of.”</p>
+</blockquote>
+<p>This emphasizes the importance of involving a statistician early on in the experimental design process.<br />
+Unfortunately, in some cases, it may be too late to involve a statistician in the experimental design process or the reality of unforeseen circumstances messed the design of your carefully planned experiment.</p>
+<p>My aim with this package is to provide practical tools for statisticians, bioinformaticians, and anyone who works with data.
+These tools are designed to be easy to use and can be used to analyze data in a variety of contexts.
+Let me know if it is helpful in your case.</p>
+<div id="reproducibility" class="section level3">
+<h3>Reproducibility</h3>
+<details>
+<pre><code>## ─ Session info ───────────────────────────────────────────────────────────────────────────────────────────────────────
+##  setting  value
+##  version  R version 4.2.2 (2022-10-31)
+##  os       Ubuntu 22.04.2 LTS
+##  system   x86_64, linux-gnu
+##  ui       X11
+##  language en_US
+##  collate  en_US.UTF-8
+##  ctype    en_US.UTF-8
+##  tz       Europe/Madrid
+##  date     2023-04-09
+##  pandoc   2.19.2 @ /usr/lib/rstudio/resources/app/bin/quarto/bin/tools/ (via rmarkdown)
+## 
+## ─ Packages ───────────────────────────────────────────────────────────────────────────────────────────────────────────
+##  package     * version  date (UTC) lib source
+##  blogdown      1.16     2022-12-13 [1] CRAN (R 4.2.2)
+##  bookdown      0.33     2023-03-06 [1] CRAN (R 4.2.2)
+##  bslib         0.4.2    2022-12-16 [1] CRAN (R 4.2.2)
+##  cachem        1.0.7    2023-02-24 [1] CRAN (R 4.2.2)
+##  cli           3.6.1    2023-03-23 [1] CRAN (R 4.2.2)
+##  digest        0.6.31   2022-12-11 [1] CRAN (R 4.2.2)
+##  evaluate      0.20     2023-01-17 [1] CRAN (R 4.2.2)
+##  experDesign * 0.2.0    2023-04-05 [1] CRAN (R 4.2.2)
+##  fastmap       1.1.1    2023-02-24 [1] CRAN (R 4.2.2)
+##  htmltools     0.5.4    2022-12-07 [1] CRAN (R 4.2.2)
+##  jquerylib     0.1.4    2021-04-26 [1] CRAN (R 4.2.2)
+##  jsonlite      1.8.4    2022-12-06 [1] CRAN (R 4.2.2)
+##  knitr         1.42     2023-01-25 [1] CRAN (R 4.2.2)
+##  MASS        * 7.3-58.1 2022-08-03 [2] CRAN (R 4.2.2)
+##  R6            2.5.1    2021-08-19 [1] CRAN (R 4.2.2)
+##  rlang         1.1.0    2023-03-14 [1] CRAN (R 4.2.2)
+##  rmarkdown     2.20     2023-01-19 [1] CRAN (R 4.2.2)
+##  rstudioapi    0.14     2022-08-22 [1] CRAN (R 4.2.2)
+##  sass          0.4.5    2023-01-24 [1] CRAN (R 4.2.2)
+##  sessioninfo   1.2.2    2021-12-06 [1] CRAN (R 4.2.2)
+##  xfun          0.37     2023-01-31 [1] CRAN (R 4.2.2)
+##  yaml          2.3.7    2023-01-23 [1] CRAN (R 4.2.2)
+## 
+##  [1] /home/lluis/bin/R/4.2.2
+##  [2] /opt/R/4.2.2/lib/R/library
+## 
+## ──────────────────────────────────────────────────────────────────────────────────────────────────────────────────────</code></pre>
+</details>
+</div>
+</div>

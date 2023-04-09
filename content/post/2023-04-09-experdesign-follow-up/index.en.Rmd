@@ -1,0 +1,136 @@
+---
+title: 'experDesign: follow up'
+author: Lluís Revilla Sancho
+date: '2023-04-09'
+slug: experdesign-follow-up
+categories:
+  - bioinformatics
+  - news
+tags:
+  - r
+  - packages
+  - experDesign
+authors:
+  - admin
+description: 'Summary of the check_data and follow_up functions and how to use them'
+draft: no
+editor_options:
+  chunk_output_type: console
+featured: yes
+image:
+  caption: ''
+  focal_point: ''
+subtitle: ''
+summary: 'Explains the new updates of the experDesign 0.2.0 package'
+---
+
+```{r setup, include = FALSE}
+knitr::opts_chunk$set(collapse = TRUE, fig.retina = 2)
+```
+
+I am happy to announce a new release of experDesign.
+Install it from CRAN with:
+
+```r
+install.packages("experDesign")
+library("experDesign")
+```
+
+This new release has focused in more tricky aspects when designing an experiment:
+
+ - Checking the samples of your experiment.
+ - How to continue stratifying your conditions after some initial batch.
+ 
+These functions should be used before carrying out anything once you have your samples collected.
+You can use these functions and make an informed decision of what might happen with your experiment.
+
+# Checking your samples
+
+The new function `check_data()` will warn you if it finds some known issues with your data.
+
+```{r load}
+library("experDesign")
+library("MASS")
+```
+
+If we take the survey dataset from the MASS package we can see that it has some issues:
+
+```{r check-survey}
+data(survey, package = "MASS")
+check_data(survey)
+```
+
+While if we fabricate our own dataset we might realize we have a problem
+
+```{r check-synthetic}
+rdata <- expand.grid(sex = c("M", "F"), class = c("lower", "median", "high"))
+stopifnot("Same samples/rows as combinations of classes" = nrow(rdata) == 2*3)
+check_data(rdata)
+# We create some new samples with the same conditions
+rdata2 <- rbind(rdata, rdata)
+check_data(rdata2)
+```
+
+One might decide to go ahead with what is available or use only some of those samples or wait to collect more samples for the experiment
+
+# Follow up
+
+Imagine you have 100 samples that you distribute in 4 batches of 25 samples each.
+Later, you collect 80 more samples to analyze.
+You want these new samples to be analyzed together with those previous 100 samples. 
+Will it be possible? How should you distribute your new samples in groups of 25?
+
+Using the same dataset from `MASS` imagine if we first collected 118 observations and later 119 more: 
+
+```{r follow_up}
+survey1 <- survey[1:118, ]
+survey2 <- survey[119:nrow(survey), ]
+# Using low number of iterations to speed the process 
+# you should even use higher number than the default
+fu <- follow_up(survey1, survey2, size_subset = 50, iterations = 10)
+```
+
+Following the previous new function it reports if there are problems with the observations. 
+One can check each collection with `check_data` to know more about the problems found.
+
+If you have already performed the experiment on your observations you can also check the distribution:
+
+```{r follow_up2}
+# Create the first batch
+variables <- c("Sex", "Smoke", "Age")
+survey1 <- survey1[, variables]
+index1 <- design(survey1, size_subset = 50, iterations = 10)
+r_survey <- inspect(index1, survey1)
+# Create the second batch with "new" students
+survey2 <- survey2[, variables]
+survey2$batch <- NA
+# Prepare the follow up
+all_classroom <- rbind(r_survey, survey2)
+fu2 <- follow_up2(all_classroom, size_subset = 50, iterations = 10)
+tail(fu2)
+```
+
+Using this function will help to decide which new observations go to which new batches.
+
+# Closing remarks
+
+The famous quote from Fisher goes:
+
+> "To consult the statistician after an experiment is finished is often merely to ask him to conduct a *post mortem* examination. He can perhaps say what the experiment died of." 
+
+This emphasizes the importance of involving a statistician early on in the experimental design process.  
+Unfortunately, in some cases, it may be too late to involve a statistician in the experimental design process or the reality of unforeseen circumstances messed the design of your carefully planned experiment. 
+
+My aim with this package is to provide practical tools for statisticians, bioinformaticians, and anyone who works with data. 
+These tools are designed to be easy to use and can be used to analyze data in a variety of contexts.
+Let me know if it is helpful in your case.
+
+### Reproducibility
+
+<details>
+```{r reproducibility, echo = FALSE}
+## Reproducibility info
+options(width = 120)
+sessioninfo::session_info()
+```
+</details>
