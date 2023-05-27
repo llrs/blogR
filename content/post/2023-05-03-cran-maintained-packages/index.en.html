@@ -37,9 +37,9 @@ The <a href="https://cran.r-project.org/CRAN_team.htm">CRAN team</a> is <a href=
 <div id="cran-in-packages" class="section level1">
 <h1>CRAN in packages</h1>
 <pre class="r"><code>packages_db &lt;- as.data.frame(tools::CRAN_package_db())
-p &lt;- grep(&quot;CRAN Team&quot;, x = packages_db$Author, ignore.case = TRUE)
-p2 &lt;- grep(&quot;CRAN Team&quot;, x = packages_db$`Authors@R`, ignore.case = TRUE)
-CRAN_TEAM_mentioned &lt;- union(p, p2)
+cran_author &lt;- grep(&quot;CRAN Team&quot;, x = packages_db$Author, ignore.case = TRUE)
+cran_authorsR &lt;- grep(&quot;CRAN Team&quot;, x = packages_db$`Authors@R`, ignore.case = TRUE)
+CRAN_TEAM_mentioned &lt;- union(cran_author, cran_authorsR)
 unique(packages_db$Package[CRAN_TEAM_mentioned])
 ## [1] &quot;fBasics&quot;   &quot;fMultivar&quot; &quot;geiger&quot;    &quot;RCurl&quot;     &quot;RJSONIO&quot;   &quot;udunits2&quot; 
 ## [7] &quot;XML&quot;</code></pre>
@@ -56,16 +56,34 @@ unique(packages_db$Package[CRAN_TEAM_mentioned])
 <li><a href="https://cran.r-project.org/package=RCurl">RCurl</a></li>
 <li><a href="https://cran.r-project.org/package=RJSONIO">RJSONIO</a></li>
 </ul>
-<p>From these three packages RJSONIO is the newest ( first release in 2010) and requires less updates (lately 1 or 2 a year).
+<p>From these three packages RJSONIO is the newest (first release in 2010) and requires less updates (lately 1 or 2 a year).
 However, in 2022 RCurl and XML required 4 and 5 updates respectively.
 I will focus on these packages as these are the ones they are looking for new maintainers.</p>
 </div>
 <div id="rcurl-and-xml" class="section level1">
 <h1>RCurl and XML</h1>
+<div id="circular-dependency" class="section level2">
+<h2>Circular dependency</h2>
+<p>Both XML and RCurl depend on each other.</p>
+<p>We can see that the packages are direct dependencies of one of their direct dependencies!
+How can be that?
+If we go the the <a href="https://cran.r-project.org/package=RCurl">RCurl</a> website we see in “Suggests: XML”, and in the <a href="https://cran.r-project.org/package=XML">XML</a> website the RCurl is there too.
+This circular dependency is allowed because they have each other in Suggests.</p>
+<p>A first step to reduce any possible problem would be to separate them.
+This would make it easier understanding which package is worth prioritizing and possible missteps will have less impact.</p>
+<p>If we look at <a href="https://github.com/search?q=repo%3Acran%2FXML%20RCurl&amp;type=code">XML source code for RCurl we find</a> some code in <code>inst/</code> folder.
+If these two cases were removed the package could remove its dependency to RCurl.</p>
+<p>Similarly, if we look at <a href="https://github.com/search?q=repo%3Acran%2FRCurl%20XML&amp;type=code">RCurl source code for XML we find</a> some code in <code>inst/</code> folder and in some examples.
+If these three cases were removed the package could remove its dependency to XML.</p>
+</div>
 <div id="relevant-data" class="section level2">
 <h2>Relevant data</h2>
+<p>We will look at 4 sets of data for each pacakge: <a href="#dependencies">dependencies</a>, <a href="#releases">releases</a>, <a href="#maintainers">maintainers</a> and <a href="#downloads">downloads</a>.</p>
+<div id="dependencies" class="section level3">
+<h3>Dependencies</h3>
 <p>Both packages have some system dependencies which might make the maintenance harder.
-In addition they have a large number of dependencies:</p>
+In addition they have a large number of dependencies.
+We can gather the dependencies in CRAN and Bioconductor software packages:</p>
 <pre class="r"><code>library(&quot;tools&quot;)
 # Look up only software dependencies in Bioconductor
 options(repos = BiocManager::repositories()[c(&quot;BioCsoft&quot;, &quot;CRAN&quot;)])
@@ -76,15 +94,22 @@ all_unique_deps &lt;- unique(unlist(all_deps, FALSE, FALSE))
 first_deps &lt;- package_dependencies(all_unique_deps, db = ap, which = &quot;all&quot;)
 first_deps_strong &lt;- package_dependencies(all_unique_deps, db = ap, which = &quot;strong&quot;)
 strong &lt;- sapply(first_deps_strong, function(x){any(c(&quot;XML&quot;, &quot;RCurl&quot;) %in% x)})
+deps_strong &lt;- package_dependencies(all_unique_deps, recursive = TRUE, 
+                                 db = ap, which = &quot;strong&quot;)
 first_rdeps &lt;- package_dependencies(all_unique_deps, 
                                    reverse = TRUE, db = ap, which = &quot;all&quot;)
 deps_all &lt;- package_dependencies(all_unique_deps, recursive = TRUE, 
                                  db = ap, which = &quot;all&quot;)</code></pre>
-<p>They have 500 direct dependencies (and 8 more in annotation packages in Bioconductor: recount3, ENCODExplorerData, UCSCRepeatMasker, gDNAinRNAseqData, qdap, qdapTools, metaboliteIDmapping and curatedBreastData).</p>
-<p>With their dependencies there are around 20000 packages that depend on these two packages (about 90% of CRAN and Bioconductor)!</p>
-<p>To focus on which packages are direct dependencies and help what is the best action, let’s gather more information about them.
-First the releases and dates.
-We can prioritze working with maintainers that are known to be active.</p>
+<p>They have 499 direct dependencies (and 8 more in annotation packages in Bioconductor: recount3, ENCODExplorerData, UCSCRepeatMasker, gDNAinRNAseqData, qdap, qdapTools, metaboliteIDmapping and curatedBreastData).</p>
+<p>These two packages with their dependencies are used one way or another by around 20000 packages (about 90% of CRAN and Bioconductor)!
+If these packages fail the impact on the community will be huge.</p>
+<p>To reduce the impact of the dependencies we should look up the direct dependencies.
+But we also looked at the reverse dependencies to asses the impact of the package in the other packages.</p>
+<p>Know which are these, and who maintain them will help decide what is the best course of action.</p>
+</div>
+<div id="releases" class="section level3">
+<h3>Releases</h3>
+<p>A first approach is looking into the number of releases and dates to asses if the package has an active maintainer or not:</p>
 <pre class="r"><code>archive &lt;- tools:::CRAN_archive_db()[all_unique_deps]
 packages &lt;- tools::CRAN_package_db()
 library(&quot;dplyr&quot;)
@@ -101,18 +126,25 @@ fr_bioc &lt;- biocDownloadStats() |&gt;
   pull(Date, name = Package)
 first_release &lt;- c(as.Date(fr[!is.na(fr)]), as.Date(fr_bioc))[all_unique_deps]
 last_update &lt;- packages$Published[match(all_unique_deps, packages$Package)]
-releases &lt;- vapply(archive, NROW, numeric(1L)) + 1
-maintainers &lt;- packages_db$Maintainer[match(all_unique_deps, packages_db$Package)]
+releases &lt;- vapply(archive, NROW, numeric(1L)) + 1</code></pre>
+<p>We only have information about CRAN packages:<br />
+Bioconductor has two releases every year, and while the maintainers can release patched versions of packages between them that information is not stored (or easily retrieved, they are still available in the <a href="https://code.bioconductor.org">git server</a>).</p>
+<p>Even if Bioconductor maintainers didn’t modify the package the version number increases with each release.
+But the version update in the git doesn’t propagate to users automatically unless their checks pass.
+For all these reasons it doesn’t make sense to count releases of packages in Bioconductor.</p>
+</div>
+<div id="maintainers" class="section level3">
+<h3>Maintainers</h3>
+<p>Now that we know which packages are more active, we can look up for the people behind it.
+This way we can prioritize working with maintainers that are known to be active<a href="#fn1" class="footnote-ref" id="fnref1"><sup>1</sup></a>.</p>
+<pre class="r"><code>maintainers &lt;- packages_db$Maintainer[match(all_unique_deps, packages_db$Package)]
 maintainers &lt;- trimws(gsub(&quot;&lt;.+&gt;&quot;, &quot;&quot;, maintainers))</code></pre>
-<p>We only have information about CRAN packages.
-Bioconductor has two releases every year.
-Even if maintainers didn’t modify the package the version number increases (this is to make it easier to know which Bioconductor version they are from).
-The patch releases in between are not tracked (they are still available in the <a href="https://code.bioconductor.org">git server</a>).
-But the verison update in the git doesn’t propagate to users automatically unless their checks pass.
-For all these reasons it doesn’t make sense to count releases of Bioconductor.</p>
-<p>We also retrieved the maintainers of CRAN packages to know key people to address to.
-Note: the <code>maintainer</code> function only works for installed packages .</p>
-<p>Another value we can use are the downloads from users of said pacakges.</p>
+<p>Once again, the Bioconductor repository doesn’t provide a file to gather this kind of data.</p>
+</div>
+<div id="downloads" class="section level3">
+<h3>Downloads</h3>
+<p>Another variable we can use are the downloads from users of said packages.
+Probably, packages more downloaded are used more and a breaking change on them will have impact on more people than other packages.</p>
 <pre class="r"><code>library(&quot;cranlogs&quot;)
 acd &lt;- cran_downloads(intersect(all_unique_deps, packages_db$Package), 
                           when = &quot;last-month&quot;)
@@ -126,10 +158,15 @@ bioc_pkg &lt;- data.frame(package = names(bioc_d), downloads = bioc_d)
 downloads &lt;- rbind(bioc_pkg, cran_pkg)
 rownames(downloads) &lt;- downloads$package
 dwn &lt;- downloads[all_unique_deps, ]</code></pre>
+<p>The logs are provided by the global mirror of CRAN (sponsored by Rstudio).</p>
+<p>The Bioconductor infrastructure which provides total number of downloads and number of downloads from distinct IPs.</p>
+<p>Both logs only count those of their repository and not from other mirrors or approaches (RSPM, bspm, r2u, ….).</p>
+</div>
 </div>
 <div id="analysis" class="section level2">
 <h2>Analysis</h2>
-<p>Now, we can start looking all the data gathered:</p>
+<p>We collected the data that might be relevant.
+Now, we can start looking all the data gathered:</p>
 <pre class="r"><code>repo &lt;- vector(&quot;character&quot;, length(all_unique_deps))
 ap_deps &lt;- ap[all_unique_deps, ]
 repo[startsWith(ap_deps[, &quot;Repository&quot;], &quot;https://bioc&quot;)] &lt;- &quot;Bioconductor&quot;
@@ -140,6 +177,9 @@ deps &lt;- data.frame(package = all_unique_deps,
                    first_deps_n = lengths(first_deps),
                    deps_all_n = lengths(deps_all),
                    first_rdeps_n = lengths(first_rdeps),
+                   first_deps_strong_n = lengths(first_deps_strong), 
+                   deps_strong_n = lengths(deps_strong),
+                   direct_strong = strong, 
                    releases = releases,
                    strong = strong, 
                    first_release = first_release,
@@ -154,20 +194,23 @@ rownames(deps) &lt;- NULL
 head(deps)</code></pre>
 <table>
 <colgroup>
-<col width="10%" />
 <col width="8%" />
-<col width="9%" />
-<col width="7%" />
 <col width="6%" />
-<col width="8%" />
+<col width="7%" />
+<col width="5%" />
+<col width="5%" />
+<col width="6%" />
+<col width="9%" />
+<col width="6%" />
+<col width="6%" />
+<col width="4%" />
+<col width="3%" />
+<col width="6%" />
+<col width="5%" />
 <col width="5%" />
 <col width="4%" />
-<col width="8%" />
-<col width="7%" />
-<col width="6%" />
 <col width="5%" />
-<col width="7%" />
-<col width="3%" />
+<col width="2%" />
 </colgroup>
 <thead>
 <tr class="header">
@@ -177,6 +220,9 @@ head(deps)</code></pre>
 <th align="right">first_deps_n</th>
 <th align="right">deps_all_n</th>
 <th align="right">first_rdeps_n</th>
+<th align="right">first_deps_strong_n</th>
+<th align="right">deps_strong_n</th>
+<th align="left">direct_strong</th>
 <th align="right">releases</th>
 <th align="left">strong</th>
 <th align="left">first_release</th>
@@ -193,14 +239,17 @@ head(deps)</code></pre>
 <td align="left">TRUE</td>
 <td align="left">TRUE</td>
 <td align="right">26</td>
-<td align="right">2399</td>
+<td align="right">2400</td>
 <td align="right">5</td>
+<td align="right">10</td>
+<td align="right">47</td>
+<td align="left">TRUE</td>
 <td align="right">1</td>
 <td align="left">TRUE</td>
 <td align="left">2012-02-01</td>
 <td align="left">NA</td>
 <td align="left">NA</td>
-<td align="right">996</td>
+<td align="right">3119</td>
 <td align="left">Bioconductor</td>
 <td align="left">both</td>
 </tr>
@@ -209,14 +258,17 @@ head(deps)</code></pre>
 <td align="left">TRUE</td>
 <td align="left">TRUE</td>
 <td align="right">33</td>
-<td align="right">2399</td>
+<td align="right">2400</td>
 <td align="right">4</td>
+<td align="right">26</td>
+<td align="right">135</td>
+<td align="left">TRUE</td>
 <td align="right">1</td>
 <td align="left">TRUE</td>
 <td align="left">2015-02-01</td>
 <td align="left">NA</td>
 <td align="left">NA</td>
-<td align="right">126</td>
+<td align="right">317</td>
 <td align="left">Bioconductor</td>
 <td align="left">both</td>
 </tr>
@@ -225,14 +277,17 @@ head(deps)</code></pre>
 <td align="left">FALSE</td>
 <td align="left">TRUE</td>
 <td align="right">61</td>
-<td align="right">2458</td>
+<td align="right">2459</td>
 <td align="right">0</td>
+<td align="right">34</td>
+<td align="right">125</td>
+<td align="left">FALSE</td>
 <td align="right">1</td>
 <td align="left">FALSE</td>
 <td align="left">2021-02-01</td>
 <td align="left">NA</td>
 <td align="left">NA</td>
-<td align="right">9</td>
+<td align="right">76</td>
 <td align="left">Bioconductor</td>
 <td align="left">RCurl</td>
 </tr>
@@ -241,14 +296,17 @@ head(deps)</code></pre>
 <td align="left">FALSE</td>
 <td align="left">TRUE</td>
 <td align="right">6</td>
-<td align="right">2399</td>
+<td align="right">2400</td>
 <td align="right">0</td>
+<td align="right">3</td>
+<td align="right">4</td>
+<td align="left">TRUE</td>
 <td align="right">1</td>
 <td align="left">TRUE</td>
 <td align="left">2013-02-01</td>
 <td align="left">NA</td>
 <td align="left">NA</td>
-<td align="right">22</td>
+<td align="right">66</td>
 <td align="left">Bioconductor</td>
 <td align="left">RCurl</td>
 </tr>
@@ -257,14 +315,17 @@ head(deps)</code></pre>
 <td align="left">FALSE</td>
 <td align="left">TRUE</td>
 <td align="right">34</td>
-<td align="right">2402</td>
+<td align="right">2403</td>
 <td align="right">0</td>
+<td align="right">24</td>
+<td align="right">160</td>
+<td align="left">TRUE</td>
 <td align="right">1</td>
 <td align="left">TRUE</td>
 <td align="left">2020-02-01</td>
 <td align="left">NA</td>
 <td align="left">NA</td>
-<td align="right">58</td>
+<td align="right">236</td>
 <td align="left">Bioconductor</td>
 <td align="left">RCurl</td>
 </tr>
@@ -273,68 +334,116 @@ head(deps)</code></pre>
 <td align="left">FALSE</td>
 <td align="left">TRUE</td>
 <td align="right">19</td>
-<td align="right">2400</td>
+<td align="right">2401</td>
 <td align="right">2</td>
+<td align="right">14</td>
+<td align="right">71</td>
+<td align="left">TRUE</td>
 <td align="right">1</td>
 <td align="left">TRUE</td>
 <td align="left">2016-02-01</td>
 <td align="left">NA</td>
 <td align="left">NA</td>
-<td align="right">57</td>
+<td align="right">173</td>
 <td align="left">Bioconductor</td>
 <td align="left">RCurl</td>
 </tr>
 </tbody>
 </table>
-<p>First of all, there is a significant amount of packages at Bioconductor.</p>
-</div>
-<div id="circular-dependency" class="section level2">
-<h2>Circular dependency</h2>
-<p>Both XML and RCurl are in the list of dependencies.</p>
-<p>We can see that the packages are direct dependencies of one of their direct dependencies!
-How can be that?
-If we go the the <a href="https://cran.r-project.org/package=RCurl">RCurl</a> website we see in Suggests XML, and in the <a href="https://cran.r-project.org/package=XML">XML</a> website the RCurl is there too.
-This circular dependency is allowed because they have each other in Suggests.</p>
-<p>A first step to reduce any possible problem would be to separate them.
-This would make it easier understanding which package is worth prioritizing and possible missteps will have less impact.</p>
-<p>If we look at <a href="https://github.com/search?q=repo%3Acran%2FXML%20RCurl&amp;type=code">XML source code for RCurl we find</a> some code in <code>inst/</code> folder.
-If these two cases were removed the package could remove its dependency to RCurl.</p>
-<p>Similarly, if we look at <a href="https://github.com/search?q=repo%3Acran%2FRCurl%20XML&amp;type=code">RCurl source code for XML we find</a> some code in <code>inst/</code> folder and in some examples.
-If these three cases were removed the package could remove its dependency to XML.</p>
-</div>
-<div id="dependencies" class="section level2">
-<h2>Dependencies</h2>
+<p>I added some numbers and logical values that might help exploring this data.</p>
+<p>We will look at the <a href="#distribution-dependencies">packages dependencies between RCurl and XML</a>, some plots to have a <a href="#overview">quick view</a></p>
+<div id="distribution-dependencies" class="section level3">
+<h3>Distribution dependencies</h3>
 <p>Let’s see how many packages depend in each of them:</p>
 <pre class="r"><code>deps |&gt; 
   group_by(direct_dep_XML, direct_dep_RCurl) |&gt; 
   summarise(Packages = n(), deps = sum(first_deps_n),
             q25 = quantile(deps_all_n, probs = 0.25),
             mean_all = mean(deps_all_n),
-            median_all = median(deps_all_n),
             q75 = quantile(deps_all_n, probs = 0.75),
             ) |&gt; 
-  arrange(-Packages)
-## # A tibble: 3 x 8
-## # Groups:   direct_dep_XML [2]
-##   direct_dep_XML direct_dep_RCurl Packages  deps   q25 mean_all median_all   q75
-##   &lt;lgl&gt;          &lt;lgl&gt;               &lt;int&gt; &lt;int&gt; &lt;dbl&gt;    &lt;dbl&gt;      &lt;dbl&gt; &lt;dbl&gt;
-## 1 TRUE           FALSE                 240  3658  2399    2303.       2399 2402 
-## 2 FALSE          TRUE                  196  3221  2399    2245.       2399 2403 
-## 3 TRUE           TRUE                   64  1140  2399    2366.       2399 2400.</code></pre>
+  ungroup() |&gt; 
+  arrange(-Packages)</code></pre>
+<table style="width:100%;">
+<colgroup>
+<col width="22%" />
+<col width="25%" />
+<col width="13%" />
+<col width="7%" />
+<col width="7%" />
+<col width="13%" />
+<col width="11%" />
+</colgroup>
+<thead>
+<tr class="header">
+<th align="left">direct_dep_XML</th>
+<th align="left">direct_dep_RCurl</th>
+<th align="right">Packages</th>
+<th align="right">deps</th>
+<th align="right">q25</th>
+<th align="right">mean_all</th>
+<th align="right">q75</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td align="left">TRUE</td>
+<td align="left">FALSE</td>
+<td align="right">241</td>
+<td align="right">3684</td>
+<td align="right">2400</td>
+<td align="right">2304.373</td>
+<td align="right">2403.00</td>
+</tr>
+<tr class="even">
+<td align="left">FALSE</td>
+<td align="left">TRUE</td>
+<td align="right">194</td>
+<td align="right">3180</td>
+<td align="right">2400</td>
+<td align="right">2244.196</td>
+<td align="right">2403.75</td>
+</tr>
+<tr class="odd">
+<td align="left">TRUE</td>
+<td align="left">TRUE</td>
+<td align="right">64</td>
+<td align="right">1110</td>
+<td align="right">2400</td>
+<td align="right">2365.953</td>
+<td align="right">2401.00</td>
+</tr>
+</tbody>
+</table>
 <p>There are ~40 more packages depending on XML than to RCurl and just 64 to both of them.</p>
+</div>
+<div id="overview" class="section level3">
+<h3>Overview</h3>
+<p>We can plot some variables to get a quick overview of the packages:</p>
 <pre class="r"><code>library(&quot;ggplot2&quot;)
 library(&quot;ggrepel&quot;)
-ggplot(deps) +
+deps_wo &lt;- filter(deps, !package %in% c(&quot;XML&quot;, &quot;RCurl&quot;))
+deps_wo |&gt; 
+  ggplot() +
   geom_point(aes(first_deps_n, downloads, shape = type)) +
   geom_text_repel(aes(first_deps_n, downloads, label = package)) +
   theme_minimal() +
   scale_y_log10(labels = scales::label_log()) +
   labs(title = &quot;Packages and downloads&quot;, 
        x = &quot;Direct dependencies&quot;, y = &quot;Downloads&quot;, size = &quot;Packages&quot;)
+## Warning: Transformation introduced infinite values in continuous y-axis
+## Transformation introduced infinite values in continuous y-axis
 ## Warning: ggrepel: 471 unlabeled data points (too many overlaps). Consider
 ## increasing max.overlaps</code></pre>
-<p><img src="{{< blogdown/postref >}}index.en_files/figure-html/unnamed-chunk-1-1.png" width="672" /></p>
-<pre class="r"><code>ggplot(deps) +
+<div class="figure"><span style="display:block;" id="fig:plot1"></span>
+<img src="{{< blogdown/postref >}}index.en_files/figure-html/plot1-1.png" alt="Direct dependencies vs downloads. Many pakcages have up to 50 packages and most have below 1000 downloads in a month." width="672" />
+<p class="caption">
+Figure 1: Direct dependencies vs downloads. Many pakcages have up to 50 packages and most have below 1000 downloads in a month.
+</p>
+</div>
+<p>There is an outlier on Fig1, the mlr package has more than 10k downloads and close to 120 direct dependencies!</p>
+<pre class="r"><code>deps_wo |&gt; 
+  ggplot() +
   geom_point(aes(first_deps_n, first_rdeps_n, shape = type)) +
   geom_text_repel(aes(first_deps_n, first_rdeps_n, label = package)) +
   theme_minimal() +
@@ -345,43 +454,65 @@ ggplot(deps) +
 ## Transformation introduced infinite values in continuous y-axis
 ## Warning: ggrepel: 471 unlabeled data points (too many overlaps). Consider
 ## increasing max.overlaps</code></pre>
-<p><img src="{{< blogdown/postref >}}index.en_files/figure-html/unnamed-chunk-2-1.png" width="672" /></p>
-<pre class="r"><code>deps_wo &lt;- filter(deps, !package %in% c(&quot;XML&quot;, &quot;RCurl&quot;))
-deps_wo |&gt; 
+<div class="figure"><span style="display:block;" id="fig:plot2"></span>
+<img src="{{< blogdown/postref >}}index.en_files/figure-html/plot2-1.png" alt="Dependencies vs packages that depend on them. " width="672" />
+<p class="caption">
+Figure 2: Dependencies vs packages that depend on them.
+</p>
+</div>
+<p>In general though, the packages that have more dependencies have less direct dependencies.</p>
+<pre class="r"><code>deps_wo |&gt; 
   filter(!is.na(maintainer)) |&gt; 
-  summarize(n = n(), downlods = sum(downloads), .by = maintainer) |&gt; 
+  summarize(n = n(), downloads = sum(downloads), .by = maintainer) |&gt; 
   ggplot() +
-  geom_point(aes(n, downlods)) +
-  geom_text_repel(aes(n, downlods, label = maintainer)) +
+  geom_point(aes(n, downloads)) +
+  geom_text_repel(aes(n, downloads, label = maintainer)) +
   scale_y_log10(labels = scales::label_log()) +
   scale_x_continuous(breaks = 1:10) +
   theme_minimal() +
-  labs(title = &quot;Maintainers that depend on XML and RCurl&quot;,
+  labs(title = &quot;CRAN maintainers that depend on XML and RCurl&quot;,
        x = &quot;Packages&quot;, y = &quot;Downloads&quot;)
-## Warning: ggrepel: 291 unlabeled data points (too many overlaps). Consider
+## Warning: Transformation introduced infinite values in continuous y-axis
+## Transformation introduced infinite values in continuous y-axis
+## Warning: ggrepel: 290 unlabeled data points (too many overlaps). Consider
 ## increasing max.overlaps</code></pre>
-<p><img src="{{< blogdown/postref >}}index.en_files/figure-html/plot-maintainers-1.png" width="672" /></p>
-<p>To avoid over plotting we can explore which variables are more important and how:</p>
-<pre class="r"><code>p &lt;- prcomp(deps_wo[, c(4:6, 8, 12)], scale. = TRUE, center = TRUE)
-summary(p)
+<div class="figure"><span style="display:block;" id="fig:plot-maintainers"></span>
+<img src="{{< blogdown/postref >}}index.en_files/figure-html/plot-maintainers-1.png" alt="Looking at maintainers and the number of downloads they have." width="672" />
+<p class="caption">
+Figure 3: Looking at maintainers and the number of downloads they have.
+</p>
+</div>
+<p>Most maintainer have few packages but some have many</p>
+</div>
+<div id="finding-important-packages" class="section level3">
+<h3>Finding important packages</h3>
+<p>We can use a PCA to find which packages are more important.</p>
+<pre class="r"><code>cols_pca &lt;-  c(4:7, 15)
+pca_all &lt;- prcomp(deps_wo[, cols_pca], scale. = TRUE, center = TRUE)
+summary(pca_all)
 ## Importance of components:
-##                           PC1    PC2    PC3    PC4    PC5
-## Standard deviation     1.2710 1.1290 0.9135 0.8708 0.7191
-## Proportion of Variance 0.3231 0.2549 0.1669 0.1517 0.1034
-## Cumulative Proportion  0.3231 0.5780 0.7449 0.8966 1.0000
-pca &lt;- cbind(p$x, deps_wo)
-ggplot(pca) +
+##                           PC1    PC2    PC3    PC4     PC5
+## Standard deviation     1.3908 1.1932 0.9382 0.7505 0.44541
+## Proportion of Variance 0.3869 0.2848 0.1760 0.1127 0.03968
+## Cumulative Proportion  0.3869 0.6716 0.8477 0.9603 1.00000
+pca_data &lt;- cbind(pca_all$x, deps_wo)
+ggplot(pca_data) +
+  geom_hline(yintercept = 0) +
+  geom_vline(xintercept = 0) +
   geom_point(aes(PC1, PC2, col = repository, shape = repository)) +
-  geom_text_repel(aes(PC1, PC2, label = package), max.overlaps = 15) +
+  geom_text_repel(aes(PC1, PC2, label = package), data = . %&gt;% filter(PC1 &gt; 5)) +
   theme_minimal() +
   theme(axis.text = element_blank()) +
-  labs(title = &quot;PCA of the numeric variables&quot;)
-## Warning: ggrepel: 485 unlabeled data points (too many overlaps). Consider
-## increasing max.overlaps</code></pre>
-<p><img src="{{< blogdown/postref >}}index.en_files/figure-html/pca-1.png" width="672" /></p>
+  labs(title = &quot;PCA of the numeric variables&quot;)</code></pre>
+<div class="figure">
+<img src="{{< blogdown/postref >}}index.en_files/figure-html/pca_al-1.png" alt="PCA of all packages" width="672" />
+<p class="caption">
+(#fig:pca_al)PCA of all packages
+</p>
+</div>
 <p>We can see in the first PCA some packages that have many downloads and/or depend on many packages.
 The second one are packages with many dependencies, as explained by <code>rotation</code>:</p>
-<pre class="r"><code>p$rotation[, 1:2]</code></pre>
+<pre class="r"><code>pca_all$rotation[, 1:2]</code></pre>
 <table>
 <thead>
 <tr class="header">
@@ -393,67 +524,100 @@ The second one are packages with many dependencies, as explained by <code>rotati
 <tbody>
 <tr class="odd">
 <td align="left">first_deps_n</td>
-<td align="right">-0.1065641</td>
-<td align="right">-0.6797466</td>
+<td align="right">-0.6563923</td>
+<td align="right">0.1069895</td>
 </tr>
 <tr class="even">
 <td align="left">deps_all_n</td>
-<td align="right">-0.0552394</td>
-<td align="right">-0.6767388</td>
+<td align="right">-0.3483641</td>
+<td align="right">0.0353693</td>
 </tr>
 <tr class="odd">
 <td align="left">first_rdeps_n</td>
-<td align="right">-0.6095048</td>
-<td align="right">0.1812261</td>
+<td align="right">0.0781033</td>
+<td align="right">0.7025987</td>
 </tr>
 <tr class="even">
-<td align="left">strong</td>
-<td align="right">0.4542194</td>
-<td align="right">0.1773709</td>
+<td align="left">first_deps_strong_n</td>
+<td align="right">-0.6601065</td>
+<td align="right">0.0400533</td>
 </tr>
 <tr class="odd">
 <td align="left">downloads</td>
-<td align="right">-0.6385776</td>
-<td align="right">0.1251632</td>
+<td align="right">0.0771423</td>
+<td align="right">0.7014649</td>
 </tr>
 </tbody>
 </table>
-<pre class="r"><code>p2 &lt;- prcomp(deps_wo[deps_wo$strong, c(4:6, 12)], scale. = TRUE, center = TRUE)
-summary(p2)
+<pre class="r"><code>pca_strong &lt;- prcomp(deps_wo[deps_wo$strong, cols_pca], 
+                     scale. = TRUE, center = TRUE)
+summary(pca_strong)
 ## Importance of components:
-##                           PC1    PC2    PC3    PC4
-## Standard deviation     1.2584 1.0819 0.8587 0.7130
-## Proportion of Variance 0.3959 0.2926 0.1844 0.1271
-## Cumulative Proportion  0.3959 0.6885 0.8729 1.0000
-pca2 &lt;- cbind(p2$x, deps_wo[deps_wo$strong, ])
-ggplot(pca2) +
+##                           PC1    PC2    PC3     PC4     PC5
+## Standard deviation     1.4382 1.3151 0.9278 0.43553 0.38930
+## Proportion of Variance 0.4137 0.3459 0.1721 0.03794 0.03031
+## Cumulative Proportion  0.4137 0.7596 0.9317 0.96969 1.00000
+pca_data_srong &lt;- cbind(pca_strong$x, deps_wo[deps_wo$strong, ])
+ggplot(pca_data_srong) +
   geom_hline(yintercept = 0) +
   geom_vline(xintercept = 0) +
   geom_point(aes(PC1, PC2, col = repository, shape = repository)) +
   geom_text_repel(aes(PC1, PC2, label = package), max.overlaps = 15) +
   theme_minimal() +
   theme(axis.text = element_blank()) +
-  labs(title = &quot;Important pacakges depending on XML and RCurl&quot;, 
+  labs(title = &quot;Important packages depending on XML and RCurl&quot;, 
        subtitle = &quot;PCA of numeric variables of strong dependencies&quot;,
        col = &quot;Repository&quot;, shape = &quot;Repository&quot;)
-## Warning: ggrepel: 394 unlabeled data points (too many overlaps). Consider
+## Warning: ggrepel: 395 unlabeled data points (too many overlaps). Consider
 ## increasing max.overlaps</code></pre>
-<p><img src="{{< blogdown/postref >}}index.en_files/figure-html/pca2-1.png" width="672" /></p>
+<div class="figure">
+<img src="{{< blogdown/postref >}}index.en_files/figure-html/pca_strong-1.png" alt="PCA of packages with strong dependency to XML or RCurl" width="672" />
+<p class="caption">
+(#fig:pca_strong)PCA of packages with strong dependency to XML or RCurl
+</p>
+</div>
 <p>rlist has as dependency XML and only uses 3 functions from it.</p>
 <p>The main packages that depend on XML and RCurl are from Biocondcutor</p>
+<pre class="r"><code>pca_weak &lt;- prcomp(deps_wo[!deps_wo$strong, cols_pca], 
+                   scale. = TRUE, center = TRUE)
+summary(pca_weak)
+## Importance of components:
+##                           PC1    PC2    PC3     PC4     PC5
+## Standard deviation     1.4408 1.1468 0.9952 0.67575 0.40225
+## Proportion of Variance 0.4152 0.2630 0.1981 0.09133 0.03236
+## Cumulative Proportion  0.4152 0.6782 0.8763 0.96764 1.00000
+pca_data_weak &lt;- cbind(pca_weak$x, deps_wo[!deps_wo$strong, ])
+ggplot(pca_data_weak) +
+  geom_hline(yintercept = 0) +
+  geom_vline(xintercept = 0) +
+  geom_point(aes(PC1, PC2, col = repository, shape = repository)) +
+  geom_text_repel(aes(PC1, PC2, label = package), max.overlaps = 15) +
+  theme_minimal() +
+  theme(axis.text = element_blank()) +
+  labs(title = &quot;Packages suggesting XML and RCurl&quot;, 
+       subtitle = &quot;PCA of numeric variables of weak dependencies&quot;,
+       col = &quot;Repository&quot;, shape = &quot;Repository&quot;)
+## Warning: ggrepel: 72 unlabeled data points (too many overlaps). Consider
+## increasing max.overlaps</code></pre>
+<div class="figure">
+<img src="{{< blogdown/postref >}}index.en_files/figure-html/pca_weak-1.png" alt="Packages with weak dependency to XML or RCurl." width="672" />
+<p class="caption">
+(#fig:pca_weak)Packages with weak dependency to XML or RCurl.
+</p>
+</div>
+</div>
 </div>
 <div id="outro" class="section level2">
 <h2>Outro</h2>
-<p>I recently found this as opposite of introduction/intro.</p>
-<p>I wanted to explore a bit how these packages got into this position.</p>
+<p>I wanted to explore a bit how these packages got into this position <a href="#fn2" class="footnote-ref" id="fnref2"><sup>2</sup></a>.</p>
 <pre class="r"><code>deps |&gt; 
   filter(strong) |&gt; 
   ggplot() +
   geom_vline(xintercept = as.Date(&quot;2013-06-15&quot;), linetype = 2) +
-  geom_label(aes(first_release, downloads, label = package),
-             data = deps[c(&quot;XML&quot;, &quot;RCurl&quot;), ], show.legend = FALSE) +
   geom_point(aes(first_release, downloads, col = type, shape = type, 
                  size = first_deps_n)) +
+  geom_label(aes(first_release, downloads, label = package),
+             data = deps[c(&quot;XML&quot;, &quot;RCurl&quot;), ], show.legend = FALSE) +
   theme_minimal() +
   scale_y_log10(labels = scales::label_log()) +
   annotate(&quot;text&quot;, x = as.Date(&quot;2014-6-15&quot;), y = 5*10^5, 
@@ -462,12 +626,18 @@ ggplot(pca2) +
        title = &quot;More packages added after CRAN maintenance than before&quot;,
        subtitle = &quot;Release date and downloads&quot;,
        col = &quot;Depends on&quot;, shape = &quot;Depends on&quot;, size = &quot;Direct dependencies&quot;) 
-## Warning: Removed 2 rows containing missing values (`geom_label()`).
-## Warning: Removed 36 rows containing missing values (`geom_point()`).</code></pre>
-<p><img src="{{< blogdown/postref >}}index.en_files/figure-html/deps-time-1.png" width="672" /></p>
+## Warning: Transformation introduced infinite values in continuous y-axis
+## Warning: Removed 35 rows containing missing values (`geom_point()`).
+## Warning: Removed 2 rows containing missing values (`geom_label()`).</code></pre>
+<div class="figure"><span style="display:block;" id="fig:deps-time"></span>
+<img src="{{< blogdown/postref >}}index.en_files/figure-html/deps-time-1.png" alt="First release of packages in relation to the maintenance by CRAN of XML and RCurl." width="672" />
+<p class="caption">
+Figure 4: First release of packages in relation to the maintenance by CRAN of XML and RCurl.
+</p>
+</div>
 <p>Almost the CRAN team have been maintaining these packages longer than the previous maintainer(s?).</p>
 <p>Next, we look at the dependencies added after CRAN started maintaining them</p>
-<pre class="r"><code>summarize(deps,
+<pre class="r"><code>summarize(deps_wo,
           before = sum(first_release &lt;= as.Date(&quot;2013-06-15&quot;), na.rm = TRUE), 
           later = sum(first_release &gt; as.Date(&quot;2013-06-15&quot;), na.rm = TRUE),
           .by = type)</code></pre>
@@ -483,36 +653,48 @@ ggplot(pca2) +
 <tr class="odd">
 <td align="left">both</td>
 <td align="right">15</td>
-<td align="right">45</td>
+<td align="right">47</td>
 </tr>
 <tr class="even">
 <td align="left">RCurl</td>
-<td align="right">22</td>
-<td align="right">151</td>
+<td align="right">21</td>
+<td align="right">149</td>
 </tr>
 <tr class="odd">
 <td align="left">XML</td>
-<td align="right">65</td>
-<td align="right">162</td>
+<td align="right">64</td>
+<td align="right">163</td>
 </tr>
 </tbody>
 </table>
-<p>Maybe packages authors trusted the CRAN team for their dependencies or there was no other alternative for the functionality.</p>
-<p>A replacment for XML could be <a href="https://cran.r-project.org/package=xml2">xml2</a>, first released in 2015 (which uses the same system dependency libxml2).
-A replacment for RCurl could be <a href="https://cran.r-project.org/package=curl">curl</a>, first released at the end of 2014 (which uses the same system dependency libcurl).
-# Recomendations</p>
+<p>More packages have been released after CRAN is maintaining it than before.
+Maybe packages authors trusted the CRAN team for their dependencies or there was no other alternative for the functionality.
+This might also be explained by the expansion of CRAN (and Bioconductor) with more packages being added each day.
+However, this places further pressure in the CRAN team to maintain those packages. Removing this burden might free more time for them or to dedicate to CRAN.</p>
+<p>A replacement for XML could be <a href="https://cran.r-project.org/package=xml2">xml2</a>, first released in 2015 (which uses the same system dependency libxml2).
+A replacement for RCurl could be <a href="https://cran.r-project.org/package=curl">curl</a>, first released at the end of 2014 (which uses the same system dependency libcurl).</p>
+<p>Until their release there were no other replacement for these packages (if there are other packages, please let me know).
+It is not clear to me if those packages at their first release could replace XML and RCurl.</p>
+<p>This highlight the importance of correct replacement of packages in the community.
+Recent examples are the efforts taken by the <a href="https://r-spatial.org/">spatial community</a> led by Roger Bivand, Edzer Pebesma.
+Where packages have been carefully designed and planned to replace older packages that are going to be retired soon.</p>
+</div>
+</div>
+<div id="recomendations" class="section level1">
+<h1>Recomendations</h1>
 <p>As a final recommendations I think:</p>
 <ul>
 <li>Disentangle the XML and RCurl circular dependency.</li>
-<li>Evaluate if the xml2 and curl packages provides enough functionality to replace XML and RCurl respectively.</li>
-<li>If their provide enough, contact package maintainers X to replace their functionality with xml2 and curl dependencies or others.</li>
-<li>Set warnings of deprecation on the XML and RCurl packages.</li>
+<li>Evaluate if the xml2 and curl packages provides enough functionality to replace XML and RCurl respectively. If not see what should be added to these packages or how to develop alternative packages to fill the gap.</li>
+<li>Contact package maintainers to replace the functionality they currently depend on XML and RCurl.</li>
+<li>Set deprecation warnings on the XML and RCurl packages.</li>
 <li>Archive XML and RCurl packages in CRAN.</li>
 </ul>
+<p>This might take years of moving packages around but I am confident that once the word is out, package developers will avoid XML and RCurl and current maintainers that depend on them will replace them.</p>
 <div id="reproducibility" class="section level3">
 <h3>Reproducibility</h3>
 <details>
-<pre><code>## - Session info -------------------------------------------------------------------------------------------------------
+<pre><code>## - Session info ---------------------------------------------------------------
 ##  setting  value
 ##  version  R version 4.3.0 (2023-04-21)
 ##  os       Ubuntu 22.04.2 LTS
@@ -522,10 +704,10 @@ A replacment for RCurl could be <a href="https://cran.r-project.org/package=curl
 ##  collate  C
 ##  ctype    C
 ##  tz       Europe/Madrid
-##  date     2023-05-17
+##  date     2023-05-27
 ##  pandoc   2.19.2 @ /usr/lib/rstudio/resources/app/bin/quarto/bin/tools/ (via rmarkdown)
 ## 
-## - Packages -----------------------------------------------------------------------------------------------------------
+## - Packages -------------------------------------------------------------------
 ##  package       * version   date (UTC) lib source
 ##  Biobase         2.60.0    2023-04-25 [1] Bioconductor
 ##  BiocFileCache   2.8.0     2023-04-25 [1] Bioconductor
@@ -614,8 +796,14 @@ A replacment for RCurl could be <a href="https://cran.r-project.org/package=curl
 ##  [1] /home/lluis/bin/R/4.3.0
 ##  [2] /opt/R/4.3.0/lib/R/library
 ## 
-## ----------------------------------------------------------------------------------------------------------------------</code></pre>
+## ------------------------------------------------------------------------------</code></pre>
 </details>
 </div>
 </div>
+<div class="footnotes footnotes-end-of-document">
+<hr />
+<ol>
+<li id="fn1"><p>the <code>maintainer</code> function only works for installed packages, and there are<a href="#fnref1" class="footnote-back">↩︎</a></p></li>
+<li id="fn2"><p>I recently found this as opposite of introduction/intro.<a href="#fnref2" class="footnote-back">↩︎</a></p></li>
+</ol>
 </div>
