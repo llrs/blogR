@@ -10,7 +10,7 @@ tags:
   - packages
 authors:
   - admin
-description: ''
+description: 'Looking at XML and RCurl impact'
 draft: no
 editor_options:
   chunk_output_type: console
@@ -19,7 +19,7 @@ image:
   caption: ''
   focal_point: ''
 subtitle: ''
-summary: ''
+summary: 'Some analysis on the RCurl and XML dependencies.'
 ---
 
 
@@ -100,7 +100,7 @@ first_rdeps &lt;- package_dependencies(all_unique_deps,
                                    reverse = TRUE, db = ap, which = &quot;all&quot;)
 deps_all &lt;- package_dependencies(all_unique_deps, recursive = TRUE, 
                                  db = ap, which = &quot;all&quot;)</code></pre>
-<p>They have 499 direct dependencies (and 8 more in annotation packages in Bioconductor: recount3, ENCODExplorerData, UCSCRepeatMasker, gDNAinRNAseqData, qdap, qdapTools, metaboliteIDmapping and curatedBreastData).</p>
+<p>They have 500 direct dependencies (and 8 more in annotation packages in Bioconductor: recount3, ENCODExplorerData, UCSCRepeatMasker, gDNAinRNAseqData, qdap, qdapTools, metaboliteIDmapping and curatedBreastData).</p>
 <p>These two packages with their dependencies are used one way or another by around 20000 packages (about 90% of CRAN and Bioconductor)!
 If these packages fail the impact on the community will be huge.</p>
 <p>To reduce the impact of the dependencies we should look up the direct dependencies.
@@ -239,7 +239,7 @@ head(deps)</code></pre>
 <td align="left">TRUE</td>
 <td align="left">TRUE</td>
 <td align="right">26</td>
-<td align="right">2400</td>
+<td align="right">2401</td>
 <td align="right">5</td>
 <td align="right">10</td>
 <td align="right">47</td>
@@ -258,7 +258,7 @@ head(deps)</code></pre>
 <td align="left">TRUE</td>
 <td align="left">TRUE</td>
 <td align="right">33</td>
-<td align="right">2400</td>
+<td align="right">2401</td>
 <td align="right">4</td>
 <td align="right">26</td>
 <td align="right">135</td>
@@ -277,7 +277,7 @@ head(deps)</code></pre>
 <td align="left">FALSE</td>
 <td align="left">TRUE</td>
 <td align="right">61</td>
-<td align="right">2459</td>
+<td align="right">2460</td>
 <td align="right">0</td>
 <td align="right">34</td>
 <td align="right">125</td>
@@ -296,7 +296,7 @@ head(deps)</code></pre>
 <td align="left">FALSE</td>
 <td align="left">TRUE</td>
 <td align="right">6</td>
-<td align="right">2400</td>
+<td align="right">2401</td>
 <td align="right">0</td>
 <td align="right">3</td>
 <td align="right">4</td>
@@ -315,7 +315,7 @@ head(deps)</code></pre>
 <td align="left">FALSE</td>
 <td align="left">TRUE</td>
 <td align="right">34</td>
-<td align="right">2403</td>
+<td align="right">2404</td>
 <td align="right">0</td>
 <td align="right">24</td>
 <td align="right">160</td>
@@ -334,7 +334,7 @@ head(deps)</code></pre>
 <td align="left">FALSE</td>
 <td align="left">TRUE</td>
 <td align="right">19</td>
-<td align="right">2401</td>
+<td align="right">2402</td>
 <td align="right">2</td>
 <td align="right">14</td>
 <td align="right">71</td>
@@ -391,31 +391,31 @@ head(deps)</code></pre>
 <td align="left">FALSE</td>
 <td align="right">241</td>
 <td align="right">3684</td>
-<td align="right">2400</td>
-<td align="right">2304.373</td>
-<td align="right">2403.00</td>
+<td align="right">2401</td>
+<td align="right">2305.332</td>
+<td align="right">2404.00</td>
 </tr>
 <tr class="even">
 <td align="left">FALSE</td>
 <td align="left">TRUE</td>
 <td align="right">194</td>
 <td align="right">3180</td>
-<td align="right">2400</td>
-<td align="right">2244.196</td>
-<td align="right">2403.75</td>
+<td align="right">2401</td>
+<td align="right">2245.129</td>
+<td align="right">2404.75</td>
 </tr>
 <tr class="odd">
 <td align="left">TRUE</td>
 <td align="left">TRUE</td>
-<td align="right">64</td>
-<td align="right">1110</td>
-<td align="right">2400</td>
-<td align="right">2365.953</td>
-<td align="right">2401.00</td>
+<td align="right">65</td>
+<td align="right">1138</td>
+<td align="right">2401</td>
+<td align="right">2367.477</td>
+<td align="right">2402.00</td>
 </tr>
 </tbody>
 </table>
-<p>There are ~40 more packages depending on XML than to RCurl and just 64 to both of them.</p>
+<p>There are ~40 more packages depending on XML than to RCurl and just 65 to both of them.</p>
 </div>
 <div id="overview" class="section level3">
 <h3>Overview</h3>
@@ -426,15 +426,12 @@ deps_wo &lt;- filter(deps, !package %in% c(&quot;XML&quot;, &quot;RCurl&quot;))
 deps_wo |&gt; 
   ggplot() +
   geom_point(aes(first_deps_n, downloads, shape = type)) +
-  geom_text_repel(aes(first_deps_n, downloads, label = package)) +
+  geom_text_repel(aes(first_deps_n, downloads, label = package),
+                  data = filter(deps_wo, first_deps_n &gt; 60 | downloads &gt; 10^5)) +
   theme_minimal() +
   scale_y_log10(labels = scales::label_log()) +
   labs(title = &quot;Packages and downloads&quot;, 
-       x = &quot;Direct dependencies&quot;, y = &quot;Downloads&quot;, size = &quot;Packages&quot;)
-## Warning: Transformation introduced infinite values in continuous y-axis
-## Transformation introduced infinite values in continuous y-axis
-## Warning: ggrepel: 471 unlabeled data points (too many overlaps). Consider
-## increasing max.overlaps</code></pre>
+       x = &quot;Direct dependencies&quot;, y = &quot;Downloads&quot;, size = &quot;Packages&quot;)</code></pre>
 <div class="figure"><span style="display:block;" id="fig:plot1"></span>
 <img src="{{< blogdown/postref >}}index.en_files/figure-html/plot1-1.png" alt="Direct dependencies vs downloads. Many pakcages have up to 50 packages and most have below 1000 downloads in a month." width="672" />
 <p class="caption">
@@ -445,15 +442,14 @@ Figure 1: Direct dependencies vs downloads. Many pakcages have up to 50 packages
 <pre class="r"><code>deps_wo |&gt; 
   ggplot() +
   geom_point(aes(first_deps_n, first_rdeps_n, shape = type)) +
-  geom_text_repel(aes(first_deps_n, first_rdeps_n, label = package)) +
+  geom_text_repel(aes(first_deps_n, first_rdeps_n, label = package),
+                  data = filter(deps_wo, first_deps_n &gt; 60 | first_rdeps_n &gt; 50)) +
   theme_minimal() +
   scale_y_log10(labels = scales::label_log()) +
   labs(title = &quot;Few dependencies but lots of dependents&quot;,
     x = &quot;Direct dependencies&quot;, y = &quot;Depend on them&quot;, size = &quot;Packages&quot;)
 ## Warning: Transformation introduced infinite values in continuous y-axis
-## Transformation introduced infinite values in continuous y-axis
-## Warning: ggrepel: 471 unlabeled data points (too many overlaps). Consider
-## increasing max.overlaps</code></pre>
+## Transformation introduced infinite values in continuous y-axis</code></pre>
 <div class="figure"><span style="display:block;" id="fig:plot2"></span>
 <img src="{{< blogdown/postref >}}index.en_files/figure-html/plot2-1.png" alt="Dependencies vs packages that depend on them. " width="672" />
 <p class="caption">
@@ -461,20 +457,20 @@ Figure 2: Dependencies vs packages that depend on them.
 </p>
 </div>
 <p>In general though, the packages that have more dependencies have less direct dependencies.</p>
-<pre class="r"><code>deps_wo |&gt; 
+<pre class="r"><code>data_maintainers &lt;- deps_wo |&gt; 
   filter(!is.na(maintainer)) |&gt; 
-  summarize(n = n(), downloads = sum(downloads), .by = maintainer) |&gt; 
+  summarize(n = n(), downloads = sum(downloads), .by = maintainer)
+data_maintainers |&gt; 
   ggplot() +
   geom_point(aes(n, downloads)) +
-  geom_text_repel(aes(n, downloads, label = maintainer)) +
+  geom_text_repel(aes(n, downloads, label = maintainer),
+                  data = filter(data_maintainers, n &gt; 2 | downloads &gt; 10^4)) +
   scale_y_log10(labels = scales::label_log()) +
-  scale_x_continuous(breaks = 1:10) +
+  scale_x_continuous(breaks = 1:10, minor_breaks = NULL) +
   theme_minimal() +
   labs(title = &quot;CRAN maintainers that depend on XML and RCurl&quot;,
        x = &quot;Packages&quot;, y = &quot;Downloads&quot;)
-## Warning: Transformation introduced infinite values in continuous y-axis
-## Transformation introduced infinite values in continuous y-axis
-## Warning: ggrepel: 290 unlabeled data points (too many overlaps). Consider
+## Warning: ggrepel: 18 unlabeled data points (too many overlaps). Consider
 ## increasing max.overlaps</code></pre>
 <div class="figure"><span style="display:block;" id="fig:plot-maintainers"></span>
 <img src="{{< blogdown/postref >}}index.en_files/figure-html/plot-maintainers-1.png" alt="Looking at maintainers and the number of downloads they have." width="672" />
@@ -491,23 +487,26 @@ Figure 3: Looking at maintainers and the number of downloads they have.
 pca_all &lt;- prcomp(deps_wo[, cols_pca], scale. = TRUE, center = TRUE)
 summary(pca_all)
 ## Importance of components:
-##                           PC1    PC2    PC3    PC4     PC5
-## Standard deviation     1.3908 1.1932 0.9382 0.7505 0.44541
-## Proportion of Variance 0.3869 0.2848 0.1760 0.1127 0.03968
-## Cumulative Proportion  0.3869 0.6716 0.8477 0.9603 1.00000
+##                          PC1    PC2    PC3    PC4    PC5
+## Standard deviation     1.391 1.1897 0.9382 0.7561 0.4449
+## Proportion of Variance 0.387 0.2831 0.1760 0.1143 0.0396
+## Cumulative Proportion  0.387 0.6700 0.8461 0.9604 1.0000
 pca_data &lt;- cbind(pca_all$x, deps_wo)
 ggplot(pca_data) +
   geom_hline(yintercept = 0) +
   geom_vline(xintercept = 0) +
   geom_point(aes(PC1, PC2, col = repository, shape = repository)) +
-  geom_text_repel(aes(PC1, PC2, label = package), data = . %&gt;% filter(PC1 &gt; 5)) +
+  geom_text_repel(aes(PC1, PC2, label = package), 
+                  data = filter(pca_data, abs(PC1) &gt; 2 | abs(PC2) &gt; 2)) +
   theme_minimal() +
   theme(axis.text = element_blank()) +
-  labs(title = &quot;PCA of the numeric variables&quot;)</code></pre>
-<div class="figure">
-<img src="{{< blogdown/postref >}}index.en_files/figure-html/pca_al-1.png" alt="PCA of all packages" width="672" />
+  labs(title = &quot;PCA of the numeric variables&quot;)
+## Warning: ggrepel: 61 unlabeled data points (too many overlaps). Consider
+## increasing max.overlaps</code></pre>
+<div class="figure"><span style="display:block;" id="fig:pca-all"></span>
+<img src="{{< blogdown/postref >}}index.en_files/figure-html/pca-all-1.png" alt="PCA of all packages." width="672" />
 <p class="caption">
-(#fig:pca_al)PCA of all packages
+Figure 4: PCA of all packages.
 </p>
 </div>
 <p>We can see in the first PCA some packages that have many downloads and/or depend on many packages.
@@ -524,28 +523,28 @@ The second one are packages with many dependencies, as explained by <code>rotati
 <tbody>
 <tr class="odd">
 <td align="left">first_deps_n</td>
-<td align="right">-0.6563923</td>
-<td align="right">0.1069895</td>
+<td align="right">-0.6565361</td>
+<td align="right">-0.1060706</td>
 </tr>
 <tr class="even">
 <td align="left">deps_all_n</td>
-<td align="right">-0.3483641</td>
-<td align="right">0.0353693</td>
+<td align="right">-0.3484813</td>
+<td align="right">-0.0343292</td>
 </tr>
 <tr class="odd">
 <td align="left">first_rdeps_n</td>
-<td align="right">0.0781033</td>
-<td align="right">0.7025987</td>
+<td align="right">0.0773820</td>
+<td align="right">-0.7027310</td>
 </tr>
 <tr class="even">
 <td align="left">first_deps_strong_n</td>
-<td align="right">-0.6601065</td>
-<td align="right">0.0400533</td>
+<td align="right">-0.6601269</td>
+<td align="right">-0.0394572</td>
 </tr>
 <tr class="odd">
 <td align="left">downloads</td>
-<td align="right">0.0771423</td>
-<td align="right">0.7014649</td>
+<td align="right">0.0759315</td>
+<td align="right">-0.7015574</td>
 </tr>
 </tbody>
 </table>
@@ -554,26 +553,27 @@ The second one are packages with many dependencies, as explained by <code>rotati
 summary(pca_strong)
 ## Importance of components:
 ##                           PC1    PC2    PC3     PC4     PC5
-## Standard deviation     1.4382 1.3151 0.9278 0.43553 0.38930
-## Proportion of Variance 0.4137 0.3459 0.1721 0.03794 0.03031
-## Cumulative Proportion  0.4137 0.7596 0.9317 0.96969 1.00000
-pca_data_srong &lt;- cbind(pca_strong$x, deps_wo[deps_wo$strong, ])
-ggplot(pca_data_srong) +
+## Standard deviation     1.4384 1.3159 0.9278 0.43334 0.38821
+## Proportion of Variance 0.4138 0.3463 0.1721 0.03756 0.03014
+## Cumulative Proportion  0.4138 0.7601 0.9323 0.96986 1.00000
+pca_data_strong &lt;- cbind(pca_strong$x, deps_wo[deps_wo$strong, ])
+ggplot(pca_data_strong) +
   geom_hline(yintercept = 0) +
   geom_vline(xintercept = 0) +
   geom_point(aes(PC1, PC2, col = repository, shape = repository)) +
-  geom_text_repel(aes(PC1, PC2, label = package), max.overlaps = 15) +
+    geom_text_repel(aes(PC1, PC2, label = package), 
+                  data = filter(pca_data_strong, abs(PC1) &gt; 2 | abs(PC2) &gt; 2)) +
   theme_minimal() +
   theme(axis.text = element_blank()) +
   labs(title = &quot;Important packages depending on XML and RCurl&quot;, 
        subtitle = &quot;PCA of numeric variables of strong dependencies&quot;,
        col = &quot;Repository&quot;, shape = &quot;Repository&quot;)
-## Warning: ggrepel: 395 unlabeled data points (too many overlaps). Consider
+## Warning: ggrepel: 39 unlabeled data points (too many overlaps). Consider
 ## increasing max.overlaps</code></pre>
-<div class="figure">
-<img src="{{< blogdown/postref >}}index.en_files/figure-html/pca_strong-1.png" alt="PCA of packages with strong dependency to XML or RCurl" width="672" />
+<div class="figure"><span style="display:block;" id="fig:pca-strong"></span>
+<img src="{{< blogdown/postref >}}index.en_files/figure-html/pca-strong-1.png" alt="PCA of packages with strong dependency to XML or RCurl." width="672" />
 <p class="caption">
-(#fig:pca_strong)PCA of packages with strong dependency to XML or RCurl
+Figure 5: PCA of packages with strong dependency to XML or RCurl.
 </p>
 </div>
 <p>rlist has as dependency XML and only uses 3 functions from it.</p>
@@ -583,26 +583,25 @@ ggplot(pca_data_srong) +
 summary(pca_weak)
 ## Importance of components:
 ##                           PC1    PC2    PC3     PC4     PC5
-## Standard deviation     1.4408 1.1468 0.9952 0.67575 0.40225
-## Proportion of Variance 0.4152 0.2630 0.1981 0.09133 0.03236
-## Cumulative Proportion  0.4152 0.6782 0.8763 0.96764 1.00000
+## Standard deviation     1.4410 1.1429 0.9954 0.68073 0.40361
+## Proportion of Variance 0.4153 0.2612 0.1982 0.09268 0.03258
+## Cumulative Proportion  0.4153 0.6766 0.8747 0.96742 1.00000
 pca_data_weak &lt;- cbind(pca_weak$x, deps_wo[!deps_wo$strong, ])
 ggplot(pca_data_weak) +
   geom_hline(yintercept = 0) +
   geom_vline(xintercept = 0) +
   geom_point(aes(PC1, PC2, col = repository, shape = repository)) +
-  geom_text_repel(aes(PC1, PC2, label = package), max.overlaps = 15) +
+  geom_text_repel(aes(PC1, PC2, label = package), 
+                  data = filter(pca_data_weak, abs(PC1)&gt; 2 | abs(PC2) &gt; 2)) +
   theme_minimal() +
   theme(axis.text = element_blank()) +
   labs(title = &quot;Packages suggesting XML and RCurl&quot;, 
        subtitle = &quot;PCA of numeric variables of weak dependencies&quot;,
-       col = &quot;Repository&quot;, shape = &quot;Repository&quot;)
-## Warning: ggrepel: 72 unlabeled data points (too many overlaps). Consider
-## increasing max.overlaps</code></pre>
-<div class="figure">
-<img src="{{< blogdown/postref >}}index.en_files/figure-html/pca_weak-1.png" alt="Packages with weak dependency to XML or RCurl." width="672" />
+       col = &quot;Repository&quot;, shape = &quot;Repository&quot;)</code></pre>
+<div class="figure"><span style="display:block;" id="fig:pca-weak"></span>
+<img src="{{< blogdown/postref >}}index.en_files/figure-html/pca-weak-1.png" alt="Packages with weak dependency to XML or RCurl." width="672" />
 <p class="caption">
-(#fig:pca_weak)Packages with weak dependency to XML or RCurl.
+Figure 6: Packages with weak dependency to XML or RCurl.
 </p>
 </div>
 </div>
@@ -626,13 +625,12 @@ ggplot(pca_data_weak) +
        title = &quot;More packages added after CRAN maintenance than before&quot;,
        subtitle = &quot;Release date and downloads&quot;,
        col = &quot;Depends on&quot;, shape = &quot;Depends on&quot;, size = &quot;Direct dependencies&quot;) 
-## Warning: Transformation introduced infinite values in continuous y-axis
 ## Warning: Removed 35 rows containing missing values (`geom_point()`).
 ## Warning: Removed 2 rows containing missing values (`geom_label()`).</code></pre>
 <div class="figure"><span style="display:block;" id="fig:deps-time"></span>
 <img src="{{< blogdown/postref >}}index.en_files/figure-html/deps-time-1.png" alt="First release of packages in relation to the maintenance by CRAN of XML and RCurl." width="672" />
 <p class="caption">
-Figure 4: First release of packages in relation to the maintenance by CRAN of XML and RCurl.
+Figure 7: First release of packages in relation to the maintenance by CRAN of XML and RCurl.
 </p>
 </div>
 <p>Almost the CRAN team have been maintaining these packages longer than the previous maintainer(s?).</p>
@@ -653,7 +651,7 @@ Figure 4: First release of packages in relation to the maintenance by CRAN of XM
 <tr class="odd">
 <td align="left">both</td>
 <td align="right">15</td>
-<td align="right">47</td>
+<td align="right">48</td>
 </tr>
 <tr class="even">
 <td align="left">RCurl</td>
@@ -704,7 +702,7 @@ Where packages have been carefully designed and planned to replace older package
 ##  collate  C
 ##  ctype    C
 ##  tz       Europe/Madrid
-##  date     2023-05-27
+##  date     2023-05-28
 ##  pandoc   2.19.2 @ /usr/lib/rstudio/resources/app/bin/quarto/bin/tools/ (via rmarkdown)
 ## 
 ## - Packages -------------------------------------------------------------------

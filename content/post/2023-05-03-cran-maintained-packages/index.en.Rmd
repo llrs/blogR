@@ -221,7 +221,7 @@ Both logs only count those of their repository and not from other mirrors or app
 We collected the data that might be relevant.
 Now, we can start looking all the data gathered:
 
-```{r all_together}
+```{r all-together}
 repo <- vector("character", length(all_unique_deps))
 ap_deps <- ap[all_unique_deps, ]
 repo[startsWith(ap_deps[, "Repository"], "https://bioc")] <- "Bioconductor"
@@ -257,7 +257,7 @@ We will look at the [packages dependencies between RCurl and XML](#distribution-
 
 Let's see how many packages depend in each of them:
 
-```{r direct_deps}
+```{r direct-deps}
 deps |> 
   group_by(direct_dep_XML, direct_dep_RCurl) |> 
   summarise(Packages = n(), deps = sum(first_deps_n),
@@ -283,7 +283,8 @@ deps_wo <- filter(deps, !package %in% c("XML", "RCurl"))
 deps_wo |> 
   ggplot() +
   geom_point(aes(first_deps_n, downloads, shape = type)) +
-  geom_text_repel(aes(first_deps_n, downloads, label = package)) +
+  geom_text_repel(aes(first_deps_n, downloads, label = package),
+                  data = filter(deps_wo, first_deps_n > 60 | downloads > 10^5)) +
   theme_minimal() +
   scale_y_log10(labels = scales::label_log()) +
   labs(title = "Packages and downloads", 
@@ -297,7 +298,8 @@ There is an outlier on Fig1, the mlr package has more than 10k downloads and clo
 deps_wo |> 
   ggplot() +
   geom_point(aes(first_deps_n, first_rdeps_n, shape = type)) +
-  geom_text_repel(aes(first_deps_n, first_rdeps_n, label = package)) +
+  geom_text_repel(aes(first_deps_n, first_rdeps_n, label = package),
+                  data = filter(deps_wo, first_deps_n > 60 | first_rdeps_n > 50)) +
   theme_minimal() +
   scale_y_log10(labels = scales::label_log()) +
   labs(title = "Few dependencies but lots of dependents",
@@ -308,14 +310,16 @@ In general though, the packages that have more dependencies have less direct dep
 
 ```{r plot-maintainers}
 #| fig.cap = "Looking at maintainers and the number of downloads they have."
-deps_wo |> 
+data_maintainers <- deps_wo |> 
   filter(!is.na(maintainer)) |> 
-  summarize(n = n(), downloads = sum(downloads), .by = maintainer) |> 
+  summarize(n = n(), downloads = sum(downloads), .by = maintainer)
+data_maintainers |> 
   ggplot() +
   geom_point(aes(n, downloads)) +
-  geom_text_repel(aes(n, downloads, label = maintainer)) +
+  geom_text_repel(aes(n, downloads, label = maintainer),
+                  data = filter(data_maintainers, n > 2 | downloads > 10^4)) +
   scale_y_log10(labels = scales::label_log()) +
-  scale_x_continuous(breaks = 1:10) +
+  scale_x_continuous(breaks = 1:10, minor_breaks = NULL) +
   theme_minimal() +
   labs(title = "CRAN maintainers that depend on XML and RCurl",
        x = "Packages", y = "Downloads")
@@ -328,8 +332,8 @@ Most maintainer have few packages but some have many
 We can use a PCA to find which packages are more important.
 
 
-```{r pca_al}
-#| fig.cap = "PCA of all packages"
+```{r pca-all}
+#| fig.cap = "PCA of all packages."
 cols_pca <-  c(4:7, 15)
 pca_all <- prcomp(deps_wo[, cols_pca], scale. = TRUE, center = TRUE)
 summary(pca_all)
@@ -338,7 +342,8 @@ ggplot(pca_data) +
   geom_hline(yintercept = 0) +
   geom_vline(xintercept = 0) +
   geom_point(aes(PC1, PC2, col = repository, shape = repository)) +
-  geom_text_repel(aes(PC1, PC2, label = package), data = . %>% filter(PC1 > 5)) +
+  geom_text_repel(aes(PC1, PC2, label = package), 
+                  data = filter(pca_data, abs(PC1) > 2 | abs(PC2) > 2)) +
   theme_minimal() +
   theme(axis.text = element_blank()) +
   labs(title = "PCA of the numeric variables")
@@ -351,17 +356,18 @@ The second one are packages with many dependencies, as explained by `rotation`:
 pca_all$rotation[, 1:2]
 ```
 
-```{r pca_strong}
-#| fig.cap = "PCA of packages with strong dependency to XML or RCurl"
+```{r pca-strong}
+#| fig.cap = "PCA of packages with strong dependency to XML or RCurl."
 pca_strong <- prcomp(deps_wo[deps_wo$strong, cols_pca], 
                      scale. = TRUE, center = TRUE)
 summary(pca_strong)
-pca_data_srong <- cbind(pca_strong$x, deps_wo[deps_wo$strong, ])
-ggplot(pca_data_srong) +
+pca_data_strong <- cbind(pca_strong$x, deps_wo[deps_wo$strong, ])
+ggplot(pca_data_strong) +
   geom_hline(yintercept = 0) +
   geom_vline(xintercept = 0) +
   geom_point(aes(PC1, PC2, col = repository, shape = repository)) +
-  geom_text_repel(aes(PC1, PC2, label = package), max.overlaps = 15) +
+    geom_text_repel(aes(PC1, PC2, label = package), 
+                  data = filter(pca_data_strong, abs(PC1) > 2 | abs(PC2) > 2)) +
   theme_minimal() +
   theme(axis.text = element_blank()) +
   labs(title = "Important packages depending on XML and RCurl", 
@@ -373,7 +379,7 @@ rlist has as dependency XML and only uses 3 functions from it.
 
 The main packages that depend on XML and RCurl are from Biocondcutor
 
-```{r pca_weak}
+```{r pca-weak}
 #| fig.cap = "Packages with weak dependency to XML or RCurl."
 pca_weak <- prcomp(deps_wo[!deps_wo$strong, cols_pca], 
                    scale. = TRUE, center = TRUE)
@@ -383,7 +389,8 @@ ggplot(pca_data_weak) +
   geom_hline(yintercept = 0) +
   geom_vline(xintercept = 0) +
   geom_point(aes(PC1, PC2, col = repository, shape = repository)) +
-  geom_text_repel(aes(PC1, PC2, label = package), max.overlaps = 15) +
+  geom_text_repel(aes(PC1, PC2, label = package), 
+                  data = filter(pca_data_weak, abs(PC1)> 2 | abs(PC2) > 2)) +
   theme_minimal() +
   theme(axis.text = element_blank()) +
   labs(title = "Packages suggesting XML and RCurl", 
