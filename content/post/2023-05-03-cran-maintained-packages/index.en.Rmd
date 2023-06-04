@@ -23,7 +23,7 @@ summary: 'Some analysis on the RCurl and XML dependencies.'
 ---
 
 ```{r setup, include = FALSE}
-knitr::opts_chunk$set(collapse = TRUE, fig.retina = 2, message = FALSE)
+knitr::opts_chunk$set(collapse = TRUE, fig.retina = 2, message = FALSE, cache = TRUE)
 library("knitr")
 knit_print.data.frame = function(x, ...) {
   res = paste(c('', '', kable(x)), collapse = '\n')
@@ -105,6 +105,8 @@ If these two cases were removed the package could remove its dependency to RCurl
 Similarly, if we look at [RCurl source code for XML we find](https://github.com/search?q=repo%3Acran%2FRCurl%20XML&type=code) some code in `inst/` folder and in some examples.
 If these three cases were removed the package could remove its dependency to XML.
 
+RCurl has been [more stable](https://diffify.com/R/RCurl/1.95-4.9/1.98-1.12) than XML, which have seen [new functions added and one removed](https://diffify.com/R/XML/3.98-1.7/3.99-0.14) since CRAN is maintaining it.
+
 ## Relevant data
 
 We will look at 4 sets of data for each pacakge: [dependencies], [releases], [maintainers] and [downloads].
@@ -180,7 +182,7 @@ For all these reasons it doesn't make sense to count releases of packages in Bio
 Now that we know which packages are more active, we can look up for the people behind it.
 This way we can prioritize working with maintainers that are known to be active[^1].
 
-[^1]: the `maintainer` function only works for installed packages, and there are
+[^1]: the `maintainer` function only works for installed packages, and I don't have all these packages installed.
 
 ```{r maintainers}
 maintainers <- packages_db$Maintainer[match(all_unique_deps, packages_db$Package)]
@@ -210,11 +212,10 @@ rownames(downloads) <- downloads$package
 dwn <- downloads[all_unique_deps, ]
 ```
 
-The logs are provided by the global mirror of CRAN (sponsored by Rstudio).
+The logs are provided by the global mirror of CRAN (sponsored by Rstudio).  
+The Bioconductor infrastructure which provides total number of downloads and number of downloads from distinct IPs [^3].
 
-The Bioconductor infrastructure which provides total number of downloads and number of downloads from distinct IPs.
-
-Both logs only count those of their repository and not from other mirrors or approaches (RSPM, bspm, r2u, ....).
+[^3]: Both logs only count those of their repository and not from other mirrors or approaches (RSPM, bspm, r2u, ....).
 
 ## Analysis
 
@@ -259,13 +260,11 @@ Let's see how many packages depend in each of them:
 
 ```{r direct-deps}
 deps |> 
-  group_by(direct_dep_XML, direct_dep_RCurl) |> 
   summarise(Packages = n(), deps = sum(first_deps_n),
             q25 = quantile(deps_all_n, probs = 0.25),
             mean_all = mean(deps_all_n),
             q75 = quantile(deps_all_n, probs = 0.75),
-            ) |> 
-  ungroup() |> 
+            .by = c(direct_dep_XML, direct_dep_RCurl)) |> 
   arrange(-Packages)
 ```
 
@@ -284,14 +283,14 @@ deps_wo |>
   ggplot() +
   geom_point(aes(first_deps_n, downloads, shape = type)) +
   geom_text_repel(aes(first_deps_n, downloads, label = package),
-                  data = filter(deps_wo, first_deps_n > 60 | downloads > 10^5)) +
+                  data = filter(deps_wo, first_deps_n > 40 | downloads > 10^5)) +
   theme_minimal() +
   scale_y_log10(labels = scales::label_log()) +
   labs(title = "Packages and downloads", 
        x = "Direct dependencies", y = "Downloads", size = "Packages")
 ```
 
-There is an outlier on Fig1, the mlr package has more than 10k downloads and close to 120 direct dependencies!
+There is an outlier on \@ref(fig:plot1), the mlr package has more than 10k downloads and close to 120 direct dependencies, but down to less than 15 strong dependencies !
 
 ```{r plot2}
 #| fig.cap = "Dependencies vs packages that depend on them. "
@@ -307,6 +306,27 @@ deps_wo |>
 ```
 
 In general though, the packages that have more dependencies have less direct dependencies.
+
+
+```{r plot3}
+#| fig.cap = "Direct strong dependencies vs downloads. Many pakcages have more than 20 direct imports."
+library("ggplot2")
+library("ggrepel")
+deps_wo <- filter(deps, !package %in% c("XML", "RCurl"))
+deps_wo |> 
+  ggplot() +
+  geom_vline(xintercept = 20, linetype = 2) +
+  geom_point(aes(first_deps_strong_n, downloads, shape = repository)) +
+  geom_text_repel(aes(first_deps_strong_n, downloads, label = package),
+                  data = filter(deps_wo, first_deps_strong_n > 20 | downloads > 10^5)) +
+  theme_minimal() +
+  scale_y_log10(labels = scales::label_log()) +
+  labs(title = "Packages and downloads", 
+       x = "Direct strong dependencies", y = "Downloads", shape = "Repository")
+```
+
+One observable effect is that many packages do not comply with current CRAN rules of having 20 strong dependencies (as [described in R-internals](https://cran.r-project.org/doc/manuals/r-devel/R-ints.html#index-_005fR_005fCHECK_005fEXCESSIVE_005fIMPORTS_005f)). 
+This suggests that these CRAN packages are old or that this limit is not checked in packages updates. 
 
 ```{r plot-maintainers}
 #| fig.cap = "Looking at maintainers and the number of downloads they have."
@@ -325,7 +345,7 @@ data_maintainers |>
        x = "Packages", y = "Downloads")
 ```
 
-Most maintainer have few packages but some have many 
+Most maintainer have few packages, some highly used packages but some have many packages relatively highly used. 
 
 ### Finding important packages
 
@@ -356,6 +376,10 @@ The second one are packages with many dependencies, as explained by `rotation`:
 pca_all$rotation[, 1:2]
 ```
 
+But more important is that are packages that are named in \@ref(fig:pca-all), there is the RUnit package, markdown and rgeos that have high number of downloads and many package depend on them one way or another. 
+
+However we can focus on packages that without RCurl or XML wouldn't work:
+
 ```{r pca-strong}
 #| fig.cap = "PCA of packages with strong dependency to XML or RCurl."
 pca_strong <- prcomp(deps_wo[deps_wo$strong, cols_pca], 
@@ -375,9 +399,9 @@ ggplot(pca_data_strong) +
        col = "Repository", shape = "Repository")
 ```
 
+The main packages that depend on XML and RCurl are from Biocondcutor, followed by mlr and rlist.
 rlist has as dependency XML and only uses 3 functions from it.
-
-The main packages that depend on XML and RCurl are from Biocondcutor
+mlr uses 5 different functions from XML.
 
 ```{r pca-weak}
 #| fig.cap = "Packages with weak dependency to XML or RCurl."
@@ -388,15 +412,58 @@ pca_data_weak <- cbind(pca_weak$x, deps_wo[!deps_wo$strong, ])
 ggplot(pca_data_weak) +
   geom_hline(yintercept = 0) +
   geom_vline(xintercept = 0) +
-  geom_point(aes(PC1, PC2, col = repository, shape = repository)) +
+  geom_point(aes(PC1, PC2, col = type, shape = type)) +
   geom_text_repel(aes(PC1, PC2, label = package), 
                   data = filter(pca_data_weak, abs(PC1)> 2 | abs(PC2) > 2)) +
   theme_minimal() +
   theme(axis.text = element_blank()) +
-  labs(title = "Packages suggesting XML and RCurl", 
-       subtitle = "PCA of numeric variables of weak dependencies",
-       col = "Repository", shape = "Repository")
+  labs(title = "PCA of packages in CRAN", col = "Type", shape = "Type")
 ```
+
+
+```{r pca-cran}
+#| fig.cap = "PCA of packages on CRAN."
+keep <- deps_wo$repository == "CRAN" & deps_wo$strong
+pca_cran <- prcomp(deps_wo[keep, cols_pca], 
+                     scale. = TRUE, center = TRUE)
+summary(pca_cran)
+pca_data_strong <- cbind(pca_cran$x, deps_wo[keep, ])
+ggplot(pca_data_strong) +
+  geom_hline(yintercept = 0) +
+  geom_vline(xintercept = 0) +
+  geom_point(aes(PC1, PC2, col = type, shape = type)) +
+    geom_text_repel(aes(PC1, PC2, label = package), 
+                  data = filter(pca_data_strong, abs(PC1) > 2 | abs(PC2) > 2)) +
+  theme_minimal() +
+  theme(axis.text = element_blank()) +
+  labs(title = "Packages in CRAN", 
+       col = "Type", shape = "Type")
+```
+
+
+
+```{r pca-bioc}
+#| fig.cap = "PCA of packages on Bioconductor."
+keep <- deps_wo$repository == "Bioconductor"  & deps_wo$strong
+pca_bioc <- prcomp(deps_wo[keep, cols_pca], 
+                     scale. = TRUE, center = TRUE)
+summary(pca_bioc)
+pca_data_strong <- cbind(pca_bioc$x, deps_wo[keep, ])
+ggplot(pca_data_strong) +
+  geom_hline(yintercept = 0) +
+  geom_vline(xintercept = 0) +
+  geom_point(aes(PC1, PC2, col = type, shape = type)) +
+    geom_text_repel(aes(PC1, PC2, label = package), 
+                  data = filter(pca_data_strong, abs(PC1) > 2 | abs(PC2) > 2)) +
+  theme_minimal() +
+  theme(axis.text = element_blank()) +
+  labs(title = "Packages in Bioconductor", 
+       subtitle = "PCA of numeric variables of strong dependencies",
+       col = "Type", shape = "Type")
+```
+
+GenomeInfoDb is the package that seems more important that only uses the `RCurl::getURL` function.
+
 
 ## Outro
 
@@ -411,9 +478,9 @@ deps |>
   ggplot() +
   geom_vline(xintercept = as.Date("2013-06-15"), linetype = 2) +
   geom_point(aes(first_release, downloads, col = type, shape = type, 
-                 size = first_deps_n)) +
+                 size = first_deps_strong_n)) +
   geom_label(aes(first_release, downloads, label = package),
-             data = deps[c("XML", "RCurl"), ], show.legend = FALSE) +
+             data = filter(deps, package %in% c("XML", "RCurl")), show.legend = FALSE) +
   theme_minimal() +
   scale_y_log10(labels = scales::label_log()) +
   annotate("text", x = as.Date("2014-6-15"), y = 5*10^5, 
@@ -421,7 +488,7 @@ deps |>
   labs(x = "Release date", y = "Downloads", 
        title = "More packages added after CRAN maintenance than before",
        subtitle = "Release date and downloads",
-       col = "Depends on", shape = "Depends on", size = "Direct dependencies") 
+       col = "Depends on", shape = "Depends on", size = "Direct strong dependencies") 
 ```
 
 Almost the CRAN team have been maintaining these packages longer than the previous maintainer(s?).
@@ -440,7 +507,7 @@ Maybe packages authors trusted the CRAN team for their dependencies or there was
 This might also be explained by the expansion of CRAN (and Bioconductor) with more packages being added each day.
 However, this places further pressure in the CRAN team to maintain those packages. Removing this burden might free more time for them or to dedicate to CRAN.
 
-A replacement for XML could be [xml2](https://cran.r-project.org/package=xml2), first released in 2015 (which uses the same system dependency libxml2).
+A replacement for XML could be [xml2](https://cran.r-project.org/package=xml2), first released in 2015 (which uses the same system dependency libxml2).  
 A replacement for RCurl could be [curl](https://cran.r-project.org/package=curl), first released at the end of 2014 (which uses the same system dependency libcurl).
 
 Until their release there were no other replacement for these packages (if there are other packages, please let me know). 
@@ -456,8 +523,10 @@ Where packages have been carefully designed and planned to replace older package
 As a final recommendations I think:
 
 -   Disentangle the XML and RCurl circular dependency.
--   Evaluate if the xml2 and curl packages provides enough functionality to replace XML and RCurl respectively. If not see what should be added to these packages or how to develop alternative packages to fill the gap.
--   Contact package maintainers to replace the functionality they currently depend on XML and RCurl.
+-   Evaluate if the xml2 and curl packages provides enough functionality to replace XML and RCurl respectively. 
+If not see what should be added to these packages or how to develop alternative packages to fill the gap if needed.  
+Maybe a helping documentation about the alternative from XML and RCurl could be written to ease the transition and evaluate if the functionality is covered by these packages. 
+- Contact package maintainers to replace the functionality they currently depend on XML and RCurl as seen in \@ref(fig:plot-maintainers) and the maintainers of packages seen in figures \@ref(fig:pca-all), \@ref(fig:pca-strong), \@ref(fig:pca-cran), and \@ref(fig:pca-bioc).
 -   Set deprecation warnings on the XML and RCurl packages.
 -   Archive XML and RCurl packages in CRAN.
 
