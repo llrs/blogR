@@ -1,0 +1,158 @@
+---
+title: BaseSet 0.9.0
+author: ''
+date: '2023-08-23'
+slug: baseset-0-9-0
+categories: []
+tags: [BaseSet, R]
+authors:
+  - admin
+description: ''
+draft: no
+editor_options:
+  chunk_output_type: console
+featured: no
+image:
+  caption: ''
+  focal_point: ''
+subtitle: ''
+summary: ''
+---
+
+```{r setup, include = FALSE}
+knitr::opts_chunk$set(collapse = TRUE, fig.retina = 2)
+```
+
+
+I'm excited to provide a new release of [BaseSet](https://cran.r-project.org/package=BaseSet), the package implementing a a class and methods to work with (fuzzy) sets.
+
+This release was focused on making it easier to work with it.
+
+From the beginning it was engineered towards the tidyverse and this time I focused on general R methods like `$`, `[`, `c`:
+
+## New methods
+
+First we can create a TidySet or TS for short:
+
+```{r}
+library("BaseSet", warn.conflicts = FALSE)
+packageVersion("BaseSet")
+l <- list(A = "1",
+     B = c("1", "2"),
+     C = c("2", "3", "4"),
+     D = c("1", "2", "3", "4")
+)
+TS <- tidySet(l)
+```
+
+
+Up till now there was no compatibility with the base R methods but there was with the tidyverse. 
+
+```{r}
+TSa <- TS[["A"]]
+TSb <- TS[["B"]]
+```
+
+Maybe this doesn't look much but previously it wasn't possible to subset the class.
+Initially I thought that working with a single class per session would be enough.
+Later I realized that maybe people would have good reasons to split or combine multiple objects:
+
+```{r subsetting}
+TSab <- c(TSa, TSb)
+TSab
+```
+
+Note that subsetting by sets does not produce the same object as elements are kept:
+
+```{r checking-sizes}
+dim(TSab)
+dim(TS[1:2, "sets"])
+```
+
+You'll need to drop the elements:
+
+```{r droping}
+dim(droplevels(TS[1:2, "sets"]))
+```
+
+
+We can include more information like this:
+
+```{r}
+TSab[1:2, "relations", "type"] <- c("new", "addition")
+TSab[1:2, "sets", "origin"] <- c("fake", "real")
+TSab
+```
+
+With this release is easier to access the columns of the TidySet:
+
+```{r}
+TSab$type
+TSab$origin
+TS$sets
+```
+
+If you pay attention you'll realize that it will look at the minimum information required.
+But if the column is present in the relations and elements or sets slots it will pick the first.
+
+You can use:
+
+```{r, eval=FALSE}
+TS[, "sets", "new"] <- "a"
+TS[, "sets", "new"]
+```
+
+I recommend reading carefully the help page of ``?`extract-TidySet` `` and make some tests based on the examples.
+I might have created some bugs or friction points with the extraction operations, let me know and I'll address them (That's the reason why I kept it below a 1.0 release). 
+
+# More usable
+
+Another usability addition to the class is the possibility to autocomplete.
+
+Now if you tab `TS$ty` and press TAB it should complete to `TS$type` because there is a column called type. This will make it easier to use the `$`.
+
+With this release, we can now check the number of sets and the number of relations each set has:
+
+```{r}
+length(TS)
+lengths(TS)
+```
+
+
+## New function
+
+The new function `union_closed` checks if the combinations of sets produce already existing sets.
+
+```{r}
+union_closed(TS, sets = c("A", "B", "C"))
+union_closed(TS)
+```
+
+# Next steps
+
+I hope this makes it even easier to work with the class. 
+Combine different objects, and manipulate it more intuitively. 
+
+While creating this document I realized it has some friction points.  
+In next release it will be possible to:
+
+ 1) Subset the object by element or set name, if only querying elements and sets slots.
+  For example `TS[c("3", "4"), "elements", "NEWS"] <- TRUE`
+ 2) Use `names` and `dimnames` to discover which data is in the object.
+ 3) Some bug fixes about these methods.
+
+
+Enjoy!
+
+I would also apreciate to hear some feedback about how you are using the package.
+It will help me to direct the development/maintenance of the package wherever it is more useful.
+
+### Reproducibility
+
+<details>
+```{r reproducibility, echo = FALSE}
+## Reproducibility info
+options(width = 120)
+sessioninfo::session_info()
+```
+</details>
