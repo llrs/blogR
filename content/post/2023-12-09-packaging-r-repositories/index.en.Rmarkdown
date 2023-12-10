@@ -1,0 +1,158 @@
+---
+title: 'Packaging R: repositories'
+author: Lluís Revilla Sancho
+date: '2023-12-09'
+slug: packaging-r-repositories
+categories:
+  - Bioconductor
+  - CRAN
+  - OSS
+tags:
+  - R
+authors:
+  - admin
+description: ''
+draft: no
+editor_options:
+  chunk_output_type: console
+featured: no
+image:
+  caption: ''
+  focal_point: ''
+subtitle: ''
+summary: ''
+---
+
+```{r setup, include = FALSE}
+knitr::opts_chunk$set(collapse = TRUE, fig.retina = 2)
+```
+
+In this post I want to collect some thoughts about R repositories.
+We have repositories that manage the packages for users.
+In this post I want to write about the purpose, functionality, benefits and drawbacks of the R repositories and how packages are managed.
+The goal is to summarize what I've learnt these last years about them.
+I'll also collect some information about them from various sources.
+
+I am writing this because I am worried about the future of CRAN and R.
+Due to different circumstances, the current position is not sustainable as is.
+People will need to step up and change to continue to benefit from R and CRAN.
+I hope that this post, will help me to understand the past, present and create some concrete steps to do.
+
+# History
+
+The first repository started earlier than April 1997.
+The [first mention](https://stat.ethz.ch/pipermail/r-devel/1997-April/017026.html) I found is already about changes in it, but it was not until the end of the month when [it was announced](https://stat.ethz.ch/pipermail/r-announce/1997/000001.html).
+
+CRAN was created by few volunteers, some of which are still involved.
+The current team is listed on [their website](https://cran.r-project.org/CRAN_team.htm).
+
+Omegahat was another repository created [shortly after CRAN](https://omegahat.net/):
+
+> The Omega project began in July, 1998, with discussions among
+> designers responsible for three current statistical languages (S, R,
+> and Lisp-Stat), with the idea of working together on new directions with special emphasis on web-based software, Java, the Java virtual machine, and distributed computing.
+
+Many developers of Omegahat were in the R Core or CRAN team.
+It was available as a repository from the R source code but was removed definitely in 4.1, 2021[^1]
+
+[^1]: In version 3.1.2 [Omegahat didn't provide](https://cran.r-project.org/doc/manuals/NEWS.3) Windows binaries and in 4.1 from the default repositories (See 4.1 in [NEWS(.4)](https://cran.r-project.org/doc/manuals/r-release/NEWS.html)).
+
+Bioconductor, was the next major repository that appeared later in 2004 (it started the mailing list).
+A paper describing it [appeared in late 2004](https://doi.org/10.1186/gb-2004-5-10-r80), describing it as:
+
+> an initiative for the collaborative creation of extensible software for computational biology and bioinformatics.
+
+Through its history repositories have evolved with R and R with them.
+For example: R was released twice a year at the beginning, and Bioconductor did too.
+But when R moved to be released once per year (in 2013 with version 3.0) Bioconductor kept using two releases a year.
+This introduced some problems when installing packages from Bioconductor, when a single R release can be compatible with two Bioconductor releases[^2].
+
+[^2]: This lead to the need of having a special function to install packages from Bioconductor.
+    Initially a function `biocLite` and later with the BiocManager package.
+
+In other cases, checks have evolved.
+For instance [Solaris](https://en.wikipedia.org/wiki/Oracle_Solaris) was used to test packages in CRAN until 2021, if I recall correctly, because it allowed to test in a proprietary C or C++ compiler.
+This lead to discover more bugs but also to more distress in R-package developers which had difficulties checking their packages in that environment.
+
+Other checks evolve with R, becoming more strict with time: In the early versions of R the use of NAMESPACE was not regulated.
+But since R version 2.15, 2012 it was compulsory even for data-only packages[^3].
+This was synchronized with repositories checks.
+
+[^3]: [NEWS in 2.15 section](https://cran.r-project.org/doc/manuals/NEWS.2)
+
+Last, some goals/desires of CRAN are not fulfilled (or where abandoned).
+For example, from the start CRAN aimed to have packages authenticated (see the bottom of [the announcement](https://stat.ethz.ch/pipermail/r-announce/1997/000001.html)).
+This might be due to lack of time, resources or that the plans are in progress but require time.
+
+With time different repositories arose:
+
+-   MRAN, which was available since September 17th, 2014 to July 1st, 2022.
+
+-   The Rstudio Public Package Manager later renamed [Posit Public Package Manager](https://packagemanager.posit.co/) has [binaries for several OS](https://posit.co/blog/the-road-to-building-ten-million-binaries/) since 2019.
+
+-   There is the [R4pi repository](https://pkgs.r4pi.org/) with binaries for Raspberry Pi.
+
+-   I remember a proteomics repository available.
+
+-   The [r-universe](https://r-universe.org) currently can provide binaries of packages that are hosted in a git repository.
+
+# Literature
+
+The role and prominence of the repositories has lead to many articles being written about it.
+I wanted to link and collect some of them for easier retrieval and because despite all the previous text there isn't a clear definition of what is a repository.
+
+I was wondering how CRAN is described by the volunteers that built it.
+
+From the announcing email:
+
+> CRAN is a collection of sites which carry identical material, consisting of the R&R R distribution(s), the contributed extensions, documentation for R, and binaries.
+
+From the [website](https://cran.r-project.org) (at 2023/12/09):
+
+> CRAN is a network of ftp and web servers around the world that store identical, up-to-date, versions of code and documentation for R.
+
+# Characteristics
+
+The predominance of CRAN and its role as primary and default R repository has lead to some special treatment of the repository.
+
+CRAN checks are in the R source code itself.
+
+Adapted from Henrik Bengstsson in [Bioconductor Slack](https://community-bioc.slack.com/archives/CLF37V6C8/p1698869264884649?thread_ts=1698804037.467439&cid=CLF37V6C8 "Link to the thread")
+
+> FOREVER ARCHIVE:
+>
+> The first one is that it publishes packages and versions of them until the end of time.
+> When a package has been published on CRAN, it takes a lot for it to be removed from there.
+> I don't know if it ever happened, but I can imagine a package can be fully removed if it was illegally published in the first place (e.g. copyright, illegal content, \...) or malicious.
+>
+> INSTALLATION SERVICE:
+>
+> Then CRAN also provides a R package repository service for installing packages on CRAN using built-in R functions.
+> The set of packages in the package repo is a subset of all packages on CRAN.
+> The CRAN package repo makes a promise that all packages listed in PACKAGES can be installed.
+> If they cannot make that promise, they'll archive the package (=remove it from PACKAGES).
+> I should also say, install.packages(url) can be used to install from the set of packages that are archived.
+> Technically, old package versions are always archived.
+>
+> CHECK SERVICE:
+>
+> The content of the R package repository is guided by the CRAN package checks that run on R-oldrel, R-release, and R-devel across multiple platforms.
+> The minimal requirement is that no package should remain in the package repository if the checks detects ERRORs (and those errors are not due to recently introduced bugs in R-devel).
+> WARNINGs can also cause a package to be archived, but that process often takes longer.
+> AFAIK, NOTEs are not a cause for a package being archived (but I could be wrong).
+> The CRAN incoming checks, which you have to pass when you submit a new package, or an updated version, will make sure that the published package pass with all OKs.
+> (It's possible to argue for NOTEs being false positives, or for them not to be fixed, but that requires a manual approval by the CRAN Team).
+
+Package managers:
+
+checkpoint, rang, renv, packrat, groundhog
+
+### Reproducibility
+
+<details>
+```{r reproducibility, echo = FALSE}
+## Reproducibility info
+options(width = 120)
+sessioninfo::session_info()
+```
+</details>
