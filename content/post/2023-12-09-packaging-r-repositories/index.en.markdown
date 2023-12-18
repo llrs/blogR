@@ -1,0 +1,311 @@
+---
+title: 'Packaging R: repositories'
+author: Lluís Revilla Sancho
+date: '2023-12-09'
+slug: packaging-r-repositories
+categories:
+  - Bioconductor
+  - CRAN
+  - OSS
+tags:
+  - R
+authors:
+  - admin
+description: ''
+draft: no
+editor_options:
+  chunk_output_type: console
+featured: no
+image:
+  caption: ''
+  focal_point: ''
+subtitle: ''
+summary: ''
+---
+
+
+
+In this post I want to collect some thoughts about R repositories.
+In R we have multiple repositories that store packages for users.
+In this post I want to write about the purpose, functionality, benefits and drawbacks of R repositories and how packages are managed.
+The goal is to summarize what I've learnt these last years about them.
+I'll also collect some information about them from various sources to make it easier for myself to find it later on.
+
+I am writing this because I am worried about the future of CRAN and R.
+Due to multiple circumstances, the current position is not sustainable as is.
+I hope that this post, will help me to understand the past, present and create some concrete steps to do.
+
+# History
+
+I was not there, but the first repository started around April 1997.
+This repository is CRAN: the Comprehensive R Archive Network.
+The [first mention](https://stat.ethz.ch/pipermail/r-devel/1997-April/017026.html) I found is already about changes in it, but it was not until the end of the month when [it was announced](https://stat.ethz.ch/pipermail/r-announce/1997/000001.html).
+
+CRAN was created by a few volunteers, some of which are still mainting it 25 years later.
+The current team is listed on [their website](https://cran.r-project.org/CRAN_team.htm).
+From the beginning it was "a collection of sites which carry identical material, consisting of the R&R R distribution(s), the contributed extensions, documentation for R, and binaries."
+
+Omegahat was another repository created [shortly after CRAN](https://omegahat.net/):
+
+> The Omega project began in July, 1998, with discussions among designers responsible for three current statistical languages (S, R, and Lisp-Stat), with the idea of working together on new directions with special emphasis on web-based software, Java, the Java virtual machine, and distributed computing.
+
+Many developers of Omegahat were in the R Core or CRAN team.
+It was available as a repository from the R source code but was removed definitely in version R 4.1, in 2021[^1].
+
+[^1]: In version 3.1.2 [Omegahat didn't provide](https://cran.r-project.org/doc/manuals/NEWS.3) Windows binaries and in 4.1 from the default repositories (See 4.1 in [NEWS(.4)](https://cran.r-project.org/doc/manuals/r-release/NEWS.html)).
+
+Bioconductor, was the next major repository that appeared.
+It was funded by Robert Gentleman and others in 2004 (it started the mailing list).
+A paper describing it [appeared in late 2004](https://doi.org/10.1186/gb-2004-5-10-r80):
+
+> an initiative for the collaborative creation of extensible software for computational biology and bioinformatics.
+
+Through its history repositories have evolved with R and R with them.
+For example: R was released twice a year at the beginning, and Bioconductor did too.
+But when R moved to be released once per year (in 2013 with version 3.0) Bioconductor kept using two releases a year.
+This introduced some problems when installing packages from Bioconductor, when a single R release can be compatible with two Bioconductor releases[^2].
+
+[^2]: This lead to the need of having a special function to install packages from Bioconductor.
+    Initially a function `biocLite` and later with the [BiocManager package](https://cran.r-project.org/package=BiocManager).
+
+In other cases, checks have evolved.
+For instance [Solaris](https://en.wikipedia.org/wiki/Oracle_Solaris) was used to test packages in CRAN until 2021, if I recall correctly, because it allowed to test in a proprietary C or C++ compiler.
+This lead to discover bugs but also to more distress in R-package developers which had difficulties checking their packages in that environment.
+
+Other checks evolve with R, becoming more strict with time: In the early versions of R the use of NAMESPACE was not regulated.
+But since R version 2.15, 2012 it was compulsory even for data-only packages[^3].
+This was synchronized with repositories checks.
+
+[^3]: [NEWS in 2.15 section](https://cran.r-project.org/doc/manuals/NEWS.2)
+
+Last, some goals/desires of CRAN are not fulfilled (or where abandoned).
+For example, from the start CRAN aimed to have packages authenticated (see the bottom of [the announcement](https://stat.ethz.ch/pipermail/r-announce/1997/000001.html)).
+This might be due to lack of time, resources or that the plans are in progress but require (volunteer) time.
+
+With time, different repositories arose:
+
+-   MRAN, which was available since September 17th, 2014 to July 1st, 2022.
+
+-   The Rstudio Public Package Manager later renamed [Posit Public Package Manager](https://packagemanager.posit.co/) has [binaries for several OS](https://posit.co/blog/the-road-to-building-ten-million-binaries/) since 2019.
+
+-   There is the [R4pi repository](https://pkgs.r4pi.org/) with binaries for Raspberry Pi.
+
+-   I remember a proteomics repository available.
+
+-   rOpenSci started its own repository which later evolved into the [r-universe](https://r-universe.org).
+    The r-universe currently can provide binaries of packages that are hosted in a git repository.
+
+# Literature
+
+The role and prominence of the repositories has lead to many articles being written about it.
+I wanted to link and collect some of them for easier retrieval.
+
+I was wondering how CRAN is described by the volunteers that built it.
+From the announcing email:
+
+> CRAN is a collection of sites which carry identical material, consisting of the R&R R distribution(s), the contributed extensions, documentation for R, and binaries.
+
+From the [website](https://cran.r-project.org) (at 2023/12/09):
+
+> CRAN is a network of ftp and web servers around the world that store identical, up-to-date, versions of code and documentation for R.
+
+Initially there was R NEWS, with an article dedicated to CRAN and one to Omegahat too.
+These articles usually describe new package additions but sometimes they also provide information about changes:
+
+-   [CRAN-2001-1](https://journal.r-project.org/news/RN-2001-1-cran): It list new packages, [CRAN-2001-2](https://journal.r-project.org/news/RN-2001-2-cran), [CRAN-2001-3](https://journal.r-project.org/news/RN-2001-3-cran), [Omegahat-2001-3](https://journal.r-project.org/articles/RN-2001-008/)
+
+-   [CRAN-2002-1](https://journal.r-project.org/news/RN-2002-1-cran), [CRAN-2002-2](https://journal.r-project.org/news/RN-2002-2-cran/), [CRAN-2002-3](https://journal.r-project.org/news/RN-2002-3-cran/)
+
+-   [CRAN-2003-1](https://journal.r-project.org/news/RN-2003-1-cran/), [CRAN-2003-2](https://journal.r-project.org/news/RN-2003-2-cran/), [CRAN-2003-3](https://journal.r-project.org/news/RN-2003-3-cran/)
+
+-   [CRAN-2004-1](https://journal.r-project.org/news/RN-2004-1-cran/), [CRAN-2004-2](https://journal.r-project.org/news/RN-2004-2-cran/)
+
+-   [CRAN-2005-1](https://journal.r-project.org/news/RN-2005-1-cran/), [CRAN-2005-2](https://journal.r-project.org/news/RN-2005-2-cran/)
+
+    Since 2006 there is also an article about Bioconductor.
+
+-   [CRAN-2006-2](https://journal.r-project.org/news/RN-2006-2-cran/), [Bioc-2006-2](https://journal.r-project.org/news/RN-2006-2-bioc)
+
+-   [CRAN-2007-1](https://journal.r-project.org/news/RN-2007-1-cran/), [CRAN-2007-2](https://journal.r-project.org/news/RN-2007-2-cran/), [Bioc-2007-2](https://journal.r-project.org/news/RN-2007-2-bioc), [CRAN-2007-3](https://journal.r-project.org/news/RN-2007-3-cran/)
+
+-   [CRAN-2008-1](https://journal.r-project.org/news/RN-2008-1-cran/), [Bioc-2008-1](https://journal.r-project.org/news/RN-2008-1-bioc) [CRAN-2008-2](https://journal.r-project.org/news/RN-2008-2-cran/), [Bioc-2008-2](https://journal.r-project.org/news/RN-2008-2-bioc)
+
+Later it became the [R Journal](https://journal.r-project.org/):
+
+-   [CRAN-2009-1](https://journal.r-project.org/issues/2009-1/RJ-2009-1.pdf), [CRAN-2009-2](https://journal.r-project.org/issues/2009-2/RJ-2009-2.pdf)
+
+-   [CRAN-2010-1](https://journal.r-project.org/issues/2010-1/RJ-2010-1.pdf), [CRAN-2010-2](https://journal.r-project.org/issues/2010-2/RJ-2010-2.pdf)
+
+-   [CRAN-2011-1](https://journal.r-project.org/issues/2011-1/RJ-2011-1.pdf), [CRAN and Bioconductor 2011-2](https://journal.r-project.org/issues/2011-2/RJ-2011-2.pdf).
+    In the bioconductor section it mentions conference, and important directions for the Bioconductor core.
+
+-   [CRAN-2012-1](https://journal.r-project.org/issues/2012-1/RJ-2012-1.pdf), [CRAN and Bioconductor 2012-2](https://journal.r-project.org/issues/2012-2/RJ-2012-2.pdf): Mentions `biocLite()` to install packages.
+
+-   [CRAN-2013-1](https://journal.r-project.org/news/RJ-2013-1-cran) [Bioc-2013-1](https://journal.r-project.org/news/RJ-2013-1-bioconductor/): mentions better integration of parallel evaluation.  
+    [CRAN-2013-2](https://journal.r-project.org/news/RJ-2013-2-cran/), [Bioc-2013-2](https://journal.r-project.org/news/RJ-2013-2-bioconductor/): Mentions again AnnotationHub
+
+-   [CRAN-2014-1](https://journal.r-project.org/news/RJ-2014-1-cran/), [Bioc-2014-1](https://journal.r-project.org/news/RJ-2014-1-bioconductor/): Mentions the git-svn bridge to synchronize git and svn repository.  
+    [CRAN-2014-2](https://journal.r-project.org/news/RJ-2014-2-cran/), [Bioc-2014-2](https://journal.r-project.org/news/RJ-2014-2-bioconductor/): Bioconductor 3.0 release, besides some packages Amazon Machine Image are offered as well as docker images.
+    Packages are required to pass BiocCheck, checks in a different package specific for Bioconductor.
+
+-   [CRAN-2015-1](https://journal.r-project.org/news/RJ-2015-1-cran/), [Bioc-2015-1](https://journal.r-project.org/news/RJ-2015-1-bioconductor/): Same mentions as the previous and encouragement to guidelines an package submission.  
+    [CRAN-2015-2](https://journal.r-project.org/news/RJ-2015-2-cran/), [Bioc-2015-2](https://journal.r-project.org/news/RJ-2015-2-bioconductor/)
+
+-   [CRAN-2016-1](https://journal.r-project.org/news/RJ-2016-1-cran/): on this article there is a plot of the number of CRAN packages and time, and doesn't list all packages listed.
+    It explicitly mentions that the CRAN team asked for help processing package submissions and some people stepped up.
+    [Bioc-2016-1](https://journal.r-project.org/news/RJ-2016-1-bioconductor/)
+
+    [CRAN-2016-2](https://journal.r-project.org/news/RJ-2016-2-cran/), [Bioc-2016-2](https://journal.r-project.org/news/RJ-2016-2-bioc/)
+
+-   [CRAN-2017-1](https://journal.r-project.org/news/RJ-2017-1-cran/): mentions changes in CRAN checks, adding new memory access and static code analysis checks.
+    It mentions that the submission has moved to a more automated one.
+    It also mentions changes in the CRAN Repository Policy.
+    [Bioc-2017-1](https://journal.r-project.org/news/RJ-2017-1-bioc/)
+
+-   [CRAN-2018-1](https://journal.r-project.org/news/RJ-2018-1-cran/): checks in alternative BLAS/LAPACK implementations, the submission pipeline is defined.
+    First time the amount of action taken by CRAN reviewers is listed in two categories automatic and manual.
+    Changes in repository policy are listed.
+    Changes in location of package repository archive , [Bioc-2018-1](https://journal.r-project.org/news/RJ-2018-1-bioc/)  
+    [CRAN-2018-2](https://journal.r-project.org/news/RJ-2018-2-cran/): Changes in policy; packages should not give a check warning nor error.
+    [Bioc-2018-2](https://journal.r-project.org/news/RJ-2018-2-bioc/): Moved to BiocManager to install packages.
+
+-   [CRAN-2019-1](https://journal.r-project.org/news/RJ-2019-1-cran/): More mentions to CRAN mirror security.
+
+    [CRAN-2019-2](https://journal.r-project.org/news/RJ-2019-2-cran/): Updates in checklist for CRAN submissions, [Bioc-2019-2](https://journal.r-project.org/news/RJ-2019-2-bioc/)
+
+-   [CRAN-2020-1](https://journal.r-project.org/news/RJ-2020-1-cran/): Many changes in CRAN policies.
+    [CRAN-2020-2](https://journal.r-project.org/news/RJ-2020-2-cran/): Many changes to CRAN policies.
+    [Bioc-2020-2](https://journal.r-project.org/news/RJ-2020-2-bioc/): Announces the Technical and Community advisory boards (as well as the project-wide Code of Conduct).
+
+-   [CRAN-2021-1](https://journal.r-project.org/news/RJ-2021-1-cran/), [Bioc-2021-1](https://journal.r-project.org/news/RJ-2021-1-bioc/): Mentions conferences that will be virtual.  
+    [CRAN-2021-2](https://journal.r-project.org/news/RJ-2021-2-cran/): Shows an [incomig](https://cran.r-project.org/incoming/) path \[See [this friendly viewer](https://r-hub.github.io/cransays/articles/dashboard.html)\], [Bioc-2021-2](https://journal.r-project.org/news/RJ-2021-2-bioc/): Mentions AnVIL and two online workshops to develop workflows.
+
+-   [CRAN-2022-1](https://journal.r-project.org/news/RJ-2022-1-cran/): List a change in CRAN policy and the CRAN Task View Initiative.  
+    [CRAN-2022-2](https://journal.r-project.org/news/RJ-2022-2-cran/): List some more repository policies.
+    [Bioc-2022-2](https://journal.r-project.org/news/RJ-2022-2-bioconductor/): Lists infrastructure updates (and its funding), changes in the core team and new initiatives.  
+    [CRAN-2022-3](https://journal.r-project.org/news/RJ-2022-3-cran/), [Bioc-2022-3](https://journal.r-project.org/news/RJ-2022-3-bioconductor/)  
+    [CRAN-2022-4](https://journal.r-project.org/news/RJ-2022-4-cran/), [Bioc-2022-4](https://journal.r-project.org/news/RJ-2022-4-bioconductor/): default branch renaming, partnership with Outreachy and blog are featured.
+    Several working groups provide updates
+
+-   [CRAN-2023-1](https://journal.r-project.org/news/RJ-2023-1-cran/)
+
+In addition, several articles and blog posts have appeared.
+From those I found it is worth mentioning the following:
+
+-   [Are There Too Many R Packages?](https://doi.org/10.17713/ajs.v41i1.188) and [derived posts](https://www.r-bloggers.com/2014/04/does-r-have-too-many-packages/)
+
+-   [Hacking Bioconductor](https://www.jumpingrivers.com/blog/security-r-hacking-bioconductor/)
+
+And my own posts:
+
+-   [Reasons CRAN packages are  archived](https://llrs.dev/post/2021/12/07/reasons-cran-archivals/)
+
+-   [CRAN files part 1](https://llrs.dev/post/2022/07/23/cran-files-1/)
+
+-   [CRAN files part 2](https://llrs.dev/post/2022/07/28/cran-files-2/)
+
+-   [CRAN maintained packages](https://llrs.dev/post/2023/05/03/cran-maintained-packages/)
+
+-   [CRAN review](https://llrs.dev/post/2021/01/31/cran-review/) (and the [talk at useRs 2021](https://llrs.dev/talk/user-2021/))
+
+-   [Bioconductor review](https://llrs.dev/post/2020/07/31/bioconductor-submissions-reviews/)
+
+-   [rOpenSci](https://llrs.dev/post/2020/09/02/ropensci-submissions/) reviews
+
+-   [Bioconductor reviews](https://llrs.dev/2020/07/bioconductor-submissions-reviews/)
+
+# Characteristics
+
+The predominance of CRAN and its role as primary and default R repository has lead to some special treatment of the repository.
+
+CRAN checks are in the R source code itself.
+While other repositories have their own checks in different tools.
+In addition, the CRAN environmental variables used are documented in the [R-internals](https://cran.r-project.org/doc/manuals/r-release/R-ints.html) (they are more or less accessible in the [svn repository](https://svn.r-project.org/R-dev-web/trunk/CRAN/) too).
+
+Others who know more have stated the benefits of CRAN too: This text is copied from Henrik Bengstsson in [Bioconductor Slack](https://community-bioc.slack.com/archives/CLF37V6C8/p1698869264884649?thread_ts=1698804037.467439&cid=CLF37V6C8 "Link to the thread"):
+
+> FOREVER ARCHIVE:
+>
+> The first one is that it publishes packages and versions of them until the end of time.
+> When a package has been published on CRAN, it takes a lot for it to be removed from there.
+> I don't know if it ever happened, but I can imagine a package can be fully removed if it was illegally published in the first place (e.g. copyright, illegal content, \...) or malicious.
+>
+> INSTALLATION SERVICE:
+>
+> Then CRAN also provides a R package repository service for installing packages on CRAN using built-in R functions.
+> The set of packages in the package repo is a subset of all packages on CRAN.
+> The CRAN package repo makes a promise that all packages listed in PACKAGES can be installed.
+> If they cannot make that promise, they'll archive the package (=remove it from PACKAGES).
+> I should also say, install.packages(url) can be used to install from the set of packages that are archived.
+> Technically, old package versions are always archived.
+>
+> CHECK SERVICE:
+>
+> The content of the R package repository is guided by the CRAN package checks that run on R-oldrel, R-release, and R-devel across multiple platforms.
+> The minimal requirement is that no package should remain in the package repository if the checks detects ERRORs (and those errors are not due to recently introduced bugs in R-devel).
+> WARNINGs can also cause a package to be archived, but that process often takes longer.
+> AFAIK, NOTEs are not a cause for a package being archived (but I could be wrong).
+> The CRAN incoming checks, which you have to pass when you submit a new package, or an updated version, will make sure that the published package pass with all OKs.
+> (It's possible to argue for NOTEs being false positives, or for them not to be fixed, but that requires a manual approval by the CRAN Team).
+
+I think there are many more resources discussing R repositories.
+If you know more I'll be happy to update this post.
+
+### Reproducibility
+
+<details>
+
+```
+## ─ Session info ───────────────────────────────────────────────────────────────────────────────────────────────────────
+##  setting  value
+##  version  R version 4.3.1 (2023-06-16)
+##  os       Ubuntu 22.04.3 LTS
+##  system   x86_64, linux-gnu
+##  ui       X11
+##  language (EN)
+##  collate  en_US.UTF-8
+##  ctype    en_US.UTF-8
+##  tz       Europe/Madrid
+##  date     2023-12-17
+##  pandoc   3.1.1 @ /usr/lib/rstudio/resources/app/bin/quarto/bin/tools/ (via rmarkdown)
+## 
+## ─ Packages ───────────────────────────────────────────────────────────────────────────────────────────────────────────
+##  package     * version date (UTC) lib source
+##  blogdown      1.18    2023-06-19 [1] CRAN (R 4.3.1)
+##  bookdown      0.37    2023-12-01 [1] CRAN (R 4.3.1)
+##  bslib         0.6.1   2023-11-28 [1] CRAN (R 4.3.1)
+##  cachem        1.0.8   2023-05-01 [1] CRAN (R 4.3.1)
+##  cli           3.6.2   2023-12-11 [1] CRAN (R 4.3.1)
+##  digest        0.6.33  2023-07-07 [1] CRAN (R 4.3.1)
+##  evaluate      0.23    2023-11-01 [1] CRAN (R 4.3.2)
+##  fastmap       1.1.1   2023-02-24 [1] CRAN (R 4.3.1)
+##  htmltools     0.5.7   2023-11-03 [1] CRAN (R 4.3.2)
+##  jquerylib     0.1.4   2021-04-26 [1] CRAN (R 4.3.1)
+##  jsonlite      1.8.8   2023-12-04 [1] CRAN (R 4.3.1)
+##  knitr         1.45    2023-10-30 [1] CRAN (R 4.3.2)
+##  lifecycle     1.0.4   2023-11-07 [1] CRAN (R 4.3.2)
+##  R6            2.5.1   2021-08-19 [1] CRAN (R 4.3.1)
+##  rlang         1.1.2   2023-11-04 [1] CRAN (R 4.3.1)
+##  rmarkdown     2.25    2023-09-18 [1] CRAN (R 4.3.1)
+##  rstudioapi    0.15.0  2023-07-07 [1] CRAN (R 4.3.1)
+##  sass          0.4.8   2023-12-06 [1] CRAN (R 4.3.1)
+##  sessioninfo   1.2.2   2021-12-06 [1] CRAN (R 4.3.1)
+##  xfun          0.41    2023-11-01 [1] CRAN (R 4.3.2)
+##  yaml          2.3.8   2023-12-11 [1] CRAN (R 4.3.1)
+## 
+##  [1] /home/lluis/bin/R/4.3.1
+##  [2] /opt/R/4.3.1/lib/R/library
+## 
+## ──────────────────────────────────────────────────────────────────────────────────────────────────────────────────────
+```
+</details>
+
+
+
+PackagingCon:
+
+Packaging Con seeks to bring various package management communities together, as a venue to discuss challenges and exchange ideas. What makes communities work together on a particular software ecosystem? Are the differences among package managers mainly in the implementation language, or are there other key distinctions to software management methodology? How can we get better interoperability and/or cooperation among package manager teams, and what's missing/required to enable that? Is dependency resolution fundamentally the same problem across systems, or does each package manager do it differently?
+
+Package managers:
+
+checkpoint, rang, renv, packrat, groundhog
