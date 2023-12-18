@@ -23,9 +23,7 @@ subtitle: ''
 summary: ''
 ---
 
-```{r setup, include = FALSE}
-knitr::opts_chunk$set(collapse = TRUE, fig.retina = 2)
-```
+
 
 In this post I want to collect some thoughts about R repositories.
 In R we have multiple repositories that store packages for users.
@@ -256,10 +254,49 @@ If you know more I'll be happy to update this post.
 ### Reproducibility
 
 <details>
-```{r reproducibility, echo = FALSE}
-## Reproducibility info
-options(width = 120)
-sessioninfo::session_info()
+
+```
+## ─ Session info ───────────────────────────────────────────────────────────────────────────────────────────────────────
+##  setting  value
+##  version  R version 4.3.1 (2023-06-16)
+##  os       Ubuntu 22.04.3 LTS
+##  system   x86_64, linux-gnu
+##  ui       X11
+##  language (EN)
+##  collate  en_US.UTF-8
+##  ctype    en_US.UTF-8
+##  tz       Europe/Madrid
+##  date     2023-12-17
+##  pandoc   3.1.1 @ /usr/lib/rstudio/resources/app/bin/quarto/bin/tools/ (via rmarkdown)
+## 
+## ─ Packages ───────────────────────────────────────────────────────────────────────────────────────────────────────────
+##  package     * version date (UTC) lib source
+##  blogdown      1.18    2023-06-19 [1] CRAN (R 4.3.1)
+##  bookdown      0.37    2023-12-01 [1] CRAN (R 4.3.1)
+##  bslib         0.6.1   2023-11-28 [1] CRAN (R 4.3.1)
+##  cachem        1.0.8   2023-05-01 [1] CRAN (R 4.3.1)
+##  cli           3.6.2   2023-12-11 [1] CRAN (R 4.3.1)
+##  digest        0.6.33  2023-07-07 [1] CRAN (R 4.3.1)
+##  evaluate      0.23    2023-11-01 [1] CRAN (R 4.3.2)
+##  fastmap       1.1.1   2023-02-24 [1] CRAN (R 4.3.1)
+##  htmltools     0.5.7   2023-11-03 [1] CRAN (R 4.3.2)
+##  jquerylib     0.1.4   2021-04-26 [1] CRAN (R 4.3.1)
+##  jsonlite      1.8.8   2023-12-04 [1] CRAN (R 4.3.1)
+##  knitr         1.45    2023-10-30 [1] CRAN (R 4.3.2)
+##  lifecycle     1.0.4   2023-11-07 [1] CRAN (R 4.3.2)
+##  R6            2.5.1   2021-08-19 [1] CRAN (R 4.3.1)
+##  rlang         1.1.2   2023-11-04 [1] CRAN (R 4.3.1)
+##  rmarkdown     2.25    2023-09-18 [1] CRAN (R 4.3.1)
+##  rstudioapi    0.15.0  2023-07-07 [1] CRAN (R 4.3.1)
+##  sass          0.4.8   2023-12-06 [1] CRAN (R 4.3.1)
+##  sessioninfo   1.2.2   2021-12-06 [1] CRAN (R 4.3.1)
+##  xfun          0.41    2023-11-01 [1] CRAN (R 4.3.2)
+##  yaml          2.3.8   2023-12-11 [1] CRAN (R 4.3.1)
+## 
+##  [1] /home/lluis/bin/R/4.3.1
+##  [2] /opt/R/4.3.1/lib/R/library
+## 
+## ──────────────────────────────────────────────────────────────────────────────────────────────────────────────────────
 ```
 </details>
 
