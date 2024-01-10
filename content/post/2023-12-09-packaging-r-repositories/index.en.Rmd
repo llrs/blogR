@@ -259,6 +259,7 @@ I think before I drag too much on the steps I'll post this and collect some more
 
 Last, Uwe Liegges presented about [CRAN in useR!2017](https://www.youtube.com/watch?v=-vX-CDiiZKI), thanks Tim Taylor for [sharing it](https://fosstodon.org/@_TimTaylor/111612010185631808). In this video there is an explanation of why the solaris OS was used. 
 
+It has come to my attention that there is an article, by G. Brooke Anderson and Dirk Eddelbuette, about the R package repositories structure (among other things): [Hosting Data Packages via drat: A Case Study with Hurricane Exposure Data](https://journal.r-project.org/archive/2017/RJ-2017-026/RJ-2017-026.pdf)
 
 
 ### Reproducibility
