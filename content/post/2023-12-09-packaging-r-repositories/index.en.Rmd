@@ -180,7 +180,7 @@ Later it became the [R Journal](https://journal.r-project.org/):
     [Bioc-2020-2](https://journal.r-project.org/news/RJ-2020-2-bioc/): Announces the Technical and Community advisory boards (as well as the project-wide Code of Conduct).
 
 -   [CRAN-2021-1](https://journal.r-project.org/news/RJ-2021-1-cran/), [Bioc-2021-1](https://journal.r-project.org/news/RJ-2021-1-bioc/): Mentions conferences that will be virtual.  
-    [CRAN-2021-2](https://journal.r-project.org/news/RJ-2021-2-cran/): Shows an [incomig](https://cran.r-project.org/incoming/) path \[See [this friendly viewer](https://r-hub.github.io/cransays/articles/dashboard.html)\], [Bioc-2021-2](https://journal.r-project.org/news/RJ-2021-2-bioc/): Mentions AnVIL and two online workshops to develop workflows.
+    [CRAN-2021-2](https://journal.r-project.org/news/RJ-2021-2-cran/): Shows an [incomig](https://cran.r-project.org/incoming/) path [See [this friendly viewer](https://r-hub.github.io/cransays/articles/dashboard.html), [Bioc-2021-2](https://journal.r-project.org/news/RJ-2021-2-bioc/): Mentions AnVIL and two online workshops to develop workflows.
 
 -   [CRAN-2022-1](https://journal.r-project.org/news/RJ-2022-1-cran/): List a change in CRAN policy and the CRAN Task View Initiative.  
     [CRAN-2022-2](https://journal.r-project.org/news/RJ-2022-2-cran/): List some more repository policies.
