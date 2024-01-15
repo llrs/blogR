@@ -1,0 +1,554 @@
+---
+title: Submissions accepted on the first try
+author: Lluís Revilla Sancho
+date: '2024-01-10'
+slug: submission-cran-first-try
+categories:
+  - CRAN
+tags:
+  - CRAN
+authors:
+  - admin
+description: ''
+draft: no
+editor_options:
+  chunk_output_type: console
+featured: no
+image:
+  caption: ''
+  focal_point: ''
+subtitle: ''
+summary: 'First time successful submissions'
+---
+
+
+
+<p>Recently someone in social media was saying that they do not succeed on submissions to CRAN on the first try.
+In this post I’ll try to answer this question.</p>
+<p>First we need to know the submissions to CRAN.
+We can download the last 3 years of CRAN submissions thanks to <a href="https://r-hub.github.io/cransays/articles/dashboard.html">cransays</a>.</p>
+<pre class="r"><code>cdh &lt;- cransays::download_history()</code></pre>
+<p>Here is the bulk of the analysis of the history of package submissions.
+This is explained in different posts, but basically I keep only one package per snapshot, try to identify new submissions instead of changes in the same submission and calculate some date-related variables.</p>
+<pre class="r"><code>library(&quot;dplyr&quot;)
+## 
+## Attaching package: &#39;dplyr&#39;
+## The following objects are masked from &#39;package:stats&#39;:
+## 
+##     filter, lag
+## The following objects are masked from &#39;package:base&#39;:
+## 
+##     intersect, setdiff, setequal, union
+library(&quot;lubridate&quot;)
+## 
+## Attaching package: &#39;lubridate&#39;
+## The following objects are masked from &#39;package:base&#39;:
+## 
+##     date, intersect, setdiff, union
+library(&quot;tidyr&quot;)
+diff0 &lt;- structure(0, class = &quot;difftime&quot;, units = &quot;hours&quot;)
+cran &lt;- cdh |&gt; 
+  filter(!is.na(version)) |&gt; 
+  distinct() |&gt; 
+  arrange(package, snapshot_time, version) |&gt; 
+  group_by(package, snapshot_time) |&gt; 
+  # Remove some duplicated packages in different folders
+  mutate(n = seq_len(n())) |&gt; 
+  filter(n == n()) |&gt; 
+  ungroup() |&gt; 
+  select(-n) |&gt; 
+  arrange(package, version, snapshot_time) |&gt; 
+  # Packages last seen in queue less than 24 ago are considered same submission 
+  # (even if their version number differs)
+  mutate(diff_time = difftime(snapshot_time, lag(snapshot_time), units = &quot;hour&quot;),
+         diff_time = if_else(is.na(diff_time), diff0, diff_time), # Fill NAs
+         diff_v = version != lag(version),
+         diff_v = if_else(is.na(diff_v), TRUE, diff_v), # Fill NAs
+         near_t = abs(diff_time) &lt;= 24,
+         resubmission = !near_t | diff_v, 
+         resubmission = if_else(resubmission == FALSE &amp; diff_time == 0, 
+                               TRUE, resubmission),
+         resubmission_n = cumsum(as.numeric(resubmission)),
+         new_version = !near(diff_time, 1, tol = 24) &amp; diff_v, 
+         new_version = if_else(new_version == FALSE &amp; diff_time == 0, 
+                               TRUE, new_version),
+         submission_n = cumsum(as.numeric(new_version)), .by = package) |&gt; 
+  select(-diff_time, -diff_v, -new_version, -new_version, -near_t) |&gt; 
+  mutate(version = package_version(version, strict = FALSE),
+         date = as_date(snapshot_time),
+         year = year(snapshot_time),
+         week = week(snapshot_time),
+         mday = mday(snapshot_time),
+         wday = wday(snapshot_time, locale = &quot;en_GB.UTF-8&quot;, 
+                     week_start = 1,
+                     label = FALSE))</code></pre>
+<p>Now we need to compare with the CRAN archive to know if the submission were accepted.</p>
+<p>First we need to retrieve the data:</p>
+<pre class="r"><code>cran_archive &lt;- tools:::CRAN_archive_db()
+# When row binding the data.frames that have only one row lose they row name:
+# handle those cases to keep the version number:
+archived &lt;- vapply(cran_archive, NROW, numeric(1L))
+names(cran_archive)[archived == 1L] &lt;- vapply(cran_archive[archived == 1L], rownames, character(1L))
+# Merge current and archive data
+cran_dates &lt;- do.call(rbind, cran_archive)
+cran_dates$type &lt;- &quot;archived&quot;
+current &lt;- tools:::CRAN_current_db()
+current$type &lt;- &quot;available&quot;
+cran_h &lt;- rbind(current, cran_dates)
+# Keep minimal CRAN data archive
+cran_h$pkg_v &lt;- basename(rownames(cran_h))
+rownames(cran_h) &lt;- NULL
+cda &lt;- cran_h |&gt; 
+  mutate(strcapture(x = pkg_v, &quot;^(.+)_([0-9]*.+).tar.gz$&quot;, 
+                    proto = data.frame(package = character(), version = character())),
+         package = if_else(is.na(package), pkg_v, package)) |&gt; 
+  arrange(package, mtime) |&gt; 
+  mutate(acceptance_n = seq_len(n()), .by = package) |&gt; 
+  select(package, pkg_v, version, acceptance_n, date = mtime, uname, type) |&gt; 
+  mutate(date = as_date(date))</code></pre>
+<p>We use <code>tools:::CRAN_current_db</code>, because <code>package.available</code> will filter packages based on OS and other options (see the <code>filter</code> argument).</p>
+<p>We can make a quick detour to plot the number of accepted articles and when were they first published:</p>
+<pre class="r"><code>library(&quot;ggplot2&quot;)
+cdas &lt;- cda |&gt; 
+  summarize(available = if_else(any(type == &quot;available&quot;), &quot;available&quot;, &quot;archived&quot;),
+            published = min(date),
+            n_published = max(acceptance_n),
+            .by = package)
+
+ggplot(cdas) + 
+  geom_point(aes(published, n_published, col = available, shape = available)) +
+  theme_minimal() +
+  theme(legend.position = c(0.7, 0.8), legend.background = element_rect()) +
+  labs(x = element_blank(), y = &quot;Versions&quot;, col = &quot;Status&quot;, shape = &quot;Status&quot;,
+       title = &quot;First publication of packages and versions published&quot;) +
+  scale_x_date(expand = expansion(), date_breaks = &quot;2 years&quot;, date_labels = &quot;%Y&quot;)</code></pre>
+<p><img src="{{< blogdown/postref >}}index.en_files/figure-html/cran-published-1.png" width="672" /></p>
+<p>In summary, there are 6308 packages archived, and 20251 available.
+We can observe that there is a package that had more than 150 versions that was later archived.</p>
+<p>Now we can really compare the submission process with the CRAN archive:</p>
+<pre class="r"><code>cran_subm &lt;- cran |&gt; 
+  summarise(
+    resubmission_n = max(resubmission_n, na.rm = TRUE),
+    submission_n = max(submission_n, na.rm = TRUE),
+    # The number of submissions 
+    submissions = resubmission_n - submission_n + 1,
+            date = min(date),
+            .by = c(&quot;package&quot;, &quot;version&quot;)) |&gt; 
+  arrange(package, version)
+# Filter to those packages submitted in the period we have data
+cda_acc &lt;- cda |&gt; 
+  filter(date &gt;= min(cran_subm$date)) |&gt; 
+  select(-pkg_v) |&gt; 
+  mutate(version = package_version(version, FALSE))
+
+accepted_subm &lt;- merge(cda_acc, cran_subm, by = c(&quot;package&quot;, &quot;version&quot;),
+             suffixes = c(&quot;.cran&quot;, &quot;.subm&quot;), all = TRUE, sort = FALSE) |&gt; 
+  arrange(package, version, date.cran, date.subm) |&gt; 
+  mutate(submissions = if_else(is.na(submissions), 1, submissions),
+         acceptance_n = if_else(is.na(acceptance_n), 0, acceptance_n))</code></pre>
+<p>We can explore a little bit this data:</p>
+<pre class="r"><code>lp &lt;- scales::label_percent(accuracy = 0.1)
+accepted_subm |&gt; 
+  summarize(cransays = sum(!is.na(date.subm)),
+            cran = sum(!is.na(date.cran)),
+            missed_submissions = cran - cransays,
+            percentaged_missed = lp(missed_submissions/cran))</code></pre>
+<table>
+<thead>
+<tr class="header">
+<th align="right">cransays</th>
+<th align="right">cran</th>
+<th align="right">missed_submissions</th>
+<th align="left">percentaged_missed</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td align="right">46339</td>
+<td align="right">50202</td>
+<td align="right">3863</td>
+<td align="left">7.7%</td>
+</tr>
+</tbody>
+</table>
+<p>This means that <a href="https://r-hub.github.io/cransays/articles/dashboard.html">cransays</a>, the package used to archive this data, misses ~8% of submissions, probably because they are handled in less than an hour!!
+Another explanation might be because for some periods cransays bot didn’t work well…</p>
+<p>On the other hand we can look how long does it take for a version to be published on CRAN:</p>
+<pre class="r"><code>accepted_subm |&gt; 
+  filter(!is.na(date.cran)) |&gt; 
+  mutate(time_diff = difftime(date.cran, date.subm, units = &quot;weeks&quot;)) |&gt;
+  # Calculate the number of accepted packages sine the recording of submissions
+  mutate(accepted_n = acceptance_n - min(acceptance_n[acceptance_n != 0L], na.rm = TRUE) + 1, .by = package) |&gt; 
+  filter(time_diff &gt;= 0) |&gt; 
+  ggplot() + 
+  geom_point(aes(date.cran, time_diff, col = accepted_n)) +
+  theme_minimal() +
+  theme(legend.position = c(0.2, 0.8), legend.background = element_rect()) +
+  labs(x = &quot;Published on CRAN&quot;, title = &quot;Time since submitted to CRAN&quot;, 
+       y = &quot;Weeks&quot;, col = &quot;Accepted&quot;)
+## Don&#39;t know how to automatically pick scale for object of type &lt;difftime&gt;.
+## Defaulting to continuous.</code></pre>
+<p><img src="{{< blogdown/postref >}}index.en_files/figure-html/accepted_subm-1.png" width="672" /></p>
+<p>I explored some of those outliers and there is a package that was submitted in 2021 and two years later it was submitted with the same version.
+In other cases the submission was done with more than 1 hour of tolerance (see the “new_version” variable creation in the second code chunk.)</p>
+<p>This means that the path to CRAN might be long and that developers do not change the version number on each submission.
+I know I haven’t done that for the first package I submitted to CRAN.</p>
+<pre class="r"><code>ffs &lt;- accepted_subm |&gt; 
+  filter(acceptance_n == 1L) |&gt;
+  mutate(attempts = submissions - 1) |&gt; 
+  count(attempts, sort = TRUE,  name = &quot;packages&quot;) |&gt; 
+  mutate(percentage = lp(packages/sum(packages, na.rm = TRUE)))
+ffs</code></pre>
+<table>
+<thead>
+<tr class="header">
+<th align="right">attempts</th>
+<th align="right">packages</th>
+<th align="left">percentage</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td align="right">0</td>
+<td align="right">3718</td>
+<td align="left">51.3%</td>
+</tr>
+<tr class="even">
+<td align="right">1</td>
+<td align="right">2360</td>
+<td align="left">32.6%</td>
+</tr>
+<tr class="odd">
+<td align="right">2</td>
+<td align="right">800</td>
+<td align="left">11.0%</td>
+</tr>
+<tr class="even">
+<td align="right">3</td>
+<td align="right">246</td>
+<td align="left">3.4%</td>
+</tr>
+<tr class="odd">
+<td align="right">4</td>
+<td align="right">83</td>
+<td align="left">1.1%</td>
+</tr>
+<tr class="even">
+<td align="right">5</td>
+<td align="right">24</td>
+<td align="left">0.3%</td>
+</tr>
+<tr class="odd">
+<td align="right">6</td>
+<td align="right">7</td>
+<td align="left">0.1%</td>
+</tr>
+<tr class="even">
+<td align="right">8</td>
+<td align="right">3</td>
+<td align="left">0.0%</td>
+</tr>
+<tr class="odd">
+<td align="right">7</td>
+<td align="right">2</td>
+<td align="left">0.0%</td>
+</tr>
+<tr class="even">
+<td align="right">9</td>
+<td align="right">1</td>
+<td align="left">0.0%</td>
+</tr>
+</tbody>
+</table>
+<p>This means that close to 48.7% first time submissions are rejected.</p>
+<p>This points out a problem:
+- the developers need to resubmit their packages and fix it more
+- the reviewers need to spend more time (approximately 50% of submissions are at one point or another handled by a human).</p>
+<p>After this exercise we might wonder whether this is just for new packages?
+If we look up those submissions that are not the first version of a package, we find the following:</p>
+<pre class="r"><code>fs_exp &lt;- accepted_subm |&gt; 
+  filter(!is.na(date.cran), acceptance_n &gt; 1L) |&gt; 
+  mutate(attempts = (submissions - 1),
+         failed_submissions = attempts != 0L) |&gt; 
+  summarise(
+    total_accepted = n(),
+    total_attempts = sum(attempts, na.rm = TRUE),
+    percentage_failed_submissions = lp(total_attempts/n()), 
+    .by = package)
+fs_exp |&gt; 
+  count(more_failed = total_accepted &gt; total_attempts, 
+            sort = TRUE, name = &quot;packages&quot;) |&gt; 
+  mutate(percentage = lp(packages/sum(packages)))</code></pre>
+<table>
+<thead>
+<tr class="header">
+<th align="left">more_failed</th>
+<th align="right">packages</th>
+<th align="left">percentage</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td align="left">TRUE</td>
+<td align="right">10324</td>
+<td align="left">78.6%</td>
+</tr>
+<tr class="even">
+<td align="left">FALSE</td>
+<td align="right">2811</td>
+<td align="left">21.4%</td>
+</tr>
+</tbody>
+</table>
+<p>Still the majority of packages have more attempts than versions released in the period analysed.
+Failing the checks on CRAN is normal, but how many more attempts are to CRAN?</p>
+<pre class="r"><code>library(&quot;ggrepel&quot;)
+ggplot(fs_exp) +
+  geom_abline(slope = 1, intercept = 0, linetype = 2) +
+  geom_count(aes(total_accepted, total_attempts)) +
+  geom_label_repel(aes(total_accepted, total_attempts, label = package), data = . %&gt;% filter(total_attempts &gt;= 100)) +
+  labs(x = &quot;CRAN versions&quot;, y = &quot;Rejected submissions&quot;,  size = &quot;Packages&quot;,
+       title = &quot;Packages after the first version&quot;, subtitle = &quot;for the period analyzed&quot;) +
+  theme_minimal() +
+  theme(legend.position = c(0.1, 0.7), legend.background = element_rect())</code></pre>
+<p><img src="{{< blogdown/postref >}}index.en_files/figure-html/failed-exp-1.png" width="672" /></p>
+<p>We can see that there are packages with more than 30 versions on CRAN in these 3 years which never had a rejected submission.
+Congratulations!!</p>
+<p>Others have a high number of submissions rejected.
+Looking at the packages, presumably because there are problems with compilers or dependencies:</p>
+<pre class="r"><code>fs_exp |&gt; 
+  filter(total_attempts != 0) |&gt; 
+  arrange(-total_attempts/total_accepted) |&gt; 
+  head()</code></pre>
+<table>
+<colgroup>
+<col width="16%" />
+<col width="20%" />
+<col width="20%" />
+<col width="41%" />
+</colgroup>
+<thead>
+<tr class="header">
+<th align="left">package</th>
+<th align="right">total_accepted</th>
+<th align="right">total_attempts</th>
+<th align="left">percentage_failed_submissions</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td align="left">terra</td>
+<td align="right">36</td>
+<td align="right">486</td>
+<td align="left">1 350.0%</td>
+</tr>
+<tr class="even">
+<td align="left">rgl</td>
+<td align="right">19</td>
+<td align="right">223</td>
+<td align="left">1 173.7%</td>
+</tr>
+<tr class="odd">
+<td align="left">oncoPredict</td>
+<td align="right">1</td>
+<td align="right">9</td>
+<td align="left">900.0%</td>
+</tr>
+<tr class="even">
+<td align="left">gdalraster</td>
+<td align="right">6</td>
+<td align="right">48</td>
+<td align="left">800.0%</td>
+</tr>
+<tr class="odd">
+<td align="left">scGOclust</td>
+<td align="right">2</td>
+<td align="right">16</td>
+<td align="left">800.0%</td>
+</tr>
+<tr class="even">
+<td align="left">OpenMx</td>
+<td align="right">12</td>
+<td align="right">85</td>
+<td align="left">708.3%</td>
+</tr>
+</tbody>
+</table>
+<p>Last we can see the overall experience for developers:</p>
+<pre class="r"><code>fs &lt;- accepted_subm |&gt; 
+  filter(acceptance_n != 0L) |&gt; 
+  mutate(attempts = (submissions - 1),
+         failed_submissions = attempts != 0L) |&gt; 
+  summarise(
+    total_accepted = n(),
+    total_attempts = sum(attempts, na.rm = TRUE),
+    percentage_attempts = lp(total_attempts/n()), 
+    .by = package)
+
+ggplot(fs) +
+  geom_abline(slope = 1, intercept = 0, linetype = 2) +
+  geom_count(aes(total_accepted, total_attempts)) +
+  geom_label_repel(aes(total_accepted, total_attempts, label = package), 
+                   data = . %&gt;% filter(total_attempts &gt;= 100)) +
+  labs(x = &quot;CRAN versions&quot;, y = &quot;Rejected submissions&quot;,  size = &quot;Packages&quot;,
+       title = &quot;All packages submissions&quot;, subtitle = &quot;for the period analyzed ~174 weeks&quot;) +
+  theme_minimal() +
+  theme(legend.position = c(0.1, 0.7), legend.background = element_rect())</code></pre>
+<p><img src="{{< blogdown/postref >}}index.en_files/figure-html/plot-failed-submissions-1.png" width="672" /></p>
+<p>It doesn’t change much between the experienced.</p>
+<pre class="r"><code>all_subm &lt;- accepted_subm |&gt; 
+  summarise(
+    total_accepted = sum(!is.na(date.cran)),
+    total_attempts = sum(submissions, na.rm = TRUE),
+    percentage_attempts = lp(total_attempts/n()), 
+    .by = package) |&gt; 
+  mutate(fail= total_attempts-total_accepted)</code></pre>
+<p>Overall, 45.9% of the attempts end up being rejected.</p>
+<div id="main-take-away" class="section level2">
+<h2>Main take away</h2>
+<p>Submitting to CRAN is not easy on the first try, and it usually requires 2 submissions for each accepted version.
+While <a href="https://cran.r-project.org/doc/manuals/r-devel/R-exts.html">Writing R extensions</a> document is clear, it might be too extensive for many cases.
+The <a href="https://cran.r-project.org/web/packages/policies.html">CRAN policy</a> is short but might not be clear enough for new maintainers.
+A document in the middle might be <a href="https://r-pkgs.org/">R packages</a> but it is still extensive and focused on only a small opionated set of packages.
+A CRAN Task View or some training might be a good solution to reduce the overall problem.
+For those maintainers struggling, maybe clearer technical or editorial decisions might be a good solution.</p>
+<p>In addition, it seems that packages having more problems with the submissions are not new: experienced maintainers have troubles getting their pacakge accepted when submitting them.
+This might hint to troubles replicating the CRAN checks or enviroments or the scale of the checks (dependency checks).
+Maybe focusing on helping those packages’ maintainer might provide a good way to help CRAN maintainers reduce their load.</p>
+<p>I also want to comment that this analysis could be improved if we knew, whether the rejection was automatic or manual.
+This would allow to see the burden on CRAN volunteers and perhaps define better the problem and propose better solutions.
+It could be attempted by looking the last folder of a pakcage in the submission process, but it would still not be clear what the most frequent problem is.</p>
+</div>
+<div id="bonus" class="section level2">
+<h2>Bonus</h2>
+<p>From all the new packages more than half are already archived (with either newer versions or totally):</p>
+<pre class="r"><code>accepted_subm |&gt; 
+  filter(acceptance_n == 1L) |&gt; 
+  count(status = type, name = &quot;packages&quot;) |&gt; 
+  mutate(percentage = lp(packages/sum(packages)))</code></pre>
+<table>
+<thead>
+<tr class="header">
+<th align="left">status</th>
+<th align="right">packages</th>
+<th align="left">percentage</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td align="left">archived</td>
+<td align="right">4742</td>
+<td align="left">65.5%</td>
+</tr>
+<tr class="even">
+<td align="left">available</td>
+<td align="right">2502</td>
+<td align="left">34.5%</td>
+</tr>
+</tbody>
+</table>
+<p>Of them:</p>
+<pre class="r"><code>fully_archived &lt;- accepted_subm |&gt;
+  filter(acceptance_n != 0L) |&gt; 
+  filter(any(acceptance_n == 1L), .by = package) |&gt; 
+  summarize(archived = all(type == &quot;archived&quot;), .by = package) |&gt; 
+  count(archived, name = &quot;packages&quot;) |&gt; 
+  mutate(percentage = lp(packages/sum(packages)))
+fully_archived</code></pre>
+<table>
+<thead>
+<tr class="header">
+<th align="left">archived</th>
+<th align="right">packages</th>
+<th align="left">percentage</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td align="left">FALSE</td>
+<td align="right">6742</td>
+<td align="left">93.1%</td>
+</tr>
+<tr class="even">
+<td align="left">TRUE</td>
+<td align="right">502</td>
+<td align="left">6.9%</td>
+</tr>
+</tbody>
+</table>
+<p>Only 6.9% of packages were fully archived at the end of this period 2020-09-12, 2024-01-15.</p>
+<div id="reproducibility" class="section level3">
+<h3>Reproducibility</h3>
+<details>
+<pre><code>## ─ Session info ───────────────────────────────────────────────────────────────────────────────────────────────────────
+##  setting  value
+##  version  R version 4.3.1 (2023-06-16)
+##  os       Ubuntu 22.04.3 LTS
+##  system   x86_64, linux-gnu
+##  ui       X11
+##  language (EN)
+##  collate  en_US.UTF-8
+##  ctype    en_US.UTF-8
+##  tz       Europe/Madrid
+##  date     2024-01-15
+##  pandoc   3.1.1 @ /usr/lib/rstudio/resources/app/bin/quarto/bin/tools/ (via rmarkdown)
+## 
+## ─ Packages ───────────────────────────────────────────────────────────────────────────────────────────────────────────
+##  package     * version    date (UTC) lib source
+##  blogdown      1.18       2023-06-19 [1] CRAN (R 4.3.1)
+##  bookdown      0.37       2023-12-01 [1] CRAN (R 4.3.1)
+##  bslib         0.6.1      2023-11-28 [1] CRAN (R 4.3.1)
+##  cachem        1.0.8      2023-05-01 [1] CRAN (R 4.3.1)
+##  cli           3.6.2      2023-12-11 [1] CRAN (R 4.3.1)
+##  codetools     0.2-19     2023-02-01 [2] CRAN (R 4.3.1)
+##  colorspace    2.1-0      2023-01-23 [1] CRAN (R 4.3.1)
+##  cransays      0.0.0.9000 2024-01-10 [1] Github (r-hub/cransays@4e9415a)
+##  digest        0.6.33     2023-07-07 [1] CRAN (R 4.3.1)
+##  dplyr       * 1.1.4      2023-11-17 [1] CRAN (R 4.3.1)
+##  evaluate      0.23       2023-11-01 [1] CRAN (R 4.3.2)
+##  fansi         1.0.6      2023-12-08 [1] CRAN (R 4.3.1)
+##  farver        2.1.1      2022-07-06 [1] CRAN (R 4.3.1)
+##  fastmap       1.1.1      2023-02-24 [1] CRAN (R 4.3.1)
+##  generics      0.1.3      2022-07-05 [1] CRAN (R 4.3.1)
+##  ggplot2     * 3.4.4      2023-10-12 [1] CRAN (R 4.3.1)
+##  ggrepel     * 0.9.5      2024-01-10 [1] CRAN (R 4.3.1)
+##  glue          1.7.0      2024-01-09 [1] CRAN (R 4.3.1)
+##  gtable        0.3.4      2023-08-21 [1] CRAN (R 4.3.1)
+##  highr         0.10       2022-12-22 [1] CRAN (R 4.3.1)
+##  htmltools     0.5.7      2023-11-03 [1] CRAN (R 4.3.2)
+##  jquerylib     0.1.4      2021-04-26 [1] CRAN (R 4.3.1)
+##  jsonlite      1.8.8      2023-12-04 [1] CRAN (R 4.3.1)
+##  knitr       * 1.45       2023-10-30 [1] CRAN (R 4.3.2)
+##  labeling      0.4.3      2023-08-29 [1] CRAN (R 4.3.2)
+##  lifecycle     1.0.4      2023-11-07 [1] CRAN (R 4.3.2)
+##  lubridate   * 1.9.3      2023-09-27 [1] CRAN (R 4.3.1)
+##  magrittr      2.0.3      2022-03-30 [1] CRAN (R 4.3.1)
+##  munsell       0.5.0      2018-06-12 [1] CRAN (R 4.3.1)
+##  pillar        1.9.0      2023-03-22 [1] CRAN (R 4.3.1)
+##  pkgconfig     2.0.3      2019-09-22 [1] CRAN (R 4.3.1)
+##  purrr         1.0.2      2023-08-10 [1] CRAN (R 4.3.1)
+##  R6            2.5.1      2021-08-19 [1] CRAN (R 4.3.1)
+##  Rcpp          1.0.11     2023-07-06 [1] CRAN (R 4.3.1)
+##  rlang         1.1.3      2024-01-10 [1] CRAN (R 4.3.1)
+##  rmarkdown     2.25       2023-09-18 [1] CRAN (R 4.3.1)
+##  rstudioapi    0.15.0     2023-07-07 [1] CRAN (R 4.3.1)
+##  sass          0.4.8      2023-12-06 [1] CRAN (R 4.3.1)
+##  scales        1.3.0      2023-11-28 [1] CRAN (R 4.3.1)
+##  sessioninfo   1.2.2      2021-12-06 [1] CRAN (R 4.3.1)
+##  tibble        3.2.1      2023-03-20 [1] CRAN (R 4.3.1)
+##  tidyr       * 1.3.0      2023-01-24 [1] CRAN (R 4.3.1)
+##  tidyselect    1.2.0      2022-10-10 [1] CRAN (R 4.3.1)
+##  timechange    0.2.0      2023-01-11 [1] CRAN (R 4.3.1)
+##  utf8          1.2.4      2023-10-22 [1] CRAN (R 4.3.2)
+##  vctrs         0.6.5      2023-12-01 [1] CRAN (R 4.3.1)
+##  withr         2.5.2      2023-10-30 [1] CRAN (R 4.3.2)
+##  xfun          0.41       2023-11-01 [1] CRAN (R 4.3.2)
+##  yaml          2.3.8      2023-12-11 [1] CRAN (R 4.3.1)
+## 
+##  [1] /home/lluis/bin/R/4.3.1
+##  [2] /opt/R/4.3.1/lib/R/library
+## 
+## ──────────────────────────────────────────────────────────────────────────────────────────────────────────────────────</code></pre>
+</details>
+</div>
+</div>

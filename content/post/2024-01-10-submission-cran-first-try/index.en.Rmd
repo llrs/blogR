@@ -22,7 +22,7 @@ summary: 'First time successful submissions'
 ---
 
 ```{r setup, include = FALSE}
-knitr::opts_chunk$set(collapse = TRUE, fig.retina = 2)
+knitr::opts_chunk$set(collapse = TRUE, fig.retina = 2, cache = TRUE)
 library("knitr")
 knit_print.data.frame = function(x, ...) {
   res = paste(c('', '', kable(x)), collapse = '\n')
@@ -301,17 +301,24 @@ all_subm <- accepted_subm |>
   mutate(fail= total_attempts-total_accepted)
 ```
 
-Overall, `r lp(sum(fail)/sum(all_subm$total_attempts))` of the attempts end up being rejected.
+Overall, `r lp(sum(all_subm$fail)/sum(all_subm$total_attempts))` of the attempts end up being rejected.
 
 ## Main take away
 
-Submitting to CRAN is not easy on the first try. 
-While [Writing R extensions](https://cran.r-project.org/doc/manuals/r-devel/R-exts.html) document is clear, it is too extensive for many cases.
-The [CRAN policy](https://cran.r-project.org/web/packages/policies.html) is short but it is not clear enough for new maintainers.
-In additions, it seems that packages having more problems with the submissions are not those new: experienced maintainers have troubles getting their pacakge accepted when submitting them.
+Submitting to CRAN is not easy on the first try, and it usually requires 2 submissions for each accepted version. 
+While [Writing R extensions](https://cran.r-project.org/doc/manuals/r-devel/R-exts.html) document is clear, it might be too extensive for many cases.
+The [CRAN policy](https://cran.r-project.org/web/packages/policies.html) is short but might not be clear enough for new maintainers.
+A document in the middle might be [R packages](https://r-pkgs.org/) but it is still extensive and focused on only a small opionated set of packages.
+A CRAN Task View or some training might be a good solution to reduce the overall problem.
+For those maintainers struggling, maybe clearer technical or editorial decisions might be a good solution.
+
+In addition, it seems that packages having more problems with the submissions are not new: experienced maintainers have troubles getting their pacakge accepted when submitting them.
+This might hint to troubles replicating the CRAN checks or enviroments or the scale of the checks (dependency checks). 
+Maybe focusing on helping those packages' maintainer might provide a good way to help CRAN maintainers reduce their load.
 
 I also want to comment that this analysis could be improved if we knew, whether the rejection was automatic or manual.
 This would allow to see the burden on CRAN volunteers and perhaps define better the problem and propose better solutions.
+It could be attempted by looking the last folder of a pakcage in the submission process, but it would still not be clear what the most frequent problem is.
 
 ## Bonus
 
