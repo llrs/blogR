@@ -1,0 +1,350 @@
+---
+title: Submissions accepted on the first try
+author: Lluís Revilla Sancho
+date: '2024-01-10'
+slug: submission-cran-first-try
+categories:
+  - CRAN
+tags:
+  - CRAN
+authors:
+  - admin
+description: ''
+draft: no
+editor_options:
+  chunk_output_type: console
+featured: no
+image:
+  caption: ''
+  focal_point: ''
+subtitle: ''
+summary: 'First time successful submissions'
+---
+
+```{r setup, include = FALSE}
+knitr::opts_chunk$set(collapse = TRUE, fig.retina = 2)
+library("knitr")
+knit_print.data.frame = function(x, ...) {
+  res = paste(c('', '', kable(x)), collapse = '\n')
+  asis_output(res)
+}
+# register the method
+registerS3method("knit_print", "data.frame", knit_print.data.frame)
+```
+
+Recently someone in social media was saying that they do not succeed on submissions to CRAN on the first try. 
+In this post I'll try to answer this question.
+
+First we need to know the submissions to CRAN.
+We can download the last 3 years of CRAN submissions thanks to [cransays](https://r-hub.github.io/cransays/articles/dashboard.html).
+
+```{r cran-submissions}
+cdh <- cransays::download_history()
+```
+
+Here is the bulk of the analysis of the history of package submissions.
+This is explained in different posts, but basically I keep only one package per snapshot, try to identify new submissions instead of changes in the same submission and calculate some date-related variables.
+
+```{r cran-submissions-clean}
+library("dplyr")
+library("lubridate")
+library("tidyr")
+diff0 <- structure(0, class = "difftime", units = "hours")
+cran <- cdh |> 
+  filter(!is.na(version)) |> 
+  distinct() |> 
+  arrange(package, snapshot_time, version) |> 
+  group_by(package, snapshot_time) |> 
+  # Remove some duplicated packages in different folders
+  mutate(n = seq_len(n())) |> 
+  filter(n == n()) |> 
+  ungroup() |> 
+  select(-n) |> 
+  arrange(package, version, snapshot_time) |> 
+  # Packages last seen in queue less than 24 ago are considered same submission 
+  # (even if their version number differs)
+  mutate(diff_time = difftime(snapshot_time, lag(snapshot_time), units = "hour"),
+         diff_time = if_else(is.na(diff_time), diff0, diff_time), # Fill NAs
+         diff_v = version != lag(version),
+         diff_v = if_else(is.na(diff_v), TRUE, diff_v), # Fill NAs
+         near_t = abs(diff_time) <= 24,
+         resubmission = !near_t | diff_v, 
+         resubmission = if_else(resubmission == FALSE & diff_time == 0, 
+                               TRUE, resubmission),
+         resubmission_n = cumsum(as.numeric(resubmission)),
+         new_version = !near(diff_time, 1, tol = 24) & diff_v, 
+         new_version = if_else(new_version == FALSE & diff_time == 0, 
+                               TRUE, new_version),
+         submission_n = cumsum(as.numeric(new_version)), .by = package) |> 
+  select(-diff_time, -diff_v, -new_version, -new_version, -near_t) |> 
+  mutate(version = package_version(version, strict = FALSE),
+         date = as_date(snapshot_time),
+         year = year(snapshot_time),
+         week = week(snapshot_time),
+         mday = mday(snapshot_time),
+         wday = wday(snapshot_time, locale = "en_GB.UTF-8", 
+                     week_start = 1,
+                     label = FALSE))
+```
+
+Now we need to compare with the CRAN archive to know if the submission were accepted.
+
+First we need to retrieve the data:
+```{r cran-archive}
+cran_archive <- tools:::CRAN_archive_db()
+# When row binding the data.frames that have only one row lose they row name:
+# handle those cases to keep the version number:
+archived <- vapply(cran_archive, NROW, numeric(1L))
+names(cran_archive)[archived == 1L] <- vapply(cran_archive[archived == 1L], rownames, character(1L))
+# Merge current and archive data
+cran_dates <- do.call(rbind, cran_archive)
+cran_dates$type <- "archived"
+current <- tools:::CRAN_current_db()
+current$type <- "available"
+cran_h <- rbind(current, cran_dates)
+# Keep minimal CRAN data archive
+cran_h$pkg_v <- basename(rownames(cran_h))
+rownames(cran_h) <- NULL
+cda <- cran_h |> 
+  mutate(strcapture(x = pkg_v, "^(.+)_([0-9]*.+).tar.gz$", 
+                    proto = data.frame(package = character(), version = character())),
+         package = if_else(is.na(package), pkg_v, package)) |> 
+  arrange(package, mtime) |> 
+  mutate(acceptance_n = seq_len(n()), .by = package) |> 
+  select(package, pkg_v, version, acceptance_n, date = mtime, uname, type) |> 
+  mutate(date = as_date(date))
+```
+
+We use `tools:::CRAN_current_db`, because `package.available` will filter packages based on OS and other options (see the `filter` argument). 
+
+We can make a quick detour to plot the number of accepted articles and when were they first published:
+
+```{r cran-published}
+library("ggplot2")
+cdas <- cda |> 
+  summarize(available = if_else(any(type == "available"), "available", "archived"),
+            published = min(date),
+            n_published = max(acceptance_n),
+            .by = package)
+
+ggplot(cdas) + 
+  geom_point(aes(published, n_published, col = available, shape = available)) +
+  theme_minimal() +
+  theme(legend.position = c(0.7, 0.8), legend.background = element_rect()) +
+  labs(x = element_blank(), y = "Versions", col = "Status", shape = "Status",
+       title = "First publication of packages and versions published") +
+  scale_x_date(expand = expansion(), date_breaks = "2 years", date_labels = "%Y")
+```
+
+In summary, there are `r sum(cdas$available == "archived")` packages archived, and  `r sum(cdas$available != "archived")` available.
+We can observe that there is a package that had more than 150 versions that was later archived.
+
+Now we can really compare the submission process with the CRAN archive:
+
+```{r merge-data}
+cran_subm <- cran |> 
+  summarise(
+    resubmission_n = max(resubmission_n, na.rm = TRUE),
+    submission_n = max(submission_n, na.rm = TRUE),
+    # The number of submissions 
+    submissions = resubmission_n - submission_n + 1,
+            date = min(date),
+            .by = c("package", "version")) |> 
+  arrange(package, version)
+# Filter to those packages submitted in the period we have data
+cda_acc <- cda |> 
+  filter(date >= min(cran_subm$date)) |> 
+  select(-pkg_v) |> 
+  mutate(version = package_version(version, FALSE))
+
+accepted_subm <- merge(cda_acc, cran_subm, by = c("package", "version"),
+             suffixes = c(".cran", ".subm"), all = TRUE, sort = FALSE) |> 
+  arrange(package, version, date.cran, date.subm) |> 
+  mutate(submissions = if_else(is.na(submissions), 1, submissions),
+         acceptance_n = if_else(is.na(acceptance_n), 0, acceptance_n))
+```
+
+
+We can explore a little bit this data:
+
+```{r cransays}
+lp <- scales::label_percent(accuracy = 0.1)
+accepted_subm |> 
+  summarize(cransays = sum(!is.na(date.subm)),
+            cran = sum(!is.na(date.cran)),
+            missed_submissions = cran - cransays,
+            percentaged_missed = lp(missed_submissions/cran))
+```
+
+
+This means that [cransays](https://r-hub.github.io/cransays/articles/dashboard.html), the package used to archive this data, misses ~8% of submissions, probably because they are handled in less than an hour!! 
+Another explanation might be because for some periods cransays bot didn't work well...
+
+On the other hand we can look how long does it take for a version to be published on CRAN:
+
+```{r accepted_subm}
+accepted_subm |> 
+  filter(!is.na(date.cran)) |> 
+  mutate(time_diff = difftime(date.cran, date.subm, units = "weeks")) |>
+  # Calculate the number of accepted packages sine the recording of submissions
+  mutate(accepted_n = acceptance_n - min(acceptance_n[acceptance_n != 0L], na.rm = TRUE) + 1, .by = package) |> 
+  filter(time_diff >= 0) |> 
+  ggplot() + 
+  geom_point(aes(date.cran, time_diff, col = accepted_n)) +
+  theme_minimal() +
+  theme(legend.position = c(0.2, 0.8), legend.background = element_rect()) +
+  labs(x = "Published on CRAN", title = "Time since submitted to CRAN", 
+       y = "Weeks", col = "Accepted")
+```
+
+I explored some of those outliers and there is a package that was submitted in 2021 and two years later it was submitted with the same version. 
+In other cases the submission was done with more than 1 hour of tolerance (see the "new_version" variable creation in the second code chunk.)
+
+This means that the path to CRAN might be long and that developers do not change the version number on each submission.
+I know I haven't done that for the first package I submitted to CRAN.
+
+```{r accepted-first-try}
+ffs <- accepted_subm |> 
+  filter(acceptance_n == 1L) |>
+  mutate(attempts = submissions - 1) |> 
+  count(attempts, sort = TRUE,  name = "packages") |> 
+  mutate(percentage = lp(packages/sum(packages, na.rm = TRUE)))
+ffs
+```
+
+This means that close to `r lp(sum(ffs$packages[-1])/sum(ffs$packages))` first time submissions are rejected. 
+
+This points out a problem: 
+- the developers need to resubmit their packages and fix it more
+- the reviewers need to spend more time (approximately 50% of submissions are at one point or another handled by a human). 
+
+After this exercise we might wonder whether this is just for new packages?
+If we look up those submissions that are not the first version of a package, we find the following:
+
+```{r failed-submissions}
+fs_exp <- accepted_subm |> 
+  filter(!is.na(date.cran), acceptance_n > 1L) |> 
+  mutate(attempts = (submissions - 1),
+         failed_submissions = attempts != 0L) |> 
+  summarise(
+    total_accepted = n(),
+    total_attempts = sum(attempts, na.rm = TRUE),
+    percentage_failed_submissions = lp(total_attempts/n()), 
+    .by = package)
+fs_exp |> 
+  count(more_failed = total_accepted > total_attempts, 
+            sort = TRUE, name = "packages") |> 
+  mutate(percentage = lp(packages/sum(packages)))
+```
+
+Still the majority of packages have more attempts than versions released in the period analysed.
+Failing the checks on CRAN is normal, but how many more attempts are to CRAN?
+
+```{r failed-exp}
+library("ggrepel")
+ggplot(fs_exp) +
+  geom_abline(slope = 1, intercept = 0, linetype = 2) +
+  geom_count(aes(total_accepted, total_attempts)) +
+  geom_label_repel(aes(total_accepted, total_attempts, label = package), data = . %>% filter(total_attempts >= 100)) +
+  labs(x = "CRAN versions", y = "Rejected submissions",  size = "Packages",
+       title = "Packages after the first version", subtitle = "for the period analyzed") +
+  theme_minimal() +
+  theme(legend.position = c(0.1, 0.7), legend.background = element_rect())
+```
+
+We can see that there are packages with more than 30 versions on CRAN in these 3 years which never had a rejected submission. 
+Congratulations!!  
+
+Others have a high number of submissions rejected.
+Looking at the packages, presumably because there are problems with compilers or dependencies:
+
+```{r fs_exp}
+fs_exp |> 
+  filter(total_attempts != 0) |> 
+  arrange(-total_attempts/total_accepted) |> 
+  head()
+```
+
+Last we can see the overall experience for developers:
+
+```{r plot-failed-submissions}
+fs <- accepted_subm |> 
+  filter(acceptance_n != 0L) |> 
+  mutate(attempts = (submissions - 1),
+         failed_submissions = attempts != 0L) |> 
+  summarise(
+    total_accepted = n(),
+    total_attempts = sum(attempts, na.rm = TRUE),
+    percentage_attempts = lp(total_attempts/n()), 
+    .by = package)
+
+ggplot(fs) +
+  geom_abline(slope = 1, intercept = 0, linetype = 2) +
+  geom_count(aes(total_accepted, total_attempts)) +
+  geom_label_repel(aes(total_accepted, total_attempts, label = package), 
+                   data = . %>% filter(total_attempts >= 100)) +
+  labs(x = "CRAN versions", y = "Rejected submissions",  size = "Packages",
+       title = "All packages submissions", subtitle = "for the period analyzed ~174 weeks") +
+  theme_minimal() +
+  theme(legend.position = c(0.1, 0.7), legend.background = element_rect())
+```
+
+It doesn't change much between the experienced.
+
+```{r all-submissions}
+all_subm <- accepted_subm |> 
+  summarise(
+    total_accepted = sum(!is.na(date.cran)),
+    total_attempts = sum(submissions, na.rm = TRUE),
+    percentage_attempts = lp(total_attempts/n()), 
+    .by = package) |> 
+  mutate(fail= total_attempts-total_accepted)
+```
+
+Overall, `r lp(sum(fail)/sum(all_subm$total_attempts))` of the attempts end up being rejected.
+
+## Main take away
+
+Submitting to CRAN is not easy on the first try. 
+While [Writing R extensions](https://cran.r-project.org/doc/manuals/r-devel/R-exts.html) document is clear, it is too extensive for many cases.
+The [CRAN policy](https://cran.r-project.org/web/packages/policies.html) is short but it is not clear enough for new maintainers.
+In additions, it seems that packages having more problems with the submissions are not those new: experienced maintainers have troubles getting their pacakge accepted when submitting them.
+
+I also want to comment that this analysis could be improved if we knew, whether the rejection was automatic or manual.
+This would allow to see the burden on CRAN volunteers and perhaps define better the problem and propose better solutions.
+
+## Bonus
+
+From all the new packages more than half are already archived (with either newer versions or totally):
+
+```{r archived}
+accepted_subm |> 
+  filter(acceptance_n == 1L) |> 
+  count(status = type, name = "packages") |> 
+  mutate(percentage = lp(packages/sum(packages)))
+```
+
+Of them:
+
+```{r fully-archived}
+fully_archived <- accepted_subm |>
+  filter(acceptance_n != 0L) |> 
+  filter(any(acceptance_n == 1L), .by = package) |> 
+  summarize(archived = all(type == "archived"), .by = package) |> 
+  count(archived, name = "packages") |> 
+  mutate(percentage = lp(packages/sum(packages)))
+fully_archived
+```
+
+Only `r lp(fully_archived$packages[2]/sum(fully_archived$packages))` of packages were fully archived at the end of this period `r range(cran$date)`. 
+
+
+### Reproducibility
+
+<details>
+```{r reproducibility, echo = FALSE}
+## Reproducibility info
+options(width = 120)
+sessioninfo::session_info()
+```
+</details>
