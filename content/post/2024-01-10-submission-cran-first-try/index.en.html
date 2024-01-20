@@ -30,26 +30,12 @@ We can download the last 3 years of CRAN submissions thanks to <a href="https://
 <pre class="r"><code>cdh &lt;- cransays::download_history()</code></pre>
 <p>Here is the bulk of the analysis of the history of package submissions.
 This is explained in different posts, but basically I keep only one package per snapshot, try to identify new submissions instead of changes in the same submission and calculate some date-related variables.</p>
-<pre class="r"><code>library(&quot;dplyr&quot;, quietly = TRUE)
-## 
-## Attaching package: &#39;dplyr&#39;
-## The following objects are masked from &#39;package:stats&#39;:
-## 
-##     filter, lag
-## The following objects are masked from &#39;package:base&#39;:
-## 
-##     intersect, setdiff, setequal, union
-library(&quot;lubridate&quot;, quietly = TRUE)
-## 
-## Attaching package: &#39;lubridate&#39;
-## The following objects are masked from &#39;package:base&#39;:
-## 
-##     date, intersect, setdiff, union
-library(&quot;tidyr&quot;, quietly = TRUE)
+<pre class="r"><code>library(&quot;dplyr&quot;, warn.conflicts	 = FALSE)
+library(&quot;lubridate&quot;, warn.conflicts	 = FALSE)
+library(&quot;tidyr&quot;, warn.conflicts	 = FALSE)
 diff0 &lt;- structure(0, class = &quot;difftime&quot;, units = &quot;hours&quot;)
 cran &lt;- cdh |&gt; 
   filter(!is.na(version)) |&gt; 
-  filter(package == &quot;terra&quot;) |&gt; 
   distinct() |&gt; 
   arrange(package, snapshot_time) |&gt; 
   group_by(package, snapshot_time) |&gt; 
@@ -127,8 +113,8 @@ We can observe that there is a package that had more than 150 versions that was 
     submission_n = max(submission_n, na.rm = TRUE),
     # The number of submissions 
     submissions = resubmission_n - submission_n + 1,
-            date = min(date),
-            .by = c(&quot;package&quot;, &quot;version&quot;)) |&gt; 
+    date = min(date),
+    .by = c(&quot;package&quot;, &quot;version&quot;)) |&gt; 
   arrange(package, version)
 # Filter to those packages submitted in the period we have data
 cda_acc &lt;- cda |&gt; 
@@ -159,10 +145,10 @@ accepted_subm |&gt;
 </thead>
 <tbody>
 <tr class="odd">
-<td align="center">63</td>
-<td align="center">48319</td>
-<td align="center">48256</td>
-<td align="center">99.9%</td>
+<td align="center">46525</td>
+<td align="center">50413</td>
+<td align="center">3888</td>
+<td align="center">7.7%</td>
 </tr>
 </tbody>
 </table>
@@ -213,12 +199,14 @@ In other cases the submission was done with more than 1 hour of tolerance (see t
 <p>I created a function to apply the same logic in whatever group I want to analyse.</p>
 <p><strong>Note:</strong> Another relevant edit was that the selection criteria changed as I missed some packages in some analysis and included other that shouldn’t be.
 Now we are ready to apply to those that got the first version of the package on CRAN:</p>
-<pre class="r"><code>
-ffs &lt;- accepted_subm |&gt; 
+<pre class="r"><code>first_submissions &lt;- accepted_subm |&gt; 
+  group_by(package) |&gt; 
   # Keep submission that where eventually accepted
-  filter(!any(min(acceptance_n[acceptance_n != 0L], 0L, na.rm = TRUE) &gt; 1), 
-         # Keep submissions until the first acceptance
-         cumsum(acceptance_n &lt;= 1L) == seq_len(n()), .by = package) |&gt;
+  filter(length(acceptance_n != 0L) &gt; 1L &amp;&amp; any(acceptance_n[acceptance_n != 0L] == 1)) |&gt; 
+  # Keep submissions until the first acceptance but not after
+  filter(cumsum(acceptance_n) &lt;= 1L &amp; seq_len(n()) &lt;= which(acceptance_n == 1L)) |&gt; 
+  ungroup()
+ffs &lt;- first_submissions |&gt;   
   count_submissions() |&gt; 
   count(total_attempts, sort = TRUE,  name = &quot;packages&quot;) |&gt; 
   mutate(percentage = lp(packages/sum(packages, na.rm = TRUE)))
@@ -234,17 +222,67 @@ ffs</code></pre>
 <tbody>
 <tr class="odd">
 <td align="center">0</td>
-<td align="center">6964</td>
-<td align="center">100.0%</td>
+<td align="center">3390</td>
+<td align="center">65.0%</td>
+</tr>
+<tr class="even">
+<td align="center">1</td>
+<td align="center">1141</td>
+<td align="center">21.9%</td>
+</tr>
+<tr class="odd">
+<td align="center">2</td>
+<td align="center">425</td>
+<td align="center">8.2%</td>
 </tr>
 <tr class="even">
 <td align="center">3</td>
+<td align="center">138</td>
+<td align="center">2.6%</td>
+</tr>
+<tr class="odd">
+<td align="center">4</td>
+<td align="center">72</td>
+<td align="center">1.4%</td>
+</tr>
+<tr class="even">
+<td align="center">5</td>
+<td align="center">23</td>
+<td align="center">0.4%</td>
+</tr>
+<tr class="odd">
+<td align="center">6</td>
+<td align="center">12</td>
+<td align="center">0.2%</td>
+</tr>
+<tr class="even">
+<td align="center">7</td>
+<td align="center">4</td>
+<td align="center">0.1%</td>
+</tr>
+<tr class="odd">
+<td align="center">8</td>
+<td align="center">3</td>
+<td align="center">0.1%</td>
+</tr>
+<tr class="even">
+<td align="center">9</td>
+<td align="center">2</td>
+<td align="center">0.0%</td>
+</tr>
+<tr class="odd">
+<td align="center">12</td>
+<td align="center">1</td>
+<td align="center">0.0%</td>
+</tr>
+<tr class="even">
+<td align="center">16</td>
 <td align="center">1</td>
 <td align="center">0.0%</td>
 </tr>
 </tbody>
 </table>
-<p>This means that close to 0.0% first time submissions are rejected.
+<p>This means that close to 35.0% first time submissions are rejected.
 Including those that are not yet (never?) included on CRAN (~1000).</p>
 <p>This points out a problem:</p>
 <ul>
@@ -253,7 +291,7 @@ Including those that are not yet (never?) included on CRAN (~1000).</p>
 </ul>
 <p>After this exercise we might wonder whether this is just for new packages?<br />
 If we look up those submissions that are not the first version of a package, we find the following:</p>
-<pre class="r"><code>fs_exp &lt;- accepted_subm |&gt; 
+<pre class="r"><code>submissions_with_accepted &lt;- accepted_subm |&gt; 
   # Filter those that were included on CRAN (not all submission rejected)
   filter(any(acceptance_n &gt;= 1), .by = package) |&gt; 
   mutate(date.mix = pmin(date.cran, date.subm, na.rm = TRUE)) |&gt; 
@@ -263,8 +301,8 @@ If we look up those submissions that are not the first version of a package, we 
     # Those that start by 0 but next acceptance is 1 or higher
      cumsum(acceptance_n) &gt;= 1L | 
        min(acceptance_n[acceptance_n != 0L], na.rm = TRUE) &gt;= 2) |&gt; 
-  ungroup() |&gt; 
-  count_submissions()
+  ungroup() 
+fs_exp &lt;- count_submissions(submissions_with_accepted)
 fs_exp |&gt; 
   count(more_failed = total_accepted &gt; total_attempts, 
             sort = TRUE, name = &quot;packages&quot;) |&gt; 
@@ -280,13 +318,13 @@ fs_exp |&gt;
 <tbody>
 <tr class="odd">
 <td align="center">TRUE</td>
-<td align="center">15612</td>
-<td align="center">100.0%</td>
+<td align="center">15337</td>
+<td align="center">96.2%</td>
 </tr>
 <tr class="even">
 <td align="center">FALSE</td>
-<td align="center">1</td>
-<td align="center">0.0%</td>
+<td align="center">600</td>
+<td align="center">3.8%</td>
 </tr>
 </tbody>
 </table>
@@ -296,7 +334,7 @@ Failing the checks on CRAN is normal, but how many more attempts are to CRAN?</p
 ggplot(fs_exp) +
   geom_abline(slope = 1, intercept = 0, linetype = 2) +
   geom_count(aes(total_accepted, total_attempts)) +
-  geom_label_repel(aes(total_accepted, total_attempts, label = package), data = . %&gt;% filter(total_attempts &gt;= 13)) +
+  geom_label_repel(aes(total_accepted, total_attempts, label = package), data = . %&gt;% filter(total_attempts &gt;= 10)) +
   labs(x = &quot;CRAN versions&quot;, y = &quot;Rejected submissions&quot;,  size = &quot;Packages&quot;,
        title = &quot;Packages after the first version&quot;, subtitle = &quot;for the period analyzed&quot;) +
   scale_size(trans = &quot;log10&quot;) +
@@ -320,17 +358,17 @@ Congratulations!!</p>
 <tbody>
 <tr class="odd">
 <td align="center">FALSE</td>
-<td align="center">15612</td>
-<td align="center">100.0%</td>
+<td align="center">15792</td>
+<td align="center">99.1%</td>
 </tr>
 <tr class="even">
 <td align="center">TRUE</td>
-<td align="center">1</td>
-<td align="center">0.0%</td>
+<td align="center">145</td>
+<td align="center">0.9%</td>
 </tr>
 </tbody>
 </table>
-<p>Close to 10% require more than double submissions per version.</p>
+<p>Close to 1% require more than double submissions per version.</p>
 <p>Last we can see the overall experience for developers:</p>
 <pre class="r"><code>fs &lt;- count_submissions(accepted_subm)
 
@@ -346,7 +384,9 @@ ggplot(fs) +
   theme(legend.position = c(0.8, 0.7), legend.background = element_rect())</code></pre>
 <p><img src="{{< blogdown/postref >}}index.en_files/figure-html/plot-failed-submissions-1.png" width="672" /></p>
 <p>It doesn’t change much between the experienced.
-Overall, 0.1% of the attempts end up being rejected.</p>
+Note that this only add the packages that were not approved ever and the submissions done to be first accepted.
+So the changes should only be observable on the bottom left corner of the plot.</p>
+<p>Overall, 14.5% of the attempts end up being rejected.</p>
 <div id="main-take-away" class="section level2">
 <h2>Main take away</h2>
 <p>Submitting to CRAN is not easy on the first try, and it usually requires 2 submissions for each accepted version.<br />
@@ -380,13 +420,13 @@ It could be attempted by looking the last folder of a package in the submission 
 <tbody>
 <tr class="odd">
 <td align="center">archived</td>
-<td align="center">4516</td>
-<td align="center">64.8%</td>
+<td align="center">4763</td>
+<td align="center">65.4%</td>
 </tr>
 <tr class="even">
 <td align="center">available</td>
-<td align="center">2448</td>
-<td align="center">35.2%</td>
+<td align="center">2517</td>
+<td align="center">34.6%</td>
 </tr>
 </tbody>
 </table>
@@ -409,17 +449,17 @@ fully_archived</code></pre>
 <tbody>
 <tr class="odd">
 <td align="center">FALSE</td>
-<td align="center">6497</td>
-<td align="center">93.3%</td>
+<td align="center">6783</td>
+<td align="center">93.2%</td>
 </tr>
 <tr class="even">
 <td align="center">TRUE</td>
-<td align="center">467</td>
-<td align="center">6.7%</td>
+<td align="center">497</td>
+<td align="center">6.8%</td>
 </tr>
 </tbody>
 </table>
-<p>Only 6.7% of packages were fully archived at the end of this period 2020-11-02, 2023-12-15.</p>
+<p>Only 6.8% of packages were fully archived at the end of this period 2020-09-12, 2024-01-20.</p>
 <div id="reproducibility" class="section level3">
 <h3>Reproducibility</h3>
 <details>
