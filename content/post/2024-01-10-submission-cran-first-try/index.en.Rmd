@@ -22,10 +22,10 @@ summary: 'First time successful submissions'
 ---
 
 ```{r setup, include = FALSE}
-knitr::opts_chunk$set(collapse = TRUE, fig.retina = 2, cache = TRUE)
+knitr::opts_chunk$set(collapse = TRUE, fig.retina = 2, cache = FALSE)
 library("knitr")
 knit_print.data.frame = function(x, ...) {
-  res = paste(c('', '', kable(x)), collapse = '\n')
+  res = paste(c('', '', kable(x, align = "c", table.attr = "style=\";margin-left:auto;margin-right:auto;\"")), collapse = '\n')
   asis_output(res)
 }
 # register the method
@@ -38,7 +38,7 @@ In this post I'll try to answer this question.
 First we need to know the submissions to CRAN.
 We can download the last 3 years of CRAN submissions thanks to [cransays](https://r-hub.github.io/cransays/articles/dashboard.html).
 
-```{r cran-submissions}
+```{r cran-submissions, cache=TRUE}
 cdh <- cransays::download_history()
 ```
 
@@ -46,21 +46,21 @@ Here is the bulk of the analysis of the history of package submissions.
 This is explained in different posts, but basically I keep only one package per snapshot, try to identify new submissions instead of changes in the same submission and calculate some date-related variables.
 
 ```{r cran-submissions-clean}
-library("dplyr")
-library("lubridate")
-library("tidyr")
+library("dplyr", warn.conflicts	 = FALSE)
+library("lubridate", warn.conflicts	 = FALSE)
+library("tidyr", warn.conflicts	 = FALSE)
 diff0 <- structure(0, class = "difftime", units = "hours")
 cran <- cdh |> 
   filter(!is.na(version)) |> 
   distinct() |> 
-  arrange(package, snapshot_time, version) |> 
+  arrange(package, snapshot_time) |> 
   group_by(package, snapshot_time) |> 
   # Remove some duplicated packages in different folders
   mutate(n = seq_len(n())) |> 
   filter(n == n()) |> 
   ungroup() |> 
   select(-n) |> 
-  arrange(package, version, snapshot_time) |> 
+  arrange(package, snapshot_time, version) |> 
   # Packages last seen in queue less than 24 ago are considered same submission 
   # (even if their version number differs)
   mutate(diff_time = difftime(snapshot_time, lag(snapshot_time), units = "hour"),
@@ -78,13 +78,7 @@ cran <- cdh |>
          submission_n = cumsum(as.numeric(new_version)), .by = package) |> 
   select(-diff_time, -diff_v, -new_version, -new_version, -near_t) |> 
   mutate(version = package_version(version, strict = FALSE),
-         date = as_date(snapshot_time),
-         year = year(snapshot_time),
-         week = week(snapshot_time),
-         mday = mday(snapshot_time),
-         wday = wday(snapshot_time, locale = "en_GB.UTF-8", 
-                     week_start = 1,
-                     label = FALSE))
+         date = as_date(snapshot_time))
 ```
 
 Now we need to compare with the CRAN archive to know if the submission were accepted.
@@ -148,8 +142,8 @@ cran_subm <- cran |>
     submission_n = max(submission_n, na.rm = TRUE),
     # The number of submissions 
     submissions = resubmission_n - submission_n + 1,
-            date = min(date),
-            .by = c("package", "version")) |> 
+    date = min(date),
+    .by = c("package", "version")) |> 
   arrange(package, version)
 # Filter to those packages submitted in the period we have data
 cda_acc <- cda |> 
@@ -201,36 +195,80 @@ I explored some of those outliers and there is a package that was submitted in 2
 In other cases the submission was done with more than 1 hour of tolerance (see the "new_version" variable creation in the second code chunk.)
 
 This means that the path to CRAN might be long and that developers do not change the version number on each submission.
-I know I haven't done that for the first package I submitted to CRAN.
+
+
+**Note:** This section is new after detecting problems with the way it was initially published.
+
+In the following function I calculate the number of submissions and similar information for each package:
+
+```{r count_submissions}
+count_submissions <- function(x) {
+  x |> 
+    mutate(submission_in_period = seq_len(n()),
+           date.mix = pmin(date.cran, date.subm, na.rm = TRUE),
+           .by = package, .after = acceptance_n) |> 
+    summarise(
+      # Number of accepted packages on CRAN
+      total_accepted = sum(!is.na(date.cran), 0, na.rm = TRUE),
+      # At minimum 0 through {cransays}
+      through_cransays = sum(!is.na(date.subm), 0, na.rm = TRUE), 
+      # In case same version number is submitted at different timepoints
+      resubmissions = ifelse(any(!is.na(resubmission_n)), 
+                              max(resubmission_n, na.rm = TRUE) - min(resubmission_n, na.rm = TRUE) - through_cransays, 0),
+      resubmissions = if_else(resubmissions < 0L, 0L, resubmissions),
+      # All submission + those that were duplicated on the submission system
+      total_submissions = max(submission_in_period, na.rm = TRUE) + resubmissions,
+      # The submissions that were not successful
+      total_attempts = total_submissions - total_accepted,
+      percentage_failed_submissions = lp(total_attempts/total_accepted), 
+      .by = package)
+}
+```
+
+I created a function to apply the same logic in whatever group I want to analyse.
+
+**Note:** Another relevant edit was that the selection criteria changed as I missed some packages in some analysis and included other that shouldn't be. 
+Now we are ready to apply to those that got the first version of the package on CRAN:
 
 ```{r accepted-first-try}
-ffs <- accepted_subm |> 
-  filter(acceptance_n == 1L) |>
-  mutate(attempts = submissions - 1) |> 
-  count(attempts, sort = TRUE,  name = "packages") |> 
+first_submissions <- accepted_subm |> 
+  group_by(package) |> 
+  # Keep submission that where eventually accepted
+  filter(length(acceptance_n != 0L) > 1L && any(acceptance_n[acceptance_n != 0L] == 1)) |> 
+  # Keep submissions until the first acceptance but not after
+  filter(cumsum(acceptance_n) <= 1L & seq_len(n()) <= which(acceptance_n == 1L)) |> 
+  ungroup()
+ffs <- first_submissions |>   
+  count_submissions() |> 
+  count(total_attempts, sort = TRUE,  name = "packages") |> 
   mutate(percentage = lp(packages/sum(packages, na.rm = TRUE)))
 ffs
 ```
 
 This means that close to `r lp(sum(ffs$packages[-1])/sum(ffs$packages))` first time submissions are rejected. 
+Including those that are not yet (never?) included on CRAN (~1000). 
 
-This points out a problem: 
-- the developers need to resubmit their packages and fix it more
+This points out a problem:  
+
+- the developers need to resubmit their packages and fix it more.
 - the reviewers need to spend more time (approximately 50% of submissions are at one point or another handled by a human). 
 
-After this exercise we might wonder whether this is just for new packages?
+After this exercise we might wonder whether this is just for new packages?  
 If we look up those submissions that are not the first version of a package, we find the following:
 
 ```{r failed-submissions}
-fs_exp <- accepted_subm |> 
-  filter(!is.na(date.cran), acceptance_n > 1L) |> 
-  mutate(attempts = (submissions - 1),
-         failed_submissions = attempts != 0L) |> 
-  summarise(
-    total_accepted = n(),
-    total_attempts = sum(attempts, na.rm = TRUE),
-    percentage_failed_submissions = lp(total_attempts/n()), 
-    .by = package)
+submissions_with_accepted <- accepted_subm |> 
+  # Filter those that were included on CRAN (not all submission rejected)
+  filter(any(acceptance_n >= 1), .by = package) |> 
+  mutate(date.mix = pmin(date.cran, date.subm, na.rm = TRUE)) |> 
+  group_by(package) |> 
+  arrange(date.mix) |> 
+  filter(
+    # Those that start by 0 but next acceptance is 1 or higher
+     cumsum(acceptance_n) >= 1L | 
+       min(acceptance_n[acceptance_n != 0L], na.rm = TRUE) >= 2) |> 
+  ungroup() 
+fs_exp <- count_submissions(submissions_with_accepted)
 fs_exp |> 
   count(more_failed = total_accepted > total_attempts, 
             sort = TRUE, name = "packages") |> 
@@ -245,80 +283,70 @@ library("ggrepel")
 ggplot(fs_exp) +
   geom_abline(slope = 1, intercept = 0, linetype = 2) +
   geom_count(aes(total_accepted, total_attempts)) +
-  geom_label_repel(aes(total_accepted, total_attempts, label = package), data = . %>% filter(total_attempts >= 100)) +
+  geom_label_repel(aes(total_accepted, total_attempts, label = package), data = . %>% filter(total_attempts >= 10)) +
   labs(x = "CRAN versions", y = "Rejected submissions",  size = "Packages",
        title = "Packages after the first version", subtitle = "for the period analyzed") +
+  scale_size(trans = "log10") +
   theme_minimal() +
-  theme(legend.position = c(0.1, 0.7), legend.background = element_rect())
+  theme(legend.position = c(0.8, 0.7), legend.background = element_rect())
 ```
 
 We can see that there are packages with more than 30 versions on CRAN in these 3 years which never had a rejected submission. 
 Congratulations!!  
 
-Others have a high number of submissions rejected.
-Looking at the packages, presumably because there are problems with compilers or dependencies:
+Others have a high number of submissions rejected, and very few versions:
 
-```{r fs_exp}
+```{r table-rejections}
 fs_exp |> 
-  filter(total_attempts != 0) |> 
-  arrange(-total_attempts/total_accepted) |> 
-  head()
+  count(total_attempts > total_accepted, name = "packages") |> 
+  mutate(percentage = lp(packages/sum(packages)))
 ```
+
+Close to 1% require more than double submissions per version.
 
 Last we can see the overall experience for developers:
 
 ```{r plot-failed-submissions}
-fs <- accepted_subm |> 
-  filter(acceptance_n != 0L) |> 
-  mutate(attempts = (submissions - 1),
-         failed_submissions = attempts != 0L) |> 
-  summarise(
-    total_accepted = n(),
-    total_attempts = sum(attempts, na.rm = TRUE),
-    percentage_attempts = lp(total_attempts/n()), 
-    .by = package)
+fs <- count_submissions(accepted_subm)
 
 ggplot(fs) +
   geom_abline(slope = 1, intercept = 0, linetype = 2) +
   geom_count(aes(total_accepted, total_attempts)) +
   geom_label_repel(aes(total_accepted, total_attempts, label = package), 
-                   data = . %>% filter(total_attempts >= 100)) +
+                   data = . %>% filter(total_attempts >= 12)) +
   labs(x = "CRAN versions", y = "Rejected submissions",  size = "Packages",
        title = "All packages submissions", subtitle = "for the period analyzed ~174 weeks") +
   theme_minimal() +
-  theme(legend.position = c(0.1, 0.7), legend.background = element_rect())
+  scale_size(trans = "log10") +
+  theme(legend.position = c(0.8, 0.7), legend.background = element_rect())
 ```
 
-It doesn't change much between the experienced.
-
-```{r all-submissions}
-all_subm <- accepted_subm |> 
-  summarise(
-    total_accepted = sum(!is.na(date.cran)),
-    total_attempts = sum(submissions, na.rm = TRUE),
-    percentage_attempts = lp(total_attempts/n()), 
-    .by = package) |> 
-  mutate(fail= total_attempts-total_accepted)
+```{r all-submissions, include=FALSE}
+global_rate <- sum(fs$total_attempts)/sum(fs$total_submissions)
 ```
 
-Overall, `r lp(sum(all_subm$fail)/sum(all_subm$total_attempts))` of the attempts end up being rejected.
+It doesn't change much between the experienced. 
+Note that this only add the packages that were not approved ever and the submissions done to be first accepted.
+So the changes should only be observable on the bottom left corner of the plot.
+
+Overall, `r lp(global_rate)` of the attempts end up being rejected.
 
 ## Main take away
 
-Submitting to CRAN is not easy on the first try, and it usually requires 2 submissions for each accepted version. 
-While [Writing R extensions](https://cran.r-project.org/doc/manuals/r-devel/R-exts.html) document is clear, it might be too extensive for many cases.
-The [CRAN policy](https://cran.r-project.org/web/packages/policies.html) is short but might not be clear enough for new maintainers.
-A document in the middle might be [R packages](https://r-pkgs.org/) but it is still extensive and focused on only a small opionated set of packages.
-A CRAN Task View or some training might be a good solution to reduce the overall problem.
+Submitting to CRAN is not easy on the first try, and it usually requires 2 submissions for each accepted version.  
+While [Writing R extensions](https://cran.r-project.org/doc/manuals/r-devel/R-exts.html) document is clear, it might be too extensive for many cases.  
+The [CRAN policy](https://cran.r-project.org/web/packages/policies.html) is short but might not be clear enough for new maintainers.  
+A document in the middle might be [R packages](https://r-pkgs.org/) but it is still extensive and focused on only a small opionated set of packages.  
+A CRAN Task View or some training might be a good solution to reduce the overall problem.  
 For those maintainers struggling, maybe clearer technical or editorial decisions might be a good solution.
 
-In addition, it seems that packages having more problems with the submissions are not new: experienced maintainers have troubles getting their pacakge accepted when submitting them.
-This might hint to troubles replicating the CRAN checks or enviroments or the scale of the checks (dependency checks). 
+In addition, it seems that packages having more problems with the submissions are not new: experienced maintainers have troubles getting their package accepted when submitting them.  
+This might hint to troubles replicating the CRAN checks or environments or the scale of the checks (dependency checks).   
 Maybe focusing on helping those packages' maintainer might provide a good way to help CRAN maintainers reduce their load.
 
-I also want to comment that this analysis could be improved if we knew, whether the rejection was automatic or manual.
-This would allow to see the burden on CRAN volunteers and perhaps define better the problem and propose better solutions.
-It could be attempted by looking the last folder of a pakcage in the submission process, but it would still not be clear what the most frequent problem is.
+I also want to comment that this analysis could be improved if we knew, whether the rejection was automatic or manual.  
+This would allow to see the burden on CRAN volunteers and perhaps define better the problem and propose better solutions.  
+It could be attempted by looking the last folder of a package in the submission process, but it would still not be clear what the most frequent problem is.
 
 ## Bonus
 
