@@ -161,7 +161,7 @@ fr <- vapply(archive, function(x) {
   }
   as.Date(x$mtime[1])
 }, FUN.VALUE = Sys.Date())
-fr_bioc <- biocDownloadStats() |> 
+fr_bioc <- biocDownloadStats("software") |> 
   filter(Package %in% all_unique_deps) |> 
   firstInBioc() |> 
   pull(Date, name = Package)
@@ -531,6 +531,10 @@ Maybe a helping documentation about the alternative from XML and RCurl could be 
 -   Archive XML and RCurl packages in CRAN.
 
 This might take years of moving packages around but I am confident that once the word is out, package developers will avoid XML and RCurl and current maintainers that depend on them will replace them.  
+
+**Update**:
+
+On 2024/01/22 the [CRAN team asked for a maintainer of XML](https://stat.ethz.ch/pipermail/r-package-devel/2024q1/010359.html)
 
 ### Reproducibility
 

@@ -41,8 +41,8 @@ cran_author &lt;- grep(&quot;CRAN Team&quot;, x = packages_db$Author, ignore.cas
 cran_authorsR &lt;- grep(&quot;CRAN Team&quot;, x = packages_db$`Authors@R`, ignore.case = TRUE)
 CRAN_TEAM_mentioned &lt;- union(cran_author, cran_authorsR)
 unique(packages_db$Package[CRAN_TEAM_mentioned])
-## [1] &quot;fBasics&quot;   &quot;fMultivar&quot; &quot;geiger&quot;    &quot;RCurl&quot;     &quot;RJSONIO&quot;   &quot;udunits2&quot; 
-## [7] &quot;XML&quot;</code></pre>
+## [1] &quot;fBasics&quot;   &quot;fMultivar&quot; &quot;geiger&quot;    &quot;plotrix&quot;   &quot;RCurl&quot;     &quot;RJSONIO&quot;  
+## [7] &quot;udunits2&quot;  &quot;XML&quot;</code></pre>
 <p>In some of these package the CRAN team appears as contributors because they provided help/code to fix bugs:</p>
 <ul>
 <li><a href="https://cran.r-project.org/package=geiger">geiger</a></li>
@@ -101,7 +101,7 @@ first_rdeps &lt;- package_dependencies(all_unique_deps,
                                    reverse = TRUE, db = ap, which = &quot;all&quot;)
 deps_all &lt;- package_dependencies(all_unique_deps, recursive = TRUE, 
                                  db = ap, which = &quot;all&quot;)</code></pre>
-<p>They have 500 direct dependencies (and 8 more in annotation packages in Bioconductor: recount3, ENCODExplorerData, UCSCRepeatMasker, gDNAinRNAseqData, qdap, qdapTools, metaboliteIDmapping and curatedBreastData).</p>
+<p>They have 495 direct dependencies (and 8 more in annotation packages in Bioconductor: recount3, ENCODExplorerData, UCSCRepeatMasker, gDNAinRNAseqData, qdap, qdapTools, metaboliteIDmapping and curatedBreastData).</p>
 <p>These two packages with their dependencies are used one way or another by around 20000 packages (about 90% of CRAN and Bioconductor)!
 If these packages fail the impact on the community will be huge.</p>
 <p>To reduce the impact of the dependencies we should look up the direct dependencies.
@@ -121,7 +121,7 @@ fr &lt;- vapply(archive, function(x) {
   }
   as.Date(x$mtime[1])
 }, FUN.VALUE = Sys.Date())
-fr_bioc &lt;- biocDownloadStats() |&gt; 
+fr_bioc &lt;- biocDownloadStats(&quot;software&quot;) |&gt; 
   filter(Package %in% all_unique_deps) |&gt; 
   firstInBioc() |&gt; 
   pull(Date, name = Package)
@@ -239,7 +239,7 @@ head(deps)</code></pre>
 <td align="left">TRUE</td>
 <td align="left">TRUE</td>
 <td align="right">26</td>
-<td align="right">2406</td>
+<td align="right">2456</td>
 <td align="right">5</td>
 <td align="right">10</td>
 <td align="right">47</td>
@@ -249,7 +249,7 @@ head(deps)</code></pre>
 <td align="left">2012-02-01</td>
 <td align="left">NA</td>
 <td align="left">NA</td>
-<td align="right">3889</td>
+<td align="right">8113</td>
 <td align="left">Bioconductor</td>
 <td align="left">both</td>
 </tr>
@@ -258,17 +258,17 @@ head(deps)</code></pre>
 <td align="left">TRUE</td>
 <td align="left">TRUE</td>
 <td align="right">33</td>
-<td align="right">2406</td>
+<td align="right">2456</td>
 <td align="right">4</td>
 <td align="right">26</td>
-<td align="right">135</td>
+<td align="right">136</td>
 <td align="left">TRUE</td>
 <td align="right">1</td>
 <td align="left">TRUE</td>
 <td align="left">2015-02-01</td>
 <td align="left">NA</td>
 <td align="left">NA</td>
-<td align="right">402</td>
+<td align="right">6619</td>
 <td align="left">Bioconductor</td>
 <td align="left">both</td>
 </tr>
@@ -277,17 +277,17 @@ head(deps)</code></pre>
 <td align="left">FALSE</td>
 <td align="left">TRUE</td>
 <td align="right">61</td>
-<td align="right">2465</td>
+<td align="right">2499</td>
 <td align="right">0</td>
 <td align="right">34</td>
-<td align="right">125</td>
+<td align="right">104</td>
 <td align="left">FALSE</td>
 <td align="right">1</td>
 <td align="left">FALSE</td>
 <td align="left">2021-02-01</td>
 <td align="left">NA</td>
 <td align="left">NA</td>
-<td align="right">124</td>
+<td align="right">91</td>
 <td align="left">Bioconductor</td>
 <td align="left">RCurl</td>
 </tr>
@@ -296,7 +296,7 @@ head(deps)</code></pre>
 <td align="left">FALSE</td>
 <td align="left">TRUE</td>
 <td align="right">6</td>
-<td align="right">2406</td>
+<td align="right">2456</td>
 <td align="right">0</td>
 <td align="right">3</td>
 <td align="right">4</td>
@@ -306,7 +306,7 @@ head(deps)</code></pre>
 <td align="left">2013-02-01</td>
 <td align="left">NA</td>
 <td align="left">NA</td>
-<td align="right">85</td>
+<td align="right">218</td>
 <td align="left">Bioconductor</td>
 <td align="left">RCurl</td>
 </tr>
@@ -315,17 +315,17 @@ head(deps)</code></pre>
 <td align="left">FALSE</td>
 <td align="left">TRUE</td>
 <td align="right">34</td>
-<td align="right">2409</td>
+<td align="right">2459</td>
 <td align="right">0</td>
 <td align="right">24</td>
-<td align="right">160</td>
+<td align="right">161</td>
 <td align="left">TRUE</td>
 <td align="right">1</td>
 <td align="left">TRUE</td>
 <td align="left">2020-02-01</td>
 <td align="left">NA</td>
 <td align="left">NA</td>
-<td align="right">331</td>
+<td align="right">221</td>
 <td align="left">Bioconductor</td>
 <td align="left">RCurl</td>
 </tr>
@@ -334,7 +334,7 @@ head(deps)</code></pre>
 <td align="left">FALSE</td>
 <td align="left">TRUE</td>
 <td align="right">19</td>
-<td align="right">2407</td>
+<td align="right">2457</td>
 <td align="right">2</td>
 <td align="right">14</td>
 <td align="right">71</td>
@@ -344,7 +344,7 @@ head(deps)</code></pre>
 <td align="left">2016-02-01</td>
 <td align="left">NA</td>
 <td align="left">NA</td>
-<td align="right">226</td>
+<td align="right">238</td>
 <td align="left">Bioconductor</td>
 <td align="left">RCurl</td>
 </tr>
@@ -370,7 +370,7 @@ head(deps)</code></pre>
 <col width="7%" />
 <col width="7%" />
 <col width="13%" />
-<col width="11%" />
+<col width="10%" />
 </colgroup>
 <thead>
 <tr class="header">
@@ -387,33 +387,33 @@ head(deps)</code></pre>
 <tr class="odd">
 <td align="left">TRUE</td>
 <td align="left">FALSE</td>
-<td align="right">241</td>
-<td align="right">3686</td>
-<td align="right">2406</td>
-<td align="right">2310.124</td>
-<td align="right">2409.00</td>
+<td align="right">235</td>
+<td align="right">3584</td>
+<td align="right">2456</td>
+<td align="right">2365.596</td>
+<td align="right">2458.5</td>
 </tr>
 <tr class="even">
 <td align="left">FALSE</td>
 <td align="left">TRUE</td>
-<td align="right">194</td>
-<td align="right">3180</td>
-<td align="right">2406</td>
-<td align="right">2249.794</td>
-<td align="right">2409.75</td>
+<td align="right">193</td>
+<td align="right">3187</td>
+<td align="right">2456</td>
+<td align="right">2320.855</td>
+<td align="right">2460.0</td>
 </tr>
 <tr class="odd">
 <td align="left">TRUE</td>
 <td align="left">TRUE</td>
-<td align="right">65</td>
-<td align="right">1138</td>
-<td align="right">2406</td>
-<td align="right">2372.400</td>
-<td align="right">2407.00</td>
+<td align="right">67</td>
+<td align="right">1216</td>
+<td align="right">2456</td>
+<td align="right">2423.119</td>
+<td align="right">2457.5</td>
 </tr>
 </tbody>
 </table>
-<p>There are ~40 more packages depending on XML than to RCurl and just 65 to both of them.</p>
+<p>There are ~40 more packages depending on XML than to RCurl and just 67 to both of them.</p>
 </div>
 <div id="overview" class="section level3">
 <h3>Overview</h3>
@@ -429,7 +429,9 @@ deps_wo |&gt;
   theme_minimal() +
   scale_y_log10(labels = scales::label_log()) +
   labs(title = &quot;Packages and downloads&quot;, 
-       x = &quot;Direct dependencies&quot;, y = &quot;Downloads&quot;, size = &quot;Packages&quot;)</code></pre>
+       x = &quot;Direct dependencies&quot;, y = &quot;Downloads&quot;, size = &quot;Packages&quot;)
+## Warning: ggrepel: 1 unlabeled data points (too many overlaps). Consider
+## increasing max.overlaps</code></pre>
 <div class="figure"><span style="display:block;" id="fig:plot1"></span>
 <img src="{{< blogdown/postref >}}index.en_files/figure-html/plot1-1.png" alt="Direct dependencies vs downloads. Many pakcages have up to 50 packages and most have below 1000 downloads in a month." width="672" />
 <p class="caption">
@@ -468,7 +470,7 @@ deps_wo |&gt;
   scale_y_log10(labels = scales::label_log()) +
   labs(title = &quot;Packages and downloads&quot;, 
        x = &quot;Direct strong dependencies&quot;, y = &quot;Downloads&quot;, shape = &quot;Repository&quot;)
-## Warning: ggrepel: 32 unlabeled data points (too many overlaps). Consider
+## Warning: ggrepel: 20 unlabeled data points (too many overlaps). Consider
 ## increasing max.overlaps</code></pre>
 <div class="figure"><span style="display:block;" id="fig:plot3"></span>
 <img src="{{< blogdown/postref >}}index.en_files/figure-html/plot3-1.png" alt="Direct strong dependencies vs downloads. Many pakcages have more than 20 direct imports." width="672" />
@@ -491,7 +493,7 @@ data_maintainers |&gt;
   theme_minimal() +
   labs(title = &quot;CRAN maintainers that depend on XML and RCurl&quot;,
        x = &quot;Packages&quot;, y = &quot;Downloads&quot;)
-## Warning: ggrepel: 16 unlabeled data points (too many overlaps). Consider
+## Warning: ggrepel: 15 unlabeled data points (too many overlaps). Consider
 ## increasing max.overlaps</code></pre>
 <div class="figure"><span style="display:block;" id="fig:plot-maintainers"></span>
 <img src="{{< blogdown/postref >}}index.en_files/figure-html/plot-maintainers-1.png" alt="Looking at maintainers and the number of downloads they have." width="672" />
@@ -508,10 +510,10 @@ Figure 4: Looking at maintainers and the number of downloads they have.
 pca_all &lt;- prcomp(deps_wo[, cols_pca], scale. = TRUE, center = TRUE)
 summary(pca_all)
 ## Importance of components:
-##                           PC1    PC2    PC3    PC4     PC5
-## Standard deviation     1.3908 1.1805 0.9383 0.7706 0.44463
-## Proportion of Variance 0.3869 0.2787 0.1761 0.1188 0.03954
-## Cumulative Proportion  0.3869 0.6656 0.8417 0.9605 1.00000
+##                          PC1    PC2    PC3     PC4     PC5
+## Standard deviation     1.386 1.2478 0.9458 0.65380 0.44846
+## Proportion of Variance 0.384 0.3114 0.1789 0.08549 0.04022
+## Cumulative Proportion  0.384 0.6954 0.8743 0.95978 1.00000
 pca_data &lt;- cbind(pca_all$x, deps_wo)
 ggplot(pca_data) +
   geom_hline(yintercept = 0) +
@@ -522,7 +524,7 @@ ggplot(pca_data) +
   theme_minimal() +
   theme(axis.text = element_blank()) +
   labs(title = &quot;PCA of the numeric variables&quot;)
-## Warning: ggrepel: 61 unlabeled data points (too many overlaps). Consider
+## Warning: ggrepel: 58 unlabeled data points (too many overlaps). Consider
 ## increasing max.overlaps</code></pre>
 <div class="figure"><span style="display:block;" id="fig:pca-all"></span>
 <img src="{{< blogdown/postref >}}index.en_files/figure-html/pca-all-1.png" alt="PCA of all packages." width="672" />
@@ -544,28 +546,28 @@ The second one are packages with many dependencies, as explained by <code>rotati
 <tbody>
 <tr class="odd">
 <td align="left">first_deps_n</td>
-<td align="right">-0.6573383</td>
-<td align="right">-0.1008788</td>
+<td align="right">-0.6521642</td>
+<td align="right">-0.1528947</td>
 </tr>
 <tr class="even">
 <td align="left">deps_all_n</td>
-<td align="right">-0.3488763</td>
-<td align="right">-0.0289303</td>
+<td align="right">-0.3304698</td>
+<td align="right">-0.0549046</td>
 </tr>
 <tr class="odd">
 <td align="left">first_rdeps_n</td>
-<td align="right">0.0727962</td>
-<td align="right">-0.7033645</td>
+<td align="right">0.1235972</td>
+<td align="right">-0.6948659</td>
 </tr>
 <tr class="even">
 <td align="left">first_deps_strong_n</td>
-<td align="right">-0.6604190</td>
-<td align="right">-0.0350320</td>
+<td align="right">-0.6606765</td>
+<td align="right">-0.0750116</td>
 </tr>
 <tr class="odd">
 <td align="left">downloads</td>
-<td align="right">0.0688415</td>
-<td align="right">-0.7021664</td>
+<td align="right">0.1170554</td>
+<td align="right">-0.6965223</td>
 </tr>
 </tbody>
 </table>
@@ -576,9 +578,9 @@ The second one are packages with many dependencies, as explained by <code>rotati
 summary(pca_strong)
 ## Importance of components:
 ##                           PC1    PC2    PC3     PC4     PC5
-## Standard deviation     1.4451 1.3266 0.9277 0.41644 0.34336
-## Proportion of Variance 0.4177 0.3519 0.1721 0.03468 0.02358
-## Cumulative Proportion  0.4177 0.7696 0.9417 0.97642 1.00000
+## Standard deviation     1.4198 1.3005 0.9373 0.49421 0.41258
+## Proportion of Variance 0.4032 0.3382 0.1757 0.04885 0.03404
+## Cumulative Proportion  0.4032 0.7414 0.9171 0.96596 1.00000
 pca_data_strong &lt;- cbind(pca_strong$x, deps_wo[deps_wo$strong, ])
 ggplot(pca_data_strong) +
   geom_hline(yintercept = 0) +
@@ -591,7 +593,7 @@ ggplot(pca_data_strong) +
   labs(title = &quot;Important packages depending on XML and RCurl&quot;, 
        subtitle = &quot;PCA of numeric variables of strong dependencies&quot;,
        col = &quot;Repository&quot;, shape = &quot;Repository&quot;)
-## Warning: ggrepel: 34 unlabeled data points (too many overlaps). Consider
+## Warning: ggrepel: 42 unlabeled data points (too many overlaps). Consider
 ## increasing max.overlaps</code></pre>
 <div class="figure"><span style="display:block;" id="fig:pca-strong"></span>
 <img src="{{< blogdown/postref >}}index.en_files/figure-html/pca-strong-1.png" alt="PCA of packages with strong dependency to XML or RCurl." width="672" />
@@ -607,9 +609,9 @@ mlr uses 5 different functions from XML.</p>
 summary(pca_weak)
 ## Importance of components:
 ##                           PC1    PC2    PC3     PC4     PC5
-## Standard deviation     1.4380 1.1345 0.9963 0.69968 0.40364
-## Proportion of Variance 0.4136 0.2574 0.1985 0.09791 0.03258
-## Cumulative Proportion  0.4136 0.6710 0.8695 0.96742 1.00000
+## Standard deviation     1.4500 1.1578 0.9901 0.63980 0.40895
+## Proportion of Variance 0.4205 0.2681 0.1960 0.08187 0.03345
+## Cumulative Proportion  0.4205 0.6886 0.8847 0.96655 1.00000
 pca_data_weak &lt;- cbind(pca_weak$x, deps_wo[!deps_wo$strong, ])
 ggplot(pca_data_weak) +
   geom_hline(yintercept = 0) +
@@ -632,9 +634,9 @@ pca_cran &lt;- prcomp(deps_wo[keep, cols_pca],
 summary(pca_cran)
 ## Importance of components:
 ##                           PC1    PC2    PC3     PC4     PC5
-## Standard deviation     1.4479 1.2842 0.9159 0.47774 0.43258
-## Proportion of Variance 0.4193 0.3298 0.1678 0.04565 0.03742
-## Cumulative Proportion  0.4193 0.7492 0.9169 0.96258 1.00000
+## Standard deviation     1.4174 1.3060 0.9244 0.51813 0.40278
+## Proportion of Variance 0.4018 0.3412 0.1709 0.05369 0.03245
+## Cumulative Proportion  0.4018 0.7430 0.9139 0.96755 1.00000
 pca_data_strong &lt;- cbind(pca_cran$x, deps_wo[keep, ])
 ggplot(pca_data_strong) +
   geom_hline(yintercept = 0) +
@@ -646,7 +648,7 @@ ggplot(pca_data_strong) +
   theme(axis.text = element_blank()) +
   labs(title = &quot;Packages in CRAN&quot;, 
        col = &quot;Type&quot;, shape = &quot;Type&quot;)
-## Warning: ggrepel: 28 unlabeled data points (too many overlaps). Consider
+## Warning: ggrepel: 26 unlabeled data points (too many overlaps). Consider
 ## increasing max.overlaps</code></pre>
 <div class="figure"><span style="display:block;" id="fig:pca-cran"></span>
 <img src="{{< blogdown/postref >}}index.en_files/figure-html/pca-cran-1.png" alt="PCA of packages on CRAN." width="672" />
@@ -660,9 +662,9 @@ pca_bioc &lt;- prcomp(deps_wo[keep, cols_pca],
 summary(pca_bioc)
 ## Importance of components:
 ##                           PC1    PC2    PC3     PC4     PC5
-## Standard deviation     1.4911 1.3771 0.8360 0.34540 0.24906
-## Proportion of Variance 0.4447 0.3793 0.1398 0.02386 0.01241
-## Cumulative Proportion  0.4447 0.8239 0.9637 0.98759 1.00000
+## Standard deviation     1.4913 1.3703 0.8495 0.33584 0.25281
+## Proportion of Variance 0.4448 0.3755 0.1443 0.02256 0.01278
+## Cumulative Proportion  0.4448 0.8203 0.9647 0.98722 1.00000
 pca_data_strong &lt;- cbind(pca_bioc$x, deps_wo[keep, ])
 ggplot(pca_data_strong) +
   geom_hline(yintercept = 0) +
@@ -674,7 +676,9 @@ ggplot(pca_data_strong) +
   theme(axis.text = element_blank()) +
   labs(title = &quot;Packages in Bioconductor&quot;, 
        subtitle = &quot;PCA of numeric variables of strong dependencies&quot;,
-       col = &quot;Type&quot;, shape = &quot;Type&quot;)</code></pre>
+       col = &quot;Type&quot;, shape = &quot;Type&quot;)
+## Warning: ggrepel: 4 unlabeled data points (too many overlaps). Consider
+## increasing max.overlaps</code></pre>
 <div class="figure"><span style="display:block;" id="fig:pca-bioc"></span>
 <img src="{{< blogdown/postref >}}index.en_files/figure-html/pca-bioc-1.png" alt="PCA of packages on Bioconductor." width="672" />
 <p class="caption">
@@ -727,18 +731,18 @@ Figure 10: First release of packages in relation to the maintenance by CRAN of X
 <tbody>
 <tr class="odd">
 <td align="left">both</td>
-<td align="right">15</td>
-<td align="right">48</td>
+<td align="right">14</td>
+<td align="right">52</td>
 </tr>
 <tr class="even">
 <td align="left">RCurl</td>
 <td align="right">21</td>
-<td align="right">149</td>
+<td align="right">150</td>
 </tr>
 <tr class="odd">
 <td align="left">XML</td>
-<td align="right">64</td>
-<td align="right">164</td>
+<td align="right">63</td>
+<td align="right">156</td>
 </tr>
 </tbody>
 </table>
@@ -768,112 +772,115 @@ Maybe a helping documentation about the alternative from XML and RCurl could be 
 <li>Archive XML and RCurl packages in CRAN.</li>
 </ul>
 <p>This might take years of moving packages around but I am confident that once the word is out, package developers will avoid XML and RCurl and current maintainers that depend on them will replace them.</p>
+<p><strong>Update</strong>:</p>
+<p>On 2024/01/22 the <a href="https://stat.ethz.ch/pipermail/r-package-devel/2024q1/010359.html">CRAN team asked for a maintainer of XML</a></p>
 <div id="reproducibility" class="section level3">
 <h3>Reproducibility</h3>
 <details>
-<pre><code>## ─ Session info ───────────────────────────────────────────────────────────────
+<pre><code>## - Session info ---------------------------------------------------------------
 ##  setting  value
-##  version  R version 4.3.0 (2023-04-21)
-##  os       Ubuntu 22.04.2 LTS
+##  version  R version 4.3.1 (2023-06-16)
+##  os       Ubuntu 22.04.3 LTS
 ##  system   x86_64, linux-gnu
 ##  ui       X11
 ##  language (EN)
-##  collate  en_US.UTF-8
-##  ctype    en_US.UTF-8
+##  collate  C
+##  ctype    C
 ##  tz       Europe/Madrid
-##  date     2023-06-03
-##  pandoc   2.19.2 @ /usr/lib/rstudio/resources/app/bin/quarto/bin/tools/ (via rmarkdown)
+##  date     2024-01-22
+##  pandoc   3.1.1 @ /usr/lib/rstudio/resources/app/bin/quarto/bin/tools/ (via rmarkdown)
 ## 
-## ─ Packages ───────────────────────────────────────────────────────────────────
-##  package       * version   date (UTC) lib source
-##  Biobase         2.60.0    2023-04-25 [1] Bioconductor
-##  BiocFileCache   2.8.0     2023-04-25 [1] Bioconductor
-##  BiocGenerics    0.46.0    2023-04-25 [1] Bioconductor
-##  BiocManager     1.30.20   2023-02-24 [1] CRAN (R 4.3.0)
-##  BiocPkgTools  * 1.18.0    2023-04-25 [1] Bioconductor
-##  biocViews       1.68.0    2023-04-25 [1] Bioconductor
-##  bit             4.0.5     2022-11-15 [1] CRAN (R 4.3.0)
-##  bit64           4.0.5     2020-08-30 [1] CRAN (R 4.3.0)
-##  bitops          1.0-7     2021-04-24 [1] CRAN (R 4.3.0)
-##  blob            1.2.4     2023-03-17 [1] CRAN (R 4.3.0)
-##  blogdown        1.16      2022-12-13 [1] CRAN (R 4.3.0)
-##  bookdown        0.33      2023-03-06 [1] CRAN (R 4.3.0)
-##  bslib           0.4.2     2022-12-16 [1] CRAN (R 4.3.0)
-##  cachem          1.0.8     2023-05-01 [1] CRAN (R 4.3.0)
-##  cli             3.6.1     2023-03-23 [1] CRAN (R 4.3.0)
-##  codetools       0.2-19    2023-02-01 [1] CRAN (R 4.3.0)
-##  colorspace      2.1-0     2023-01-23 [1] CRAN (R 4.3.0)
-##  cranlogs      * 2.1.1     2019-04-29 [1] CRAN (R 4.3.0)
-##  crul            1.3       2022-09-03 [1] CRAN (R 4.3.0)
-##  curl            5.0.0     2023-01-12 [1] CRAN (R 4.3.0)
-##  DBI             1.1.3     2022-06-18 [1] CRAN (R 4.3.0)
-##  dbplyr          2.3.2     2023-03-21 [1] CRAN (R 4.3.0)
-##  digest          0.6.31    2022-12-11 [1] CRAN (R 4.3.0)
-##  dplyr         * 1.1.2     2023-04-20 [1] CRAN (R 4.3.0)
-##  DT              0.27      2023-01-17 [1] CRAN (R 4.3.0)
-##  evaluate        0.20      2023-01-17 [1] CRAN (R 4.3.0)
-##  fansi           1.0.4     2023-01-22 [1] CRAN (R 4.3.0)
-##  farver          2.1.1     2022-07-06 [1] CRAN (R 4.3.0)
-##  fastmap         1.1.1     2023-02-24 [1] CRAN (R 4.3.0)
-##  fauxpas         0.5.0     2020-04-13 [1] CRAN (R 4.3.0)
-##  filelock        1.0.2     2018-10-05 [1] CRAN (R 4.3.0)
-##  generics        0.1.3     2022-07-05 [1] CRAN (R 4.3.0)
-##  ggplot2       * 3.4.2     2023-04-03 [1] CRAN (R 4.3.0)
-##  ggrepel       * 0.9.3     2023-02-03 [1] CRAN (R 4.3.0)
-##  gh              1.4.0     2023-02-22 [1] CRAN (R 4.3.0)
-##  glue            1.6.2     2022-02-24 [1] CRAN (R 4.3.0)
-##  graph           1.78.0    2023-04-25 [1] Bioconductor
-##  gtable          0.3.3     2023-03-21 [1] CRAN (R 4.3.0)
-##  highr           0.10      2022-12-22 [1] CRAN (R 4.3.0)
-##  hms             1.1.3     2023-03-21 [1] CRAN (R 4.3.0)
-##  htmltools       0.5.5     2023-03-23 [1] CRAN (R 4.3.0)
-##  htmlwidgets   * 1.6.2     2023-03-17 [1] CRAN (R 4.3.0)
-##  httpcode        0.3.0     2020-04-10 [1] CRAN (R 4.3.0)
-##  httr            1.4.5     2023-02-24 [1] CRAN (R 4.3.0)
-##  igraph          1.4.2     2023-04-07 [1] CRAN (R 4.3.0)
-##  jquerylib       0.1.4     2021-04-26 [1] CRAN (R 4.3.0)
-##  jsonlite        1.8.4     2022-12-06 [1] CRAN (R 4.3.0)
-##  knitr         * 1.42      2023-01-25 [1] CRAN (R 4.3.0)
-##  labeling        0.4.2     2020-10-20 [1] CRAN (R 4.3.0)
-##  lifecycle       1.0.3     2022-10-07 [1] CRAN (R 4.3.0)
-##  magrittr        2.0.3     2022-03-30 [1] CRAN (R 4.3.0)
-##  memoise         2.0.1     2021-11-26 [1] CRAN (R 4.3.0)
-##  munsell         0.5.0     2018-06-12 [1] CRAN (R 4.3.0)
-##  pillar          1.9.0     2023-03-22 [1] CRAN (R 4.3.0)
-##  pkgconfig       2.0.3     2019-09-22 [1] CRAN (R 4.3.0)
-##  R6              2.5.1     2021-08-19 [1] CRAN (R 4.3.0)
-##  RBGL            1.76.0    2023-04-25 [1] Bioconductor
-##  Rcpp            1.0.10    2023-01-22 [1] CRAN (R 4.3.0)
-##  RCurl           1.98-1.12 2023-03-27 [1] CRAN (R 4.3.0)
-##  readr           2.1.4     2023-02-10 [1] CRAN (R 4.3.0)
-##  rlang           1.1.1     2023-04-28 [1] CRAN (R 4.3.0)
-##  rmarkdown       2.21      2023-03-26 [1] CRAN (R 4.3.0)
-##  rorcid          0.7.0     2021-01-20 [1] CRAN (R 4.3.0)
-##  RSQLite         2.3.1     2023-04-03 [1] CRAN (R 4.3.0)
-##  rstudioapi      0.14      2022-08-22 [1] CRAN (R 4.3.0)
-##  RUnit           0.4.32    2018-05-18 [1] CRAN (R 4.3.0)
-##  rvest           1.0.3     2022-08-19 [1] CRAN (R 4.3.0)
-##  sass            0.4.5     2023-01-24 [1] CRAN (R 4.3.0)
-##  scales          1.2.1     2022-08-20 [1] CRAN (R 4.3.0)
-##  sessioninfo     1.2.2     2021-12-06 [1] CRAN (R 4.3.0)
-##  stringi         1.7.12    2023-01-11 [1] CRAN (R 4.3.0)
-##  stringr         1.5.0     2022-12-02 [1] CRAN (R 4.3.0)
-##  tibble          3.2.1     2023-03-20 [1] CRAN (R 4.3.0)
-##  tidyselect      1.2.0     2022-10-10 [1] CRAN (R 4.3.0)
-##  tzdb            0.3.0     2022-03-28 [1] CRAN (R 4.3.0)
-##  utf8            1.2.3     2023-01-31 [1] CRAN (R 4.3.0)
-##  vctrs           0.6.2     2023-04-19 [1] CRAN (R 4.3.0)
-##  whisker         0.4.1     2022-12-05 [1] CRAN (R 4.3.0)
-##  withr           2.5.0     2022-03-03 [1] CRAN (R 4.3.0)
-##  xfun            0.39      2023-04-20 [1] CRAN (R 4.3.0)
-##  XML             3.99-0.14 2023-03-19 [1] CRAN (R 4.3.0)
-##  xml2            1.3.4     2023-04-27 [1] CRAN (R 4.3.0)
-##  yaml            2.3.7     2023-01-23 [1] CRAN (R 4.3.0)
+## - Packages -------------------------------------------------------------------
+##  package       * version     date (UTC) lib source
+##  Biobase         2.62.0      2023-10-24 [1] Bioconductor
+##  BiocFileCache   2.10.1      2023-10-26 [1] Bioconductor
+##  BiocGenerics    0.48.1      2023-11-01 [1] Bioconductor
+##  BiocManager     1.30.22     2023-08-08 [1] CRAN (R 4.3.1)
+##  BiocPkgTools  * 1.20.0      2023-10-24 [1] Bioconductor
+##  biocViews       1.70.0      2023-10-24 [1] Bioconductor
+##  bit             4.0.5       2022-11-15 [1] CRAN (R 4.3.1)
+##  bit64           4.0.5       2020-08-30 [1] CRAN (R 4.3.1)
+##  bitops          1.0-7       2021-04-24 [1] CRAN (R 4.3.1)
+##  blob            1.2.4       2023-03-17 [1] CRAN (R 4.3.1)
+##  blogdown        1.18        2023-06-19 [1] CRAN (R 4.3.1)
+##  bookdown        0.37        2023-12-01 [1] CRAN (R 4.3.1)
+##  bslib           0.6.1       2023-11-28 [1] CRAN (R 4.3.1)
+##  cachem          1.0.8       2023-05-01 [1] CRAN (R 4.3.1)
+##  cli             3.6.2       2023-12-11 [1] CRAN (R 4.3.1)
+##  codetools       0.2-19      2023-02-01 [2] CRAN (R 4.3.1)
+##  colorspace      2.1-0       2023-01-23 [1] CRAN (R 4.3.1)
+##  cranlogs      * 2.1.1       2019-04-29 [1] CRAN (R 4.3.1)
+##  crul            1.4.0       2023-05-17 [1] CRAN (R 4.3.1)
+##  curl            5.2.0       2023-12-08 [1] CRAN (R 4.3.1)
+##  DBI             1.2.1       2024-01-12 [1] CRAN (R 4.3.1)
+##  dbplyr          2.4.0       2023-10-26 [1] CRAN (R 4.3.2)
+##  digest          0.6.34      2024-01-11 [1] CRAN (R 4.3.1)
+##  dplyr         * 1.1.4       2023-11-17 [1] CRAN (R 4.3.1)
+##  DT              0.31        2023-12-09 [1] CRAN (R 4.3.1)
+##  evaluate        0.23        2023-11-01 [1] CRAN (R 4.3.2)
+##  fansi           1.0.6       2023-12-08 [1] CRAN (R 4.3.1)
+##  farver          2.1.1       2022-07-06 [1] CRAN (R 4.3.1)
+##  fastmap         1.1.1       2023-02-24 [1] CRAN (R 4.3.1)
+##  fauxpas         0.5.2       2023-05-03 [1] CRAN (R 4.3.1)
+##  filelock        1.0.3       2023-12-11 [1] CRAN (R 4.3.1)
+##  generics        0.1.3       2022-07-05 [1] CRAN (R 4.3.1)
+##  ggplot2       * 3.4.4       2023-10-12 [1] CRAN (R 4.3.1)
+##  ggrepel       * 0.9.5       2024-01-10 [1] CRAN (R 4.3.1)
+##  gh              1.4.0       2023-02-22 [1] CRAN (R 4.3.1)
+##  glue            1.7.0       2024-01-09 [1] CRAN (R 4.3.1)
+##  graph           1.80.0      2023-10-24 [1] Bioconductor
+##  gtable          0.3.4       2023-08-21 [1] CRAN (R 4.3.1)
+##  highr           0.10        2022-12-22 [1] CRAN (R 4.3.1)
+##  hms             1.1.3       2023-03-21 [1] CRAN (R 4.3.1)
+##  htmltools       0.5.7       2023-11-03 [1] CRAN (R 4.3.2)
+##  htmlwidgets   * 1.6.4       2023-12-06 [1] CRAN (R 4.3.1)
+##  httpcode        0.3.0       2020-04-10 [1] CRAN (R 4.3.1)
+##  httr            1.4.7       2023-08-15 [1] CRAN (R 4.3.1)
+##  igraph          1.6.0       2023-12-11 [1] CRAN (R 4.3.1)
+##  jquerylib       0.1.4       2021-04-26 [1] CRAN (R 4.3.1)
+##  jsonlite        1.8.8       2023-12-04 [1] CRAN (R 4.3.1)
+##  knitr         * 1.45        2023-10-30 [1] CRAN (R 4.3.2)
+##  labeling        0.4.3       2023-08-29 [1] CRAN (R 4.3.2)
+##  lifecycle       1.0.4       2023-11-07 [1] CRAN (R 4.3.2)
+##  magrittr        2.0.3       2022-03-30 [1] CRAN (R 4.3.1)
+##  memoise         2.0.1       2021-11-26 [1] CRAN (R 4.3.1)
+##  munsell         0.5.0       2018-06-12 [1] CRAN (R 4.3.1)
+##  pillar          1.9.0       2023-03-22 [1] CRAN (R 4.3.1)
+##  pkgconfig       2.0.3       2019-09-22 [1] CRAN (R 4.3.1)
+##  purrr           1.0.2       2023-08-10 [1] CRAN (R 4.3.1)
+##  R6              2.5.1       2021-08-19 [1] CRAN (R 4.3.1)
+##  RBGL            1.78.0      2023-10-24 [1] Bioconductor
+##  Rcpp            1.0.12      2024-01-09 [1] CRAN (R 4.3.1)
+##  RCurl           1.98-1.14   2024-01-09 [1] CRAN (R 4.3.1)
+##  readr           2.1.5       2024-01-10 [1] CRAN (R 4.3.1)
+##  rlang           1.1.3       2024-01-10 [1] CRAN (R 4.3.1)
+##  rmarkdown       2.25        2023-09-18 [1] CRAN (R 4.3.1)
+##  rorcid          0.7.0       2021-01-20 [1] CRAN (R 4.3.1)
+##  RSQLite         2.3.5       2024-01-21 [1] CRAN (R 4.3.1)
+##  rstudioapi      0.15.0      2023-07-07 [1] CRAN (R 4.3.1)
+##  RUnit           0.4.32      2018-05-18 [1] CRAN (R 4.3.1)
+##  rvest           1.0.3       2022-08-19 [1] CRAN (R 4.3.1)
+##  sass            0.4.8       2023-12-06 [1] CRAN (R 4.3.1)
+##  scales          1.3.0       2023-11-28 [1] CRAN (R 4.3.1)
+##  sessioninfo     1.2.2       2021-12-06 [1] CRAN (R 4.3.1)
+##  stringi         1.8.3       2023-12-11 [1] CRAN (R 4.3.1)
+##  stringr         1.5.1       2023-11-14 [1] CRAN (R 4.3.1)
+##  tibble          3.2.1       2023-03-20 [1] CRAN (R 4.3.1)
+##  tidyselect      1.2.0       2022-10-10 [1] CRAN (R 4.3.1)
+##  tzdb            0.4.0       2023-05-12 [1] CRAN (R 4.3.1)
+##  utf8            1.2.4       2023-10-22 [1] CRAN (R 4.3.2)
+##  vctrs           0.6.5       2023-12-01 [1] CRAN (R 4.3.1)
+##  whisker         0.4.1       2022-12-05 [1] CRAN (R 4.3.1)
+##  withr           3.0.0       2024-01-16 [1] CRAN (R 4.3.1)
+##  xfun            0.41        2023-11-01 [1] CRAN (R 4.3.2)
+##  XML             3.99-0.16.1 2024-01-22 [1] CRAN (R 4.3.1)
+##  xml2            1.3.6       2023-12-04 [1] CRAN (R 4.3.1)
+##  yaml            2.3.8       2023-12-11 [1] CRAN (R 4.3.1)
 ## 
-##  [1] /home/lluis/bin/R/4.3.0
-##  [2] /opt/R/4.3.0/lib/R/library
+##  [1] /home/lluis/bin/R/4.3.1
+##  [2] /opt/R/4.3.1/lib/R/library
 ## 
-## ──────────────────────────────────────────────────────────────────────────────</code></pre>
+## ------------------------------------------------------------------------------</code></pre>
 </details>
 </div>
 </div>
