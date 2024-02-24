@@ -1,0 +1,79 @@
+---
+title: 'New rtweet release: 2.0.0'
+author: Lluís Revilla Sancho
+date: '2024-02-16'
+slug: new-rtweet-release-2-0-0
+categories:
+  - r
+  - CRAN
+tags:
+  - rtweet
+authors:
+  - admin
+description: ''
+draft: no
+editor_options:
+  chunk_output_type: console
+featured: no
+image:
+  caption: ''
+  focal_point: ''
+subtitle: ''
+summary: ''
+---
+
+```{r setup, include = FALSE}
+knitr::opts_chunk$set(collapse = TRUE, fig.retina = 2)
+```
+
+
+This is a brief announcement of rtweet version 2.0.0.
+This major version changes signals the move from the API v1.1 to the API v2.
+
+There haven't been many changes since 1.2.1 but this is to signal that the API v1.1 is deprecated.
+
+The previous release was a bit of a rush to meet with the requirements of CRAN maintainers to fix an error and it wasn't polished. 
+Some users complained that it was difficult to find what worked.
+In this release I focused mostly to make life easier for users:
+
+Now there is a document the deprecated functions from API v1.1 to API v2: see `help("rtweet-deprecated", "rtweet")`.
+I also made it easier for the rtweet to work with API v2: the release of httr2 1.0.0 version helped to avoid some workarounds with the authentication process.
+
+I also focused on updating the vignettes to the most up to date recommendations.
+I am not sure the streaming vignettes is up to date (but keep reading why I left it as is).
+
+Last, following CRAN policy: if users create rtweet data they can now delete it with  `client_clean()` and `auth_clean()`.
+
+# Future releases
+
+For the last year I [asked the community](https://github.com/ropensci/rtweet/issues/763) for a co-maintainer with interest in the package.
+Unfortunately, people that showed some interest at the end didn't commit to it.
+
+At the same time I [also asked](https://llrs.dev/post/2023/02/16/rtweet-future/) for  [donations](https://www.buymeacoffee.com/llrs) to support an API access.
+It currently costs 100€ to access most endpoints which is needed to test and develop the package. 
+However, this is more than half of what I spend in groceries last month.  
+Other packages like [academictwitteR](https://cran.r-project.org/package=academictwitteR) are also stopping development/support. 
+Although not archived from CRAN, it has a note in the README:
+
+> Note this repo is now ARCHVIED due to changes to the Twitter API. The paid API means open-source development of this package is no longer feasible.
+
+Similarly without financial help and community interest I won't invest more time on it.  
+This is the last version that I release.
+I have other interests and I would like to focus on other projects.
+My focus will be on updating and releasing some packages I have.
+I also want to focus more on my own company to help the R community (and beyond). 
+I will write about the company shortly.
+
+There have been some discussions on social media how to signal deprecation of packages.
+The only method available on CRAN that I know is to declare a package ORPHANATED.
+I have requested to CRAN to declared the package ORPHANATED.
+
+### Reproducibility
+
+<details>
+```{r reproducibility, echo = FALSE}
+## Reproducibility info
+options(width = 120)
+sessioninfo::session_info()
+```
+</details>

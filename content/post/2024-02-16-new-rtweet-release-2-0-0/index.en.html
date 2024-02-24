@@ -1,0 +1,105 @@
+---
+title: 'New rtweet release: 2.0.0'
+author: Lluís Revilla Sancho
+date: '2024-02-16'
+slug: new-rtweet-release-2-0-0
+categories:
+  - r
+  - CRAN
+tags:
+  - rtweet
+authors:
+  - admin
+description: ''
+draft: no
+editor_options:
+  chunk_output_type: console
+featured: no
+image:
+  caption: ''
+  focal_point: ''
+subtitle: ''
+summary: ''
+---
+
+
+
+<p>This is a brief announcement of rtweet version 2.0.0.
+This major version changes signals the move from the API v1.1 to the API v2.</p>
+<p>There haven’t been many changes since 1.2.1 but this is to signal that the API v1.1 is deprecated.</p>
+<p>The previous release was a bit of a rush to meet with the requirements of CRAN maintainers to fix an error and it wasn’t polished.
+Some users complained that it was difficult to find what worked.
+In this release I focused mostly to make life easier for users:</p>
+<p>Now there is a document the deprecated functions from API v1.1 to API v2: see <code>help("rtweet-deprecated", "rtweet")</code>.
+I also made it easier for the rtweet to work with API v2: the release of httr2 1.0.0 version helped to avoid some workarounds with the authentication process.</p>
+<p>I also focused on updating the vignettes to the most up to date recommendations.
+I am not sure the streaming vignettes is up to date (but keep reading why I left it as is).</p>
+<p>Last, following CRAN policy: if users create rtweet data they can now delete it with <code>client_clean()</code> and <code>auth_clean()</code>.</p>
+<div id="future-releases" class="section level1">
+<h1>Future releases</h1>
+<p>For the last year I <a href="https://github.com/ropensci/rtweet/issues/763">asked the community</a> for a co-maintainer with interest in the package.
+Unfortunately, people that showed some interest at the end didn’t commit to it.</p>
+<p>At the same time I <a href="https://llrs.dev/post/2023/02/16/rtweet-future/">also asked</a> for <a href="https://www.buymeacoffee.com/llrs">donations</a> to support an API access.
+It currently costs 100€ to access most endpoints which is needed to test and develop the package.
+However, this is more than half of what I spend in groceries last month.<br />
+Other packages like <a href="https://cran.r-project.org/package=academictwitteR">academictwitteR</a> are also stopping development/support.
+Although not archived from CRAN, it has a note in the README:</p>
+<blockquote>
+<p>Note this repo is now ARCHVIED due to changes to the Twitter API. The paid API means open-source development of this package is no longer feasible.</p>
+</blockquote>
+<p>Similarly without financial help and community interest I won’t invest more time on it.<br />
+This is the last version that I release.
+I have other interests and I would like to focus on other projects.
+My focus will be on updating and releasing some packages I have.
+I also want to focus more on my own company to help the R community (and beyond).
+I will write about the company shortly.</p>
+<p>There have been some discussions on social media how to signal deprecation of packages.
+The only method available on CRAN that I know is to declare a package ORPHANATED.
+I have requested to CRAN to declared the package ORPHANATED.</p>
+<div id="reproducibility" class="section level3">
+<h3>Reproducibility</h3>
+<details>
+<pre><code>## ─ Session info ───────────────────────────────────────────────────────────────────────────────────────────────────────
+##  setting  value
+##  version  R version 4.3.1 (2023-06-16)
+##  os       Ubuntu 22.04.4 LTS
+##  system   x86_64, linux-gnu
+##  ui       X11
+##  language en
+##  collate  en_US.UTF-8
+##  ctype    en_US.UTF-8
+##  tz       Europe/Madrid
+##  date     2024-02-24
+##  pandoc   3.1.1 @ /usr/lib/rstudio/resources/app/bin/quarto/bin/tools/ (via rmarkdown)
+## 
+## ─ Packages ───────────────────────────────────────────────────────────────────────────────────────────────────────────
+##  package     * version date (UTC) lib source
+##  blogdown      1.18    2023-06-19 [1] CRAN (R 4.3.1)
+##  bookdown      0.37    2023-12-01 [1] CRAN (R 4.3.1)
+##  bslib         0.6.1   2023-11-28 [1] CRAN (R 4.3.1)
+##  cachem        1.0.8   2023-05-01 [1] CRAN (R 4.3.1)
+##  cli           3.6.2   2023-12-11 [1] CRAN (R 4.3.1)
+##  digest        0.6.34  2024-01-11 [1] CRAN (R 4.3.1)
+##  evaluate      0.23    2023-11-01 [1] CRAN (R 4.3.2)
+##  fastmap       1.1.1   2023-02-24 [1] CRAN (R 4.3.1)
+##  htmltools     0.5.7   2023-11-03 [1] CRAN (R 4.3.2)
+##  jquerylib     0.1.4   2021-04-26 [1] CRAN (R 4.3.1)
+##  jsonlite      1.8.8   2023-12-04 [1] CRAN (R 4.3.1)
+##  knitr         1.45    2023-10-30 [1] CRAN (R 4.3.2)
+##  lifecycle     1.0.4   2023-11-07 [1] CRAN (R 4.3.2)
+##  R6            2.5.1   2021-08-19 [1] CRAN (R 4.3.1)
+##  rlang         1.1.3   2024-01-10 [1] CRAN (R 4.3.1)
+##  rmarkdown     2.25    2023-09-18 [1] CRAN (R 4.3.1)
+##  rstudioapi    0.15.0  2023-07-07 [1] CRAN (R 4.3.1)
+##  sass          0.4.8   2023-12-06 [1] CRAN (R 4.3.1)
+##  sessioninfo   1.2.2   2021-12-06 [1] CRAN (R 4.3.1)
+##  xfun          0.42    2024-02-08 [1] CRAN (R 4.3.1)
+##  yaml          2.3.8   2023-12-11 [1] CRAN (R 4.3.1)
+## 
+##  [1] /home/lluis/bin/R/4.3.1
+##  [2] /opt/R/4.3.1/lib/R/library
+## 
+## ──────────────────────────────────────────────────────────────────────────────────────────────────────────────────────</code></pre>
+</details>
+</div>
+</div>
