@@ -1,0 +1,41 @@
+---
+title: 'useR madrid: rtweet'
+author: Lluís Revilla Sancho
+date: '2024-02-29T19:00:00+02:00'
+slug: user-madrid-rtweet
+categories:
+  - FOSS
+  - r
+tags:
+  - rtweet
+  - R
+  - packages
+subtitle: Un ejemplo de la vida de un paquete
+event: "UseR MadRid"
+event_url: http://madrid.r-es.org/87-jueves-29-de-febrero-2024/
+location: online
+summary: "I provide some experiences around developing and maintaining a package"
+abstract: ~
+date_end: '2024-02-29T20:30:00+02:00'
+all_day: no
+publishDate: '2024-02-29T20:30:00+02:00'
+authors:
+  - -admin
+featured: no
+image:
+  caption: ''
+  focal_point: ''
+links:
+  - icon: images
+    icon_pack: fas
+    name: slides
+    url: https://docs.google.com/presentation/d/1UzHsy280RzCxcIxt6N9G6V2ql_l6kQRAUNRHjYrmNkU/edit?usp=sharing
+  - icon: vimeo
+    icon_pack: fab
+    name: video
+    url: https://player.vimeo.com/video/918131059
+projects: []
+---
+
+This presentation was in Spanish. I shared the history of my involvement with rtweet and what is happening with the package and Twitter API.
+
