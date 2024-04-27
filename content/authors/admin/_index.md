@@ -7,18 +7,13 @@ authors:
 superuser: true
 role: Bioinformatician
 organizations:
-- name: Universitat de Barcelona
-  url: https://www.ub.edu/web/ub/en/index.html?
-- name: CIBEREHD
-  url: https://www.ciberehd.org/en
-- name: RSGSpain
-  url: http://www.rsg-spain.iscbsc.org/
-bio: Bioinformatician with interests in functional enrichment, data integration and
-  transcriptomics. 
+- name: IrsiCaixa
+  url: https://irsicaixa.es
+bio: Bioinformatician with interests in software quality, mostly R.
 interests:
-- Functional enrichment
-- Data integration
+- Software quality
 - Improving process
+- Data integration
 education:
   courses:
   - course: PhD in Biomedicnie (Bioinformatics)
@@ -30,7 +25,7 @@ education:
   - course: BSc in Biotechnology
     institution: Universitat Autònoma de Barcelona
     year: 2015
-email: lluis.revilla+llrs@gmail.com
+email: lluis.revilla+blog@gmail.com
 social:
 - icon: envelope
   icon_pack: fas
@@ -38,9 +33,9 @@ social:
 - icon: linkedin-in
   icon_pack: fab
   link: https://linkedin.com/in/lluisrevilla/
-- icon: twitter
-  icon_pack: fab
-  link: https://twitter.com/Lluis_Revilla
+# - icon: twitter
+#   icon_pack: fab
+#   link: https://twitter.com/Lluis_Revilla
 - icon: mastodon
   icon_pack: fab
   link: https://fosstodon.org/@Lluis_Revilla
