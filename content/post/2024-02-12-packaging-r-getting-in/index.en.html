@@ -1,0 +1,78 @@
+---
+title: 'Packaging R: getting in repositories'
+author: Lluís Revilla Sancho
+date: '2024-05-05'
+slug: packaging-r-getting-in
+categories:
+  - Bioconductor
+  - CRAN
+  - OSS
+tags:
+  - R
+authors:
+  - admin
+description: ''
+draft: no
+editor_options:
+  chunk_output_type: console
+featured: no
+image:
+  caption: ''
+  focal_point: ''
+subtitle: ''
+summary: ''
+---
+
+
+
+<p>After the previous post collecting information about repositories I want to collect here my thoughts on adding a package in a repository and how repositories are recognized.
+As in the previous post this is built on the assumption that one already has a package or more and wants to distribute it.</p>
+<p>This is meant as a reflection of what is an R repository and not intended for R package developers.
+However, their feedback is appreciated to consider how an ideal repository would be.</p>
+<div id="package-submission" class="section level2">
+<h2>Package submission</h2>
+<p>An R repository will have a way to incorporate a package.
+CRAN submission process starts with <a href="https://cran.r-project.org/submit.html">a form</a>, while Bioconductor is done through a <a href="https://github.com/Bioconductor/Contributions/issues/new">Github issue</a>.</p>
+<p>The process will usually then start with an automated process.
+Until the automated process check hasn’t passed probably no one will look into the package submission.
+This reduce the hours a human must dedicate to manage submissions.
+If a man is kept in the loop one could appeal the automatic process contacting them, or if it is a random failing re-submitting the package again.</p>
+<div class="float">
+<img src="images/submissions.png" alt="Package submission checks: first a check of the package, if it is not new a dependency check from the repository if all checks pass the package is added to the repository." />
+<div class="figcaption"><strong>Package submission checks</strong>: first a check of the package, if it is not new a dependency check from the repository if all checks pass the package is added to the repository.</div>
+</div>
+<p>Generally a package must first pass a package quality check before it is considered for further integration test.
+This integration test is usually checking the new version of a package with packages that depend on it, also known as reverse dependencies.</p>
+</div>
+<div id="package-maintenance" class="section level2">
+<h2>Package maintenance</h2>
+<p>Once a package is included in a repository it usually needs to be maintained.</p>
+<p>There are many moving pieces, chips architecture, OS, R, other packages.
+This all lead that authors need to maintain the packages in good shape if they want it to remain useful to users.
+Of course, if one doesn’t want to do that they do not need to create a repository to share their package.</p>
+<div class="float">
+<img src="images/checks.png" alt="Graphic showing time and different R versions and checks. Repositories check the packages on them on multiple levels." />
+<div class="figcaption"><strong>Graphic showing time and different R versions and checks.</strong> Repositories check the packages on them on multiple levels.</div>
+</div>
+<p>This leads that at any given time point there must be some tests for any given package under different conditions as shown in image 2.
+This leads to the possibility of having a package archived from the repository for failing the checks in place.</p>
+<p>Repositories provide these checks as a service to the users.
+They guarantee that R packages in the repository work well together and pass the same set of packages (mostly).
+This is what leads to their reputation and usage among users (this is true beyond R, DEBIAN, Ubuntu, …).</p>
+</div>
+<div id="closing-remarks" class="section level2">
+<h2>Closing remarks</h2>
+<p>There are several official repositories how the package submission works when a package is submitted to one but it is related, via dependencies to other repositories is a matter of another post.</p>
+<p>There are some discussion on what is an R repository.
+The importance of CRAN and Bioconductor has lead to some confusion.
+There are generally two meanings of what a cran-like repository is:</p>
+<ol style="list-style-type: decimal">
+<li><p>One where <code>install.packages()</code> works (This is defined by how the files and binaries are organized and will be a theme for another time).</p></li>
+<li><p>One were all the checks described here are in place and <code>install.packages()</code> works too.</p></li>
+</ol>
+<p>r-universe is using the first definition but could be used to generate repositories with checks that comply with the second definition.
+Other repositories that use that are the <a href="https://packagemanager.posit.co/client/#/"><em>Posit</em> Public <em>Package Manager</em></a>, or the <a href="https://r4pi.org/">R4Pi repository</a> (which provides binaries for Raspberry Pi OS).</p>
+<p>As the second definition is more strict I’ll focus on it as this post has explained.</p>
+<p>PS: This post might be edited as it has been siting in my computer for several months.
+I prefer to post it and be improved with feedback, so let me know if you have any addition.</p>
+</div>
