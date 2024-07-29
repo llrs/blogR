@@ -8,10 +8,10 @@ categories:
   - r
 tags:
   - R
-  - useR!Conference
+  - useRConference
 authors:
   - admin
-description: ''
+description: 'The ambient in the user!2024 conference'
 draft: no
 editor_options:
   chunk_output_type: console
