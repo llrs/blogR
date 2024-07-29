@@ -154,19 +154,20 @@ However, the event ended very successfully with many patches and improvements. A
 
 # Summary
 
-The environment of the conference was great, I spoke with many people who like me, was their first useR conference. 
-There were also seasoned useRs that had been at many conferences. 
-I don't know if they found this conference better or worse than previous editions but I found it it helped me to meet with people I already connected online and new people. 
+The conference environment was fantastic, and I had the chance to meet many people attending their first useR conference, like myself. 
+There were also many seasoned useRs who had attended multiple conferences. 
+I can't speak to how they found this conference compared to previous ones, but for me, it was a valuable opportunity to connect with people I had previously only met online and to make new connections.
 
-I didn't take many photos with people, but I saw some people taking photos of their group, R ladies, company or selfies with other attendees (like Hadley Wickham) or online friends. 
-I didn't saw many people approaching the R core members, which without them we wouldn't be there.
-I must admit that I didn't know exactly how to approach them. 
-I see two approaches: 1) go like a fan and ask for a selfie with them, 2) approach to them with questions or petitions about R.
+Although I didn’t take many photos with people, I noticed others taking photos with their groups, such as R Ladies, company teams, or selfies with fellow attendees and online friends (including Hadley Wickham). 
+Interestingly, not many people approached the R core members, without whom this event wouldn't be possible. 
+I must admit, I wasn’t sure how to approach them myself. 
+I see two possible approaches: either go up to them like a fan asking for a selfie or engage them with questions or requests about R. 
+Neither extreme seemed ideal to me. 
+Instead, there might be more value in understanding their perspectives on R and finding ways to collaborate with them.
 
-I don't think neither is good but maybe there could be more collaboration with the R core.
-
-One useR told me that the R core can't continue working as it was now that companies investing money and depending on it. 
-While this is a problem for the company, I also would like to see some changes in the R core.
-I am sure that with more collaboration with with them we will overcome the upcoming challenges, I hope experienced R developers that have already some rapport with the R core will step up. 
+One useR mentioned to me that the R core can't continue operating as it has, especially now that companies are investing money and relying on it. 
+While this poses challenges for businesses, I also see it as an opportunity for positive changes within the R core. 
+I believe that through increased collaboration, we can overcome upcoming challenges. 
+I hope that experienced R developers who already have a rapport with the R core will take the lead.
 
 What was your experience at useR!2024? Do you agree on supporting and collaborating more the R core? We can continue the conversation at [@Lluis_Revilla@fosstodon.org](https://fosstodon.org/@Lluis_Revilla)
