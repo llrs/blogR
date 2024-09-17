@@ -288,8 +288,7 @@ summarise(xrefBase3,
           n = n(), 
           ndocs = n_distinct(Rd_origin), 
           nlinks = n_distinct(to_pkg, to_target), 
-          ndocs_d = n_distinct(to_target)) |> 
-  View("a")
+          ndocs_d = n_distinct(to_target))
 ```
 
 
@@ -330,7 +329,7 @@ aliasesCRAN <- alias2df(aliases_CRAN)
 aliasesCRAN |> 
   summarise(.by = Package, n = n_distinct(Source)) |> 
   arrange(-n) |> 
-  head()
+  head(10)
 ```
 
 We can also find those targets that are duplicated on CRAN:
@@ -378,9 +377,14 @@ fill_xref_cran <- function(z) {
   no_anchor <- !nzchar(z$Anchor)
   no_anchor_no_dup <- no_anchor & is.na(z[["to_pkg"]]) & !z[["Target"]] %in% dup_cran[["Target"]]
   match_target <- match(z[["Target"]][no_anchor_no_dup], aliasesCRAN[["Target"]])
+  
   # Adding values
   z[["to_pkg"]][no_anchor_no_dup] <- aliasesCRAN[["Package"]][match_target]
   z[["to_target"]][no_anchor_no_dup] <- aliasesCRAN[["Target"]][match_target]
+  
+  # Adding the package of those that have anchors 
+  missing_but_anchor <- is.na(z[["to_pkg"]]) & startsWith(z[["Anchor"]], "=")
+  z[["to_pkg"]][missing_but_anchor] <- z[["Package"]][missing_but_anchor]
   
   # Adding duplicated Targets/topics at other packages but present on the package
   blank_target <- is.na(z$to_target)
@@ -401,8 +405,7 @@ rdxrefsCRAN3 <- merge(rdxrefsCRAN2, rbind(aliasesBase, aliasesCRAN),
   select(Rd_origin = Source.x, Anchor, Target, Package, to_pkg, to_target, Rd_destiny = Source.y)
 ```
 
-### Continue here
-
+Here we are:
 
 ```{r}
 missing <- xrefBase3 |> 
@@ -416,46 +419,138 @@ xrefBase3_m <- merge(missing, aliasesCRAN,
 
 xrefBase4 <- xrefBase3 |> 
   filter(!is.na(Rd_destiny)) |>
-  rbind(xrefBase3_m)
+  rbind(xrefBase3_m) |> 
+  arrange(Package, Rd_origin)
+```
+
+
+Now that we added the references to the files we can check some 
+
+```{r}
 
 ```
 
+Now we can add the links that use the file names instead of topics.
+
 ```{r}
-count(xrefBase4, is.na(Rd_destiny))
+missing <- xrefBase4 |> 
+  filter(is.na(Rd_destiny), !is.na(to_pkg), !is.na(to_target)) |> 
+  select(-Rd_destiny, Source = Rd_origin)
+
+aliasesCRAN$filename <- tools::file_path_sans_ext(aliasesCRAN$Source)
+aliasesBase$filename <- tools::file_path_sans_ext(aliasesBase$Source)
+all_aliases <- rbind(aliasesCRAN, aliasesBase)
+xrefBase4_m <- merge(missing, all_aliases[, -2], 
+            by.x = c("to_pkg", "to_target"), 
+            by.y = c("Package", "filename"), 
+            all.x = TRUE, sort = FALSE) |> 
+  select(Rd_origin = Source.x, Anchor, Target, Package, to_pkg, to_target, Rd_destiny = Source.y) |> 
+  distinct() |> 
+  mutate(Rd_destiny = if_else(!is.na(Rd_destiny), paste0("=", Rd_destiny), NA))
+
+
+xrefBase5 <- xrefBase4 |> 
+  filter(!is.na(Rd_destiny)) |>
+  rbind(xrefBase4_m) |> 
+  mutate(to_file = startsWith(Rd_destiny, "="),
+         Rd_destiny = gsub("^=", "", Rd_destiny)) |> 
+  arrange(Package, Rd_origin)
+```
+
+We added a column to add this information. 
+We need to do the same with CRAN links
+
+```{r}
+missing <- rdxrefsCRAN3 |> 
+  filter(is.na(Rd_destiny), !is.na(to_pkg), !is.na(to_target)) |> 
+  select(-Rd_destiny, Source = Rd_origin) |> 
+  mutate(n = seq_len(n()))
+
+rdxrefsCRAN3_m <- merge(missing, all_aliases[, -2], 
+            by.x = c("to_pkg", "to_target"), 
+            by.y = c("Package", "filename"), 
+            all.x = TRUE, sort = FALSE) |> 
+  distinct(n, .keep_all = TRUE) |> 
+  select(Rd_origin = Source.x, Anchor, Target, Package, to_pkg, to_target, Rd_destiny = Source.y) |> 
+  mutate(Rd_destiny = if_else(!is.na(Rd_destiny), paste0("=", Rd_destiny), NA))
+# abcdef
+rdxrefsCRAN4 <- rdxrefsCRAN3 |> 
+  filter(!is.na(Rd_destiny)) |>
+  rbind(rdxrefsCRAN3_m) |> 
+  mutate(to_file = startsWith(Rd_destiny, "="),
+         Rd_destiny = gsub("^=", "", Rd_destiny)) |> 
+  arrange(Package, Rd_origin)
+```
+
+## Checking them
+
+We can continue adding some more columns to the data for different conditions:
+
+```{r}
+# Collect Bioconductor packages
+ap_bioc <- available.packages(repos = BiocManager::repositories()[1:5],
+                              filters = character())
+bioc_packages <- rownames(ap_bioc)
+
+# "Merge" the two repositories (Keeping those windows specific)
+db$Repository <- "CRAN"
+db$File <- NA_character_
+ap_all <- rbind(db[, colnames(ap_bioc)], ap_bioc)
+
 tpd <- tools::package_dependencies(db$Package, 
-                            db = db, 
+                            db = ap_all, 
                             which = c("Depends", "Imports", "Suggests", "Enhances"))
+
 in_tpd <- function(pkg) {
   tpd[[unique(pkg)]]
 }
-mis <- rdxrefsCRAN3 |> 
-  filter() |> 
+
+mis <- rdxrefsCRAN4 |> 
   summarise(.by = Package, 
-            missing_destiny = any(is.na(Rd_destiny)),
+            to_file = any(to_file),
+            to_file_w_eq_anchor = any(to_file & startsWith(Anchor, "=")),
+            missing_destination = any(is.na(Rd_destiny)),
             missing_anchors = any(!nzchar(Anchor)),
-            not_base = any(missing_anchors & !is.na(to_pkg) & !to_pkg %in% names(aliases_base)), 
-            missing_other = any(missing_anchors & !is.na(to_pkg) & to_pkg != Package),
-            missing_dependency = any(!is.na(to_pkg) & !to_pkg %in% c(Package, in_tpd(Package))),
-            missing_package = !to_pkg %in% c(names(rdxrefs_CRAN), names(xrefs_base)),
-            any = any(not_base, missing_other, missing_dependency)
-  ) |> 
-  filter(missing_destiny | any)
+            linking2base = any(!to_pkg %in% names(aliases_base) & !is.na(to_pkg)),
+            linking2cran = any(!is.na(to_pkg) & to_pkg != Package),
+            linking2bioc = any(to_pkg %in% bioc_packages),
+            missing_dependency = any(!is.na(to_pkg) & !to_pkg %in% c(Package, in_tpd(Package)) & !to_pkg %in% names(aliases_base))
+  )
 ```
 
+To further check what is happening we can compare directly with what CRAN reports.
 
 ```{r}
 ccd <- tools::CRAN_check_details()
 mis2 <- ccd |> 
   as.data.frame() |> 
   filter(Check == "Rd cross-references") |> 
-  distinct(Package)
+  distinct(Package) |> 
+  mutate(CRAN_checks = "rd_cross_reference")
 
-mis2$type <- "rd_cross_reference"
 m <- merge(mis2, mis, all = TRUE)
-count(m, type, missing_destiny, missing_anchors)
-filter(m, !is.na(type), is.na(missing_destiny), is.na(missing_anchors)) |> 
-  pull(Package) |> 
-  head()
+count(m, CRAN_checks, missing_anchors) 
+m |> filter(is.na(CRAN_checks)) |> 
+  count(missing_anchors, 
+linking2base, linking2cran, linking2bioc, missing_dependency, , 
+missing_package, sort = TRUE) |> 
+  arrange(n)
+
+m |> count(CRAN_checks, to_file_w_eq_anchor, missing_destination, missing_dependency, missing_anchors)
+
+# TODO find out why those packages do not match the data
+# MetaNLP has a link to glmnet that is detected as problematic for CRAN in select_features.Rd but it links correctly to glmnet and glmnet has a target for glmnet.
+# # TODODO
+pkgs <- m |> 
+  filter(!is.na(CRAN_checks)) |> 
+  filter(!to_file_w_eq_anchor, !missing_destination, !missing_dependency, !missing_anchors) |>
+  pull(Package)
+
+m |> 
+  filter(is.na(CRAN_checks)) |> 
+  filter(missing_destiny, !missing_anchors, !not_base, missing_other, missing_dependency, !to_bioc, !missing_package)
+
+
 sdm <- setdiff(mis2$Package, mis$Package[mis$missing_anchors])
 sdm2 <- setdiff(mis$Package[mis$missing_anchors], mis2$Package)
 
@@ -463,7 +558,7 @@ sdm2 <- setdiff(mis$Package[mis$missing_anchors], mis2$Package)
 ```
 
 
-
+# Analysis
 
 ```{r}
 missing_anchors <- rdxrefsCRAN3 |> 
@@ -520,7 +615,7 @@ However, roxygen2 cross-references in `@family tag` do not follow the same patte
 </details>
 
 
-```{r}
+```{r eval=FALSE}
 rdxrefs <- tools:::CRAN_rdxrefs_db()
 ## Note that as of 2024-06-11, 7139 CRAN packages have no Rd xrefs:
 (n1 <- sum(lengths(rdxrefs) == 0L))
@@ -589,14 +684,17 @@ While I have been pressing for having the same file available at the time of wri
 
 As this is is a recent introduction to R repositories and not compulsory, or mandated by the R-admin section about [setting up repositories](https://cran.r-project.org/doc/manuals/r-release/R-admin.html#Setting-up-a-package-repository) it is not provided by Bioconductor or R-universe or other systems to setup repositories. 
 
+The code in CRAN goes beyond the definition of repository set and Bioconductor hasn't provided this detail of information (yet?).
+
 # Conclusions
 
 ### Reproducibility
 
 <details>
+<summary>Session info</summary>
 ```{r reproducibility, echo = FALSE}
 ## Reproducibility info
 options(width = 120)
-sessioninfo::session_info()
+sessioninfo::session_info(info = c("platform", "packages"))
 ```
 </details>
