@@ -2,9 +2,16 @@
 active: true
 date_format: January 2006
 experience:
+- company: Roche
+  company_url: https://www.roche.com
+  date_end: ""
+  date_start: "2022-12-01"
+  description: "Part of the Data&Analysis team I work in different projects:\n * Teal framework\n * R regulatory working group"
+  location: Madrid
+  title: Data scientist
 - company: IrsiCaixa
   company_url: https://www.irsicaixa.es/en
-  date_end: ""
+  date_end: "2024-10-11"
   date_start: "2022-12-01"
   description: "Responsibilities include:\n  \n * Analysing RNA-seq \n 
     \n * Building reports and provide statistical support\n * Assessing design of sequencing experiments\n"
