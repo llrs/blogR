@@ -1,0 +1,1442 @@
+---
+title: "Exploring CRAN's files: part 3"
+subtitle: 'References: links between pages, packages and base R'
+author: Lluís Revilla Sancho
+date: '2024-09-23'
+slug: cran-files-3
+categories:
+  - CRAN
+  - r
+tags:
+  - r
+  - packages
+  - cran-files
+authors:
+  - admin
+description: ''
+draft: no
+editor_options:
+  chunk_output_type: console
+featured: yes
+image:
+  caption: ''
+  focal_point: ''
+summary: 'Exploring references and help pages of base R packages and CRAN packages.'
+---
+
+```{r setup, include = FALSE}
+knitr::opts_chunk$set(collapse = TRUE, fig.retina = 2, cache = TRUE, 
+                      include = TRUE, echo = FALSE, warning = FALSE, 
+                      error = FALSE, message = FALSE, eval = TRUE)
+Sys.setlocale("LC_ALL", "C")
+Sys.setenv(R_CRAN_WEB = "https://cloud.r-project.org")
+```
+
+
+In the blog post of CRAN files, I [initially explored the database](https://llrs.dev/post/2022/07/23/cran-files-1/) (mostly around `CRAN_package_db()`). On the [second post](https://llrs.dev/post/2022/07/28/cran-files-2/) I moved to analyze the archive around `CRAN_archive_db()`.
+
+Recently at useR!2024, Kurt Hornik offered to export data from CRAN. After an email [several new functions were exported](https://developer.r-project.org/blosxom.cgi/R-devel/NEWS/2024/08/22#n2024-08-22) and introduced to base R.
+
+In that presentation and in a previous exchange with Kurt, he explained his project about providing the HTML manual pages of all CRAN packages.
+One of the problems with this projects is providing links to the right pages of the packages (others are making it accessible for all users).
+
+In R-devel now there are test that ensure links to other pages are in the right format [^1].
+In this post we we'll explore links between documentation pages, what manuals say about them and what is the state of base R and the CRAN packages.
+
+[^1]: By setting `_R_CHECK_XREFS_NOTE_MISSING_PACKAGE_ANCHORS_=true` as environmental variable.
+
+# Introduction
+
+Help pages are defined in R documentation files, commonly with the `.Rd` extension.
+Each documentation file can have multiple topics.
+A topic is defined in R documentation format with `\alias{topic}`, so once can use interchangeably alias and topics.
+Links, or cross-references (xref for short) [should be to an alias](https://cran.r-project.org/doc/manuals/r-devel/R-exts.html#Cross_002dreferences), not to files (allowing to move topics between help pages)[^4].
+
+[^4]: But using links to files is still fine.
+
+One can define links with `\link{alias}` or `\link[=alias]{name}` if the link is to a different place than the name [^2]. 
+In the second form the content within the square bracket is known as anchor.
+
+There are two other forms accepted: `\link[pkg]{alias}` and `\link[pkg:alias]{name}` which do not use the `=` inside the anchor [^3]. 
+These last two forms are only used in the HTML format. 
+Packages referred to on these square brackets should be declared in the DESCRIPTION file, in the ‘Depends’, ‘Imports’, ‘Suggests’ or ‘Enhances’ fields.
+
+One important thing is that links are case sensitive: `?Complex` leads to a different help page than `?complex`. 
+
+[^2]: There is also the `\linkS4class{abc}` that expands to `\link[=abc-class]{abc}` for S4 classes.
+
+[^3]: So there are three names for (almost) the same thing: topic, alias and anchor. Anchors do not need to start with `=` but should be resolvable.
+
+With this in mind we can check to which packages have more manual pages, have more cross-references, or have an overview help page (those with *pkgname*-package.Rd).
+We will also check which documentation pages have more links, are more linked to, or needs its links fixed.
+
+# Base R
+
+Before looking to CRAN packages we can start by looking to R base packages.
+
+Previously there wasn't a way to know the links and aliases in base R. Since recently (~2024/08/20) we can download them (on R-devel till it is released on R 4.5) with `tools::base_aliases_db()` and `tools::base_rdxrefs_db()`.
+
+```{r base}
+library("ggrepel")
+library("knitr")
+library("ggplot2")
+aliases_base <- tools::base_aliases_db()
+xrefs_base <- tools:::base_rdxrefs_db()
+```
+
+
+## Aliases
+
+```{r}
+#| label: alias2df
+alias2df <- function(x){
+  l <- lapply(x, function(x) {
+    data.frame(Source = rep(names(x), lengths(x)),
+               Target = unlist(x, FALSE, FALSE))
+  })
+  aliasesDF <- do.call(rbind, l)
+  aliasesDF$Package <- rep(names(l), vapply(l, NROW, numeric(1L)))
+  rownames(aliasesDF) <- NULL
+  aliasesDF[, c("Source", "Target", "Package"), drop = FALSE]
+}
+
+aliasesBase <- alias2df(aliases_base)
+library("dplyr")
+```
+
+On base R there are `r dplyr::n_distinct(aliasesBase$Source)` help pages with `r nrow(aliasesBase)` topics/aliases.
+
+```{r}
+#| label: base-dup-files
+dup_files <- aliasesBase |> 
+  select(-Target) |> 
+  distinct() |> 
+  summarise(.by = Source, 
+            dup_pages = n(),
+            packages = paste(Package, collapse = ", ")) |> 
+  arrange(-dup_pages) |> 
+  filter(dup_pages > 1L) |> 
+  head()
+```
+
+There are some help files with the same name in base R that can be accessed via their targets (via `?Target`). 
+Those files are `r dup_files$Source`.  
+To distinguish between those files one need to check the title(s) and content of the pages.
+
+Similarly there are multiple help pages of different packages with the same topics:
+
+```{r}
+#| label: base-dup-targets
+dtBase <- aliasesBase |> 
+  summarise(.by = Target, n = n(), Package = paste0(Package, collapse = ", ")) |> 
+  filter(n > 1) |> 
+  arrange(Target, Package) |> 
+  select(Alias = Target, Packages = Package)
+dtBase
+```
+
+Most of them are in base and other packages, from the methods package to tools, grDevices, graphics, and utils.
+
+To access them directly one needs to use `help()`: `help("clipboard", package = "utils")` otherwise one will need to choose them from the menu it will pop up from using `?clipboard`.
+This works to access any other help page too.
+
+```{r}
+#| label: base-dup-pages
+uniq_target_pages <- aliasesBase |> 
+  filter(.by = Source, !Target %in% dup_files$Alias) |> 
+  filter(.by = c(Package, Source), n()  == 1) |> 
+  select(Package, Target, Source) |> 
+  group_by(Target, Package) |> 
+  arrange(Target, Package, Source) |> 
+  ungroup() |> 
+  select(Target, Package, Source)
+```
+
+There are `r nrow(uniq_target_pages)` help pages that only have one alias. 
+For example, `.BasicFunsList`, `.Platform` or `.Last.value`. 
+Some of these are datasets or very specific help pages.
+
+```{r}
+#| label: base-package.rd
+#| eval: FALSE
+aliasesBase |> 
+  filter(grepl("-package.Rd", Source)) |> 
+  filter(.by = Package, sum(Target == Package, 
+                            grepl(unique(paste0(Package, "-package")), Target)) != 2) |> 
+  select(Package, Source, Alias = Target)
+```
+
+Last, we can check the topics for the packages' help page.
+While usually packages have at least two alias, `pkg` and one `pkgname-package`, there are two packages that do not have this, **grid** and **methods** packages.  
+These packages do not have the alias for `pkgname` to their own package help page.
+`?grid` could be confused with `graphics::grid` and `?methods` could be confused with `utils::methods`.  
+
+## Cross references
+
+Having explored the topics on the help pages, it is time to move to the cross references on R.
+
+We can check where these help pages link to, starting by knowing how many are directly to the alias or those that use an anchor:
+
+```{r}
+#| label: xrefsBase
+xrefs2df <- function(x) {
+  rdxrefsDF <- do.call(rbind, x)
+  rdxrefsDF <- as.data.frame(rdxrefsDF)
+  rdxrefsDF$Package <- rep(names(x), vapply(x, NROW, numeric(1L)))  
+  rownames(rdxrefsDF) <- NULL
+  rdxrefsDF[, c("Source", "Target", "Anchor", "Package"), drop = FALSE]
+  rdxrefsDF
+}
+xrefBase <- xrefs2df(xrefs_base)
+```
+
+
+```{r}
+#| label: links-base
+#| fig-cap: "**Packages with links using alias per help page.** Each point is a help pages with different number of links. Some packages directly link a lot while others are more mixed."
+library("ggplot2")
+
+xref_summary <- xrefBase |> 
+  group_by(Package, Source) |> 
+  count(Change_name = nzchar(Anchor)) |> 
+  ungroup() |> 
+  arrange(Package, Source, Change_name) |> 
+  mutate(.by = c(Package), help_pages = n_distinct(Source)) |> 
+  mutate(.by = c(Package, Source), ratio_source = sum(n[Change_name])/sum(n)) |> 
+  summarise(.by = c(Package, Change_name, n, help_pages, ratio_source), size = n()) |> 
+  mutate(.by = c(Package), ratio_pkg = sum(n[Change_name])/sum(n)) 
+
+library("forcats")
+xref_summary |> 
+  ggplot() +
+  geom_jitter(aes(ratio_source, fct_reorder(Package, help_pages, .fun = max), 
+                  size = n), width = 0) +
+  scale_size(limits = c(1, NA), breaks = c(1, seq(from = 10, to = 100, by = 10))) +
+  scale_x_continuous(labels = scales::label_percent(), expand = expansion(add = 0.025, mult = 0)) +
+  labs(x = "Links using alias", y = element_blank(), 
+       size = "Links",
+       title = "Links with alias per help page",
+       subtitle = "Packages sorted by number of help pages") +
+  theme_minimal() +
+  theme(plot.title.position = "plot")
+```
+
+We can further explore to where they link if we find out the package and topic, instead of just the topic used.
+
+```{r}
+#| label: base-split-dest
+xrefBase <- cbind(xrefBase, 
+                   strcapture("([[:alnum:].]*{2,})?[:=]?(.*)", 
+                              x = xrefBase$Anchor, 
+                              proto = data.frame(to_pkg = character(), 
+                                                 to_target = character())))
+```
+
+```{r}
+#| label: base-fill-xref
+fill_xref <- function(z, alias, duplicate_alias) {
+
+  # Anchors with packages
+  missing_target <- nzchar(z$Anchor) & !startsWith(z$Anchor, "=") & !grepl(":", z$Anchor, fixed = TRUE)
+  z$to_target[missing_target] <- z$Target[missing_target]
+  
+  # Anchors with = to base packages with no duplicates
+  anchors_nodup <- startsWith(z$Anchor, "=") & !z$Anchor %in% duplicate_alias
+  match_target <- match(z$to_target[anchors_nodup], alias$Target)
+  z$to_pkg[anchors_nodup] <- alias$Package[match_target]
+  
+  # Anchors with = to packages with duplicates
+  anchors_dup <- startsWith(z$Anchor, "=") & z$Anchor %in% duplicate_alias
+  z$to_pkg[anchors_dup] <- z$Package[anchors_dup]
+  
+  # No anchors
+  no_anchor <- !nzchar(z$Anchor)
+  match_target <- match(z$Target[no_anchor], alias$Target)
+  z$to_pkg[no_anchor] <- alias$Package[match_target]
+  z$to_target[no_anchor] <- alias$Target[match_target]
+  z
+}
+
+xrefBase2 <- fill_xref(xrefBase, aliasesBase, dtBase$Alias)
+
+# We can then add the aliases to know to which help page do they link.
+xrefBase3 <- merge(xrefBase2, aliasesBase,
+            by.x = c("to_pkg", "to_target"), 
+            by.y = c("Package", "Target"), 
+            all.x = TRUE, sort = FALSE) |> 
+  select(Rd_origin = Source.x, Anchor, Target, Package, to_pkg, to_target, Rd_destiny = Source.y)
+# As expected, xref to other packages not in base R are not included. 
+```
+
+
+```{r}
+#| label: self-xref
+self_xref <- xrefBase3 |> 
+  filter(Rd_origin == Rd_destiny, Package == to_pkg) |> 
+  select(Rd_origin, Target, Package) |> 
+  distinct(Rd_origin, Package)
+
+```
+
+We can check for pages that link to themselves.
+The cross-reference system doesn't provide a way to link to a specific section (yet?). 
+When users follow those links they are redirected to the top of the same help page,
+while probably they were expecting to go to another help page.
+At least this is something I have felt in the past. 
+In my opinion these links could be deleted and rewritten to explain which section should the user read:
+
+```{r}
+#| label: self-references
+#| tab.cap: "**Help pages on base with links to themselves**. These links could be removed or perhaps a linking to a specific section could be implemented."
+sx <- self_xref[, c("Package", "Rd_origin")]
+colnames(sx)[2] <- c("Help page")
+sx2 <- sort_by(sx, ~Package)
+rownames(sx2) <- NULL
+kable(sx2)
+```
+
+There are `r nrow(self_xref)` links to their own help pages that could be removed. 
+
+R documentation files with references to other help pages: 
+
+```{r}
+#| label: plot-base-package-links
+#| fig-cap: "**Links between R help pages are predominantly to their own
+#|  package.** Base is more connected than any other package. Some packages
+#|  recieve links from very few packages."
+# Explore the information
+cross_ref_base <- summarise(xrefBase3, 
+          .by = c(Package, to_pkg), 
+          n = n(), 
+          ndocs = n_distinct(Rd_origin), 
+          nlinks = n_distinct(to_pkg, to_target), 
+          ndocs_d = n_distinct(to_target))
+
+cross_ref_base |> 
+  filter(!is.na(to_pkg),
+         to_pkg %in% names(aliases_base)) |> 
+  mutate(Package = fct_reorder2(Package, n, ndocs, .fun = sum),
+         Package = factor(Package, levels = rev(levels(Package)))) |> 
+  ggplot() +
+  geom_point(aes(fct_relevel(to_pkg, rev(levels(Package))),
+                 Package, 
+                 col = n, size = ndocs)) +
+  labs(x = "To", y = "From", col = "Links", size = "Help pages",
+       title = "Links between R help pages:") +
+  theme_minimal() +
+  scale_x_discrete(position = "top", guide = guide_axis(n.dodge = 2))  +
+  theme(plot.title.position = "plot", 
+        axis.title.y = element_text(hjust = 0, vjust = 1, angle = 0),
+        axis.title.x = element_text(hjust = 0),
+        )
+```
+
+We can clearly see that the packages link more between their own package but there are some heavily connected packages like utils and base or stats and base. 
+Surprisingly, **compiler** package doesn't have any reference to other packages. 
+
+
+```{r}
+#| label: cran-aliases
+aliases_CRAN <- tools:::CRAN_aliases_db()
+aliasesCRAN <- alias2df(aliases_CRAN)
+aliasesCRAN$filename <- tools::file_path_sans_ext(aliasesCRAN$Source)
+```
+
+
+```{r}
+#| label: base-links-cran
+missing <- xrefBase3 |> 
+  filter(is.na(Rd_destiny)) |> 
+  select(-Rd_destiny, Source = Rd_origin)
+xrefBase3_m <- merge(missing, aliasesCRAN, 
+            by.x = c("to_pkg", "to_target"), 
+            by.y = c("Package", "Target"), 
+            all.x = TRUE, sort = FALSE) |> 
+  select(Rd_origin = Source.x, Anchor, Target, Package, to_pkg, to_target, Rd_destiny = Source.y)
+
+xrefBase4 <- xrefBase3 |> 
+  filter(!is.na(Rd_destiny)) |>
+  rbind(xrefBase3_m) |> 
+  arrange(Package, Rd_origin)
+```
+
+There were help pages that use the file names instead of topics to link pages[^98]. 
+I raised this issue on the [mailing list](https://stat.ethz.ch/pipermail/r-devel/2024-September/083626.html) and submitted a patch later on [18815](https://bugs.r-project.org/show_bug.cgi?id=18815) that got them fixed before publishing this post.
+
+[^98]: Yes, even though the documentation makes it clear that this shouldn't be done the help system works around this issue. 
+
+We also observed that some packages do not provide links.
+How frequent is this and how it affects base R? 
+
+
+```{r}
+#| label: base-links-files
+
+# This was used to detect those packages linking to a file.
+missingBase <- xrefBase4 |> 
+  mutate(n = seq_len(n())) |> 
+  filter(is.na(Rd_destiny) & !is.na(to_pkg) & !is.na(to_target)) |> 
+  select(-Rd_destiny, Source = Rd_origin)
+
+aliasesCRAN$filename <- tools::file_path_sans_ext(aliasesCRAN$Source)
+aliasesBase$filename <- tools::file_path_sans_ext(aliasesBase$Source)
+all_aliases <- rbind(aliasesCRAN, aliasesBase)
+xrefBase4_m <- merge(missingBase, all_aliases[, -2], 
+            by.x = c("to_pkg", "to_target"), 
+            by.y = c("Package", "filename"), 
+            all.x = TRUE, sort = FALSE, all.y = FALSE) |> 
+  select(Rd_origin = Source.x, Anchor, Target, Package, to_pkg, to_target,
+         Rd_destiny = Source.y, n) |> 
+  distinct(.keep_all = TRUE) |> 
+  mutate(Rd_destiny = if_else(!is.na(Rd_destiny), paste0("=", Rd_destiny), NA))
+
+xrefBase5 <- xrefBase4 |> 
+  mutate(n = seq_len(n())) |> 
+  filter(!n %in% xrefBase4_m$n) |>
+  rbind(xrefBase4_m) |> 
+  mutate(to_file = startsWith(Rd_destiny, "="),
+         Rd_destiny = gsub("^=", "", Rd_destiny)) |> 
+  arrange(Package, Rd_origin, n) |> 
+  select(-n)
+
+stopifnot(sum(startsWith(xrefBase4_m$Rd_destiny, "="), na.rm = TRUE) == sum(xrefBase5$to_file))
+stopifnot(nrow(xrefBase4) == nrow(xrefBase5))
+```
+
+
+```{r}
+#| label: cran-split-dest
+rdxrefs_CRAN <- tools:::CRAN_rdxrefs_db()
+rdxrefsCRAN <- xrefs2df(rdxrefs_CRAN)
+pkg_no_links <- setdiff(names(rdxrefs_CRAN), rdxrefsCRAN$Package)
+rdxrefsCRAN <- cbind(rdxrefsCRAN, 
+                     strcapture("([[:alnum:].]*{2,})?[:=]?(.*)", 
+                                x = rdxrefsCRAN$Anchor, 
+                                proto = data.frame(to_pkg = character(), 
+                                                   to_target = character())))
+
+# Fill with base references
+rdxrefsCRAN <- fill_xref(rdxrefsCRAN, aliasesBase, dtBase$Alias)
+
+dup_cran <- aliasesCRAN |> 
+  summarise(.by = Target, n = n_distinct(Package), 
+            Package = paste(Package, collapse = ", ")) |> 
+  arrange(-n) |> 
+  filter(n > 1)
+# Fill with CRAN targets
+fill_xref_cran <- function(z, alias = aliasesCRAN, duplicates = dup_cran[["Target"]]) {
+  # No anchors assuming they are from CRAN
+  no_anchor <- !nzchar(z$Anchor)
+  no_anchor_no_dup <- no_anchor & is.na(z[["to_pkg"]]) & !z[["Target"]] %in% duplicates
+  match_target <- match(z[["Target"]][no_anchor_no_dup], alias[["Target"]])
+  
+  # Adding values
+  z[["to_pkg"]][no_anchor_no_dup] <- alias[["Package"]][match_target]
+  z[["to_target"]][no_anchor_no_dup] <- alias[["Target"]][match_target]
+  
+  # Adding the package of those that have anchors 
+  missing_but_anchor <- is.na(z[["to_pkg"]]) & startsWith(z[["Anchor"]], "=")
+  z[["to_pkg"]][missing_but_anchor] <- z[["Package"]][missing_but_anchor]
+  
+  # Adding duplicated Targets/topics at other packages but present on the package
+  blank_target <- is.na(z$to_target)
+  for (pkg in unique(z[["Package"]][blank_target])) {
+    z_keep <- z[["Package"]] == pkg & blank_target
+    alias_keep <- alias[["Package"]] == pkg
+    m <- match(z[["Target"]][z_keep], alias[["Target"]][alias_keep])
+    z[["to_target"]][z_keep] <- alias[["Target"]][alias_keep][m]
+    z[["to_pkg"]][z_keep] <- alias[["Package"]][alias_keep][m]
+  }
+  z
+}
+
+rdxrefsCRAN2 <- fill_xref_cran(rdxrefsCRAN)
+rdxrefsCRAN3 <- merge(rdxrefsCRAN2, rbind(aliasesBase, aliasesCRAN), 
+            by.x = c("to_pkg", "to_target"), 
+            by.y = c("Package", "Target"), 
+            all.x = TRUE, sort = FALSE) |> 
+  select(Rd_origin = Source.x, Anchor, Target, Package, to_pkg, 
+         to_target, Rd_destiny = Source.y)
+```
+
+
+```{r}
+#| label: cran-links-files
+# Try to merge those that we don't know the destiny but we know the other things
+missingCRAN <- rdxrefsCRAN3 |> 
+  mutate(n = seq_len(n())) |> 
+  filter(is.na(Rd_destiny) & !is.na(to_pkg) & !is.na(to_target)) |> 
+  select(-Rd_destiny, Source = Rd_origin) 
+
+rdxrefsCRAN3_m <- merge(missingCRAN, all_aliases[, -2], 
+            by.x = c("to_pkg", "to_target"), 
+            by.y = c("Package", "filename"), 
+            all.x = TRUE, sort = FALSE) |> 
+  distinct(.keep_all = TRUE) |> 
+  select(Rd_origin = Source.x, Anchor, Target, Package, to_pkg, to_target,
+         Rd_destiny = Source.y, n) |> 
+  mutate(Rd_destiny = if_else(!is.na(Rd_destiny), paste0("=", Rd_destiny), NA))
+
+rdxrefsCRAN4 <- rdxrefsCRAN3 |> 
+  mutate(n = seq_len(n())) |> 
+  filter(!n %in% rdxrefsCRAN3_m$n) |>
+  rbind(rdxrefsCRAN3_m) |> 
+  mutate(to_file = if_else(startsWith(Rd_destiny, "="), TRUE, FALSE),
+         Rd_destiny = gsub("^=", "", Rd_destiny)) |> 
+  arrange(Package, Rd_origin, n) |> 
+  select(-n)
+```
+
+```{r}
+#| label: base-pages-links
+#| tab.cap: "**References on help pages.** Most base help pages are referenced 
+#| and link to other help pages."
+
+base_to_file <- xrefBase5[, c("to_pkg", "Rd_destiny")]
+base_from_file <- xrefBase5[, c("Package", "Rd_origin")]
+base_aliases_files <- distinct(aliasesBase, Source, Package)
+
+base_rows_aliases <- do.call("paste", base_aliases_files[, c("Package", "Source")])
+base_rows_to <- do.call("paste", base_to_file[, c("to_pkg", "Rd_destiny")])
+base_rows_from <- do.call("paste", base_from_file[, c("Package", "Rd_origin")])
+
+m <- match(base_rows_to, base_rows_aliases)
+mt <- table(m)
+base_aliases_files$to_file <- 0
+base_aliases_files$to_file[as.numeric(names(mt))] <- mt
+
+m <- match(base_rows_from, base_rows_aliases)
+mt <- table(m)
+base_aliases_files$from_file <- 0
+base_aliases_files$from_file[as.numeric(names(mt))] <- mt
+
+cran_to_file <- rdxrefsCRAN4[, c("to_pkg", "Rd_destiny")]
+cran_rows_to <- do.call("paste", cran_to_file[, c("to_pkg", "Rd_destiny")])
+
+
+m <- match(cran_rows_to, base_rows_aliases)
+mt <- table(m)
+base_aliases_files$from_cran <- 0
+base_aliases_files$from_cran[as.numeric(names(mt))] <- mt
+
+base_aliases_files |> 
+  count(`Link from` = from_file != 0, 
+        `Reference to` = to_file != 0, 
+        name = "Help pages") |> 
+  mutate(perc = scales::percent(`Help pages`/sum(`Help pages`))) |> 
+  arrange(-`Help pages`/sum(`Help pages`)) |> 
+  kable()
+```
+
+
+Almost all help pages have links and most of them receive references from other help pages (compre this with \@ref(tab:cran-pages-links).
+Only 113 help pages do not have links or receive references, so unless they are documented somewhere else, like [R internals](https://cran.r-project.org/doc/manuals/r-devel/R-ints.html), [Writing R extensions](https://cran.r-project.org/doc/manuals/r-devel/R-exts.html), [R Installation and Administration](https://cran.r-project.org/doc/manuals/r-devel/R-admin.html), it will be hard to find them. 
+
+This seems a good opportunity to patch documentation and make it easier to find and use those help pages. 
+For example there is currently no CRAN package, or base package that links to `Rmcd()`. 
+This makes it harder to discover and use it. 
+
+```{r}
+#| label: base-pages-links2
+#| fig-cap: "**Help pages receiving and sending references to other help pages.**
+#|   The help page more linked on base is the options help page"
+base_aliases_files |> 
+  ggplot() +
+  geom_count(aes(to_file, from_file), alpha = 0.25) +
+  geom_text_repel(aes(to_file, from_file, label = Source, col = Package),
+                   data = . %>% filter(from_file > 50 | to_file > 50), key_glyph = draw_key_point) +
+  labs(size = "Help pages") +
+  geom_abline(slope = 1, intercept = 0, linetype = 2) +
+  theme_minimal() +
+  labs(title = "Links", x = "To other help pages", y = "To that help page")
+```
+
+While so far we focus on links if we compare that with the existing help pages we might find some interesting patterns:
+
+```{r}
+#| label: base-no-link
+#| tab.cap: "**Help pages with no links to them**."
+base_aliases_files |> 
+  filter(to_file < 1) |> 
+  count(Package, name = "Help pages") |> 
+  arrange(-`Help pages`) |> 
+  kable()
+```
+
+As one could expect there aren't many links on documentation help pages from datasets. 
+Surprisingly grid is the next package without links from other base packages, followed by base itself. 
+It would be interesting to see which help pages, as connecting these help pages to other topics might help users to find what R is capable. 
+
+```{r}
+#| label: base-no-ref
+#| tab.cap: "**Help pages with no references from them**."
+base_aliases_files |> 
+  filter(from_file < 1) |> 
+  count(Package, name = "Help pages") |> 
+  arrange(-`Help pages`) |> 
+  kable()
+```
+
+Similar to the table above there are many help pages that do not link to them
+
+But having links to and from help pages is not enough for discovering them.
+They could form a closed graph, where some pages are unreachable from the others.
+
+```{r}
+#| label: plot-base-links-files
+#| fig-cap: "**Graph of all the links between help pages of base R**. There are some help pages that are not connected to any other help page"
+rd_origin <- summarise(xrefBase3, 
+          .by = c(Rd_origin, Package, to_pkg, Rd_destiny), 
+          n = n()) |> 
+  mutate(from = paste0(Package, ":", Rd_origin),
+         to = paste0(to_pkg, ":", Rd_destiny)) |> 
+  mutate(.by = to, n_to = n_distinct(from)) |> 
+  mutate(.by = from, n_from = n_distinct(to)) |> 
+  filter(to_pkg %in% names(aliases_base))
+library("tidygraph")
+g <- rd_origin |> 
+  select(-Rd_origin, -to_pkg, -Rd_destiny) |> 
+  as_tbl_graph()
+
+ai <- as.igraph(g)
+aid <- igraph::decompose(ai)
+
+isolated_help <- sapply(aid[-1], igraph::vertex_attr) |> 
+  unlist(use.names = FALSE)
+
+library("tidygraph")
+library("ggraph")
+g |> 
+  ggraph() +
+  geom_edge_link(aes(col = n), alpha = 0.15) + 
+  geom_node_point(alpha = 0.15) +
+  theme_graph() +
+  labs(title = "Links between R help pages")
+```
+
+Apparently there are some help page on base R that don't have links to navigate to the rest of the documentation.
+There are `r length(aid)` isolated clusters of help pages.
+These are `r isolated_help`.
+These help pages would be easier to find if at least they were linked from other help pages from base R.
+
+### To CRAN
+
+We can also ask which packages are linked from R that are not part of R.
+
+```{r}
+#| label: cran-database
+#| tab.cap: "**Most packages linked from base R are from current R core members.** Information about non-base packages linked from base R."
+db <- tools::CRAN_package_db()
+options(knitr.kable.NA = '')
+xrefBase3 |> 
+  filter(!to_pkg %in% names(aliases_base)) |> 
+  count(to_pkg, sort = TRUE, name = "links") |> 
+  left_join(db[, c("Package", "Priority", "Maintainer")],
+            by = join_by(to_pkg == Package),
+            multiple = "first") |> 
+  mutate(Maintainer = gsub(" <.+", "", Maintainer),
+         `Core member` = Maintainer %in% c("Brian Ripley", "Martin Maechler", "Deepayan Sarkar", "R Core Team", "Kurt Hornik")) |> 
+  arrange(-links, Priority, -`Core member`, to_pkg) |> 
+  rename(Package = to_pkg) |> 
+  kable()
+```
+
+We can see that some packages linked from base R are from the recommended packages and many from the R core members or maintained by the whole R core group.
+Some other links include popular packages, while others are not so popular. 
+
+
+# CRAN packages
+
+
+Now that we explored base R packages we can also explore CRAN's help pages.
+
+## Aliases
+
+As before we start exploring CRAN aliases.
+Which are the packages that have more aliases?
+
+
+```{r cran-count-aliases}
+aliases <- aliasesCRAN |> 
+  summarise(.by = Package, n = n()) |> 
+  arrange(-n)
+one_alias <- aliases |> 
+  count(one_alias = n == 1) |> 
+  filter(one_alias) |> 
+  pull(n)
+aliases |> 
+  head(10) |> 
+  kable()
+```
+
+The top packages with more help pages have more than 2000! 
+On the other side there are more than 800 packages (`r one_alias`) with only one alias.
+
+
+```{r}
+#| label: plot-cran-alias-hist
+#| fig.cap: "**Most CRAN packages have 14 aliases.** Aliases distribution on CRAN."
+aliases |> 
+  ggplot() +
+  geom_histogram(aes(n), bins = 40) +
+  geom_vline(xintercept = median(aliases$n), linetype = 2) +
+  scale_x_log10(expand = expansion()) +
+  scale_y_continuous(expand = expansion()) +
+  theme_minimal() +
+  labs(x = "Aliases", y = "Packages",
+       title = "Alias distribution per package on CRAN")
+```
+
+I'm surprised to see so many packages with just one alias. 
+This might indicates packages that only try to do just one thing, while more complex packages will have more aliases and maybe also more help pages. 
+
+We can also find those targets that are duplicated on CRAN:
+
+```{r}
+#| label: plot-cran-dup-targets
+#| fig.cap: "**Top 25 duplicated topics on CRAN.** Common methods and the magrittr pipe dominate the most frequent topics."
+dup_cran |> 
+  head(25) |> 
+  ggplot() +
+  geom_col(aes(n, fct_reorder(Target, n))) +
+  scale_x_continuous(expand = expansion(mult = c(0, NA), add = c(0, NA)), 
+                     limits = c(0, NA)) +
+  labs(x = "Packages", y = element_blank(),
+       title = "Top 50 topics more repeated on CRAN") +
+  theme_minimal() +
+  theme(plot.title.position = "plot")
+```
+
+The most repeated topic is the magrittr pipe `%>%` followed by reexports (curious as usually the pipe is also re-exported).
+We can see some common methods like `plot`, `print`, `show` and some that are related to the dplyr and shiny, mixed between some methods used for statistics. 
+
+
+## Help pages
+
+Similar to the alias on CRAN we can check what happens with help pages:
+
+```{r}
+#| label: cran-help-counts
+#| tab.cap: "**Number of help pages of top 10 packages.** Some packages have
+#|  many help pages."
+sources <- aliasesCRAN |> 
+  summarise(.by = Package, n = n_distinct(Source)) |> 
+  arrange(-n)
+
+one_help <- sources |> 
+  count(one_help = n == 1) |> 
+  filter(one_help) |> 
+  pull(n)
+sources |> 
+  head(10) |> 
+  select(`Help page` = n) |> 
+  kable()
+```
+
+The top packages with more help pages have more than 800! 
+On the other side there are more than 1000 packages (`r one_help`) with only one help page.
+
+Overall doesn't seem like there is a distribution pattern. 
+Packages end up with as many aliases as maintainers see fit.
+
+
+```{r}
+#| label: plot-cran-help-pages-hist
+#| fig.cap: "**Most CRAN packages have 11 help pages.** Help page distribution."
+sources |> 
+  ggplot() +
+  geom_histogram(aes(n), bins = 40) +
+  geom_vline(xintercept = median(sources$n), linetype = 2) +
+  scale_x_log10(expand = expansion()) +
+  scale_y_continuous(expand = expansion()) +
+  theme_minimal() +
+  labs(x = "Help pages", y = "Packages",
+       title = "Help page distribution per package on CRAN")
+```
+
+
+```{r}
+#| label: plot-dup-targets
+
+# library("tidygraph")
+# library("ggraph")
+# ab <- aliasesCRAN |>
+#   filter(.by = Target, n_distinct(Package) > 1) |>
+#   arrange(Target) |>
+#   select(Target, Package)
+
+
+# as_tbl_graph() |> 
+# mutate(Popularity = centrality_degree(mode = 'in')) |> 
+# ggraph(layout = "kk") +
+# geom_edge_fan(aes(alpha = after_stat(index)), show.legend = FALSE) + 
+# geom_node_point(aes(size = Popularity)) + 
+# theme_graph(fg_text_colour = 'white')
+```
+
+We can check the ratio of alias per help page and number of help pages by package:
+
+```{r}
+#| label: plot-cran-help-topics
+#| fig.cap: "**Some packages have many alias per help pages.** Packages with
+#|  high number of alias per help page are colored in green while packages
+#|  with high number of help pages and alias are in black. The dashed line
+#|  correspond to a perfect match between help pages and alias."
+
+hcran <- aliasesCRAN |> 
+  summarise(.by = c(Source, Package), alias = n()) |> 
+  arrange(-alias) |> 
+  mutate(.by = Package, help_pages = n())
+
+hcran_alias <- hcran |> 
+  summarise(.by = Package, 
+            help_pages = unique(help_pages),
+            across(alias, list(max = max, min = min, mean = mean, median = median, sum = sum)))
+
+
+hcran_alias |> 
+  count(help_pages, alias_sum, alias_median) |> 
+  arrange(n) |> 
+  ggplot() +
+  geom_abline(slope = 1, intercept = 0, linetype = 2) +
+  geom_point(aes(help_pages, alias_sum, size = alias_median, col = n), alpha = 0.25) +
+  geom_text_repel(aes(help_pages, alias_sum, label = Package), col = "darkgreen",
+                  data = hcran_alias %>% filter(alias_sum >= 1000 & help_pages < 750)) +
+  geom_text_repel(aes(help_pages, alias_sum, label = Package),
+                  data = hcran_alias %>% filter(help_pages > 750)) +
+  labs(x = "Help pages", y = "Alias", col = "Packages",
+       size = "Median alias",
+       title = "Help pages") +
+  theme_minimal()
+```
+
+It is clear that more help pages might lead to more topic pages but there are some packages with low number of help pages but high number of alias (those in green on the plot above).
+These packages tend to have 5 alias per help page or more. 
+
+
+```{r}
+#| label: plot-cran-topics-helps
+
+vec <- hcran |> 
+  summarise(.by = Package, topics = sum(alias), hp = n()) |> 
+  summarise(t = median(topics), h = median(hp)) |> 
+  simplify2array()
+```
+
+
+However this is not normal, the median number of help pages is `r unname(vec["h"])` and the median number of topics is `r unname(vec["t"])`. 
+So usually CRAN packages tend to be much smaller. 
+
+## Cross references
+
+So far we analyzed CRAN help pages by the number of alias and help pages they have.
+While this is interesting I think it can be more revealing checking what they are linking to. 
+
+Similar to what we did with R cross-references we first start finding links to base packages and then we'll search for links across CRAN packages.
+
+```{r}
+#| label: cran-links-files2
+# Try to merge those that we don't know the destiny but we know the other things
+missingCRAN <- rdxrefsCRAN3 |> 
+  mutate(n = seq_len(n())) |> 
+  filter(is.na(Rd_destiny) & !is.na(to_pkg) & !is.na(to_target)) |> 
+  select(-Rd_destiny, Source = Rd_origin) 
+
+rdxrefsCRAN3_m <- merge(missingCRAN, all_aliases[, -2], 
+            by.x = c("to_pkg", "to_target"), 
+            by.y = c("Package", "filename"), 
+            all.x = TRUE, sort = FALSE) |> 
+  distinct(.keep_all = TRUE) |> 
+  select(Rd_origin = Source.x, Anchor, Target, Package, to_pkg, to_target,
+         Rd_destiny = Source.y, n) |> 
+  mutate(Rd_destiny = if_else(!is.na(Rd_destiny), paste0("=", Rd_destiny), NA))
+
+rdxrefsCRAN4 <- rdxrefsCRAN3 |> 
+  mutate(n = seq_len(n())) |> 
+  filter(!n %in% rdxrefsCRAN3_m$n) |>
+  rbind(rdxrefsCRAN3_m) |> 
+  mutate(to_file = if_else(startsWith(Rd_destiny, "="), TRUE, FALSE),
+         Rd_destiny = gsub("^=", "", Rd_destiny)) |> 
+  arrange(Package, Rd_origin, n) |> 
+  select(-n)
+
+stopifnot(sum(startsWith(rdxrefsCRAN3_m$Rd_destiny, "="), na.rm = TRUE) == sum(rdxrefsCRAN4$to_file, na.rm = TRUE))
+stopifnot(nrow(rdxrefsCRAN3) == nrow(rdxrefsCRAN4))
+```
+
+Now that I have corrected many issues I'll check if it matches CRAN's output.
+
+## Comparing links with CRAN's checks
+
+We can compare the data with CRAN's package details of issues found related to cross-references.
+
+```{r}
+#| label: cran-details
+ccd <- tools::CRAN_check_details()
+crans_issues <- ccd |> 
+  as.data.frame() |> 
+  filter(Check == "Rd cross-references") |> 
+  distinct(Package) |> 
+  mutate(CRAN_checks = "rd_cross_reference")
+```
+
+There are `r nrow(crans_issues)` packages with issues in "Rd cross-references" across all flavors.
+These can be found online too, for example for [r-devel in debian](https://cran.r-project.org/web/checks/check_details_r-devel-linux-x86_64-debian-clang.html), (pick your [flavor](https://cran.r-project.org/web/checks/check_summary.html)). 
+
+<!-- To compare with CRAN we need to prepare the data collected.  -->
+<!-- First thing, CRAN packages can depend on packages in Bioconductor and other additional repositories for which we don't have the data.  -->
+<!-- Identifying those packages will help to avoid any false positive.  -->
+
+```{r}
+#| label: cran-summaries-details
+# Collect Bioconductor packages
+ap_bioc <- available.packages(repos = BiocManager::repositories()[1:5],
+                              filters = character())
+bioc_packages <- rownames(ap_bioc)
+
+# "Merge" the two repositories (Keeping those windows specific)
+db$Repository <- "CRAN"
+db$File <- NA_character_
+ap_all <- rbind(db[, colnames(ap_bioc)], ap_bioc)
+
+tpd <- tools::package_dependencies(db$Package, 
+                            db = ap_all, 
+                            which = c("Depends", "Imports", "Suggests", "Enhances"))
+
+in_tpd <- function(pkg) {
+  tpd[[unique(pkg)]]
+}
+
+additional_repo <- function(x) {
+  any(!is.na(db$Additional_repositories[db$Package == x]))
+}
+
+summary_CRAN <- rdxrefsCRAN4 |> 
+  summarise(.by = Package, 
+            to_file = any(to_file),
+            additional_repo = additional_repo(unique(Package)),
+            to_file_w_eq_anchor = any(to_file & startsWith(Anchor, "=")),
+            missing_destination = any(is.na(Rd_destiny)),
+            missing_anchors = any(!nzchar(Anchor)),
+            linking2base = any(!to_pkg %in% names(aliases_base) & !is.na(to_pkg)),
+            linking2cran = any(!is.na(to_pkg) & !to_pkg %in% names(rdxrefs_CRAN)),
+            linking2bioc = any(to_pkg %in% bioc_packages),
+            missing_dependency = any(!is.na(to_pkg) & !to_pkg %in% c(Package, in_tpd(Package)) & !to_pkg %in% names(aliases_base))
+  ) |> 
+  mutate(to_file = if_else(is.na(to_file), FALSE, to_file))
+```
+
+<!-- To further check what is happening we can compare directly with what CRAN reports. -->
+
+
+```{r}
+#| label: cran-comparison
+summary_CRAN2 <- merge(crans_issues, summary_CRAN, all = TRUE)
+csc <- count(summary_CRAN2, CRAN_checks, to_file)
+```
+
+There are `r csc$n[csc$to_file & !is.na(csc$CRAN_checks)]` packages currently with cross references notes that could be improved by using topics on the cross-references  (instead of file names).
+There are `r csc$n[csc$to_file & is.na(csc$CRAN_checks)]` that are currently not detected by CRAN that could be improved the same way, by instead of using file names of other CRAN packages use their topic.
+
+<!-- Now that we found that they mostly agree let's analyse the data. -->
+
+```{r}
+#| label: cran-checks2
+#| eval: FALSE
+summary_CRAN2 |> 
+  # filter(is.na(CRAN_checks)) |>
+  summarise(.by = c(missing_anchors, to_file, missing_dependency),
+            n = sum(!additional_repo)) |> 
+  arrange(-n) |> 
+  mutate(ratio = scales::percent(n/sum(n))) 
+  
+
+summary_CRAN2 |> 
+  count(CRAN_checks, to_file_w_eq_anchor, missing_destination, missing_dependency, missing_anchors)
+
+```
+
+
+# Further analysis
+
+## Pages with links
+
+
+```{r}
+#| label: cran-pages-links
+#| tab-cap: "**More than half of CRAN's help pages do not have links to other help pages**. "
+
+cran_to_file <- rdxrefsCRAN4[, c("to_pkg", "Rd_destiny")]
+cran_rows_to <- do.call("paste", cran_to_file[, c("to_pkg", "Rd_destiny")])
+cran_from_file <- rdxrefsCRAN4[, c("Package", "Rd_origin")]
+cran_aliases_files <- distinct(aliasesCRAN, Source, Package)
+
+cran_rows_aliases <- do.call("paste", cran_aliases_files[, c("Package", "Source")])
+cran_rows_to <- do.call("paste", cran_to_file[, c("to_pkg", "Rd_destiny")])
+cran_rows_from <- do.call("paste", cran_from_file[, c("Package", "Rd_origin")])
+
+m <- match(cran_rows_to, cran_rows_aliases)
+mt <- table(m)
+cran_aliases_files$to_file <- 0
+cran_aliases_files$to_file[as.numeric(names(mt))] <- mt
+
+m <- match(cran_rows_from, cran_rows_aliases)
+mt <- table(m)
+cran_aliases_files$from_file <- 0
+cran_aliases_files$from_file[as.numeric(names(mt))] <- mt
+
+cran_aliases_files |> 
+  count(`Link from` = from_file != 0, 
+        `References to` = to_file != 0, 
+        name = "Help pages") |> 
+  mutate(perc = scales::percent(`Help pages`/sum(`Help pages`))) |> 
+  arrange(-`Help pages`/sum(`Help pages`)) |> 
+  kable()
+```
+
+
+CRAN help pages by contrast with base help pages have many less references to other help pages (See \@ref(tab:cran-pages-links)). 
+Almost 50% receive no reference or links to other help pages, but the next biggest group is those that have links and receive references. 
+Surprising there are some help pages that receive reference that do not link to other help pages.
+
+```{r}
+#| label: cran-pages-links2
+#| fig-cap: "**Links on CRAN's help pages.** Many pages are either linked a lot or link a lot. Dashed line represents pages recevigin same number of links than those they have."
+cran_aliases_files |> 
+  ggplot() +
+  geom_count(aes(to_file, from_file), alpha = 0.25) +
+  geom_text_repel(aes(to_file, from_file, label = Source, col = Package),
+                   data = . %>% filter(from_file > 400 | to_file > 600), key_glyph = draw_key_point) +
+  geom_abline(slope = 1, intercept = 0, linetype = 2) +
+  labs(size = "Help pages", 
+       x = "Links to the help page", 
+       y = "References from the help page") +
+  theme_minimal()
+```
+
+Most CRAN's help pages are not linked , not even by their own package, or have links. 
+Followed by those with links to and from the help page, then by those that are linked but do not have a link.
+Last, those that have a link but are not linked elsewhere. 
+
+
+## Links to base
+
+First we can check the number of links to base R:
+
+```{r}
+#| label: plot-base-links
+#| fig.cap: "**Base is the most linked package.** Packages sorted by number of
+#|   links they receive from CRAN's packages."
+to_base_links <- rdxrefsCRAN4 |> 
+  filter(to_pkg %in% names(aliases_base))
+base_links <- count(to_base_links, Package, to_pkg, sort = TRUE)
+base_links |> 
+  ggplot() +
+  geom_histogram(aes(n, group = to_pkg, col = to_pkg, fill = to_pkg),
+                 binwidth = 1, show.legend = "none") +
+  facet_wrap(~fct_reorder(to_pkg, -n, .fun = sum), scales = "free") +
+  scale_y_log10(expand = expansion()) +
+  scale_x_continuous(expand = expansion()) +
+  theme_bw() +
+  theme(panel.background = element_blank(), 
+        strip.background = element_rect( fill = "white"))
+```
+
+There are many packages that link a lot base R, but most of them link them fairly few. 
+
+```{r}
+#| label: plot-base-links2
+#| fig.cap: "**Base is the most linked package.** Packages sorted by number of
+#|   links they receive from CRAN's packages."
+base_links |> 
+  ggplot() +
+  geom_col(aes(n, fct_reorder(to_pkg, n, .fun = "sum"))) +
+  scale_x_continuous(expand = expansion()) +
+  guides(col = "none", fill = "none") +
+  labs(x = "Links", y = element_blank(), title = "Links to base packages") +
+  theme_minimal()
+```
+
+From the above plot I find surprising there are these few links to the utils package. 
+Perhaps looking at which files are linked could help.
+
+```{r}
+#| label: base-links-packages
+#| fig.cap: "**Links to base from different pacakges**"
+
+base_links_sources <- to_base_links |> 
+  summarise(.by = c(to_pkg, Rd_destiny), 
+            n = n(), 
+            packages = n_distinct(Package), 
+            targets = n_distinct(to_target)) |> 
+  arrange(to_pkg, -n, -packages)
+
+base_links_sources |> 
+  ggplot() +
+  geom_jitter(aes(n, fct_reorder(to_pkg, n, .fun = "sum"), col = to_pkg, size = packages), width = 0) +
+  scale_x_continuous(expand = expansion(), trans = "log10") +
+  guides(col = "none", fill = "none") +
+  labs(x = "Links", y = element_blank(), title = "Links to base packages") +
+  theme_minimal()
+```
+
+As previously reported there are many links to different help pages across packages.
+Many of the most popular pages are linked from different many different packages too.
+Surprisingly all links to the compiler package are to a single page: `help("compile", package = "compiler")`
+
+```{r}
+#| label: base-links-sources
+#| fig.cap: "**Most linked pages by packages.** Some data types are the most 
+#|  linked as well as some plot parameters and methods for model fitting or 
+#|   representation."
+base_links_sources |> 
+  ggplot(aes(packages, n, col = fct_reorder(to_pkg, -n, .fun = "sum"))) +
+  geom_point(aes(size = targets)) +
+  geom_text_repel(aes(label = Rd_destiny), data = . %>% filter(n > 1000 | packages > 400), show.legend = c(col = FALSE) ) +
+  labs(col = "Package", title = "Packages with links to different base R documents", x = "Links from different packages", y = "Links") + 
+  theme_minimal()
+```
+
+
+```{r}
+#| label: missing-anchors
+#| fig-cap: "**Usually there are slightly more topics per help page.** "
+missing_anchors <- rdxrefsCRAN3 |> 
+  summarise(.by = Package, missing = sum(is.na(to_target)), n = n()) |> 
+  arrange(-missing)
+
+help_pages <- summarise(aliasesCRAN, .by = Package, 
+                        `Help pages` = n_distinct(Source),
+                        Topics = n_distinct(Target))
+help_pages2 <- aliasesCRAN |> 
+  summarise(.by = c(Package, Source),
+                        Topics = n_distinct(Target)) |> 
+  summarise(.by = Package, across(Topics, 
+                                  .fns = c(mean = mean, median = median, min = min, max = max)))
+hp <- merge(help_pages, help_pages2, sort = FALSE)
+
+ggplot(hp) +
+  geom_count(aes(`Help pages`, Topics, col = Topics_median)) +
+  geom_hline(yintercept = median(hp$Topics), linetype = "dashed", col = "black") +
+  geom_vline(xintercept = median(hp$`Help pages`), linetype = "dashed", col = "black") +
+  annotate("text", label = "More help pages and topics\n than the median", 
+           x = 400, y = 40) +
+  scale_size_binned_area(limits = c(1, NA), name = "Packages") +
+  scale_color_continuous(name = "Median topics per page") +
+  labs(title = "CRAN packages documentation practice per package") +
+  scale_x_log10() +
+  scale_y_log10() +
+  theme_minimal()
+```
+
+
+```{r}
+#| label: links
+pkg_missing <- data.frame(Package = pkg_no_links, 
+                          links = 0, diff_source = 0, diff_target = 0,
+                          Links_mean = 0, Links_median = 0, Links_min = 0,
+                          Links_max = 0)
+# Too slow
+# pkg_target <- rdxrefsCRAN4 |>
+#   summarise(.by = Package,
+#             links = n(),
+#             diff_source = n_distinct(Rd_origin),
+#             diff_target = n_distinct(to_pkg, Rd_destiny),
+#             to_file = any(to_file),
+#             additional_repo = additional_repo(unique(Package)),
+#             to_file_w_eq_anchor = any(to_file & startsWith(Anchor, "=")),
+#             missing_destination = any(is.na(Rd_destiny)),
+#             missing_anchors = any(!nzchar(Anchor)),
+#             linking2base = any(!to_pkg %in% names(aliases_base) & !is.na(to_pkg)),
+#             linking2cran = any(!is.na(to_pkg) & to_pkg != rdxrefs_CRAN),
+#             linking2bioc = any(to_pkg %in% bioc_packages),
+#             missing_dependency = any(!is.na(to_pkg) & !to_pkg %in% c(Package, in_tpd(Package)) & !to_pkg %in% names(aliases_base))
+#   ) |>
+#   mutate(to_file = if_else(is.na(to_file), FALSE, to_file))
+# pkg_target2 <- rdxrefsCRAN4 |>
+#   summarise(.by = c(Package, Rd_origin),
+#             Links = n_distinct(to_pkg, Rd_destiny)) |>
+#   summarise(.by = Package, across(Links,
+#                                   .fns = c(mean = mean, median = median,
+#                                            min = min, max = max)))
+# pt <- merge(pkg_target, pkg_target2, sort = FALSE) |>
+#   full_join(pkg_missing, by = join_by("Package"), fill = 0)
+# 
+# ggplot(pt) +
+#   geom_abline(slope = 1, intercept = 0) +
+#   geom_count(aes(diff_source, diff_target, col = links)) +
+#   geom_hline(yintercept = median(pt$diff_source), linetype = "dashed", col = "black") +
+#   geom_vline(xintercept = median(pt$diff_target), linetype = "dashed", col = "black") +
+#   scale_size_binned_area(limits = c(1, NA), name = "Packages",
+#                          breaks = c(5, 10, 50, 100, 500, 1000),
+#                          trans = "log10") +
+#   scale_color_continuous(name = "Links", trans = "log10") +
+#   labs(title = "CRAN packages' links", 
+#        x = "Links from different help pages",
+#        y = "Links to different help pages") +
+#   scale_x_continuous(trans = scales::pseudo_log_trans(base = 10), 
+#                      breaks = c(0, 1, 10, 50, 100, 200, 400, 800)) +
+#   scale_y_continuous(trans = scales::pseudo_log_trans(base = 10), 
+#                      breaks = c(0, 1, 10, 100, 1000, 10000))
+```
+
+<!-- Surprisingly there are more than 7000 packages with no links to other documentation pages, while the median is to link to ` median(pt$diff_target)` different help pages, from ` median(pt$diff_source)` different help pages. -->
+
+<!-- We can see some packages that have many help pages but only link to the same help page and some other packages that have few help pages that link to several pages. -->
+
+
+## CRAN packages
+
+Now it is time to check for CRAN packages.
+
+There are `r sum(summary_CRAN2$missing_destination)` packages that lack destination of the R document. 
+There are also `r sum(summary_CRAN2$missing_anchors)` that miss anchors, the majority of these are to their own R documentation help pages. 
+There are `r sum(summary_CRAN2$missing_dependency)` packages that link to a packages that is not on the dependency, while these could be packages using "LinkingTo" this could also be packages linking to archived packages.
+There are `r sum(summary_CRAN2$to_file)` packages that link to a file instead of a topic. While this is not forbidden (yet)
+
+We can look at packages are CRAN packages linking to (excluding themselves):
+
+```{r}
+#| label: cran-linksto
+#| fig.cap: "**Links to other packages** Most packages receive links  from few
+#|  packages, but there are some that receive links from few packages and many
+#|  help pages"
+
+cran_to <- rdxrefsCRAN4 |> 
+  filter(to_pkg != Package) |> 
+  summarise(.by = to_pkg, hp = n_distinct(Rd_destiny), pkges = n_distinct(Package), n = n()) |> 
+  arrange(-n, -pkges, -hp)
+cran_to |> 
+  ggplot() +
+  geom_point(aes(pkges, hp, size = n)) +
+  geom_text_repel(aes(pkges, hp, label = to_pkg), data = . %>% filter(pkges > 1000 | hp > 750)) +
+  scale_x_continuous(expand = expansion(add = 1)) +
+  scale_y_continuous(expand = expansion(add = 1)) +
+  theme_minimal() +
+  labs(x = "Distinct packages", y = "Help pages", size = "Links",
+       title = "Most frequent links on CRAN")
+```
+
+There are few packages thightly linked together (those that start with `paws.*`) and then there are the base packages linked by many different packages.
+
+If we focus more on the most common packages we might find some other common practices:
+
+```{r}
+#| label: cran-linksto-zoom
+#| fig.cap: "**Zooming to links to other packages** Focusing on packages with 
+#|  less than 400 help pages linked and less than 1000 packages being 
+#|  referenced."
+
+cran_to |> 
+  filter(pkges < 1000, hp < 400) |>
+  ggplot() +
+  geom_point(aes(pkges, hp, size = n), alpha = 0.5) +
+  geom_text_repel(aes(pkges, hp, label = to_pkg), 
+                  data = . %>% filter(pkges > 200 | hp > 250  & pkges > 3)) +
+  scale_x_continuous(expand = expansion(add = 1)) +
+  scale_y_continuous(expand = expansion(add = 1)) +
+  theme_minimal() +
+  labs(x = "Distinct packages", y = "Help pages", size = "Links",
+       title = "Most frequent links on CRAN")
+```
+
+
+But who is linking to these packages?
+
+```{r}
+#| label: cran-linksto2
+#| fig.cap: "**Links to other packages** Most packages receive links  from few
+#|  packages, but there are some that receive links from "
+
+cran_from <- rdxrefsCRAN4 |> 
+  filter(to_pkg != Package) |> 
+  summarise(.by = Package, hp = n_distinct(Rd_origin), pkges = n_distinct(to_pkg), n = n()) |> 
+  arrange(-n, -pkges, -hp)
+
+cran_from |> 
+  ggplot() +
+  geom_point(aes(pkges, hp, size = n), alpha = 0.15) +
+  geom_text_repel(aes(pkges, hp, label = Package), 
+                  data = . %>% filter(pkges > 30 | hp > 150)) +
+  scale_x_continuous(expand = expansion(add = 1)) +
+  scale_y_continuous(expand = expansion(add = 1)) +
+  theme_minimal() +
+  labs(x = "Distinct packages", y = "Help pages", size = "Links",
+       title = "Origin of links on CRAN")
+```
+
+There are many packages that link to few packages but from many help pages.
+There are some that link to many packages from relatively few help pages.
+There is broom that links to many distinct packages from many help pages.
+
+Putting this together we can explore which packages are more connected, those that provide links, those that recieve and those that do both or neither.
+
+```{r}
+#| label: cran-packages-links
+#| tab.cap: "**Table describing packages cross reference status.** Most packages
+#|  are not linked, most provides link and few receive links but do not link to
+#|  other packages."
+
+cran_l <- merge(cran_from, cran_to, suffixes = c(".from", ".to"), 
+                by.x = "Package", by.y = "to_pkg",
+                all = TRUE)
+pkg_not_linked <- setdiff(names(aliases_CRAN), cran_l$Package)
+not_linked <- data.frame(Package = pkg_not_linked,  "hp.from" = NA , 
+                         "pkges.from" = NA, "n.from" = NA , "hp.to" = NA,
+                         "pkges.to" = NA, "n.to" = NA)
+cran_l2 <- rbind(cran_l, not_linked) |> 
+  filter(Package %in% names(aliases_CRAN))
+cran_l2 |> 
+  count(Receives_links = !is.na(n.to), Provides_links = !is.na(n.from), 
+        name = "Packages", sort = TRUE) |> 
+  kable()
+```
+
+Most packages do not provide links to external packages or receive them.
+Next come those that link to other packages but are not linked back, followed by those that are linked to and are linked back.
+Last there are those package that receives links but do not link to other resources.
+
+```{r}
+#| label: cran-links
+#| fig.cap: "**Packages receiveing and giving links.** Very few packages link to
+#|  many others. While some other packages are linked by many."
+
+cran_l2 |> 
+  filter(!is.na(n.from), !is.na(n.to)) |> 
+  ggplot() +
+  geom_count(aes(pkges.to, pkges.from), alpha = 0.25, show.legend = c(fill = TRUE, alpha = FALSE)) +
+  geom_text_repel(aes(pkges.to, pkges.from, label = Package),
+                  data = . %>% filter(pkges.from > 25 | pkges.to > 150)) +
+  geom_hline(yintercept = 20, linetype = "36", col = "lightgray") +
+  theme_minimal() +
+  labs(x = "Number of packages that link to them",
+       y = "Number of packages that they link to",
+       size = "Times",
+       title = "Packages receiving and giving links.")
+```
+
+broom is a package that receives few links from packages but link to multiple packages. 
+
+```{r}
+#| label: links-distribution
+#| fig.cap: "**Distribution of links on help pages with links.** CRAN packages
+#|  have more links than base packages."
+
+cran_pages <- rdxrefsCRAN4 |> 
+  filter(to_pkg != Package) |> 
+  summarise(.by = c(Package, Rd_origin), n = n()) |> 
+  arrange(-n)
+base_pages <- xrefBase5 |> 
+  filter(to_pkg != Package) |> 
+  summarise(.by = c(Package, Rd_origin), n = n()) |> 
+  arrange(-n)
+cran_pages2 <- count(cran_pages, links = n, name = "CRAN package", sort = TRUE)
+base_pages2 <- count(base_pages, links = n, name = "R", sort = TRUE)
+pages2 <- merge(cran_pages2, base_pages2, all = TRUE)
+pages2 |> 
+  tidyr::pivot_longer(cols = c(`CRAN package`, R), names_to = "type") |> 
+  filter(!is.na(value)) |> 
+  ggplot() +
+  geom_step(aes(links, value, col = type)) +
+  scale_y_log10() +
+  scale_x_log10() +
+  labs(title = "CRAN links per page (with links)",
+       x = "Links", y = "Help pages", col = "Type") +
+  theme_minimal()
+```
+
+CRAN's packages tend to have more links to other packages than base R.
+
+# Conclusions
+
+As a summary of the analysis of the links and alias.
+About base:
+
+
+ - Help page more linked to from base: options.Rd
+ - Help page more linked to from CRAN: character.Rd
+ - Help page with more links: par.Rd
+ - Package more linked to from CRAN: base
+ - Page more linked from different packages: par.Rd
+ - Package with more links: base
+ - Package with less links: compiler
+ 
+ 
+```{r}
+#| label: pipes
+#| eval: false
+aliasesCRAN |> 
+  summarise(.by = Package, n = n_distinct(Source)) |> 
+  arrange(-n) |> 
+  head()
+rdxrefsCRAN4 |> filter(to_pkg != Package) |> 
+  summarise(.by = to_pkg, n = n()) |> 
+  arrange(-n) |> 
+  head()
+rdxrefsCRAN4 |> 
+  summarise(.by = c(Rd_origin, Package), n = n()) |> 
+  arrange(-n) |> 
+  head()
+rdxrefsCRAN4 |> 
+  summarise(.by = Rd_origin, n = n()) |> 
+  arrange(-n) |> 
+  head()
+rdxrefsCRAN4 |> 
+  summarise(.by = c(Rd_destiny, to_pkg), n = n()) |> 
+  arrange(-n) |> 
+  filter(!to_pkg %in% names(aliases_base)) |> 
+  head()
+rdxrefsCRAN4 |> 
+  filter(to_pkg != Package) |> 
+  summarise(.by = Package, n = n()) |> 
+  arrange(-n) |> 
+  head()
+rdxrefsCRAN4 |> 
+  summarise(.by = Package, n = n()) |> 
+  arrange(-n) |> 
+  head()
+aliasesCRAN |> 
+  count(Target, sort = TRUE) |> 
+  head()
+rdxrefsCRAN4 |> 
+  summarise(.by = c(Rd_destiny, to_pkg), n = n()) |> 
+  arrange(-n) |> 
+  filter(!to_pkg %in% names(aliases_base)) |> 
+  head()
+aliasesCRAN |> 
+  count(filename, sort = TRUE) |> 
+  head()
+```
+
+About CRAN packages:
+ 
+ - Package with more help pages: paws.management
+ - Package more linked by other packages: ggplot2 
+ - Package help with more links: spatstat-package.Rd
+ - Help page more repeated: reexports
+ - Package help with linked to: R6Class.Rd
+ - Package with more links to other packages: paws
+ - Package with more links : keras3
+ - Topic more repeated: `%>%`
+ - Links I couldn't resolve: 5358
+ - Packages with link related problems: 
+ - Packages linking to Bioconductor: 
+ 
+Wrong assumptions I had about cross-references:
+
+ - All packages will have one link to other help pages.
+ - One cannot link to a file. 
+ - Base packages wouldn't link to CRAN packages.
+ 
+I don't think I was ever aware of the compiler package.  
+
+### Reproducibility
+
+<details>
+<summary>Session info</summary>
+```{r reproducibility, echo = FALSE}
+## Reproducibility info
+options(width = 120)
+sessioninfo::session_info(info = c("platform", "packages"))
+```
+</details>

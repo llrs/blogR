@@ -1,0 +1,1050 @@
+---
+title: "Exploring CRAN's files: part 3"
+subtitle: 'References: links between pages, packages and base R'
+author: Lluís Revilla Sancho
+date: '2024-09-23'
+slug: cran-files-3
+categories:
+  - CRAN
+  - r
+tags:
+  - r
+  - packages
+  - cran-files
+authors:
+  - admin
+description: ''
+draft: no
+editor_options:
+  chunk_output_type: console
+featured: yes
+image:
+  caption: ''
+  focal_point: ''
+summary: 'Exploring references and help pages of base R packages and CRAN packages.'
+---
+
+
+
+<p>In the blog post of CRAN files, I <a href="https://llrs.dev/post/2022/07/23/cran-files-1/">initially explored the database</a> (mostly around <code>CRAN_package_db()</code>). On the <a href="https://llrs.dev/post/2022/07/28/cran-files-2/">second post</a> I moved to analyze the archive around <code>CRAN_archive_db()</code>.</p>
+<p>Recently at useR!2024, Kurt Hornik offered to export data from CRAN. After an email <a href="https://developer.r-project.org/blosxom.cgi/R-devel/NEWS/2024/08/22#n2024-08-22">several new functions were exported</a> and introduced to base R.</p>
+<p>In that presentation and in a previous exchange with Kurt, he explained his project about providing the HTML manual pages of all CRAN packages.
+One of the problems with this projects is providing links to the right pages of the packages (others are making it accessible for all users).</p>
+<p>In R-devel now there are test that ensure links to other pages are in the right format <a href="#fn1" class="footnote-ref" id="fnref1"><sup>1</sup></a>.
+In this post we we’ll explore links between documentation pages, what manuals say about them and what is the state of base R and the CRAN packages.</p>
+<div id="introduction" class="section level1">
+<h1>Introduction</h1>
+<p>Help pages are defined in R documentation files, commonly with the <code>.Rd</code> extension.
+Each documentation file can have multiple topics.
+A topic is defined in R documentation format with <code>\alias{topic}</code>, so once can use interchangeably alias and topics.
+Links, or cross-references (xref for short) <a href="https://cran.r-project.org/doc/manuals/r-devel/R-exts.html#Cross_002dreferences">should be to an alias</a>, not to files (allowing to move topics between help pages)<a href="#fn2" class="footnote-ref" id="fnref2"><sup>2</sup></a>.</p>
+<p>One can define links with <code>\link{alias}</code> or <code>\link[=alias]{name}</code> if the link is to a different place than the name <a href="#fn3" class="footnote-ref" id="fnref3"><sup>3</sup></a>.
+In the second form the content within the square bracket is known as anchor.</p>
+<p>There are two other forms accepted: <code>\link[pkg]{alias}</code> and <code>\link[pkg:alias]{name}</code> which do not use the <code>=</code> inside the anchor <a href="#fn4" class="footnote-ref" id="fnref4"><sup>4</sup></a>.
+These last two forms are only used in the HTML format.
+Packages referred to on these square brackets should be declared in the DESCRIPTION file, in the ‘Depends’, ‘Imports’, ‘Suggests’ or ‘Enhances’ fields.</p>
+<p>One important thing is that links are case sensitive: <code>?Complex</code> leads to a different help page than <code>?complex</code>.</p>
+<p>With this in mind we can check to which packages have more manual pages, have more cross-references, or have an overview help page (those with <em>pkgname</em>-package.Rd).
+We will also check which documentation pages have more links, are more linked to, or needs its links fixed.</p>
+</div>
+<div id="base-r" class="section level1">
+<h1>Base R</h1>
+<p>Before looking to CRAN packages we can start by looking to R base packages.</p>
+<p>Previously there wasn’t a way to know the links and aliases in base R. Since recently (~2024/08/20) we can download them (on R-devel till it is released on R 4.5) with <code>tools::base_aliases_db()</code> and <code>tools::base_rdxrefs_db()</code>.</p>
+<div id="aliases" class="section level2">
+<h2>Aliases</h2>
+<p>On base R there are 1458 help pages with 4676 topics/aliases.</p>
+<p>There are some help files with the same name in base R that can be accessed via their targets (via <code>?Target</code>).
+Those files are dev.Rd, format.Rd, units.Rd.<br />
+To distinguish between those files one need to check the title(s) and content of the pages.</p>
+<p>Similarly there are multiple help pages of different packages with the same topics:</p>
+<pre><code>##           Alias         Packages
+## 1       Complex    base, methods
+## 2           GSC      base, tools
+## 3         Logic    base, methods
+## 4          Math    base, methods
+## 5           Ops    base, methods
+## 6       R_GSCMD      base, tools
+## 7            S4    base, methods
+## 8       Summary    base, methods
+## 9     clipboard      base, utils
+## 10          hat grDevices, stats
+## 11    matrixOps    base, methods
+## 12         plot   base, graphics
+## 13 show-methods  methods, stats4
+## 14       symbol  base, grDevices</code></pre>
+<p>Most of them are in base and other packages, from the methods package to tools, grDevices, graphics, and utils.</p>
+<p>To access them directly one needs to use <code>help()</code>: <code>help("clipboard", package = "utils")</code> otherwise one will need to choose them from the menu it will pop up from using <code>?clipboard</code>.
+This works to access any other help page too.</p>
+<p>There are 665 help pages that only have one alias.
+For example, <code>.BasicFunsList</code>, <code>.Platform</code> or <code>.Last.value</code>.
+Some of these are datasets or very specific help pages.</p>
+<p>Last, we can check the topics for the packages’ help page.
+While usually packages have at least two alias, <code>pkg</code> and one <code>pkgname-package</code>, there are two packages that do not have this, <strong>grid</strong> and <strong>methods</strong> packages.<br />
+These packages do not have the alias for <code>pkgname</code> to their own package help page.
+<code>?grid</code> could be confused with <code>graphics::grid</code> and <code>?methods</code> could be confused with <code>utils::methods</code>.</p>
+</div>
+<div id="cross-references" class="section level2">
+<h2>Cross references</h2>
+<p>Having explored the topics on the help pages, it is time to move to the cross references on R.</p>
+<p>We can check where these help pages link to, starting by knowing how many are directly to the alias or those that use an anchor:</p>
+<div class="figure"><span style="display:block;" id="fig:links-base"></span>
+<img src="{{< blogdown/postref >}}index.en_files/figure-html/links-base-1.png" alt="**Packages with links using alias per help page.** Each point is a help pages with different number of links. Some packages directly link a lot while others are more mixed." width="672" />
+<p class="caption">
+Figure 1: <strong>Packages with links using alias per help page.</strong> Each point is a help pages with different number of links. Some packages directly link a lot while others are more mixed.
+</p>
+</div>
+<p>We can further explore to where they link if we find out the package and topic, instead of just the topic used.</p>
+<p>We can check for pages that link to themselves.
+The cross-reference system doesn’t provide a way to link to a specific section (yet?).
+When users follow those links they are redirected to the top of the same help page,
+while probably they were expecting to go to another help page.
+At least this is something I have felt in the past.
+In my opinion these links could be deleted and rewritten to explain which section should the user read:</p>
+<table>
+<caption><span id="tab:self-references">Table 1: </span><strong>Help pages on base with links to themselves</strong>. These links could be removed or perhaps a linking to a specific section could be implemented.</caption>
+<thead>
+<tr class="header">
+<th align="left">Package</th>
+<th align="left">Help page</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td align="left">base</td>
+<td align="left">double.Rd</td>
+</tr>
+<tr class="even">
+<td align="left">base</td>
+<td align="left">numeric.Rd</td>
+</tr>
+<tr class="odd">
+<td align="left">base</td>
+<td align="left">parse.Rd</td>
+</tr>
+<tr class="even">
+<td align="left">base</td>
+<td align="left">call.Rd</td>
+</tr>
+<tr class="odd">
+<td align="left">base</td>
+<td align="left">is.unsorted.Rd</td>
+</tr>
+<tr class="even">
+<td align="left">base</td>
+<td align="left">showConnections.Rd</td>
+</tr>
+<tr class="odd">
+<td align="left">base</td>
+<td align="left">taskCallback.Rd</td>
+</tr>
+<tr class="even">
+<td align="left">grDevices</td>
+<td align="left">axisTicks.Rd</td>
+</tr>
+<tr class="odd">
+<td align="left">grid</td>
+<td align="left">grid.add.Rd</td>
+</tr>
+<tr class="even">
+<td align="left">grid</td>
+<td align="left">grid.get.Rd</td>
+</tr>
+<tr class="odd">
+<td align="left">methods</td>
+<td align="left">setIs.Rd</td>
+</tr>
+<tr class="even">
+<td align="left">parallel</td>
+<td align="left">makeCluster.Rd</td>
+</tr>
+<tr class="odd">
+<td align="left">parallel</td>
+<td align="left">unix/children.Rd</td>
+</tr>
+<tr class="even">
+<td align="left">stats</td>
+<td align="left">uniroot.Rd</td>
+</tr>
+<tr class="odd">
+<td align="left">stats</td>
+<td align="left">NLSstRtAsymptote.Rd</td>
+</tr>
+<tr class="even">
+<td align="left">stats</td>
+<td align="left">dist.Rd</td>
+</tr>
+<tr class="odd">
+<td align="left">stats</td>
+<td align="left">dendrogram.Rd</td>
+</tr>
+<tr class="even">
+<td align="left">stats</td>
+<td align="left">stepfun.Rd</td>
+</tr>
+<tr class="odd">
+<td align="left">utils</td>
+<td align="left">update.packages.Rd</td>
+</tr>
+</tbody>
+</table>
+<p>There are 19 links to their own help pages that could be removed.</p>
+<p>R documentation files with references to other help pages:</p>
+<div class="figure"><span style="display:block;" id="fig:plot-base-package-links"></span>
+<img src="{{< blogdown/postref >}}index.en_files/figure-html/plot-base-package-links-1.png" alt="**Links between R help pages are predominantly to their own package.** Base is more connected than any other package. Some packages recieve links from very few packages." width="672" />
+<p class="caption">
+Figure 2: <strong>Links between R help pages are predominantly to their own package.</strong> Base is more connected than any other package. Some packages recieve links from very few packages.
+</p>
+</div>
+<p>We can clearly see that the packages link more between their own package but there are some heavily connected packages like utils and base or stats and base.
+Surprisingly, <strong>compiler</strong> package doesn’t have any reference to other packages.</p>
+<p>There were help pages that use the file names instead of topics to link pages<a href="#fn5" class="footnote-ref" id="fnref5"><sup>5</sup></a>.
+I raised this issue on the <a href="https://stat.ethz.ch/pipermail/r-devel/2024-September/083626.html">mailing list</a> and submitted a patch later on <a href="https://bugs.r-project.org/show_bug.cgi?id=18815">18815</a> that got them fixed before publishing this post.</p>
+<p>We also observed that some packages do not provide links.
+How frequent is this and how it affects base R?</p>
+<table>
+<caption><span id="tab:base-pages-links">Table 2: </span><strong>References on help pages.</strong> Most base help pages are referenced and link to other help pages.</caption>
+<thead>
+<tr class="header">
+<th align="left">Link from</th>
+<th align="left">Reference to</th>
+<th align="right">Help pages</th>
+<th align="left">perc</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td align="left">TRUE</td>
+<td align="left">TRUE</td>
+<td align="right">1093</td>
+<td align="left">74.8%</td>
+</tr>
+<tr class="even">
+<td align="left">TRUE</td>
+<td align="left">FALSE</td>
+<td align="right">211</td>
+<td align="left">14.4%</td>
+</tr>
+<tr class="odd">
+<td align="left">FALSE</td>
+<td align="left">FALSE</td>
+<td align="right">113</td>
+<td align="left">7.7%</td>
+</tr>
+<tr class="even">
+<td align="left">FALSE</td>
+<td align="left">TRUE</td>
+<td align="right">44</td>
+<td align="left">3.0%</td>
+</tr>
+</tbody>
+</table>
+<p>Almost all help pages have links and most of them receive references from other help pages (compre this with <a href="#tab:cran-pages-links">7</a>.
+Only 113 help pages do not have links or receive references, so unless they are documented somewhere else, like <a href="https://cran.r-project.org/doc/manuals/r-devel/R-ints.html">R internals</a>, <a href="https://cran.r-project.org/doc/manuals/r-devel/R-exts.html">Writing R extensions</a>, <a href="https://cran.r-project.org/doc/manuals/r-devel/R-admin.html">R Installation and Administration</a>, it will be hard to find them.</p>
+<p>This seems a good opportunity to patch documentation and make it easier to find and use those help pages.
+For example there is currently no CRAN package, or base package that links to <code>Rmcd()</code>.
+This makes it harder to discover and use it.</p>
+<div class="figure"><span style="display:block;" id="fig:base-pages-links2"></span>
+<img src="{{< blogdown/postref >}}index.en_files/figure-html/base-pages-links2-1.png" alt="**Help pages receiving and sending references to other help pages.** The help page more linked on base is the options help page" width="672" />
+<p class="caption">
+Figure 3: <strong>Help pages receiving and sending references to other help pages.</strong> The help page more linked on base is the options help page
+</p>
+</div>
+<p>While so far we focus on links if we compare that with the existing help pages we might find some interesting patterns:</p>
+<table>
+<caption><span id="tab:base-no-link">Table 3: </span><strong>Help pages with no links to them</strong>.</caption>
+<thead>
+<tr class="header">
+<th align="left">Package</th>
+<th align="right">Help pages</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td align="left">datasets</td>
+<td align="right">67</td>
+</tr>
+<tr class="even">
+<td align="left">grid</td>
+<td align="right">50</td>
+</tr>
+<tr class="odd">
+<td align="left">base</td>
+<td align="right">46</td>
+</tr>
+<tr class="even">
+<td align="left">stats</td>
+<td align="right">40</td>
+</tr>
+<tr class="odd">
+<td align="left">utils</td>
+<td align="right">32</td>
+</tr>
+<tr class="even">
+<td align="left">tools</td>
+<td align="right">28</td>
+</tr>
+<tr class="odd">
+<td align="left">methods</td>
+<td align="right">20</td>
+</tr>
+<tr class="even">
+<td align="left">graphics</td>
+<td align="right">10</td>
+</tr>
+<tr class="odd">
+<td align="left">stats4</td>
+<td align="right">10</td>
+</tr>
+<tr class="even">
+<td align="left">grDevices</td>
+<td align="right">7</td>
+</tr>
+<tr class="odd">
+<td align="left">tcltk</td>
+<td align="right">6</td>
+</tr>
+<tr class="even">
+<td align="left">splines</td>
+<td align="right">5</td>
+</tr>
+<tr class="odd">
+<td align="left">parallel</td>
+<td align="right">3</td>
+</tr>
+</tbody>
+</table>
+<p>As one could expect there aren’t many links on documentation help pages from datasets.
+Surprisingly grid is the next package without links from other base packages, followed by base itself.
+It would be interesting to see which help pages, as connecting these help pages to other topics might help users to find what R is capable.</p>
+<table>
+<caption><span id="tab:base-no-ref">Table 4: </span><strong>Help pages with no references from them</strong>.</caption>
+<thead>
+<tr class="header">
+<th align="left">Package</th>
+<th align="right">Help pages</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td align="left">datasets</td>
+<td align="right">71</td>
+</tr>
+<tr class="even">
+<td align="left">base</td>
+<td align="right">20</td>
+</tr>
+<tr class="odd">
+<td align="left">grid</td>
+<td align="right">13</td>
+</tr>
+<tr class="even">
+<td align="left">stats</td>
+<td align="right">12</td>
+</tr>
+<tr class="odd">
+<td align="left">tools</td>
+<td align="right">12</td>
+</tr>
+<tr class="even">
+<td align="left">utils</td>
+<td align="right">11</td>
+</tr>
+<tr class="odd">
+<td align="left">grDevices</td>
+<td align="right">6</td>
+</tr>
+<tr class="even">
+<td align="left">methods</td>
+<td align="right">2</td>
+</tr>
+<tr class="odd">
+<td align="left">parallel</td>
+<td align="right">2</td>
+</tr>
+<tr class="even">
+<td align="left">splines</td>
+<td align="right">2</td>
+</tr>
+<tr class="odd">
+<td align="left">stats4</td>
+<td align="right">2</td>
+</tr>
+<tr class="even">
+<td align="left">tcltk</td>
+<td align="right">2</td>
+</tr>
+<tr class="odd">
+<td align="left">compiler</td>
+<td align="right">1</td>
+</tr>
+<tr class="even">
+<td align="left">graphics</td>
+<td align="right">1</td>
+</tr>
+</tbody>
+</table>
+<p>Similar to the table above there are many help pages that do not link to them</p>
+<p>But having links to and from help pages is not enough for discovering them.
+They could form a closed graph, where some pages are unreachable from the others.</p>
+<div class="figure"><span style="display:block;" id="fig:plot-base-links-files"></span>
+<img src="{{< blogdown/postref >}}index.en_files/figure-html/plot-base-links-files-1.png" alt="**Graph of all the links between help pages of base R**. There are some help pages that are not connected to any other help page" width="672" />
+<p class="caption">
+Figure 4: <strong>Graph of all the links between help pages of base R</strong>. There are some help pages that are not connected to any other help page
+</p>
+</div>
+<p>Apparently there are some help page on base R that don’t have links to navigate to the rest of the documentation.
+There are 4 isolated clusters of help pages.
+These are tools:toHTML.Rd, tools:HTMLheader.Rd, grid:absolute.size.Rd, grid:widthDetails.Rd, grid:gridCoords.Rd, grid:grobCoords.Rd.
+These help pages would be easier to find if at least they were linked from other help pages from base R.</p>
+<div id="to-cran" class="section level3">
+<h3>To CRAN</h3>
+<p>We can also ask which packages are linked from R that are not part of R.</p>
+<table>
+<caption><span id="tab:cran-database">Table 5: </span><strong>Most packages linked from base R are from current R core members.</strong> Information about non-base packages linked from base R.</caption>
+<thead>
+<tr class="header">
+<th align="left">Package</th>
+<th align="right">links</th>
+<th align="left">Priority</th>
+<th align="left">Maintainer</th>
+<th align="left">Core member</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td align="left">MASS</td>
+<td align="right">23</td>
+<td align="left">recommended</td>
+<td align="left">Brian Ripley</td>
+<td align="left">TRUE</td>
+</tr>
+<tr class="even">
+<td align="left">Matrix</td>
+<td align="right">10</td>
+<td align="left">recommended</td>
+<td align="left">Martin Maechler</td>
+<td align="left">TRUE</td>
+</tr>
+<tr class="odd">
+<td align="left">KernSmooth</td>
+<td align="right">9</td>
+<td align="left">recommended</td>
+<td align="left">Brian Ripley</td>
+<td align="left">TRUE</td>
+</tr>
+<tr class="even">
+<td align="left">lattice</td>
+<td align="right">8</td>
+<td align="left">recommended</td>
+<td align="left">Deepayan Sarkar</td>
+<td align="left">TRUE</td>
+</tr>
+<tr class="odd">
+<td align="left">nlme</td>
+<td align="right">7</td>
+<td align="left">recommended</td>
+<td align="left">R Core Team</td>
+<td align="left">TRUE</td>
+</tr>
+<tr class="even">
+<td align="left">cluster</td>
+<td align="right">6</td>
+<td align="left">recommended</td>
+<td align="left">Martin Maechler</td>
+<td align="left">TRUE</td>
+</tr>
+<tr class="odd">
+<td align="left">survival</td>
+<td align="right">3</td>
+<td align="left">recommended</td>
+<td align="left">Terry M Therneau</td>
+<td align="left">FALSE</td>
+</tr>
+<tr class="even">
+<td align="left">SuppDists</td>
+<td align="right">3</td>
+<td align="left"></td>
+<td align="left">Thorsten Pohlert</td>
+<td align="left">FALSE</td>
+</tr>
+<tr class="odd">
+<td align="left">coin</td>
+<td align="right">3</td>
+<td align="left"></td>
+<td align="left">Torsten Hothorn</td>
+<td align="left">FALSE</td>
+</tr>
+<tr class="even">
+<td align="left">knitr</td>
+<td align="right">2</td>
+<td align="left"></td>
+<td align="left">Yihui Xie</td>
+<td align="left">FALSE</td>
+</tr>
+<tr class="odd">
+<td align="left">mathjaxr</td>
+<td align="right">2</td>
+<td align="left"></td>
+<td align="left">Wolfgang Viechtbauer</td>
+<td align="left">FALSE</td>
+</tr>
+<tr class="even">
+<td align="left">vcd</td>
+<td align="right">2</td>
+<td align="left"></td>
+<td align="left">David Meyer</td>
+<td align="left">FALSE</td>
+</tr>
+<tr class="odd">
+<td align="left">nnet</td>
+<td align="right">1</td>
+<td align="left">recommended</td>
+<td align="left">Brian Ripley</td>
+<td align="left">TRUE</td>
+</tr>
+<tr class="even">
+<td align="left">rpart</td>
+<td align="right">1</td>
+<td align="left">recommended</td>
+<td align="left">Beth Atkinson</td>
+<td align="left">FALSE</td>
+</tr>
+<tr class="odd">
+<td align="left">chron</td>
+<td align="right">1</td>
+<td align="left"></td>
+<td align="left">Kurt Hornik</td>
+<td align="left">TRUE</td>
+</tr>
+<tr class="even">
+<td align="left">date</td>
+<td align="right">1</td>
+<td align="left"></td>
+<td align="left">Kurt Hornik</td>
+<td align="left">TRUE</td>
+</tr>
+<tr class="odd">
+<td align="left">robustbase</td>
+<td align="right">1</td>
+<td align="left"></td>
+<td align="left">Martin Maechler</td>
+<td align="left">TRUE</td>
+</tr>
+<tr class="even">
+<td align="left">round</td>
+<td align="right">1</td>
+<td align="left"></td>
+<td align="left">Martin Maechler</td>
+<td align="left">TRUE</td>
+</tr>
+<tr class="odd">
+<td align="left">Kendall</td>
+<td align="right">1</td>
+<td align="left"></td>
+<td align="left">A.I. McLeod</td>
+<td align="left">FALSE</td>
+</tr>
+<tr class="even">
+<td align="left">multcomp</td>
+<td align="right">1</td>
+<td align="left"></td>
+<td align="left">Torsten Hothorn</td>
+<td align="left">FALSE</td>
+</tr>
+<tr class="odd">
+<td align="left">pcaPP</td>
+<td align="right">1</td>
+<td align="left"></td>
+<td align="left">Valentin Todorov</td>
+<td align="left">FALSE</td>
+</tr>
+<tr class="even">
+<td align="left">pspearman</td>
+<td align="right">1</td>
+<td align="left"></td>
+<td align="left">Petr Savicky</td>
+<td align="left">FALSE</td>
+</tr>
+</tbody>
+</table>
+<p>We can see that some packages linked from base R are from the recommended packages and many from the R core members or maintained by the whole R core group.
+Some other links include popular packages, while others are not so popular.</p>
+</div>
+</div>
+</div>
+<div id="cran-packages" class="section level1">
+<h1>CRAN packages</h1>
+<p>Now that we explored base R packages we can also explore CRAN’s help pages.</p>
+<div id="aliases-1" class="section level2">
+<h2>Aliases</h2>
+<p>As before we start exploring CRAN aliases.
+Which are the packages that have more aliases?</p>
+<table>
+<thead>
+<tr class="header">
+<th align="left">Package</th>
+<th align="right">n</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td align="left">aroma.affymetrix</td>
+<td align="right">2158</td>
+</tr>
+<tr class="even">
+<td align="left">Matrix</td>
+<td align="right">1997</td>
+</tr>
+<tr class="odd">
+<td align="left">VGAM</td>
+<td align="right">1948</td>
+</tr>
+<tr class="even">
+<td align="left">CVXR</td>
+<td align="right">1723</td>
+</tr>
+<tr class="odd">
+<td align="left">paws.management</td>
+<td align="right">1580</td>
+</tr>
+<tr class="even">
+<td align="left">paws.security.identity</td>
+<td align="right">1580</td>
+</tr>
+<tr class="odd">
+<td align="left">aroma.core</td>
+<td align="right">1566</td>
+</tr>
+<tr class="even">
+<td align="left">paws.compute</td>
+<td align="right">1429</td>
+</tr>
+<tr class="odd">
+<td align="left">paws.analytics</td>
+<td align="right">1349</td>
+</tr>
+<tr class="even">
+<td align="left">photobiology</td>
+<td align="right">1319</td>
+</tr>
+</tbody>
+</table>
+<p>The top packages with more help pages have more than 2000!
+On the other side there are more than 800 packages (835) with only one alias.</p>
+<div class="figure"><span style="display:block;" id="fig:plot-cran-alias-hist"></span>
+<img src="{{< blogdown/postref >}}index.en_files/figure-html/plot-cran-alias-hist-1.png" alt="**Most CRAN packages have 14 aliases.** Aliases distribution on CRAN." width="672" />
+<p class="caption">
+Figure 5: <strong>Most CRAN packages have 14 aliases.</strong> Aliases distribution on CRAN.
+</p>
+</div>
+<p>I’m surprised to see so many packages with just one alias.
+This might indicates packages that only try to do just one thing, while more complex packages will have more aliases and maybe also more help pages.</p>
+<p>We can also find those targets that are duplicated on CRAN:</p>
+<div class="figure"><span style="display:block;" id="fig:plot-cran-dup-targets"></span>
+<img src="{{< blogdown/postref >}}index.en_files/figure-html/plot-cran-dup-targets-1.png" alt="**Top 25 duplicated topics on CRAN.** Common methods and the magrittr pipe dominate the most frequent topics." width="672" />
+<p class="caption">
+Figure 6: <strong>Top 25 duplicated topics on CRAN.</strong> Common methods and the magrittr pipe dominate the most frequent topics.
+</p>
+</div>
+<p>The most repeated topic is the magrittr pipe <code>%&gt;%</code> followed by reexports (curious as usually the pipe is also re-exported).
+We can see some common methods like <code>plot</code>, <code>print</code>, <code>show</code> and some that are related to the dplyr and shiny, mixed between some methods used for statistics.</p>
+</div>
+<div id="help-pages" class="section level2">
+<h2>Help pages</h2>
+<p>Similar to the alias on CRAN we can check what happens with help pages:</p>
+<table>
+<caption><span id="tab:cran-help-counts">Table 6: </span><strong>Number of help pages of top 10 packages.</strong> Some packages have many help pages.</caption>
+<thead>
+<tr class="header">
+<th align="right">Help page</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td align="right">1573</td>
+</tr>
+<tr class="even">
+<td align="right">1573</td>
+</tr>
+<tr class="odd">
+<td align="right">1422</td>
+</tr>
+<tr class="even">
+<td align="right">1342</td>
+</tr>
+<tr class="odd">
+<td align="right">1283</td>
+</tr>
+<tr class="even">
+<td align="right">1091</td>
+</tr>
+<tr class="odd">
+<td align="right">970</td>
+</tr>
+<tr class="even">
+<td align="right">911</td>
+</tr>
+<tr class="odd">
+<td align="right">901</td>
+</tr>
+<tr class="even">
+<td align="right">874</td>
+</tr>
+</tbody>
+</table>
+<p>The top packages with more help pages have more than 800!
+On the other side there are more than 1000 packages (1084) with only one help page.</p>
+<p>Overall doesn’t seem like there is a distribution pattern.
+Packages end up with as many aliases as maintainers see fit.</p>
+<div class="figure"><span style="display:block;" id="fig:plot-cran-help-pages-hist"></span>
+<img src="{{< blogdown/postref >}}index.en_files/figure-html/plot-cran-help-pages-hist-1.png" alt="**Most CRAN packages have 11 help pages.** Help page distribution." width="672" />
+<p class="caption">
+Figure 7: <strong>Most CRAN packages have 11 help pages.</strong> Help page distribution.
+</p>
+</div>
+<p>We can check the ratio of alias per help page and number of help pages by package:</p>
+<div class="figure"><span style="display:block;" id="fig:plot-cran-help-topics"></span>
+<img src="{{< blogdown/postref >}}index.en_files/figure-html/plot-cran-help-topics-1.png" alt="**Some packages have many alias per help pages.** Packages with high number of alias per help page are colored in green while packages with high number of help pages and alias are in black. The dashed line correspond to a perfect match between help pages and alias." width="672" />
+<p class="caption">
+Figure 8: <strong>Some packages have many alias per help pages.</strong> Packages with high number of alias per help page are colored in green while packages with high number of help pages and alias are in black. The dashed line correspond to a perfect match between help pages and alias.
+</p>
+</div>
+<p>It is clear that more help pages might lead to more topic pages but there are some packages with low number of help pages but high number of alias (those in green on the plot above).
+These packages tend to have 5 alias per help page or more.</p>
+<p>However this is not normal, the median number of help pages is 11 and the median number of topics is 14.
+So usually CRAN packages tend to be much smaller.</p>
+</div>
+<div id="cross-references-1" class="section level2">
+<h2>Cross references</h2>
+<p>So far we analyzed CRAN help pages by the number of alias and help pages they have.
+While this is interesting I think it can be more revealing checking what they are linking to.</p>
+<p>Similar to what we did with R cross-references we first start finding links to base packages and then we’ll search for links across CRAN packages.</p>
+<p>Now that I have corrected many issues I’ll check if it matches CRAN’s output.</p>
+</div>
+<div id="comparing-links-with-crans-checks" class="section level2">
+<h2>Comparing links with CRAN’s checks</h2>
+<p>We can compare the data with CRAN’s package details of issues found related to cross-references.</p>
+<p>There are 1904 packages with issues in “Rd cross-references” across all flavors.
+These can be found online too, for example for <a href="https://cran.r-project.org/web/checks/check_details_r-devel-linux-x86_64-debian-clang.html">r-devel in debian</a>, (pick your <a href="https://cran.r-project.org/web/checks/check_summary.html">flavor</a>).</p>
+<!-- To compare with CRAN we need to prepare the data collected.  -->
+<!-- First thing, CRAN packages can depend on packages in Bioconductor and other additional repositories for which we don't have the data.  -->
+<!-- Identifying those packages will help to avoid any false positive.  -->
+<!-- To further check what is happening we can compare directly with what CRAN reports. -->
+<p>There are 180 packages currently with cross references notes that could be improved by using topics on the cross-references (instead of file names).
+There are 1145 that are currently not detected by CRAN that could be improved the same way, by instead of using file names of other CRAN packages use their topic.</p>
+<!-- Now that we found that they mostly agree let's analyse the data. -->
+</div>
+</div>
+<div id="further-analysis" class="section level1">
+<h1>Further analysis</h1>
+<div id="pages-with-links" class="section level2">
+<h2>Pages with links</h2>
+<table>
+<caption><span id="tab:cran-pages-links">Table 7: </span><strong>More than half of CRAN’s help pages do not have links to other help pages</strong>.</caption>
+<thead>
+<tr class="header">
+<th align="left">Link from</th>
+<th align="left">References to</th>
+<th align="right">Help pages</th>
+<th align="left">perc</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td align="left">FALSE</td>
+<td align="left">FALSE</td>
+<td align="right">219029</td>
+<td align="left">47.5%</td>
+</tr>
+<tr class="even">
+<td align="left">TRUE</td>
+<td align="left">TRUE</td>
+<td align="right">135683</td>
+<td align="left">29.4%</td>
+</tr>
+<tr class="odd">
+<td align="left">TRUE</td>
+<td align="left">FALSE</td>
+<td align="right">73348</td>
+<td align="left">15.9%</td>
+</tr>
+<tr class="even">
+<td align="left">FALSE</td>
+<td align="left">TRUE</td>
+<td align="right">33206</td>
+<td align="left">7.2%</td>
+</tr>
+</tbody>
+</table>
+<p>CRAN help pages by contrast with base help pages have many less references to other help pages (See <a href="#tab:cran-pages-links">7</a>).
+Almost 50% receive no reference or links to other help pages, but the next biggest group is those that have links and receive references.
+Surprising there are some help pages that receive reference that do not link to other help pages.</p>
+<div class="figure"><span style="display:block;" id="fig:cran-pages-links2"></span>
+<img src="{{< blogdown/postref >}}index.en_files/figure-html/cran-pages-links2-1.png" alt="**Links on CRAN's help pages.** Many pages are either linked a lot or link a lot. Dashed line represents pages recevigin same number of links than those they have." width="672" />
+<p class="caption">
+Figure 9: <strong>Links on CRAN’s help pages.</strong> Many pages are either linked a lot or link a lot. Dashed line represents pages recevigin same number of links than those they have.
+</p>
+</div>
+<p>Most CRAN’s help pages are not linked , not even by their own package, or have links.
+Followed by those with links to and from the help page, then by those that are linked but do not have a link.
+Last, those that have a link but are not linked elsewhere.</p>
+</div>
+<div id="links-to-base" class="section level2">
+<h2>Links to base</h2>
+<p>First we can check the number of links to base R:</p>
+<div class="figure"><span style="display:block;" id="fig:plot-base-links"></span>
+<img src="{{< blogdown/postref >}}index.en_files/figure-html/plot-base-links-1.png" alt="**Base is the most linked package.** Packages sorted by number of links they receive from CRAN's packages." width="672" />
+<p class="caption">
+Figure 10: <strong>Base is the most linked package.</strong> Packages sorted by number of links they receive from CRAN’s packages.
+</p>
+</div>
+<p>There are many packages that link a lot base R, but most of them link them fairly few.</p>
+<div class="figure"><span style="display:block;" id="fig:plot-base-links2"></span>
+<img src="{{< blogdown/postref >}}index.en_files/figure-html/plot-base-links2-1.png" alt="**Base is the most linked package.** Packages sorted by number of links they receive from CRAN's packages." width="672" />
+<p class="caption">
+Figure 11: <strong>Base is the most linked package.</strong> Packages sorted by number of links they receive from CRAN’s packages.
+</p>
+</div>
+<p>From the above plot I find surprising there are these few links to the utils package.
+Perhaps looking at which files are linked could help.</p>
+<div class="figure"><span style="display:block;" id="fig:base-links-packages"></span>
+<img src="{{< blogdown/postref >}}index.en_files/figure-html/base-links-packages-1.png" alt="**Links to base from different pacakges**" width="672" />
+<p class="caption">
+Figure 12: <strong>Links to base from different pacakges</strong>
+</p>
+</div>
+<p>As previously reported there are many links to different help pages across packages.
+Many of the most popular pages are linked from different many different packages too.
+Surprisingly all links to the compiler package are to a single page: <code>help("compile", package = "compiler")</code></p>
+<div class="figure"><span style="display:block;" id="fig:base-links-sources"></span>
+<img src="{{< blogdown/postref >}}index.en_files/figure-html/base-links-sources-1.png" alt="**Most linked pages by packages.** Some data types are the most linked as well as some plot parameters and methods for model fitting or representation." width="672" />
+<p class="caption">
+Figure 13: <strong>Most linked pages by packages.</strong> Some data types are the most linked as well as some plot parameters and methods for model fitting or representation.
+</p>
+</div>
+<div class="figure"><span style="display:block;" id="fig:missing-anchors"></span>
+<img src="{{< blogdown/postref >}}index.en_files/figure-html/missing-anchors-1.png" alt="**Usually there are slightly more topics per help page.** " width="672" />
+<p class="caption">
+Figure 14: <strong>Usually there are slightly more topics per help page.</strong>
+</p>
+</div>
+<!-- Surprisingly there are more than 7000 packages with no links to other documentation pages, while the median is to link to ` median(pt$diff_target)` different help pages, from ` median(pt$diff_source)` different help pages. -->
+<!-- We can see some packages that have many help pages but only link to the same help page and some other packages that have few help pages that link to several pages. -->
+</div>
+<div id="cran-packages-1" class="section level2">
+<h2>CRAN packages</h2>
+<p>Now it is time to check for CRAN packages.</p>
+<p>There are 1400 packages that lack destination of the R document.
+There are also 11645 that miss anchors, the majority of these are to their own R documentation help pages.
+There are 689 packages that link to a packages that is not on the dependency, while these could be packages using “LinkingTo” this could also be packages linking to archived packages.
+There are 1325 packages that link to a file instead of a topic. While this is not forbidden (yet)</p>
+<p>We can look at packages are CRAN packages linking to (excluding themselves):</p>
+<div class="figure"><span style="display:block;" id="fig:cran-linksto"></span>
+<img src="{{< blogdown/postref >}}index.en_files/figure-html/cran-linksto-1.png" alt="**Links to other packages** Most packages receive links  from few packages, but there are some that receive links from few packages and many help pages" width="672" />
+<p class="caption">
+Figure 15: <strong>Links to other packages</strong> Most packages receive links from few packages, but there are some that receive links from few packages and many help pages
+</p>
+</div>
+<p>There are few packages thightly linked together (those that start with <code>paws.*</code>) and then there are the base packages linked by many different packages.</p>
+<p>If we focus more on the most common packages we might find some other common practices:</p>
+<div class="figure"><span style="display:block;" id="fig:cran-linksto-zoom"></span>
+<img src="{{< blogdown/postref >}}index.en_files/figure-html/cran-linksto-zoom-1.png" alt="**Zooming to links to other packages** Focusing on packages with less than 400 help pages linked and less than 1000 packages being referenced." width="672" />
+<p class="caption">
+Figure 16: <strong>Zooming to links to other packages</strong> Focusing on packages with less than 400 help pages linked and less than 1000 packages being referenced.
+</p>
+</div>
+<p>But who is linking to these packages?</p>
+<div class="figure"><span style="display:block;" id="fig:cran-linksto2"></span>
+<img src="{{< blogdown/postref >}}index.en_files/figure-html/cran-linksto2-1.png" alt="**Links to other packages** Most packages receive links  from few packages, but there are some that receive links from " width="672" />
+<p class="caption">
+Figure 17: <strong>Links to other packages</strong> Most packages receive links from few packages, but there are some that receive links from
+</p>
+</div>
+<p>There are many packages that link to few packages but from many help pages.
+There are some that link to many packages from relatively few help pages.
+There is broom that links to many distinct packages from many help pages.</p>
+<p>Putting this together we can explore which packages are more connected, those that provide links, those that recieve and those that do both or neither.</p>
+<table>
+<caption><span id="tab:cran-packages-links">Table 8: </span><strong>Table describing packages cross reference status.</strong> Most packages are not linked, most provides link and few receive links but do not link to other packages.</caption>
+<thead>
+<tr class="header">
+<th align="left">Receives_links</th>
+<th align="left">Provides_links</th>
+<th align="right">Packages</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td align="left">FALSE</td>
+<td align="left">FALSE</td>
+<td align="right">11006</td>
+</tr>
+<tr class="even">
+<td align="left">FALSE</td>
+<td align="left">TRUE</td>
+<td align="right">7431</td>
+</tr>
+<tr class="odd">
+<td align="left">TRUE</td>
+<td align="left">TRUE</td>
+<td align="right">2570</td>
+</tr>
+<tr class="even">
+<td align="left">TRUE</td>
+<td align="left">FALSE</td>
+<td align="right">741</td>
+</tr>
+</tbody>
+</table>
+<p>Most packages do not provide links to external packages or receive them.
+Next come those that link to other packages but are not linked back, followed by those that are linked to and are linked back.
+Last there are those package that receives links but do not link to other resources.</p>
+<div class="figure"><span style="display:block;" id="fig:cran-links"></span>
+<img src="{{< blogdown/postref >}}index.en_files/figure-html/cran-links-1.png" alt="**Packages receiveing and giving links.** Very few packages link to many others. While some other packages are linked by many." width="672" />
+<p class="caption">
+Figure 18: <strong>Packages receiveing and giving links.</strong> Very few packages link to many others. While some other packages are linked by many.
+</p>
+</div>
+<p>broom is a package that receives few links from packages but link to multiple packages.</p>
+<div class="figure"><span style="display:block;" id="fig:links-distribution"></span>
+<img src="{{< blogdown/postref >}}index.en_files/figure-html/links-distribution-1.png" alt="**Distribution of links on help pages with links.** CRAN packages have more links than base packages." width="672" />
+<p class="caption">
+Figure 19: <strong>Distribution of links on help pages with links.</strong> CRAN packages have more links than base packages.
+</p>
+</div>
+<p>CRAN’s packages tend to have more links to other packages than base R.</p>
+</div>
+</div>
+<div id="conclusions" class="section level1">
+<h1>Conclusions</h1>
+<p>As a summary of the analysis of the links and alias.
+About base:</p>
+<ul>
+<li>Help page more linked to from base: options.Rd</li>
+<li>Help page more linked to from CRAN: character.Rd</li>
+<li>Help page with more links: par.Rd</li>
+<li>Package more linked to from CRAN: base</li>
+<li>Page more linked from different packages: par.Rd</li>
+<li>Package with more links: base</li>
+<li>Package with less links: compiler</li>
+</ul>
+<p>About CRAN packages:</p>
+<ul>
+<li>Package with more help pages: paws.management</li>
+<li>Package more linked by other packages: ggplot2</li>
+<li>Package help with more links: spatstat-package.Rd</li>
+<li>Help page more repeated: reexports</li>
+<li>Package help with linked to: R6Class.Rd</li>
+<li>Package with more links to other packages: paws</li>
+<li>Package with more links : keras3</li>
+<li>Topic more repeated: <code>%&gt;%</code></li>
+<li>Links I couldn’t resolve: 5358</li>
+<li>Packages with link related problems:</li>
+<li>Packages linking to Bioconductor:</li>
+</ul>
+<p>Wrong assumptions I had about cross-references:</p>
+<ul>
+<li>All packages will have one link to other help pages.</li>
+<li>One cannot link to a file.</li>
+<li>Base packages wouldn’t link to CRAN packages.</li>
+</ul>
+<p>I don’t think I was ever aware of the compiler package.</p>
+<div id="reproducibility" class="section level3">
+<h3>Reproducibility</h3>
+<details>
+<summary>
+Session info
+</summary>
+<pre><code>## - Session info -------------------------------------------------------------------------------------------------------
+##  setting  value
+##  version  R Under development (unstable) (2024-12-20 r87452)
+##  os       Ubuntu 24.04.1 LTS
+##  system   x86_64, linux-gnu
+##  ui       X11
+##  language en
+##  collate  C
+##  ctype    C
+##  tz       Europe/Madrid
+##  date     2024-12-24
+##  pandoc   3.2 @ /usr/lib/rstudio/resources/app/bin/quarto/bin/tools/x86_64/ (via rmarkdown)
+##  quarto   1.4.553 @ /usr/local/bin/quarto
+## 
+## - Packages -----------------------------------------------------------------------------------------------------------
+##  package      * version    date (UTC) lib source
+##  blogdown       1.19       2024-02-01 [1] CRAN (R 4.5.0)
+##  bookdown       0.41       2024-10-16 [1] CRAN (R 4.5.0)
+##  bslib          0.8.0      2024-07-29 [1] CRAN (R 4.5.0)
+##  cachem         1.1.0      2024-05-16 [1] CRAN (R 4.5.0)
+##  cli            3.6.3      2024-06-21 [1] CRAN (R 4.5.0)
+##  codetools      0.2-20     2024-03-31 [2] CRAN (R 4.5.0)
+##  colorspace     2.1-1      2024-07-26 [1] CRAN (R 4.5.0)
+##  digest         0.6.37     2024-08-19 [1] CRAN (R 4.5.0)
+##  dplyr        * 1.1.4      2023-11-17 [1] CRAN (R 4.5.0)
+##  evaluate       1.0.1      2024-10-10 [1] CRAN (R 4.5.0)
+##  fansi          1.0.6      2023-12-08 [1] CRAN (R 4.5.0)
+##  farver         2.1.2      2024-05-13 [1] CRAN (R 4.5.0)
+##  fastmap        1.2.0      2024-05-15 [1] CRAN (R 4.5.0)
+##  forcats      * 1.0.0      2023-01-29 [1] CRAN (R 4.5.0)
+##  generics       0.1.3      2022-07-05 [1] CRAN (R 4.5.0)
+##  ggforce        0.4.2      2024-02-19 [1] CRAN (R 4.5.0)
+##  ggplot2      * 3.5.1      2024-04-23 [1] CRAN (R 4.5.0)
+##  ggraph       * 2.2.1      2024-03-07 [1] CRAN (R 4.5.0)
+##  ggrepel      * 0.9.6      2024-09-07 [1] CRAN (R 4.5.0)
+##  glue           1.8.0      2024-09-30 [1] CRAN (R 4.5.0)
+##  graphlayouts   1.2.1      2024-11-18 [1] CRAN (R 4.5.0)
+##  gridExtra      2.3        2017-09-09 [1] CRAN (R 4.5.0)
+##  gtable         0.3.6      2024-10-25 [1] CRAN (R 4.5.0)
+##  htmltools      0.5.8.1    2024-04-04 [1] CRAN (R 4.5.0)
+##  igraph         2.1.1      2024-10-19 [1] CRAN (R 4.5.0)
+##  jquerylib      0.1.4      2021-04-26 [1] CRAN (R 4.5.0)
+##  jsonlite       1.8.9      2024-09-20 [1] CRAN (R 4.5.0)
+##  knitr        * 1.49       2024-11-08 [1] CRAN (R 4.5.0)
+##  lifecycle      1.0.4      2023-11-07 [1] CRAN (R 4.5.0)
+##  magrittr       2.0.3      2022-03-30 [1] CRAN (R 4.5.0)
+##  MASS           7.3-61     2024-06-13 [2] CRAN (R 4.5.0)
+##  memoise        2.0.1      2021-11-26 [1] CRAN (R 4.5.0)
+##  munsell        0.5.1      2024-04-01 [1] CRAN (R 4.5.0)
+##  pillar         1.9.0      2023-03-22 [1] CRAN (R 4.5.0)
+##  pkgconfig      2.0.3      2019-09-22 [1] CRAN (R 4.5.0)
+##  polyclip       1.10-7     2024-07-23 [1] CRAN (R 4.5.0)
+##  purrr          1.0.2      2023-08-10 [1] CRAN (R 4.5.0)
+##  R6             2.5.1      2021-08-19 [1] CRAN (R 4.5.0)
+##  Rcpp           1.0.13-1   2024-11-02 [1] CRAN (R 4.5.0)
+##  rlang          1.1.4      2024-06-04 [1] CRAN (R 4.5.0)
+##  rmarkdown      2.29       2024-11-04 [1] CRAN (R 4.5.0)
+##  rstudioapi     0.17.1     2024-10-22 [1] CRAN (R 4.5.0)
+##  sass           0.4.9      2024-03-15 [1] CRAN (R 4.5.0)
+##  scales         1.3.0      2023-11-28 [1] CRAN (R 4.5.0)
+##  sessioninfo    1.2.2.9000 2024-09-15 [1] Github (r-lib/sessioninfo@442a686)
+##  tibble         3.2.1      2023-03-20 [1] CRAN (R 4.5.0)
+##  tidygraph    * 1.3.1      2024-01-30 [1] CRAN (R 4.5.0)
+##  tidyr          1.3.1      2024-01-24 [1] CRAN (R 4.5.0)
+##  tidyselect     1.2.1      2024-03-11 [1] CRAN (R 4.5.0)
+##  tweenr         2.0.3      2024-02-26 [1] CRAN (R 4.5.0)
+##  utf8           1.2.4      2023-10-22 [1] CRAN (R 4.5.0)
+##  vctrs          0.6.5      2023-12-01 [1] CRAN (R 4.5.0)
+##  viridis        0.6.5      2024-01-29 [1] CRAN (R 4.5.0)
+##  viridisLite    0.4.2      2023-05-02 [1] CRAN (R 4.5.0)
+##  withr          3.0.2      2024-10-28 [1] CRAN (R 4.5.0)
+##  xfun           0.49       2024-10-31 [1] CRAN (R 4.5.0)
+##  yaml           2.3.10     2024-07-26 [1] CRAN (R 4.5.0)
+## 
+##  [1] /home/lluis/bin/R/4.5
+##  [2] /opt/R/devel/lib/R/library
+##  * -- Packages attached to the search path.
+## 
+## ----------------------------------------------------------------------------------------------------------------------</code></pre>
+</details>
+</div>
+</div>
+<div class="footnotes footnotes-end-of-document">
+<hr />
+<ol>
+<li id="fn1"><p>By setting <code>_R_CHECK_XREFS_NOTE_MISSING_PACKAGE_ANCHORS_=true</code> as environmental variable.<a href="#fnref1" class="footnote-back">↩︎</a></p></li>
+<li id="fn2"><p>But using links to files is still fine.<a href="#fnref2" class="footnote-back">↩︎</a></p></li>
+<li id="fn3"><p>There is also the <code>\linkS4class{abc}</code> that expands to <code>\link[=abc-class]{abc}</code> for S4 classes.<a href="#fnref3" class="footnote-back">↩︎</a></p></li>
+<li id="fn4"><p>So there are three names for (almost) the same thing: topic, alias and anchor. Anchors do not need to start with <code>=</code> but should be resolvable.<a href="#fnref4" class="footnote-back">↩︎</a></p></li>
+<li id="fn5"><p>Yes, even though the documentation makes it clear that this shouldn’t be done the help system works around this issue.<a href="#fnref5" class="footnote-back">↩︎</a></p></li>
+</ol>
+</div>
