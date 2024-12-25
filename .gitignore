@@ -13,3 +13,5 @@ Thumbs.db
 /resources/
 .hugo_build.lock
 /resources/
+index.en_cache/
+content/post/*/*.RDS
