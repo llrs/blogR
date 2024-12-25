@@ -58,21 +58,73 @@ We will also check which documentation pages have more links, are more linked to
 Those files are dev.Rd, format.Rd, units.Rd.<br />
 To distinguish between those files one need to check the title(s) and content of the pages.</p>
 <p>Similarly there are multiple help pages of different packages with the same topics:</p>
-<pre><code>##           Alias         Packages
-## 1       Complex    base, methods
-## 2           GSC      base, tools
-## 3         Logic    base, methods
-## 4          Math    base, methods
-## 5           Ops    base, methods
-## 6       R_GSCMD      base, tools
-## 7            S4    base, methods
-## 8       Summary    base, methods
-## 9     clipboard      base, utils
-## 10          hat grDevices, stats
-## 11    matrixOps    base, methods
-## 12         plot   base, graphics
-## 13 show-methods  methods, stats4
-## 14       symbol  base, grDevices</code></pre>
+<table>
+<caption><span id="tab:base-dup-targets">Table 1: </span><strong>Duplicate alias on R base packages.</strong> Alias and packages with the same alias.</caption>
+<thead>
+<tr class="header">
+<th align="left">Alias</th>
+<th align="left">Packages</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td align="left">Complex</td>
+<td align="left">base, methods</td>
+</tr>
+<tr class="even">
+<td align="left">GSC</td>
+<td align="left">base, tools</td>
+</tr>
+<tr class="odd">
+<td align="left">Logic</td>
+<td align="left">base, methods</td>
+</tr>
+<tr class="even">
+<td align="left">Math</td>
+<td align="left">base, methods</td>
+</tr>
+<tr class="odd">
+<td align="left">Ops</td>
+<td align="left">base, methods</td>
+</tr>
+<tr class="even">
+<td align="left">R_GSCMD</td>
+<td align="left">base, tools</td>
+</tr>
+<tr class="odd">
+<td align="left">S4</td>
+<td align="left">base, methods</td>
+</tr>
+<tr class="even">
+<td align="left">Summary</td>
+<td align="left">base, methods</td>
+</tr>
+<tr class="odd">
+<td align="left">clipboard</td>
+<td align="left">base, utils</td>
+</tr>
+<tr class="even">
+<td align="left">hat</td>
+<td align="left">grDevices, stats</td>
+</tr>
+<tr class="odd">
+<td align="left">matrixOps</td>
+<td align="left">base, methods</td>
+</tr>
+<tr class="even">
+<td align="left">plot</td>
+<td align="left">base, graphics</td>
+</tr>
+<tr class="odd">
+<td align="left">show-methods</td>
+<td align="left">methods, stats4</td>
+</tr>
+<tr class="even">
+<td align="left">symbol</td>
+<td align="left">base, grDevices</td>
+</tr>
+</tbody>
+</table>
 <p>Most of them are in base and other packages, from the methods package to tools, grDevices, graphics, and utils.</p>
 <p>To access them directly one needs to use <code>help()</code>: <code>help("clipboard", package = "utils")</code> otherwise one will need to choose them from the menu it will pop up from using <code>?clipboard</code>.
 This works to access any other help page too.</p>
@@ -102,7 +154,7 @@ while probably they were expecting to go to another help page.
 At least this is something I have felt in the past.
 In my opinion these links could be deleted and rewritten to explain which section should the user read:</p>
 <table>
-<caption><span id="tab:self-references">Table 1: </span><strong>Help pages on base with links to themselves</strong>. These links could be removed or perhaps a linking to a specific section could be implemented.</caption>
+<caption><span id="tab:self-references">Table 2: </span><strong>Help pages on base with links to themselves</strong>. These links could be removed or perhaps a linking to a specific section could be implemented.</caption>
 <thead>
 <tr class="header">
 <th align="left">Package</th>
@@ -203,7 +255,7 @@ I raised this issue on the <a href="https://stat.ethz.ch/pipermail/r-devel/2024-
 <p>We also observed that some packages do not provide links.
 How frequent is this and how it affects base R?</p>
 <table>
-<caption><span id="tab:base-pages-links">Table 2: </span><strong>References on help pages.</strong> Most base help pages are referenced and link to other help pages.</caption>
+<caption><span id="tab:base-pages-links">Table 3: </span><strong>References on help pages.</strong> Most base help pages are referenced and link to other help pages.</caption>
 <thead>
 <tr class="header">
 <th align="left">Link from</th>
@@ -239,7 +291,7 @@ How frequent is this and how it affects base R?</p>
 </tr>
 </tbody>
 </table>
-<p>Almost all help pages have links and most of them receive references from other help pages (compre this with <a href="#tab:cran-pages-links">7</a>.
+<p>Almost all help pages have links and most of them receive references from other help pages (compre this with Table <a href="#tab:cran-pages-links">9</a>).
 Only 113 help pages do not have links or receive references, so unless they are documented somewhere else, like <a href="https://cran.r-project.org/doc/manuals/r-devel/R-ints.html">R internals</a>, <a href="https://cran.r-project.org/doc/manuals/r-devel/R-exts.html">Writing R extensions</a>, <a href="https://cran.r-project.org/doc/manuals/r-devel/R-admin.html">R Installation and Administration</a>, it will be hard to find them.</p>
 <p>This seems a good opportunity to patch documentation and make it easier to find and use those help pages.
 For example there is currently no CRAN package, or base package that links to <code>Rmcd()</code>.
@@ -252,7 +304,7 @@ Figure 3: <strong>Help pages receiving and sending references to other help page
 </div>
 <p>While so far we focus on links if we compare that with the existing help pages we might find some interesting patterns:</p>
 <table>
-<caption><span id="tab:base-no-link">Table 3: </span><strong>Help pages with no links to them</strong>.</caption>
+<caption><span id="tab:base-no-link">Table 4: </span><strong>Help pages with no links to them</strong>.</caption>
 <thead>
 <tr class="header">
 <th align="left">Package</th>
@@ -318,7 +370,7 @@ Figure 3: <strong>Help pages receiving and sending references to other help page
 Surprisingly grid is the next package without links from other base packages, followed by base itself.
 It would be interesting to see which help pages, as connecting these help pages to other topics might help users to find what R is capable.</p>
 <table>
-<caption><span id="tab:base-no-ref">Table 4: </span><strong>Help pages with no references from them</strong>.</caption>
+<caption><span id="tab:base-no-ref">Table 5: </span><strong>Help pages with no references from them</strong>.</caption>
 <thead>
 <tr class="header">
 <th align="left">Package</th>
@@ -401,7 +453,7 @@ These help pages would be easier to find if at least they were linked from other
 <h3>To CRAN</h3>
 <p>We can also ask which packages are linked from R that are not part of R.</p>
 <table>
-<caption><span id="tab:cran-database">Table 5: </span><strong>Most packages linked from base R are from current R core members.</strong> Information about non-base packages linked from base R.</caption>
+<caption><span id="tab:cran-database">Table 6: </span><strong>Most packages linked from base R are from current R core members.</strong> Information about non-base packages linked from base R.</caption>
 <thead>
 <tr class="header">
 <th align="left">Package</th>
@@ -576,15 +628,15 @@ Some other links include popular packages, while others are not so popular.</p>
 <div id="cran-packages" class="section level1">
 <h1>CRAN packages</h1>
 <p>Now that we explored base R packages we can also explore CRAN’s help pages.</p>
-<div id="aliases-1" class="section level2">
-<h2>Aliases</h2>
+<p>1## Aliases</p>
 <p>As before we start exploring CRAN aliases.
 Which are the packages that have more aliases?</p>
 <table>
+<caption><span id="tab:cran-count-aliases">Table 7: </span><strong>Help pages per CRAN package</strong>. Top 10 packages with more help pages.</caption>
 <thead>
 <tr class="header">
 <th align="left">Package</th>
-<th align="right">n</th>
+<th align="right">Help page</th>
 </tr>
 </thead>
 <tbody>
@@ -649,12 +701,11 @@ Figure 6: <strong>Top 25 duplicated topics on CRAN.</strong> Common methods and 
 </div>
 <p>The most repeated topic is the magrittr pipe <code>%&gt;%</code> followed by reexports (curious as usually the pipe is also re-exported).
 We can see some common methods like <code>plot</code>, <code>print</code>, <code>show</code> and some that are related to the dplyr and shiny, mixed between some methods used for statistics.</p>
-</div>
 <div id="help-pages" class="section level2">
 <h2>Help pages</h2>
 <p>Similar to the alias on CRAN we can check what happens with help pages:</p>
 <table>
-<caption><span id="tab:cran-help-counts">Table 6: </span><strong>Number of help pages of top 10 packages.</strong> Some packages have many help pages.</caption>
+<caption><span id="tab:cran-help-counts">Table 8: </span><strong>Number of help pages of top 10 packages.</strong> Some packages have many help pages.</caption>
 <thead>
 <tr class="header">
 <th align="right">Help page</th>
@@ -741,7 +792,7 @@ There are 1145 that are currently not detected by CRAN that could be improved th
 <div id="pages-with-links" class="section level2">
 <h2>Pages with links</h2>
 <table>
-<caption><span id="tab:cran-pages-links">Table 7: </span><strong>More than half of CRAN’s help pages do not have links to other help pages</strong>.</caption>
+<caption><span id="tab:cran-pages-links">Table 9: </span><strong>More than half of CRAN’s help pages do not have links to other help pages</strong>.</caption>
 <thead>
 <tr class="header">
 <th align="left">Link from</th>
@@ -777,7 +828,7 @@ There are 1145 that are currently not detected by CRAN that could be improved th
 </tr>
 </tbody>
 </table>
-<p>CRAN help pages by contrast with base help pages have many less references to other help pages (See <a href="#tab:cran-pages-links">7</a>).
+<p>CRAN help pages by contrast with base help pages have many less references to other help pages (See <a href="#tab:cran-pages-links">9</a>).
 Almost 50% receive no reference or links to other help pages, but the next biggest group is those that have links and receive references.
 Surprising there are some help pages that receive reference that do not link to other help pages.</p>
 <div class="figure"><span style="display:block;" id="fig:cran-pages-links2"></span>
@@ -866,7 +917,7 @@ There are some that link to many packages from relatively few help pages.
 There is broom that links to many distinct packages from many help pages.</p>
 <p>Putting this together we can explore which packages are more connected, those that provide links, those that recieve and those that do both or neither.</p>
 <table>
-<caption><span id="tab:cran-packages-links">Table 8: </span><strong>Table describing packages cross reference status.</strong> Most packages are not linked, most provides link and few receive links but do not link to other packages.</caption>
+<caption><span id="tab:cran-packages-links">Table 10: </span><strong>Table describing packages cross reference status.</strong> Most packages are not linked, most provides link and few receive links but do not link to other packages.</caption>
 <thead>
 <tr class="header">
 <th align="left">Receives_links</th>

@@ -127,12 +127,15 @@ Similarly there are multiple help pages of different packages with the same topi
 
 ```{r}
 #| label: base-dup-targets
+#| tab.cap: "**Duplicate alias on R base packages.** Alias and packages with 
+#|  the same alias."
 dtBase <- aliasesBase |> 
   summarise(.by = Target, n = n(), Package = paste0(Package, collapse = ", ")) |> 
   filter(n > 1) |> 
   arrange(Target, Package) |> 
   select(Alias = Target, Packages = Package)
-dtBase
+dtBase |> 
+  kable()
 ```
 
 Most of them are in base and other packages, from the methods package to tools, grDevices, graphics, and utils.
@@ -529,7 +532,7 @@ base_aliases_files |>
 ```
 
 
-Almost all help pages have links and most of them receive references from other help pages (compre this with \@ref(tab:cran-pages-links).
+Almost all help pages have links and most of them receive references from other help pages (compre this with Table \@ref(tab:cran-pages-links)).
 Only 113 help pages do not have links or receive references, so unless they are documented somewhere else, like [R internals](https://cran.r-project.org/doc/manuals/r-devel/R-ints.html), [Writing R extensions](https://cran.r-project.org/doc/manuals/r-devel/R-exts.html), [R Installation and Administration](https://cran.r-project.org/doc/manuals/r-devel/R-admin.html), it will be hard to find them. 
 
 This seems a good opportunity to patch documentation and make it easier to find and use those help pages. 
@@ -650,13 +653,15 @@ Some other links include popular packages, while others are not so popular.
 
 Now that we explored base R packages we can also explore CRAN's help pages.
 
-## Aliases
+1## Aliases
 
 As before we start exploring CRAN aliases.
 Which are the packages that have more aliases?
 
 
 ```{r cran-count-aliases}
+#| tab.cap: "**Help pages per CRAN package**. Top 10 packages with more help 
+#|  pages."
 aliases <- aliasesCRAN |> 
   summarise(.by = Package, n = n()) |> 
   arrange(-n)
@@ -666,7 +671,7 @@ one_alias <- aliases |>
   pull(n)
 aliases |> 
   head(10) |> 
-  kable()
+  kable(col.names = c("Package", "Help page"))
 ```
 
 The top packages with more help pages have more than 2000! 
