@@ -2,7 +2,7 @@
 title: "Exploring CRAN's files: part 3"
 subtitle: 'References: links between pages, packages and base R'
 author: Lluís Revilla Sancho
-date: '2024-09-23'
+date: '2024-12-23'
 slug: cran-files-3
 categories:
   - CRAN

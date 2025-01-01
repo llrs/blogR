@@ -2,7 +2,7 @@
 title: "Exploring CRAN's files: part 3"
 subtitle: 'References: links between pages, packages and base R'
 author: Lluís Revilla Sancho
-date: '2024-09-23'
+date: '2024-12-23'
 slug: cran-files-3
 categories:
   - CRAN
@@ -745,7 +745,7 @@ We can see some common methods like <code>plot</code>, <code>print</code>, <code
 </tbody>
 </table>
 <p>The top packages with more help pages have more than 800!
-On the other side there are more than 1000 packages (1084) with only one help page.</p>
+On the other side there are more than 1000 packages (1086) with only one help page.</p>
 <p>Overall doesn’t seem like there is a distribution pattern.
 Packages end up with as many aliases as maintainers see fit.</p>
 <div class="figure"><span style="display:block;" id="fig:plot-cran-help-pages-hist"></span>
@@ -776,14 +776,14 @@ While this is interesting I think it can be more revealing checking what they ar
 <div id="comparing-links-with-crans-checks" class="section level2">
 <h2>Comparing links with CRAN’s checks</h2>
 <p>We can compare the data with CRAN’s package details of issues found related to cross-references.</p>
-<p>There are 1904 packages with issues in “Rd cross-references” across all flavors.
+<p>There are 1876 packages with issues in “Rd cross-references” across all flavors.
 These can be found online too, for example for <a href="https://cran.r-project.org/web/checks/check_details_r-devel-linux-x86_64-debian-clang.html">r-devel in debian</a>, (pick your <a href="https://cran.r-project.org/web/checks/check_summary.html">flavor</a>).</p>
 <!-- To compare with CRAN we need to prepare the data collected.  -->
 <!-- First thing, CRAN packages can depend on packages in Bioconductor and other additional repositories for which we don't have the data.  -->
 <!-- Identifying those packages will help to avoid any false positive.  -->
 <!-- To further check what is happening we can compare directly with what CRAN reports. -->
-<p>There are 180 packages currently with cross references notes that could be improved by using topics on the cross-references (instead of file names).
-There are 1145 that are currently not detected by CRAN that could be improved the same way, by instead of using file names of other CRAN packages use their topic.</p>
+<p>There are 176 packages currently with cross references notes that could be improved by using topics on the cross-references (instead of file names).
+There are 1159 that are currently not detected by CRAN that could be improved the same way, by instead of using file names of other CRAN packages use their topic.</p>
 <!-- Now that we found that they mostly agree let's analyse the data. -->
 </div>
 </div>
@@ -805,25 +805,25 @@ There are 1145 that are currently not detected by CRAN that could be improved th
 <tr class="odd">
 <td align="left">FALSE</td>
 <td align="left">FALSE</td>
-<td align="right">219029</td>
+<td align="right">220340</td>
 <td align="left">47.5%</td>
 </tr>
 <tr class="even">
 <td align="left">TRUE</td>
 <td align="left">TRUE</td>
-<td align="right">135683</td>
+<td align="right">136230</td>
 <td align="left">29.4%</td>
 </tr>
 <tr class="odd">
 <td align="left">TRUE</td>
 <td align="left">FALSE</td>
-<td align="right">73348</td>
+<td align="right">73727</td>
 <td align="left">15.9%</td>
 </tr>
 <tr class="even">
 <td align="left">FALSE</td>
 <td align="left">TRUE</td>
-<td align="right">33206</td>
+<td align="right">33351</td>
 <td align="left">7.2%</td>
 </tr>
 </tbody>
@@ -886,10 +886,10 @@ Figure 14: <strong>Usually there are slightly more topics per help page.</strong
 <div id="cran-packages-1" class="section level2">
 <h2>CRAN packages</h2>
 <p>Now it is time to check for CRAN packages.</p>
-<p>There are 1400 packages that lack destination of the R document.
-There are also 11645 that miss anchors, the majority of these are to their own R documentation help pages.
-There are 689 packages that link to a packages that is not on the dependency, while these could be packages using “LinkingTo” this could also be packages linking to archived packages.
-There are 1325 packages that link to a file instead of a topic. While this is not forbidden (yet)</p>
+<p>There are 1387 packages that lack destination of the R document.
+There are also 11684 that miss anchors, the majority of these are to their own R documentation help pages.
+There are 695 packages that link to a packages that is not on the dependency, while these could be packages using “LinkingTo” this could also be packages linking to archived packages.
+There are 1335 packages that link to a file instead of a topic. While this is not forbidden (yet)</p>
 <p>We can look at packages are CRAN packages linking to (excluding themselves):</p>
 <div class="figure"><span style="display:block;" id="fig:cran-linksto"></span>
 <img src="{{< blogdown/postref >}}index.en_files/figure-html/cran-linksto-1.png" alt="**Links to other packages** Most packages receive links  from few packages, but there are some that receive links from few packages and many help pages" width="672" />
@@ -929,22 +929,22 @@ There is broom that links to many distinct packages from many help pages.</p>
 <tr class="odd">
 <td align="left">FALSE</td>
 <td align="left">FALSE</td>
-<td align="right">11006</td>
+<td align="right">11056</td>
 </tr>
 <tr class="even">
 <td align="left">FALSE</td>
 <td align="left">TRUE</td>
-<td align="right">7431</td>
+<td align="right">7466</td>
 </tr>
 <tr class="odd">
 <td align="left">TRUE</td>
 <td align="left">TRUE</td>
-<td align="right">2570</td>
+<td align="right">2578</td>
 </tr>
 <tr class="even">
 <td align="left">TRUE</td>
 <td align="left">FALSE</td>
-<td align="right">741</td>
+<td align="right">743</td>
 </tr>
 </tbody>
 </table>
@@ -1017,12 +1017,13 @@ Session info
 ##  collate  C
 ##  ctype    C
 ##  tz       Europe/Madrid
-##  date     2024-12-24
+##  date     2025-01-01
 ##  pandoc   3.2 @ /usr/lib/rstudio/resources/app/bin/quarto/bin/tools/x86_64/ (via rmarkdown)
 ##  quarto   1.4.553 @ /usr/local/bin/quarto
 ## 
 ## - Packages -----------------------------------------------------------------------------------------------------------
 ##  package      * version    date (UTC) lib source
+##  BiocManager    1.30.25    2024-08-28 [1] CRAN (R 4.5.0)
 ##  blogdown       1.19       2024-02-01 [1] CRAN (R 4.5.0)
 ##  bookdown       0.41       2024-10-16 [1] CRAN (R 4.5.0)
 ##  bslib          0.8.0      2024-07-29 [1] CRAN (R 4.5.0)
@@ -1051,6 +1052,7 @@ Session info
 ##  jquerylib      0.1.4      2021-04-26 [1] CRAN (R 4.5.0)
 ##  jsonlite       1.8.9      2024-09-20 [1] CRAN (R 4.5.0)
 ##  knitr        * 1.49       2024-11-08 [1] CRAN (R 4.5.0)
+##  labeling       0.4.3      2023-08-29 [1] CRAN (R 4.5.0)
 ##  lifecycle      1.0.4      2023-11-07 [1] CRAN (R 4.5.0)
 ##  magrittr       2.0.3      2022-03-30 [1] CRAN (R 4.5.0)
 ##  MASS           7.3-61     2024-06-13 [2] CRAN (R 4.5.0)
