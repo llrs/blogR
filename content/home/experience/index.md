@@ -5,8 +5,8 @@ experience:
 - company: Roche
   company_url: https://www.roche.com
   date_end: ""
-  date_start: "2022-12-01"
-  description: "Part of the Data&Analysis team I work in different projects:\n * Teal framework\n * R regulatory working group"
+  date_start: "2024-10-15"
+  description: "Part of the Data&Analysis team I work in different projects:\n * Teal framework\n * R validation repository working group"
   location: Madrid
   title: Data scientist
 - company: IrsiCaixa
