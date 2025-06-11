@@ -1,0 +1,41 @@
+---
+title: Volunteer Responsibility Amnesty Day
+author: Lluís Revilla Sancho
+date: '2025-06-11'
+slug: volunteer-responsibility-amnesty-day
+categories:
+  - FOSS
+tags:
+  - Bioconductor
+authors:
+  - admin
+description: ''
+draft: no
+editor_options:
+  chunk_output_type: console
+featured: no
+image:
+  caption: ''
+  focal_point: ''
+subtitle: ''
+summary: ''
+---
+
+```{r setup, include = FALSE}
+knitr::opts_chunk$set(collapse = TRUE, fig.retina = 2)
+```
+
+
+Recently I was pointed to [Volunteer Responsibility Amnesty Day](https://www.volunteeramnestyday.net/) and given my situation and recent behavior I decided to re-evaluate my participation in at least one project:
+
+Bioconductor:
+
+ - **Responsibilities**: CAB member: Enabling productive and respectful participation, empowering developers at all levels of experience.
+ - **What I'll keep**: answering developers' requests/questions by email. 
+ - **Next steps**: 
+    - I have notified the CAB secretary that I will take a long leave.
+    - I have disengaged from current discussions within Bioconductor.
+    - I notified the [EuroBioc2025](https://eurobioc2025.bioconductor.org/) organizer I won't attend or contribute more towards the conference organization. 
+    - I have paused the notifications from the bioc-devel mailing list.
+
+I am researching how/what to improve in my implication and participation with this and other projects. Other projects might be paused or won't keep volunteering (might update the post or write new ones).
