@@ -174,33 +174,33 @@ I ended up using [this solution](https://tex.stackexchange.com/questions/262950/
 % auxiliary counter
 \newcounter{chapshift}
 % the list of colors to be used (add more if needed)
-\newcommand\BoxColor{%
+\newcommand\BoxColor{
   \ifcase\thechapshift blue!30\or red!30\or olive!30\or magenta!30\or teal!30\or lime!30\or orange!30\or violet!30\or brown!30\else yellow!30\fi}
 % the main command; the mandatory argument sets the color of the vertical box
-\newcommand\ChapFrame{%
-  \def\TitleText{\leftmark}%
-  \AddEverypageHook{%
-    \ifthenelse{\isodd{\value{page}}}{%
+\newcommand\ChapFrame{
+  \def\TitleText{\leftmark}
+  \AddEverypageHook{
+    \ifthenelse{\isodd{\value{page}}}{
       \backgroundsetup{
-        contents={%
+        contents={
           \begin{tikzpicture}[overlay,remember picture]
           \node[fill=\BoxColor,inner sep=0pt,rectangle,text width=1cm,
             text height=3cm,align=center,anchor=north east]
           at ($ (current page.north east) + (-0cm,-3*\thechapshift cm) $)
-          % {\rotatebox{90}{\parbox{4cm}{%
+          % {\rotatebox{90}{\parbox{4cm}{
           %   \centering\textcolor{black}{\scshape\thechapshift}}}};
           {};
           \end{tikzpicture}
         }
       }
-    }{%
+    }{
       \backgroundsetup{
-        contents={%
+        contents={
           \begin{tikzpicture}[overlay,remember picture]
           \node[fill=\BoxColor,inner sep=0pt,rectangle,text width=1cm,
             text height=3cm,align=center,anchor=north west]
           at ($ (current page.north west) + (-0cm,-3*\thechapshift cm) $)
-          % {\rotatebox{90}{\parbox{4cm}{%
+          % {\rotatebox{90}{\parbox{4cm}{
           %   \centering\textcolor{black}{\scshape\thechapshift}}}};
           {};
           \end{tikzpicture}
@@ -208,7 +208,7 @@ I ended up using [this solution](https://tex.stackexchange.com/questions/262950/
       }
     }
     \BgMaterial
-  }%
+  }
   \stepcounter{chapshift}
 }
 ```
@@ -342,11 +342,11 @@ On the right side a red box 3 cm below the top.](images/chapter.png)
 I decided to use different style for page numbers
 
 ``` latex
-\usepackage[automark,headsepline]{scrlayer-scrpage}% sets page style scrheadings automatically
+\usepackage[automark,headsepline]{scrlayer-scrpage} sets page style scrheadings automatically
 \clearpairofpagestyles
 \ihead{\leftmark}
 \ohead*{\pagemark}
-\setkomafont{pagenumber}{}% default is \normalfont\normalcolor
+\setkomafont{pagenumber}{} default is \normalfont\normalcolor
 ```
 
 ### Include pdfs
