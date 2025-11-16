@@ -13,9 +13,6 @@ description: 'Tips and leasons learned while writing a PhD thesis with bookdown.
 editor_options:
   chunk_output_type: console
 featured: no
-image:
-  caption: 'Pen writing in a sheet'
-  focal_point: 'left'
 subtitle: 'Learning latex tweaks with bookdown'
 summary: 'Tips and leasons learned while writing a PhD thesis with bookdown.'
 ---
@@ -183,35 +180,36 @@ I ended up using [this solution](https://tex.stackexchange.com/questions/262950/
 \newcommand\ChapFrame{%
   \def\TitleText{\leftmark}%
   \AddEverypageHook{%
-    \ifthenelse{\isodd{\value{page}}}
-      {\backgroundsetup{
+    \ifthenelse{\isodd{\value{page}}}{%
+      \backgroundsetup{
         contents={%
           \begin{tikzpicture}[overlay,remember picture]
           \node[fill=\BoxColor,inner sep=0pt,rectangle,text width=1cm,
             text height=3cm,align=center,anchor=north east]
-          at ($ (current page.north east) + (-0cm,- 3*\thechapshift cm) $)
+          at ($ (current page.north east) + (-0cm,-3*\thechapshift cm) $)
           % {\rotatebox{90}{\parbox{4cm}{%
           %   \centering\textcolor{black}{\scshape\thechapshift}}}};
           {};
           \end{tikzpicture}
-        }%
+        }
+      }
+    }{%
+      \backgroundsetup{
+        contents={%
+          \begin{tikzpicture}[overlay,remember picture]
+          \node[fill=\BoxColor,inner sep=0pt,rectangle,text width=1cm,
+            text height=3cm,align=center,anchor=north west]
+          at ($ (current page.north west) + (-0cm,-3*\thechapshift cm) $)
+          % {\rotatebox{90}{\parbox{4cm}{%
+          %   \centering\textcolor{black}{\scshape\thechapshift}}}};
+          {};
+          \end{tikzpicture}
+        }
       }
     }
-    {\backgroundsetup{
-      contents={%
-        \begin{tikzpicture}[overlay,remember picture]
-        \node[fill=\BoxColor,inner sep=0pt,rectangle,text width=1cm,
-          text height=3cm,align=center,anchor=north west]
-        at ($ (current page.north west) + (-0cm,-3*\thechapshift cm) $)
-        % {\rotatebox{90}{\parbox{4cm}{%
-        %   \centering\textcolor{black}{\scshape\thechapshift}}}};
-        {};
-        \end{tikzpicture}
-      }
-    }
-  }
-\BgMaterial}%
-\stepcounter{chapshift}
+    \BgMaterial
+  }%
+  \stepcounter{chapshift}
 }
 ```
 
