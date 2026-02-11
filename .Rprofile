@@ -10,3 +10,11 @@ if (interactive()) {
         xfun.bg_process.verbose = TRUE,
         blogdown.use.processx = FALSE)
   }
+# Attempt 1. On knitr blogdown I don't see the geom_smooth CI.
+# https://tinyheero.github.io/2015/09/15/semi-transparency-r.html
+# setHook(packageEvent("grDevices", "onLoad"),
+# 				function(...) grDevices::X11.options(type='cairo'))
+# options(device='x11')
+
+# Attempt 2: https://stackoverflow.com/a/22915279/2886003 (found via https://groups.google.com/g/ggplot2/c/vRbGlfoT1GQ)
+options(bitmapType="cairo")
