@@ -10,3 +10,5 @@
 [context.branch-deploy.environment]
   # Also used 0.62
   HUGO_VERSION = "0.91.2"
+[context.deploy-preview.environment]
+  HUGO_BLOGDOWN_POST_RELREF = "true"
