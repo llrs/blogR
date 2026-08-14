@@ -1,0 +1,269 @@
+---
+title: "Advanced use of BaseSet"
+author: 'Lluís Revilla Sancho @Lluis_Revilla'
+subtitle: "Exploring Bioconductor packages"
+date: "`r Sys.Date()`"
+slug: BaseSet-advanced
+tags: [r]
+output:
+  xaringan::moon_reader:
+    lib_dir: libs
+    nature:
+      highlightLines: true
+      countIncrementalSlides: true
+editor_options: 
+  chunk_output_type: console
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE, collapse = TRUE)
+library("tidyverse")
+library("BaseSet")
+```
+
+## BaseSet
+
+A [package](https://github.com/llrs/BaseSet) to work with sets. 
+
+```{r show, eval=FALSE, include=TRUE}
+BiocManager::install("llrs/BaseSet")
+```
+
+Some features:
+
+- Works with the tidyverse verbs
+- [Interacts easily](https://llrs.github.io/BaseSet_slides/) with existing *[GSEABase](https://bioconductor.org/packages/GSEABase)* classes.
+- Enables to use probabilities in the association between elements and sets.
+
+---
+
+## Bioconductor packages
+
+We can quickly access the dependencies and maintainers of Bioconductor' packages:
+
+```{r download}
+views <- "https://bioconductor.org/packages/devel/bioc/VIEWS"
+dcf <- read.dcf(url(views), c("Package", "Maintainer", 
+                  "dependencyCount", "Depends", "Imports"))
+tbl <- as_tibble(dcf) %>%
+   mutate(
+     Maintainer = gsub("[[:space:]]+", " ", Maintainer),
+     dependencyCount = as.integer(dependencyCount),
+     Core = grepl("Bioconductor Package Maintainer", Maintainer),
+     Maintainer = stringr::str_split(Maintainer, ",\\s*|( and )"),
+     Depend = stringr::str_split(Depends, ",\\s+"), 
+     Import = stringr::str_split(Imports, ",\\s+"),
+     )
+```
+
+Modified code from Martin Morgan
+
+---
+
+The content:
+
+```{r tbl, echo=FALSE, message=TRUE, warning=FALSE}
+head(tbl)
+```
+
+As you can see the Maintainers field is a list and also the Depends and Import.
+
+---
+
+## Maintainers
+
+For each package we can have several maintainers. We must indicate what are our sets and our elements:
+```{r maintainers}
+prepare <- unnest(tbl[, c("Maintainer", "Package")])
+colnames(prepare) <- c("sets", "elements")
+maintainers <- tidySet(prepare)
+```
+
+We can see with `nElements(maintainers)` that it has less than `r nElements(maintainers)` maintainers. Because some appear duplicated:
+
+```{r carey}
+grep("Carey", name_elements(maintainers), value = TRUE)
+```
+
+---
+
+Now we are ready for some plots:
+
+```{r maintainers1, message=FALSE, warning=FALSE, fig.height=4, dev='svg'}
+maintainers %>% 
+  set_size() %>% 
+  ggplot() +
+  geom_histogram(aes(size)) + 
+  scale_y_log10() +
+  theme_minimal() +
+  labs(title = "Maintainers by package")
+```
+
+---
+
+```{r maintainers2, message=FALSE, warning=FALSE, fig.height=4, dev='svg'}
+maintainers %>% 
+  filter_element(!grepl("Bioconductor Package Maintainer", 
+                        as.character(elements))) %>% 
+  element_size() %>% 
+  ggplot() +
+  geom_histogram(aes(size)) + 
+  scale_y_log10() +
+  theme_minimal() +
+  labs(title = "Packages maintained by person") 
+```
+
+---
+
+## Bioconductor packages
+
+We can have a look at the packages maintained by Bioconductor:
+
+```{r Bioc_packages}
+(Bioconductor_packages <- maintainers %>% 
+  filter_element(grepl("Bioconductor", elements)) %>% 
+  droplevels() %>% 
+  pull_set(sets))
+```
+
+```{r rcore, include=FALSE}
+rcore <- c("base", "compiler", "datasets", "grDevices", "graphics", "grid", 
+           "methods", "parallel", "splines", "stats", "stats4", "tcltk", "tools", 
+           "utils", "KernSmooth", "Mass", "Matrix", "boot", "class", "cluster", 
+           "codetools", "foreign", "lattice", "mgcv", "nlme", "nnet", "rpart", 
+           "spatial", "survival")
+```
+
+And we can see which are installed by default or recommended at the [FAQs](https://cran.r-project.org/doc/FAQ/R-FAQ.html#Which-add_002don-packages-exist-for-R_003f):
+in total `r length(rcore)`.
+
+---
+
+## Dependencies
+
+Now let's work on the dependencies.
+First some clean up of the package names:
+
+```{r dependencies}
+l <- apply(tbl[, c("Depend", "Import")], 1, function(x){
+  y <- unlist(x, use.names = FALSE)
+  y <- gsub(" ?\\(.*", "", y)
+  y <- y[!grepl("\\)", y)]
+  y <- y[y != ""]
+  unique(y[!is.na(y)])
+})
+names(l) <- tbl[, "Package", drop = TRUE]
+head(l, 2)
+```
+
+---
+
+Now we are ready to transform to a TidySet:
+
+```{r dependencies0, message=FALSE, warning=FALSE}
+packages <- tidySet(l) %>% 
+  filter_element(elements != "R") %>% 
+  mutate_element(Origin = case_when(
+    elements  %in%  rcore ~ "R core",
+    elements  %in% Bioconductor_packages ~ "Bioconductor Core",
+    elements  %in% name_sets(maintainers) ~  "Bioconductor",
+    TRUE ~ "Other")) %>% 
+    activate("sets") %>% 
+    mutate(Type = case_when(
+    sets  %in% rcore ~ "R core",
+    sets  %in% Bioconductor_packages ~ "Bioconductor Core",
+    sets  %in% name_sets(maintainers) ~  "Bioconductor",
+    TRUE ~ "Other"))
+
+sets(packages) <- inner_join(sets(packages),
+                             tbl[, c("Package", "dependencyCount")], 
+                             by = c("sets" = "Package"))
+is_nested(packages)
+```
+
+In this case we can see that some packages appear as dependencies of others as expected.
+
+---
+
+We can plot the direct dependencies:
+
+```{r dependensies1, message=FALSE, warning=FALSE, fig.height=4, dev='svg'}
+packages %>% 
+  set_size() %>% 
+  ggplot() +
+  geom_histogram(aes(size), bins = 50) +
+  scale_y_log10() +
+  theme_minimal() +
+  labs(title = "Packages dependencies")
+```
+
+---
+
+```{r dependensies2, message=FALSE, warning=FALSE, fig.height=4, dev='svg'}
+p <- packages %>% 
+  element_size() %>% 
+  left_join(elements(packages))
+p %>% 
+  ggplot() +
+  geom_histogram(aes(size)) + 
+  scale_y_log10() +
+  theme_minimal() +
+  labs(title = "Packages depended")
+```
+
+
+```{r dependensies4, message=FALSE, warning=FALSE, fig.height=4, dev='svg'}
+p %>% 
+  ggplot(aes(Origin, size)) +
+  geom_violin() +
+  geom_point(position = position_jitter()) +
+  theme_minimal() +
+  scale_y_log10()
+table(p$Origin)
+```
+ 
+---
+
+## Fuzzy sets
+
+The relationship between the element and the set is a probability: it can be or it can't be.
+
+For example from [https://docs.abcam.com/pdf/immunology/t_cells_the_usual_subsets.pdf](t_cells_the_usual_subsets.pdf)
+
+```{r fuzzy1}
+
+signature <- list(Th1 = c("CD3" = 1, "CD4" = 1, "IL-12R" = 0.75, "CXCR3" = 0.2),
+                  Th2 = c("CD3" = 1, "CD4" = 1, "IL-4R" = 1, "CCR4" = 0.8, 
+                          "CRTH2" = 0.2),
+                  Th9 = c("CD3" = 1, "CD4" = 1, "IL-9" = 0.2, "IL-10" = 0.4),
+                  Th17 = c("CD3" = 1, "CD4" = 1, "IL-23R" = 0.9, "CCR6" = 0.2, 
+                           "IL-1R" = 0.8, "CD161" = 1),
+                  Tm = c("CCR7" = 0.5, "CD44" = 1, "CD62L" = 0.2, "CD3" = 0.57, 
+                         "IL-7R" = 0.89, "CD127" = 0.32, "IL-15R" = 0.83),
+                  NKT = c("NK1.1" = 1, "SLAMF1" = 0.9, "SLAMF6" = 0.7, 
+                          "PLZF" = 0.4)
+                  )
+
+cells <- tidySet(signature)
+```
+
+---
+
+We can check that the most probable 
+
+```{r }
+set_size(cells)
+```
+
+---
+
+## Thanks!!
+
+Thanks for all the feedback from:
+ 
+ - Kayla Morall
+ - Kevin Rue
+ - Martin Morgan
+ - Ludwig Geistlinger
+
+And for your feedback!

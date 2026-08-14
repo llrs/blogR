@@ -1,0 +1,463 @@
+<!DOCTYPE html>
+<html lang="" xml:lang="">
+  <head>
+    <title>Advanced use of BaseSet</title>
+    <meta charset="utf-8" />
+    <meta name="author" content="Lluís Revilla Sancho @Lluis_Revilla" />
+    <meta name="date" content="2021-01-08" />
+    <script src="libs/header-attrs-2.6/header-attrs.js"></script>
+    <link href="libs/remark-css-0.0.1/default.css" rel="stylesheet" />
+    <link href="libs/remark-css-0.0.1/default-fonts.css" rel="stylesheet" />
+  </head>
+  <body>
+    <textarea id="source">
+class: center, middle, inverse, title-slide
+
+# Advanced use of BaseSet
+## Exploring Bioconductor packages
+### Lluís Revilla Sancho <span class="citation">@Lluis_Revilla</span>
+### 2021-01-08
+
+---
+
+
+
+
+## BaseSet
+
+A [package](https://github.com/llrs/BaseSet) to work with sets. 
+
+
+```r
+BiocManager::install("llrs/BaseSet")
+```
+
+Some features:
+
+- Works with the tidyverse verbs
+- [Interacts easily](https://llrs.github.io/BaseSet_slides/) with existing *[GSEABase](https://bioconductor.org/packages/GSEABase)* classes.
+- Enables to use probabilities in the association between elements and sets.
+
+---
+
+## Bioconductor packages
+
+We can quickly access the dependencies and maintainers of Bioconductor' packages:
+
+
+```r
+views &lt;- "https://bioconductor.org/packages/devel/bioc/VIEWS"
+dcf &lt;- read.dcf(url(views), c("Package", "Maintainer", 
+                  "dependencyCount", "Depends", "Imports"))
+tbl &lt;- as_tibble(dcf) %&gt;%
+   mutate(
+     Maintainer = gsub("[[:space:]]+", " ", Maintainer),
+     dependencyCount = as.integer(dependencyCount),
+     Core = grepl("Bioconductor Package Maintainer", Maintainer),
+     Maintainer = stringr::str_split(Maintainer, ",\\s*|( and )"),
+     Depend = stringr::str_split(Depends, ",\\s+"), 
+     Import = stringr::str_split(Imports, ",\\s+"),
+     )
+```
+
+Modified code from Martin Morgan
+
+---
+
+The content:
+
+
+```
+## # A tibble: 6 x 8
+##   Package  Maintainer dependencyCount Depends    Imports     Core  Depend Import
+##   &lt;chr&gt;    &lt;list&gt;               &lt;int&gt; &lt;chr&gt;      &lt;chr&gt;       &lt;lgl&gt; &lt;list&gt; &lt;list&gt;
+## 1 a4       &lt;chr [1]&gt;               72 a4Base, a…  &lt;NA&gt;       FALSE &lt;chr … &lt;chr …
+## 2 a4Base   &lt;chr [1]&gt;               64 a4Preproc… "methods, … FALSE &lt;chr … &lt;chr …
+## 3 a4Class… &lt;chr [1]&gt;               30 a4Core, a… "methods, … FALSE &lt;chr … &lt;chr …
+## 4 a4Core   &lt;chr [1]&gt;               18 &lt;NA&gt;       "Biobase, … FALSE &lt;chr … &lt;chr …
+## 5 a4Prepr… &lt;chr [1]&gt;                7 &lt;NA&gt;       "BiocGener… FALSE &lt;chr … &lt;chr …
+## 6 a4Repor… &lt;chr [1]&gt;                4 &lt;NA&gt;       "methods, … FALSE &lt;chr … &lt;chr …
+```
+
+As you can see the Maintainers field is a list and also the Depends and Import.
+
+---
+
+## Maintainers
+
+For each package we can have several maintainers. We must indicate what are our sets and our elements:
+
+```r
+prepare &lt;- unnest(tbl[, c("Maintainer", "Package")])
+## Warning: `cols` is now required when using unnest().
+## Please use `cols = c(Maintainer)`
+colnames(prepare) &lt;- c("sets", "elements")
+maintainers &lt;- tidySet(prepare)
+```
+
+We can see with `nElements(maintainers)` that it has less than 1928 maintainers. Because some appear duplicated:
+
+
+```r
+grep("Carey", name_elements(maintainers), value = TRUE)
+## character(0)
+```
+
+---
+
+Now we are ready for some plots:
+
+
+```r
+maintainers %&gt;% 
+  set_size() %&gt;% 
+  ggplot() +
+  geom_histogram(aes(size)) + 
+  scale_y_log10() +
+  theme_minimal() +
+  labs(title = "Maintainers by package")
+```
+
+![](Advanced-BaseSet_files/figure-html/maintainers1-1.svg)&lt;!-- --&gt;
+
+---
+
+
+```r
+maintainers %&gt;% 
+  filter_element(!grepl("Bioconductor Package Maintainer", 
+                        as.character(elements))) %&gt;% 
+  element_size() %&gt;% 
+  ggplot() +
+  geom_histogram(aes(size)) + 
+  scale_y_log10() +
+  theme_minimal() +
+  labs(title = "Packages maintained by person") 
+```
+
+![](Advanced-BaseSet_files/figure-html/maintainers2-1.svg)&lt;!-- --&gt;
+
+---
+
+## Bioconductor packages
+
+We can have a look at the packages maintained by Bioconductor:
+
+
+```r
+(Bioconductor_packages &lt;- maintainers %&gt;% 
+  filter_element(grepl("Bioconductor", elements)) %&gt;% 
+  droplevels() %&gt;% 
+  pull_set(sets))
+## character(0)
+```
+
+
+
+And we can see which are installed by default or recommended at the [FAQs](https://cran.r-project.org/doc/FAQ/R-FAQ.html#Which-add_002don-packages-exist-for-R_003f):
+in total 29.
+
+---
+
+## Dependencies
+
+Now let's work on the dependencies.
+First some clean up of the package names:
+
+
+```r
+l &lt;- apply(tbl[, c("Depend", "Import")], 1, function(x){
+  y &lt;- unlist(x, use.names = FALSE)
+  y &lt;- gsub(" ?\\(.*", "", y)
+  y &lt;- y[!grepl("\\)", y)]
+  y &lt;- y[y != ""]
+  unique(y[!is.na(y)])
+})
+names(l) &lt;- tbl[, "Package", drop = TRUE]
+head(l, 2)
+## $a4
+## [1] "a4Base"      "a4Preproc"   "a4Classif"   "a4Core"      "a4Reporting"
+## 
+## $a4Base
+##  [1] "a4Preproc"  "a4Core"     "methods"    "graphics"   "grid"      
+##  [6] "Biobase"    "annaffy"    "mpm"        "genefilter" "limma"     
+## [11] "multtest"   "glmnet"     "gplots"
+```
+
+---
+
+Now we are ready to transform to a TidySet:
+
+
+```r
+packages &lt;- tidySet(l) %&gt;% 
+  filter_element(elements != "R") %&gt;% 
+  mutate_element(Origin = case_when(
+    elements  %in%  rcore ~ "R core",
+    elements  %in% Bioconductor_packages ~ "Bioconductor Core",
+    elements  %in% name_sets(maintainers) ~  "Bioconductor",
+    TRUE ~ "Other")) %&gt;% 
+    activate("sets") %&gt;% 
+    mutate(Type = case_when(
+    sets  %in% rcore ~ "R core",
+    sets  %in% Bioconductor_packages ~ "Bioconductor Core",
+    sets  %in% name_sets(maintainers) ~  "Bioconductor",
+    TRUE ~ "Other"))
+
+sets(packages) &lt;- inner_join(sets(packages),
+                             tbl[, c("Package", "dependencyCount")], 
+                             by = c("sets" = "Package"))
+is_nested(packages)
+## [1] TRUE
+```
+
+In this case we can see that some packages appear as dependencies of others as expected.
+
+---
+
+We can plot the direct dependencies:
+
+
+```r
+packages %&gt;% 
+  set_size() %&gt;% 
+  ggplot() +
+  geom_histogram(aes(size), bins = 50) +
+  scale_y_log10() +
+  theme_minimal() +
+  labs(title = "Packages dependencies")
+```
+
+![](Advanced-BaseSet_files/figure-html/dependensies1-1.svg)&lt;!-- --&gt;
+
+---
+
+
+```r
+p &lt;- packages %&gt;% 
+  element_size() %&gt;% 
+  left_join(elements(packages))
+p %&gt;% 
+  ggplot() +
+  geom_histogram(aes(size)) + 
+  scale_y_log10() +
+  theme_minimal() +
+  labs(title = "Packages depended")
+```
+
+![](Advanced-BaseSet_files/figure-html/dependensies2-1.svg)&lt;!-- --&gt;
+
+
+
+```r
+p %&gt;% 
+  ggplot(aes(Origin, size)) +
+  geom_violin() +
+  geom_point(position = position_jitter()) +
+  theme_minimal() +
+  scale_y_log10()
+```
+
+![](Advanced-BaseSet_files/figure-html/dependensies4-1.svg)&lt;!-- --&gt;
+
+```r
+table(p$Origin)
+## 
+##  Other R core 
+##   1802     27
+```
+ 
+---
+
+## Fuzzy sets
+
+The relationship between the element and the set is a probability: it can be or it can't be.
+
+For example from [https://docs.abcam.com/pdf/immunology/t_cells_the_usual_subsets.pdf](t_cells_the_usual_subsets.pdf)
+
+
+```r
+
+signature &lt;- list(Th1 = c("CD3" = 1, "CD4" = 1, "IL-12R" = 0.75, "CXCR3" = 0.2),
+                  Th2 = c("CD3" = 1, "CD4" = 1, "IL-4R" = 1, "CCR4" = 0.8, 
+                          "CRTH2" = 0.2),
+                  Th9 = c("CD3" = 1, "CD4" = 1, "IL-9" = 0.2, "IL-10" = 0.4),
+                  Th17 = c("CD3" = 1, "CD4" = 1, "IL-23R" = 0.9, "CCR6" = 0.2, 
+                           "IL-1R" = 0.8, "CD161" = 1),
+                  Tm = c("CCR7" = 0.5, "CD44" = 1, "CD62L" = 0.2, "CD3" = 0.57, 
+                         "IL-7R" = 0.89, "CD127" = 0.32, "IL-15R" = 0.83),
+                  NKT = c("NK1.1" = 1, "SLAMF1" = 0.9, "SLAMF6" = 0.7, 
+                          "PLZF" = 0.4)
+                  )
+
+cells &lt;- tidySet(signature)
+```
+
+---
+
+We can check that the most probable 
+
+
+```r
+set_size(cells)
+##    sets size probability
+## 1   NKT    1 0.018000000
+## 2   NKT    2 0.216000000
+## 3   NKT    3 0.514000000
+## 4   NKT    4 0.252000000
+## 5   Th1    2 0.200000000
+## 6   Th1    3 0.650000000
+## 7   Th1    4 0.150000000
+## 8  Th17    3 0.016000000
+## 9  Th17    4 0.212000000
+## 10 Th17    5 0.628000000
+## 11 Th17    6 0.144000000
+## 12  Th2    3 0.160000000
+## 13  Th2    4 0.680000000
+## 14  Th2    5 0.160000000
+## 15  Th9    2 0.480000000
+## 16  Th9    3 0.440000000
+## 17  Th9    4 0.080000000
+## 18   Tm    1 0.002187152
+## 19   Tm    2 0.035036932
+## 20   Tm    3 0.179653640
+## 21   Tm    4 0.354372080
+## 22   Tm    5 0.304685320
+## 23   Tm    6 0.110590988
+## 24   Tm    7 0.013473888
+```
+
+---
+
+## Thanks!!
+
+Thanks for all the feedback from:
+ 
+ - Kayla Morall
+ - Kevin Rue
+ - Martin Morgan
+ - Ludwig Geistlinger
+
+And for your feedback!
+    </textarea>
+<style data-target="print-only">@media screen {.remark-slide-container{display:block;}.remark-slide-scaler{box-shadow:none;}}</style>
+<script src="https://remarkjs.com/downloads/remark-latest.min.js"></script>
+<script>var slideshow = remark.create({
+"highlightLines": true,
+"countIncrementalSlides": true
+});
+if (window.HTMLWidgets) slideshow.on('afterShowSlide', function (slide) {
+  window.dispatchEvent(new Event('resize'));
+});
+(function(d) {
+  var s = d.createElement("style"), r = d.querySelector(".remark-slide-scaler");
+  if (!r) return;
+  s.type = "text/css"; s.innerHTML = "@page {size: " + r.style.width + " " + r.style.height +"; }";
+  d.head.appendChild(s);
+})(document);
+
+(function(d) {
+  var el = d.getElementsByClassName("remark-slides-area");
+  if (!el) return;
+  var slide, slides = slideshow.getSlides(), els = el[0].children;
+  for (var i = 1; i < slides.length; i++) {
+    slide = slides[i];
+    if (slide.properties.continued === "true" || slide.properties.count === "false") {
+      els[i - 1].className += ' has-continuation';
+    }
+  }
+  var s = d.createElement("style");
+  s.type = "text/css"; s.innerHTML = "@media print { .has-continuation { display: none; } }";
+  d.head.appendChild(s);
+})(document);
+// delete the temporary CSS (for displaying all slides initially) when the user
+// starts to view slides
+(function() {
+  var deleted = false;
+  slideshow.on('beforeShowSlide', function(slide) {
+    if (deleted) return;
+    var sheets = document.styleSheets, node;
+    for (var i = 0; i < sheets.length; i++) {
+      node = sheets[i].ownerNode;
+      if (node.dataset["target"] !== "print-only") continue;
+      node.parentNode.removeChild(node);
+    }
+    deleted = true;
+  });
+})();
+(function() {
+  "use strict"
+  // Replace <script> tags in slides area to make them executable
+  var scripts = document.querySelectorAll(
+    '.remark-slides-area .remark-slide-container script'
+  );
+  if (!scripts.length) return;
+  for (var i = 0; i < scripts.length; i++) {
+    var s = document.createElement('script');
+    var code = document.createTextNode(scripts[i].textContent);
+    s.appendChild(code);
+    var scriptAttrs = scripts[i].attributes;
+    for (var j = 0; j < scriptAttrs.length; j++) {
+      s.setAttribute(scriptAttrs[j].name, scriptAttrs[j].value);
+    }
+    scripts[i].parentElement.replaceChild(s, scripts[i]);
+  }
+})();
+(function() {
+  var links = document.getElementsByTagName('a');
+  for (var i = 0; i < links.length; i++) {
+    if (/^(https?:)?\/\//.test(links[i].getAttribute('href'))) {
+      links[i].target = '_blank';
+    }
+  }
+})();
+// adds .remark-code-has-line-highlighted class to <pre> parent elements
+// of code chunks containing highlighted lines with class .remark-code-line-highlighted
+(function(d) {
+  const hlines = d.querySelectorAll('.remark-code-line-highlighted');
+  const preParents = [];
+  const findPreParent = function(line, p = 0) {
+    if (p > 1) return null; // traverse up no further than grandparent
+    const el = line.parentElement;
+    return el.tagName === "PRE" ? el : findPreParent(el, ++p);
+  };
+
+  for (let line of hlines) {
+    let pre = findPreParent(line);
+    if (pre && !preParents.includes(pre)) preParents.push(pre);
+  }
+  preParents.forEach(p => p.classList.add("remark-code-has-line-highlighted"));
+})(document);</script>
+
+<script>
+slideshow._releaseMath = function(el) {
+  var i, text, code, codes = el.getElementsByTagName('code');
+  for (i = 0; i < codes.length;) {
+    code = codes[i];
+    if (code.parentNode.tagName !== 'PRE' && code.childElementCount === 0) {
+      text = code.textContent;
+      if (/^\\\((.|\s)+\\\)$/.test(text) || /^\\\[(.|\s)+\\\]$/.test(text) ||
+          /^\$\$(.|\s)+\$\$$/.test(text) ||
+          /^\\begin\{([^}]+)\}(.|\s)+\\end\{[^}]+\}$/.test(text)) {
+        code.outerHTML = code.innerHTML;  // remove <code></code>
+        continue;
+      }
+    }
+    i++;
+  }
+};
+slideshow._releaseMath(document);
+</script>
+<!-- dynamically load mathjax for compatibility with self-contained -->
+<script>
+(function () {
+  var script = document.createElement('script');
+  script.type = 'text/javascript';
+  script.src  = 'https://mathjax.rstudio.com/latest/MathJax.js?config=TeX-MML-AM_CHTML';
+  if (location.protocol !== 'file:' && /^https?:/.test(script.src))
+    script.src  = script.src.replace(/^https?:/, '');
+  document.getElementsByTagName('head')[0].appendChild(script);
+})();
+</script>
+  </body>
+</html>
