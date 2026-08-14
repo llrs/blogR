@@ -1,0 +1,276 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes" ?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>FOSS | B101nfo</title>
+    <link>https://llrs.dev/categories/foss/</link>
+      <atom:link href="https://llrs.dev/categories/foss/index.xml" rel="self" type="application/rss+xml" />
+    <description>FOSS</description>
+    <generator>Source Themes Academic (https://sourcethemes.com/academic/)</generator><language>en-us</language><copyright>If it is code you can copy and reuse (MIT) if it is text, please cite and reuse CC-BY 2026.</copyright><lastBuildDate>Wed, 11 Jun 2025 00:00:00 +0000</lastBuildDate>
+    <image>
+      <url>img/map[gravatar:%!s(bool=false) shape:circle]</url>
+      <title>FOSS</title>
+      <link>https://llrs.dev/categories/foss/</link>
+    </image>
+    
+    <item>
+      <title>Volunteer Responsibility Amnesty Day</title>
+      <link>https://llrs.dev/post/2025/06/11/volunteer-responsibility-amnesty-day/</link>
+      <pubDate>Wed, 11 Jun 2025 00:00:00 +0000</pubDate>
+      <guid>https://llrs.dev/post/2025/06/11/volunteer-responsibility-amnesty-day/</guid>
+      <description>
+
+
+&lt;p&gt;Recently I was pointed to &lt;a href=&#34;https://www.volunteeramnestyday.net/&#34;&gt;Volunteer Responsibility Amnesty Day&lt;/a&gt; and given my situation and recent behavior I decided to re-evaluate my participation in at least one project:&lt;/p&gt;
+&lt;p&gt;Bioconductor:&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;strong&gt;Responsibilities&lt;/strong&gt;: CAB member: Enabling productive and respectful participation, empowering developers at all levels of experience.&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;What I’ll keep&lt;/strong&gt;: answering developers’ requests/questions by email.&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;Next steps&lt;/strong&gt;:
+&lt;ul&gt;
+&lt;li&gt;I have notified the CAB secretary that I will take a long leave.&lt;/li&gt;
+&lt;li&gt;I have disengaged from current discussions within Bioconductor.&lt;/li&gt;
+&lt;li&gt;I notified the &lt;a href=&#34;https://eurobioc2025.bioconductor.org/&#34;&gt;EuroBioc2025&lt;/a&gt; organizer I won’t attend or contribute more towards the conference organization.&lt;/li&gt;
+&lt;li&gt;I have paused the notifications from the bioc-devel mailing list.&lt;/li&gt;
+&lt;/ul&gt;&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;I am researching how/what to improve in my implication and participation with this and other projects. Other projects might be paused or won’t keep volunteering (might update the post or write new ones).&lt;/p&gt;
+</description>
+    </item>
+    
+    <item>
+      <title>The missing R generation</title>
+      <link>https://llrs.dev/post/2024/07/28/the-missing-r-generation/</link>
+      <pubDate>Sun, 28 Jul 2024 00:00:00 +0000</pubDate>
+      <guid>https://llrs.dev/post/2024/07/28/the-missing-r-generation/</guid>
+      <description>
+
+
+&lt;div id=&#34;sunday&#34; class=&#34;section level2&#34;&gt;
+&lt;h2&gt;Sunday&lt;/h2&gt;
+&lt;p&gt;I was a bit down before going to Salzburg, as I was considering if spending my monthly salary in a week for useR!2
+024 was worth it.
+While I was looking to some talks and content I was mainly interested in meeting people.&lt;/p&gt;
+&lt;p&gt;I cherished soon, as I met with Emilio López Cano on my flight to Salzburg&lt;a href=&#34;#fn1&#34; class=&#34;footnote-ref&#34; id=&#34;fnref1&#34;&gt;&lt;sup&gt;1&lt;/sup&gt;&lt;/a&gt;.
+Once on the flight, we met with more people going to the conference from Appsilon, a sponsor of the conference.&lt;/p&gt;
+&lt;p&gt;The day before the conference was great already: I had registered to the guided tour.
+Despite the light rain, we were like 30 people in the park to visit the city with other useRs!
+Lucky for me, there were people I already interacted online there too.
+Shannon Pileggi and Yann Féat were in my group, which Robert Müller from Roche (another sponsor of the conference), guided as an expert through the city.
+I particularly liked that he had made some notes to provide details of what he was explaining to us.
+We finished the tour in a bribery drinking and eating in a relaxed environment.
+Which lead to meeting Max and Fonti Kar, where their enthusiasm and their experience with R was very different from mine.&lt;/p&gt;
+&lt;div class=&#34;float&#34;&gt;
+&lt;img src=&#34;images/Salzburg_river.jpg&#34; alt=&#34;Picture of the river of Salzburg&#34; /&gt;
+&lt;div class=&#34;figcaption&#34;&gt;Picture of the river of Salzburg&lt;/div&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;div id=&#34;monday&#34; class=&#34;section level2&#34;&gt;
+&lt;h2&gt;Monday&lt;/h2&gt;
+&lt;p&gt;The next day, the conference started officially.
+I won’t talk much about the content of the conference, as I have posted it live during the conference&lt;a href=&#34;#fn2&#34; class=&#34;footnote-ref&#34; id=&#34;fnref2&#34;&gt;&lt;sup&gt;2&lt;/sup&gt;&lt;/a&gt;.
+But I want to write about the people I met (and those that I missed) and the environment I saw.&lt;/p&gt;
+&lt;p&gt;In the morning I saw several R core members there, as they took the opportunity to have a long day meeting to discuss things.&lt;/p&gt;
+&lt;p&gt;I had registered to two tutorials: The one on the morning from Shannon about debugging R.
+There I met with Maëlle Salmon for the second time, after meeting her in the previous Spanish R conference, as she was helping in the workshop.&lt;/p&gt;
+&lt;p&gt;On the afternoon I went to Gabe Becker’s workshop about contributing to R, who I had meet at the R contributor working group a couple of years ago.
+After it, while I was talking with him I could greet Michael Lawrence which supervised my work on the &lt;a href=&#34;https://contributor.r-project.org/rdevguide/&#34;&gt;R dev guide&lt;/a&gt;.&lt;/p&gt;
+&lt;p&gt;On the evening, some of us went to have dinner at the center of the city, and we end up 5 at a beer garden.&lt;/p&gt;
+&lt;div class=&#34;float&#34;&gt;
+&lt;img src=&#34;images/Salzburg_09.jpeg&#34; alt=&#34;Roche explaining why they sponsor useR! conference&#34; /&gt;
+&lt;div class=&#34;figcaption&#34;&gt;Roche explaining why they sponsor useR! conference&lt;/div&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;div id=&#34;tuesday&#34; class=&#34;section level2&#34;&gt;
+&lt;h2&gt;Tuesday&lt;/h2&gt;
+&lt;p&gt;On Tuesday the keynotes and the conference itself started in full swig.
+We finally got our badges around our necks and prepared for the only keynote of a R core member.
+Before the proper keynote there was a brief summary of the major contributions of Friedch Leisch to R and the programming world.
+I knew his name was in the &lt;a href=&#34;https://www.r-project.org/contributors.html&#34;&gt;Contributors’ page&lt;/a&gt;, but didn’t know much about his contributions.&lt;/p&gt;
+&lt;p&gt;After his talk I could talk with Kurt about some ongoing collaboration we have and about the data presented.
+Similarly I also take the opportunity to talk with Uwe Liegges, another CRAN member, to talk about the submission process.
+It struck to me the admiration he spoke of Brian Ripley’s contributions to R and code in general&lt;a href=&#34;#fn3&#34; class=&#34;footnote-ref&#34; id=&#34;fnref3&#34;&gt;&lt;sup&gt;3&lt;/sup&gt;&lt;/a&gt;.&lt;/p&gt;
+&lt;p&gt;During the talks, I could meet Hugo Gruson, and ask him a couple of questions.
+I also could greet Martin Morgan, a former R core member and ex-leader of the &lt;a href=&#34;https://bioconductor.org&#34;&gt;Bioconductor project&lt;/a&gt; &lt;a href=&#34;#fn4&#34; class=&#34;footnote-ref&#34; id=&#34;fnref4&#34;&gt;&lt;sup&gt;4&lt;/sup&gt;&lt;/a&gt;.
+For those that don’t know Bioconductor is also an “official” R repository focused on biology related packages &lt;a href=&#34;#fn5&#34; class=&#34;footnote-ref&#34; id=&#34;fnref5&#34;&gt;&lt;sup&gt;5&lt;/sup&gt;&lt;/a&gt;.&lt;/p&gt;
+&lt;p&gt;During lunch with Heather Turner, which is behind the &lt;a href=&#34;https://contributor.r-project.org/&#34;&gt;R contributor working group&lt;/a&gt; and the R dev days (continue reading), we talked about the different background of useRs.&lt;/p&gt;
+&lt;p&gt;In one of the previous talks I could exchange some sticker with Kelly Bodwin the last keynote of the day.
+In her keynote Kelly explained how weird R is and how her parents, both computational scientists don’t like it.
+But beyond weird, R is funny and more than a programming language but about a community.&lt;/p&gt;
+&lt;p&gt;During the day I saw several R core members talking between them.
+From time to time I saw some senior attendees talking with them but rarely someone young.&lt;/p&gt;
+&lt;p&gt;That night I had dinner with other people from the conference, and I end up meeting Hilary Parker.&lt;/p&gt;
+&lt;div class=&#34;float&#34;&gt;
+&lt;img src=&#34;images/Salzburg_10.jpg&#34; alt=&#34;The gardens of Mirabell (where the guided tour started on Sunday)&#34; /&gt;
+&lt;div class=&#34;figcaption&#34;&gt;The gardens of Mirabell (where the guided tour started on Sunday)&lt;/div&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;div id=&#34;wednesday&#34; class=&#34;section level2&#34;&gt;
+&lt;h2&gt;Wednesday&lt;/h2&gt;
+&lt;p&gt;On Wednesday we started with Maëlle Salmon keynote, a great talk with many references about code maintenance.
+During the conference you could find her with reading a book; she reads a lot!&lt;/p&gt;
+&lt;p&gt;After the provocative talk titled “I’m only Giving This Talk Because I’m a Woman”, I had the opportunity to explain to another attendee how a Code of Conduct committee works &lt;a href=&#34;#fn6&#34; class=&#34;footnote-ref&#34; id=&#34;fnref6&#34;&gt;&lt;sup&gt;6&lt;/sup&gt;&lt;/a&gt;.&lt;/p&gt;
+&lt;p&gt;During dinner I was sitting with Henrik Bengtsson and Charlie Gao when Martin Mächler and Luke Tierney came to sit with us.
+I took the opportunity to ask how Luke ended up writing about the pipe operator, while his background and work is statistics, which lead to funny stories shared by Martin Mächler.&lt;/p&gt;
+&lt;p&gt;On the afternoon there was also the poster session.
+As I had a poster about &lt;a href=&#34;https://cranhaven.org&#34;&gt;CRANHaven&lt;/a&gt; I couldn’t go around much, but I got to talk to lots of people that came to learn what was this about (protecting users from installing packages that. Among them came Sebastian Meyer, who I was surprised to find out that he doesn’t have a permanent position as professor.&lt;/p&gt;
+&lt;p&gt;The afternoons keynote talk from Torsten Hothorn was also inspiring about a life of work related to his package mvtnorm and how it has shaped his work, friends, family.&lt;/p&gt;
+&lt;div class=&#34;float&#34;&gt;
+&lt;img src=&#34;images/Salzburg_11.jpg&#34; alt=&#34;Views from the hills of the Salzburg towards the center of the old city with the castle on the top of another hill&#34; /&gt;
+&lt;div class=&#34;figcaption&#34;&gt;Views from the hills of the Salzburg towards the center of the old city with the castle on the top of another hill&lt;/div&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;div id=&#34;thursday&#34; class=&#34;section level2&#34;&gt;
+&lt;h2&gt;Thursday&lt;/h2&gt;
+&lt;p&gt;We started with a refreshingly direct and honest talk from one of the sponsors Raiffesen, about why they support R.&lt;/p&gt;
+&lt;p&gt;Then we heard about the the effort to convert R journal articles to html webpages from Abhishek Ulayil who I had met earlier.
+His direct demo of how pdfs were converted back to dynamic html pages was funny and energizing.&lt;/p&gt;
+&lt;p&gt;This day there were many short talks and I couldn’t talk much with the presenters or many people as I was running from one site to another.&lt;/p&gt;
+&lt;p&gt;I think there were fewer R core members as many had to go back to their jobs and families.&lt;/p&gt;
+&lt;p&gt;The last keynote of the conference was a provocative talk about Large Language Models from Hilary Parker.&lt;/p&gt;
+&lt;p&gt;The conference ended requesting participation of users to organize the next in-person conference.&lt;/p&gt;
+&lt;div class=&#34;float&#34;&gt;
+&lt;img src=&#34;images/Salzburg_10c.jpg&#34; style=&#34;height:40.0%&#34; alt=&#34;Notes on the conference venue&#34; /&gt;
+&lt;div class=&#34;figcaption&#34;&gt;Notes on the conference venue&lt;/div&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;div id=&#34;friday&#34; class=&#34;section level2&#34;&gt;
+&lt;h2&gt;Friday&lt;/h2&gt;
+&lt;p&gt;This day was booked by the R-Dev event, this is an event where R core members hang out with interested people to fix some pending issues on R (not packages!).&lt;/p&gt;
+&lt;p&gt;It was great to see R core members sitting in the row behind me: Martin Mächler, Michael Lawrence, Tomas Kalibera, Paul Murrell, Peter Dalgaard, Luke Tierney, and Sebastian Meyer (apologies if I mix names I didn’t talk to all of them, and I don’t know their faces well).
+Together with a mix of R users and developers like Edzer Pebesma, Paola Corrales, Fonti Kar, Mitchell O’Hara-Wild or Audrey Yeo.&lt;/p&gt;
+&lt;p&gt;There were lots of young people in the R dev and new people contributing for the first time to R.
+Some of them were a bit intimidated by submitting patches and interacting with R core members.
+However, the event ended very successfully with many patches and improvements. At the end we&lt;/p&gt;
+&lt;div class=&#34;float&#34;&gt;
+&lt;img src=&#34;images/Salzburg_12.jpg&#34; alt=&#34;The R dev contributors after getting back to it after lunch&#34; /&gt;
+&lt;div class=&#34;figcaption&#34;&gt;The R dev contributors after getting back to it after lunch&lt;/div&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;div id=&#34;summary&#34; class=&#34;section level1&#34;&gt;
+&lt;h1&gt;Summary&lt;/h1&gt;
+&lt;p&gt;The conference environment was fantastic, and I had the chance to meet many people attending their first useR conference, like myself.
+There were also many seasoned useRs who had attended multiple conferences.
+I can’t speak to how they found this conference compared to previous ones, but for me, it was a valuable opportunity to connect with people I had previously only met online and to make new connections.&lt;/p&gt;
+&lt;p&gt;Although I didn’t take many photos with people, I noticed others taking photos with their groups, such as R Ladies, company teams, or selfies with fellow attendees and online friends (including Hadley Wickham).
+Interestingly, not many people approached the R core members, without whom this event wouldn’t be possible.
+I must admit, I wasn’t sure how to approach them myself.
+I see two possible approaches: either go up to them like a fan asking for a selfie or engage them with questions or requests about R.
+Neither extreme seemed ideal to me.
+Instead, there might be more value in understanding their perspectives on R and finding ways to collaborate with them.&lt;/p&gt;
+&lt;p&gt;One useR mentioned to me that the R core can’t continue operating as it has, especially now that companies are investing money and relying on it.
+While this poses challenges for businesses, I also see it as an opportunity for positive changes within the R core.
+I believe that through increased collaboration, we can overcome upcoming challenges.
+I hope that experienced R developers who already have a rapport with the R core will take the lead.&lt;/p&gt;
+&lt;p&gt;What was your experience at useR!2024? Do you agree on supporting and collaborating more the R core? We can continue the conversation at &lt;a href=&#34;https://fosstodon.org/@Lluis_Revilla&#34;&gt;&lt;span class=&#34;citation&#34;&gt;@Lluis_Revilla&lt;/span&gt;&lt;span class=&#34;citation&#34;&gt;@fosstodon.org&lt;/span&gt;&lt;/a&gt;&lt;/p&gt;
+&lt;/div&gt;
+&lt;div class=&#34;footnotes footnotes-end-of-document&#34;&gt;
+&lt;hr /&gt;
+&lt;ol&gt;
+&lt;li id=&#34;fn1&#34;&gt;&lt;p&gt;He is the president of the Spanish association of R.&lt;a href=&#34;#fnref1&#34; class=&#34;footnote-back&#34;&gt;↩︎&lt;/a&gt;&lt;/p&gt;&lt;/li&gt;
+&lt;li id=&#34;fn2&#34;&gt;&lt;p&gt;I posted it on Fosstodon: &lt;a href=&#34;https://fosstodon.org/search&#34;&gt;search&lt;/a&gt; for &lt;code&gt;from:@Lluis_Revilla@fosstodon.org #useR2024&lt;/code&gt;.&lt;a href=&#34;#fnref2&#34; class=&#34;footnote-back&#34;&gt;↩︎&lt;/a&gt;&lt;/p&gt;&lt;/li&gt;
+&lt;li id=&#34;fn3&#34;&gt;&lt;p&gt;But at the same time making it clear that his decisions are only his.&lt;a href=&#34;#fnref3&#34; class=&#34;footnote-back&#34;&gt;↩︎&lt;/a&gt;&lt;/p&gt;&lt;/li&gt;
+&lt;li id=&#34;fn4&#34;&gt;&lt;p&gt;I was surprised he was the only Bioconductor member I found at the conference.
+I expected that more people of the Bioconductor project would come here, and I saw some posters using packages shared there but no mention to the project in any talk I went.&lt;a href=&#34;#fnref4&#34; class=&#34;footnote-back&#34;&gt;↩︎&lt;/a&gt;&lt;/p&gt;&lt;/li&gt;
+&lt;li id=&#34;fn5&#34;&gt;&lt;p&gt;Official in the sense that packages in CRAN cannot have the same name as in packages in Bioconductor and &lt;em&gt;vice-versa&lt;/em&gt;, and its repository can be set from R via &lt;code&gt;setRepositories()&lt;/code&gt; and with environmental variable &lt;code&gt;R_BIOC_VERSION&lt;/code&gt;.&lt;a href=&#34;#fnref5&#34; class=&#34;footnote-back&#34;&gt;↩︎&lt;/a&gt;&lt;/p&gt;&lt;/li&gt;
+&lt;li id=&#34;fn6&#34;&gt;&lt;p&gt;My term at &lt;a href=&#34;https://bioconductor.github.io/bioc_coc_multilingual/&#34;&gt;Bioconductor’s code of conduct committee&lt;/a&gt; is about to finish, but I served for close to 2 years.&lt;a href=&#34;#fnref6&#34; class=&#34;footnote-back&#34;&gt;↩︎&lt;/a&gt;&lt;/p&gt;&lt;/li&gt;
+&lt;/ol&gt;
+&lt;/div&gt;
+</description>
+    </item>
+    
+    <item>
+      <title>Future FOSS contributions</title>
+      <link>https://llrs.dev/post/2024/04/02/foss-contributions/</link>
+      <pubDate>Tue, 02 Apr 2024 00:00:00 +0000</pubDate>
+      <guid>https://llrs.dev/post/2024/04/02/foss-contributions/</guid>
+      <description>
+
+
+&lt;p&gt;I write this post after several weeks/months of consideration of why I am feeling a burden when I contribute to the FOSS community, mostly the R community.
+I want to make public some rules I set for myself for future references and in case it helps others.&lt;/p&gt;
+&lt;div id=&#34;how-i-end-up-here&#34; class=&#34;section level1&#34;&gt;
+&lt;h1&gt;How I end up here&lt;/h1&gt;
+&lt;p&gt;I use R for my work and I realized I could use it for my interests.
+With the creativity of a computer language that I know well, I could answer question I had and help others in the process.&lt;/p&gt;
+&lt;p&gt;As the questions I answered were more general or more community centered I got involved in more meetings and working groups.
+Some decisions/commitments were carefully considered, and known to be temporal, others were/are more open ended with an unclear end.&lt;/p&gt;
+&lt;div class=&#34;float&#34;&gt;
+&lt;img src=&#34;images/rataplan.JPG&#34; style=&#34;width:30.0%;height:30.0%&#34; alt=&#34;An image of Rataplan the dog of Lucky Luck.&#34; /&gt;
+&lt;div class=&#34;figcaption&#34;&gt;An image of Rataplan the dog of Lucky Luck.&lt;/div&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;div id=&#34;current-situation&#34; class=&#34;section level1&#34;&gt;
+&lt;h1&gt;Current situation&lt;/h1&gt;
+&lt;ol style=&#34;list-style-type: decimal&#34;&gt;
+&lt;li&gt;I often participate to the &lt;a href=&#34;https://contributor.r-project.org/working-group&#34; title=&#34;RCWG webpage&#34;&gt;R Contributors working group (RCWG)&lt;/a&gt;, not only meetings but other activities and task.&lt;/li&gt;
+&lt;li&gt;I am member of the &lt;a href=&#34;https://bioconductor.org&#34;&gt;Bioconductor&lt;/a&gt;, helping in the forum from time to time&lt;a href=&#34;#fn1&#34; class=&#34;footnote-ref&#34; id=&#34;fnref1&#34;&gt;&lt;sup&gt;1&lt;/sup&gt;&lt;/a&gt;.&lt;/li&gt;
+&lt;li&gt;I am member of the Bioconductor code of conduct committee.&lt;/li&gt;
+&lt;li&gt;I am member of the &lt;a href=&#34;https://ropensci.org&#34;&gt;rOpenSci community&lt;/a&gt;, helping in the slack and in the forum if the questions are related to the packages I have in their organization.&lt;/li&gt;
+&lt;li&gt;I am member of the &lt;a href=&#34;https://github.com/RConsortium/r-repositories-wg&#34; title=&#34;RRepoWG github repository&#34;&gt;R repository working group (RRepoWG) from the R Foundation&lt;/a&gt;.&lt;/li&gt;
+&lt;li&gt;I impulsed the Bioconductor Classes and Methods Working Group (although there isn’t much activity for the last year and a half).&lt;/li&gt;
+&lt;li&gt;I co-organized the local R conference of my country for 2023.&lt;/li&gt;
+&lt;li&gt;I co-organized the local R user group of my city last year (2-3 events) and I’ve been trying to restart it this year 2024 and contributed to others RUGs.&lt;/li&gt;
+&lt;li&gt;I maintain 3-4 packages on CRAN and Bioconductor&lt;a href=&#34;#fn2&#34; class=&#34;footnote-ref&#34; id=&#34;fnref2&#34;&gt;&lt;sup&gt;2&lt;/sup&gt;&lt;/a&gt;.&lt;/li&gt;
+&lt;/ol&gt;
+&lt;p&gt;I am sure there are several people doing more but after reflection I came to the conclusion that this is not sustainable/worth it for me.&lt;/p&gt;
+&lt;/div&gt;
+&lt;div id=&#34;reasons-to-keep-giving&#34; class=&#34;section level1&#34;&gt;
+&lt;h1&gt;Reasons to keep giving&lt;/h1&gt;
+&lt;p&gt;From now on when I contribute something there are 3 reasons I will keep in mind:&lt;/p&gt;
+&lt;ol style=&#34;list-style-type: decimal&#34;&gt;
+&lt;li&gt;&lt;p&gt;It is part of my &lt;strong&gt;work&lt;/strong&gt; or related to it.&lt;/p&gt;
+&lt;p&gt;When I go to these working groups I do not represent my employer or any comunity.
+I am not paid for anything of the previous list and I need to recover the hours when I have meetings during working hours.&lt;/p&gt;
+&lt;p&gt;Here I also include contributions to something that might make help my career.
+This includes gig jobs or consulting that I am open to do.&lt;/p&gt;&lt;/li&gt;
+&lt;li&gt;&lt;p&gt;It is &lt;strong&gt;fun&lt;/strong&gt;ny/rewarding.&lt;/p&gt;
+&lt;p&gt;These contributions might interest me because I find funny, for example plotting a simple tree with ggplot2.&lt;/p&gt;
+&lt;p&gt;Or because it is rewarding helping someone to solve their problems, such as helping a family member to claim her wage for their overtime.&lt;/p&gt;&lt;/li&gt;
+&lt;li&gt;&lt;p&gt;I &lt;strong&gt;learn&lt;/strong&gt; something.&lt;/p&gt;
+&lt;p&gt;I don’t like to learn new things for the sake of learning.
+But I enjoy learning something that could be useful: a technology, a solution, a community or new data I never analyzed.
+This might be for my personal interest or work related: recently having learn how to parse html/xml helped me at work doing a task in 5 minutes a simple task my boss would have need half an hour or more but I learned it for a hobby project.&lt;/p&gt;&lt;/li&gt;
+&lt;/ol&gt;
+&lt;p&gt;If I see a project/proposal doesn’t fit any of these three I will stop contributing/maintaining.
+I’ll try to avoid commitments that I think that should be done that I could step up or do it but do not fit in these three rules.
+This includes contributing to books, mentoring, being the glue between different communities or simply sending a PR.&lt;/p&gt;
+&lt;p&gt;As my time is more stretched with commitments away from the keyword.
+I feel torn apart between contributing more effectively or stopping.
+Each hour I spend in a meeting that could/was an email is 2 hours or more that I lose, not only the opportunity cost but also the motivation&lt;a href=&#34;#fn3&#34; class=&#34;footnote-ref&#34; id=&#34;fnref3&#34;&gt;&lt;sup&gt;3&lt;/sup&gt;&lt;/a&gt; and the time I spent preparing the meeting.&lt;/p&gt;
+&lt;/div&gt;
+&lt;div id=&#34;future-contributions&#34; class=&#34;section level1&#34;&gt;
+&lt;h1&gt;Future contributions&lt;/h1&gt;
+&lt;p&gt;Aside from that and some previous commitments I will finish serving the community.
+I will no longer prioritize what is good for the community over what is good for me.
+If they overlap it will be great if it doesn’t, I’m sorry.&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;images/ikigai.png&#34; style=&#34;width:30.0%;height:30.0%&#34; alt=&#34;ikigai scheme from Wikipedia&#34; /&gt;.&lt;/p&gt;
+&lt;p&gt;As you now know you can appeal to either of the three motivations now: Ask me something I might find funny/rewarding, ask me to learn something I could use or simply provide a payment or a way forward for my career.&lt;/p&gt;
+&lt;p&gt;I am open to consulting or developing something, you can contact me useing the &lt;a href=&#34;lluis.revilla@gmail.com&#34; class=&#34;mailito&#34;&gt;email on the blog&lt;/a&gt;.&lt;/p&gt;
+&lt;/div&gt;
+&lt;div class=&#34;footnotes footnotes-end-of-document&#34;&gt;
+&lt;hr /&gt;
+&lt;ol&gt;
+&lt;li id=&#34;fn1&#34;&gt;&lt;p&gt;I also receive answers and help too when I occasionally ask too.
+I also benefit of many questions from online forums (although now it is rare those I search are about R).&lt;a href=&#34;#fnref1&#34; class=&#34;footnote-back&#34;&gt;↩︎&lt;/a&gt;&lt;/p&gt;&lt;/li&gt;
+&lt;li id=&#34;fn2&#34;&gt;&lt;p&gt;There are many more only in github or some other communities.&lt;a href=&#34;#fnref2&#34; class=&#34;footnote-back&#34;&gt;↩︎&lt;/a&gt;&lt;/p&gt;&lt;/li&gt;
+&lt;li id=&#34;fn3&#34;&gt;&lt;p&gt;Which frankly lately is very low.
+I won’t get into details.&lt;a href=&#34;#fnref3&#34; class=&#34;footnote-back&#34;&gt;↩︎&lt;/a&gt;&lt;/p&gt;&lt;/li&gt;
+&lt;/ol&gt;
+&lt;/div&gt;
+</description>
+    </item>
+    
+    <item>
+      <title>useR madrid: rtweet</title>
+      <link>https://llrs.dev/talk/user-madrid-rtweet/</link>
+      <pubDate>Thu, 29 Feb 2024 19:00:00 +0200</pubDate>
+      <guid>https://llrs.dev/talk/user-madrid-rtweet/</guid>
+      <description>
+
+
+&lt;p&gt;This presentation was in Spanish. I shared the history of my involvement with rtweet and what is happening with the package and Twitter API.&lt;/p&gt;
+</description>
+    </item>
+    
+  </channel>
+</rss>

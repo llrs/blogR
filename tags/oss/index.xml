@@ -1,0 +1,74 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes" ?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>OSS | B101nfo</title>
+    <link>https://llrs.dev/tags/oss/</link>
+      <atom:link href="https://llrs.dev/tags/oss/index.xml" rel="self" type="application/rss+xml" />
+    <description>OSS</description>
+    <generator>Source Themes Academic (https://sourcethemes.com/academic/)</generator><language>en-us</language><copyright>If it is code you can copy and reuse (MIT) if it is text, please cite and reuse CC-BY 2026.</copyright><lastBuildDate>Fri, 27 May 2022 00:00:00 +0000</lastBuildDate>
+    <image>
+      <url>img/map[gravatar:%!s(bool=false) shape:circle]</url>
+      <title>OSS</title>
+      <link>https://llrs.dev/tags/oss/</link>
+    </image>
+    
+    <item>
+      <title>Leadership in open source projects</title>
+      <link>https://llrs.dev/post/2022/05/27/leadership-open-source/</link>
+      <pubDate>Fri, 27 May 2022 00:00:00 +0000</pubDate>
+      <guid>https://llrs.dev/post/2022/05/27/leadership-open-source/</guid>
+      <description>
+
+
+&lt;p&gt;This is the second part of the previous post about &lt;a href=&#34;https://llrs.dev/post/2022/03/16/concepts-around-open-source-free-software/&#34;&gt;concepts around open source/free software&lt;/a&gt;.&lt;/p&gt;
+&lt;p&gt;Since last book, I also read &lt;a href=&#34;https://un.curl.dev&#34;&gt;Uncurled&lt;/a&gt; which recommended &lt;a href=&#34;https://www.amazon.com/Working-Public-Making-Maintenance-Software/dp/0578675862&#34;&gt;“The Making and maintenance of open source software”&lt;/a&gt; (I will short it to MMOSS) and “&lt;a href=&#34;https://producingoss.com/&#34;&gt;Producing Open Source Software&lt;/a&gt;” (POSS), which provide first hand experiences about how those maintainers handled different projects.&lt;/p&gt;
+&lt;p&gt;This post is about projects, growth and management of the project (I don’t want to make them about R but I will also use my experience within R to reflect on these ideas).&lt;/p&gt;
+&lt;div id=&#34;projects&#34; class=&#34;section level2&#34;&gt;
+&lt;h2&gt;Projects&lt;/h2&gt;
+&lt;p&gt;It is common to say refer to open source as projects.
+While it is true that open source/free software is a project with limited resources it doesn’t have a fixed end date.
+I don’t think they fit the criteria of the &lt;a href=&#34;https://en.wikipedia.org/wiki/Project_Management_Body_of_Knowledge&#34; title=&#34;Project Management Body of Knowledge&#34;&gt;PMBOK&lt;/a&gt;.&lt;/p&gt;
+&lt;p&gt;Software “projects” run from the usefulness for the maintainer and the feedback received.
+If a maintainer does no longer use a piece of software and doesn’t receive any feedback they might choose to not update the public version.
+The software is still up there but the valuable resource (maintenance) is no longer there.&lt;/p&gt;
+&lt;p&gt;This explains why it is so common to look up for activity on a “project”.
+If a developer/maintainer hasn’t committed or reacted in a long time the “project” is no longer active.
+The code might still be used, it might have more users, but it is no longer a project.&lt;/p&gt;
+&lt;p&gt;Another characteristics of projects is that there is a leadership.
+It might be a team or an individual like a benevolent dictator for life as explained by POSS.
+This leadership most important role is communication.
+It is not enough to have commit access or a foundation but to communicate and steward the community towards a direction or following some guidelines.&lt;/p&gt;
+&lt;p&gt;This communication is usually done by NEWS and changelog, in bug reports feedback on mailing list (and by the lack of communication too).&lt;/p&gt;
+&lt;p&gt;These leaders are those who can steward with contributor growth, support, ease of participation and technical improvements.
+Particularly POSS mentions the distinction between commit access and maintainer; also considering maintainers those that organize conferences, set up infrastructure and participate even if not committing code.&lt;/p&gt;
+&lt;p&gt;All the activities of the maintainers (and others) help with the project status and growth.&lt;/p&gt;
+&lt;/div&gt;
+&lt;div id=&#34;growth&#34; class=&#34;section level2&#34;&gt;
+&lt;h2&gt;Growth?&lt;/h2&gt;
+&lt;p&gt;There seems to be in the MMOSS book a tendency to only mention growth, which is very hard to measure.
+Just fo give an example focusing on users: Is LAPACK user base growing or not?
+I would say it is, because R uses it and more people is using R.
+But there isn’t, to my knowledge, a growth on users claiming to be experts on LAPACK, although there are several LAPACK optimizations.&lt;/p&gt;
+&lt;p&gt;MMOSS mentions that the (long term) contributors tend to lurk and just chime in when they can propose something of value or given the room.
+This is echoed by POSS, which even says that one of the roles of maintainers is to encourage other contributors to become maintainers.&lt;/p&gt;
+&lt;p&gt;Casual contributors post when they have an issue/bug while using it but they are not interested on the long term health of the software.
+Presumably on the classification on table 1 of the &lt;a href=&#34;https://llrs.dev/post/2022/03/16/concepts-around-open-source-free-software/&#34;&gt;previous post&lt;/a&gt; refers to both.
+However, as acknowledge by the author it is hard to measure users and contributors.&lt;/p&gt;
+&lt;p&gt;The books always focus on the very positive outcome growth, not stagnation or reduction of users/contributors.
+I think it is important to acknowledge this happens too and find the causes to avoid them.&lt;/p&gt;
+&lt;p&gt;On python the support of python 2.7 had to be extended multiple times due to slow uptake of python 3.x.
+It might have similar effects than the upgrade from perl4 to perl5, which (besides many other reasons) left perl outside the curriculum of the universities, so without many new users.&lt;/p&gt;
+&lt;p&gt;Probably the best indicator is the relationship between users, contributors and maintainers.
+If these are three different groups of people, there are more users than contributors and less maintainers while the dynamics are good and the software is in good healthy status.&lt;/p&gt;
+&lt;/div&gt;
+&lt;div id=&#34;end&#34; class=&#34;section level2&#34;&gt;
+&lt;h2&gt;End&lt;/h2&gt;
+&lt;p&gt;I haven’t touch much the status of code but this is also important it can be status as in quality of code and status of the software and community.
+The first is easier to measure and compare while the second one is much harder, more subjective and thus less general.&lt;/p&gt;
+&lt;p&gt;Whatever the status of a software is don’t forget to be nice to users, contributors and help them become more familiar with the code in a friendly manner.&lt;/p&gt;
+&lt;/div&gt;
+</description>
+    </item>
+    
+  </channel>
+</rss>

@@ -1,0 +1,1846 @@
+<!DOCTYPE html>
+<html lang="en-us">
+
+<head>
+
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="generator" content="Source Themes Academic 4.8.0">
+
+  
+
+  
+  
+  
+  
+  
+    
+    
+    
+  
+  
+
+  <meta name="author" content="Lluís Revilla Sancho">
+
+  
+  
+  
+    
+  
+  <meta name="description" content="Recently the CRAN team lead by Kurt Hornik has made available some more information about the process of CRAN. The information is gathered now at posteriority via analyzing emails they have archived.">
+
+  
+  <link rel="alternate" hreflang="en-us" href="https://llrs.dev/post/2026/04/25/life-of-a-package/">
+
+  
+
+
+  
+  
+  
+  <meta name="theme-color" content="#2962ff">
+  
+
+  
+  
+
+  
+  
+  
+  
+    
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/academicons/1.8.6/css/academicons.min.css" integrity="sha256-uFVgMKfistnJAfoCUQigIl+JfUaP47GrRKjf6CTPVmw=" crossorigin="anonymous">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.12.0-1/css/all.min.css" integrity="sha256-4w9DunooKSr3MFXHXWyFER38WmPdm361bQS/2KUWZbU=" crossorigin="anonymous">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/fancybox/3.5.7/jquery.fancybox.min.css" integrity="sha256-Vzbj7sDDS/woiFS3uNKo8eIuni59rjyNGtXfstRzStA=" crossorigin="anonymous">
+
+    
+    
+    
+      
+    
+    
+      
+      
+        
+          <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.18.1/styles/github.min.css" crossorigin="anonymous" title="hl-light">
+          <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.18.1/styles/dracula.min.css" crossorigin="anonymous" title="hl-dark" disabled>
+        
+      
+    
+
+    
+
+    
+
+    
+    
+      
+
+      
+      
+
+      
+    
+      
+
+      
+      
+
+      
+    
+      
+
+      
+      
+
+      
+    
+      
+
+      
+      
+
+      
+    
+      
+
+      
+      
+
+      
+    
+      
+
+      
+      
+
+      
+    
+      
+
+      
+      
+
+      
+    
+      
+
+      
+      
+
+      
+    
+      
+
+      
+      
+
+      
+    
+      
+
+      
+      
+
+      
+    
+      
+
+      
+      
+
+      
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/lazysizes/5.1.2/lazysizes.min.js" integrity="sha256-Md1qLToewPeKjfAHU1zyPwOutccPAm5tahnaw7Osw0A=" crossorigin="anonymous" async></script>
+      
+    
+      
+
+      
+      
+
+      
+    
+      
+
+      
+      
+
+      
+    
+      
+
+      
+      
+        
+      
+
+      
+    
+      
+
+      
+      
+
+      
+    
+
+  
+
+  
+  
+  
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Montserrat:400,700%7CRoboto:400,400italic,700%7CRoboto+Mono&display=swap">
+  
+
+  
+  
+  
+  
+  <link rel="stylesheet" href="/css/academic.css">
+
+  
+
+
+
+
+  
+
+
+  
+
+  <link rel="manifest" href="/index.webmanifest">
+  <link rel="icon" type="image/png" href="/images/icon_hud03320d081f55857e6179906aee3769c_2658_32x32_fill_lanczos_center_3.png">
+  <link rel="apple-touch-icon" type="image/png" href="/images/icon_hud03320d081f55857e6179906aee3769c_2658_192x192_fill_lanczos_center_3.png">
+
+  <link rel="canonical" href="https://llrs.dev/post/2026/04/25/life-of-a-package/">
+
+  
+  
+  
+  
+  
+    
+    
+  
+  
+  <meta property="twitter:card" content="summary">
+  
+  <meta property="og:site_name" content="B101nfo">
+  <meta property="og:url" content="https://llrs.dev/post/2026/04/25/life-of-a-package/">
+  <meta property="og:title" content="Life of a package | B101nfo">
+  <meta property="og:description" content="Recently the CRAN team lead by Kurt Hornik has made available some more information about the process of CRAN. The information is gathered now at posteriority via analyzing emails they have archived."><meta property="og:image" content="img/map[gravatar:%!s(bool=false) shape:circle]">
+  <meta property="twitter:image" content="img/map[gravatar:%!s(bool=false) shape:circle]"><meta property="og:locale" content="en-us">
+  
+    
+      <meta property="article:published_time" content="2026-04-25T00:00:00&#43;00:00">
+    
+    <meta property="article:modified_time" content="2026-04-25T00:00:00&#43;00:00">
+  
+
+  
+
+
+    
+
+
+
+
+
+
+  
+
+
+
+
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "BlogPosting",
+  "mainEntityOfPage": {
+    "@type": "WebPage",
+    "@id": "https://llrs.dev/post/2026/04/25/life-of-a-package/"
+  },
+  "headline": "Life of a package",
+  
+  "datePublished": "2026-04-25T00:00:00Z",
+  "dateModified": "2026-04-25T00:00:00Z",
+  
+  "author": {
+    "@type": "Person",
+    "name": "Lluís Revilla Sancho"
+  },
+  
+  "publisher": {
+    "@type": "Organization",
+    "name": "B101nfo",
+    "logo": {
+      "@type": "ImageObject",
+      "url": "https://llrs.dev/images/icon_hud03320d081f55857e6179906aee3769c_2658_192x192_fill_lanczos_center_3.png"
+    }
+  },
+  "description": "Recently the CRAN team lead by Kurt Hornik has made available some more information about the process of CRAN. The information is gathered now at posteriority via analyzing emails they have archived."
+}
+</script>
+
+  
+
+  
+
+
+  
+
+
+  
+
+
+
+
+
+  <title>Life of a package | B101nfo</title>
+
+</head>
+
+<body id="top" data-spy="scroll" data-offset="70" data-target="#TableOfContents" >
+
+  <aside class="search-results" id="search">
+  <div class="container">
+    <section class="search-header">
+
+      <div class="row no-gutters justify-content-between mb-3">
+        <div class="col-6">
+          <h1>Search</h1>
+        </div>
+        <div class="col-6 col-search-close">
+          <a class="js-search" href="#"><i class="fas fa-times-circle text-muted" aria-hidden="true"></i></a>
+        </div>
+      </div>
+
+      <div id="search-box">
+        
+        <input name="q" id="search-query" placeholder="Search..." autocapitalize="off"
+        autocomplete="off" autocorrect="off" spellcheck="false" type="search">
+        
+      </div>
+
+    </section>
+    <section class="section-search-results">
+
+      <div id="search-hits">
+        
+      </div>
+
+    </section>
+  </div>
+</aside>
+
+
+  
+
+
+
+
+
+
+
+<nav class="navbar navbar-expand-lg navbar-light compensate-for-scrollbar" id="navbar-main">
+  <div class="container">
+
+    
+    <div class="d-none d-lg-inline-flex">
+      <a class="navbar-brand" href="/">B101nfo</a>
+    </div>
+    
+
+    
+    <button type="button" class="navbar-toggler" data-toggle="collapse"
+            data-target="#navbar-content" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
+    <span><i class="fas fa-bars"></i></span>
+    </button>
+    
+
+    
+    <div class="navbar-brand-mobile-wrapper d-inline-flex d-lg-none">
+      <a class="navbar-brand" href="/">B101nfo</a>
+    </div>
+    
+
+    
+    
+    <div class="navbar-collapse main-menu-item collapse justify-content-start" id="navbar-content">
+
+      
+      <ul class="navbar-nav d-md-inline-flex">
+        
+
+        
+
+        
+        
+        
+          
+        
+
+        
+        
+        
+        
+        
+        
+          
+          
+          
+            
+          
+          
+        
+
+        <li class="nav-item">
+          <a class="nav-link " href="/#about"><span>Home</span></a>
+        </li>
+
+        
+        
+
+        
+
+        
+        
+        
+
+        
+        
+        
+        
+        
+        
+
+        <li class="nav-item">
+          <a class="nav-link  active" href="/post"><span>Blog</span></a>
+        </li>
+
+        
+        
+
+        
+
+        
+        
+        
+
+        
+        
+        
+        
+        
+        
+
+        <li class="nav-item">
+          <a class="nav-link " href="/talk"><span>Talks</span></a>
+        </li>
+
+        
+        
+
+      
+
+        
+      </ul>
+    </div>
+
+    <ul class="nav-icons navbar-nav flex-row ml-auto d-flex pl-md-2">
+      
+      <li class="nav-item">
+        <a class="nav-link js-search" href="#"><i class="fas fa-search" aria-hidden="true"></i></a>
+      </li>
+      
+
+      
+      <li class="nav-item">
+        <a class="nav-link js-dark-toggle" href="#"><i class="fas fa-moon" aria-hidden="true"></i></a>
+      </li>
+      
+
+      
+
+    </ul>
+
+  </div>
+</nav>
+
+
+  <article class="article">
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+  
+  
+  
+<div class="article-container pt-3">
+  <h1>Life of a package</h1>
+
+  
+
+  
+    
+
+
+<div class="article-metadata">
+
+  
+  
+  
+  
+  <div>
+    
+
+  
+  <span><a href="/authors/admin/">Lluís Revilla Sancho</a></span>
+  </div>
+  
+  
+
+  
+  <span class="article-date">
+    
+    
+      
+    
+    Apr 25, 2026
+  </span>
+  
+
+  
+
+  
+  <span class="middot-divider"></span>
+  <span class="article-reading-time">
+    21 min read
+  </span>
+  
+
+  
+  
+  
+
+  
+  
+  <span class="middot-divider"></span>
+  <span class="article-categories">
+    <i class="fas fa-folder mr-1"></i><a href="/categories/r/">r</a></span>
+  
+
+</div>
+
+    
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+</div>
+
+
+
+  <div class="article-container">
+
+    <div class="article-style">
+      
+
+
+<p>Recently the CRAN team lead by Kurt Hornik has made available some more information about the process of CRAN.
+The information is gathered now at posteriority via analyzing emails they have archived.</p>
+<p>Previously I was given access to some data (what I call actions) but there is more that was made public.
+This fell right within the project I had embarked to create a package to retrieve and ease access to this data.
+I created the repo.data package in order to analyze it and help developers to use it and repositories to generate this (that later idea is just that at the moment).</p>
+<p>Another recently released dataset are the issues: some notifications that CRAN QA team have sent to package maintainers through some years.</p>
+<p>With these new datasets now we can know more about how packages fare on CRAN.
+I am going to analyze it here and present it at useR!2026.</p>
+<p>This is a blogpost I make in advance to share and analyze what I’ll present there. Let me know of any feedback and questions that might be possible to answer (or not) that you might have about them.</p>
+<pre class="r"><code>library(&quot;repo.data&quot;)
+## 
+## Attaching package: &#39;repo.data&#39;
+## The following object is masked from &#39;package:stats&#39;:
+## 
+##     alias
+ca &lt;- cran_archive()
+## Warning: There are 5 packages both archived and published
+## This indicate manual CRAN intervention.</code></pre>
+<div id="how-often-are-packages-archived" class="section level2">
+<h2>How often are packages archived?</h2>
+<p>One first answer is to compare the archive of CRAN with the list of packages available (0).
+This provides an approximate answer (177678) but misses the most interesting cases in my opinion: packages that were archived and went back to CRAN.
+With the new actions file we can check what the “internal” records of CRAN say about this.</p>
+<pre class="r"><code>library(&quot;dplyr&quot;)
+## 
+## Attaching package: &#39;dplyr&#39;
+## The following objects are masked from &#39;package:stats&#39;:
+## 
+##     filter, lag
+## The following objects are masked from &#39;package:base&#39;:
+## 
+##     intersect, setdiff, setequal, union
+library(&quot;ggplot2&quot;)
+library(&quot;ggrepel&quot;)
+caa &lt;- cran_actions()
+## Warning: There are 35 packages starting with an archive action!
+## Warning: There are 271 packages with duplicated actions for the same version.
+## Explanation: These indicate a manual intervention of the CRAN team.
+pkg_actions &lt;- caa |&gt; 
+  summarise(.by = c(Date, Action), n = n()) |&gt; 
+  arrange(Date)
+#   
+# pkg_actions |&gt; 
+#   summarise(.by = Date, n2 = sum(n[Action == &quot;publish&quot;]) - sum(n[Action != &quot;publish&quot;])) |&gt; 
+#   mutate(n3 = cumsum(n2)) |&gt; 
+#   View()
+#   ggplot() +
+#   geom_smooth(aes(Date, n3)) +
+#   theme_minimal() +
+#   scale_x_date(date_breaks = &quot;2 years&quot;, date_labels = &quot;%y&quot;, name = &quot;Year&quot;) +
+#   scale_y_continuous(limits = c(0, NA), expand = expansion_0NA, name = &quot;Packages on CRAN&quot;) +
+#   labs(title = &quot;CRAN size&quot;)</code></pre>
+<p>The above figure might be familiar to you if you check the R-journal and read the report by CRAN on it.</p>
+<pre class="r"><code>expansion_0NA &lt;- expansion(c(0, NA), c(0, NA))
+scale_x_years &lt;- scale_x_date(date_breaks = &quot;2 years&quot;, date_labels = &quot;%Y&quot;)
+gradient_archived &lt;- scales::pal_seq_gradient(low = &quot;black&quot;, &quot;red&quot;)
+pkg_actions |&gt; 
+  ggplot() +
+  geom_smooth(aes(Date, n, col = Action, linetype = Action), span = &quot;1 month&quot;,
+              method = &quot;gam&quot;, formula = y ~ s(x, bs = &quot;cs&quot;), method.args = list(family = &quot;poisson&quot;)) +
+  theme_minimal() +
+  scale_x_years +
+  scale_y_continuous(limits = c(0, NA), name = &quot;Actions&quot;, expand = c(0, NA),
+                     sec.axis = dup_axis(name = NULL)) +
+  scale_color_manual(breaks = c(&quot;Publish&quot; = &quot;publish&quot;, &quot;Archive&quot; = &quot;archive&quot;, &quot;Remove&quot; = &quot;remove&quot;),
+                     values = c(&quot;publish&quot; = &quot;green&quot;, &quot;archive&quot; = &quot;orange&quot;, &quot;remove&quot; = &quot;red&quot;)) +
+  scale_linetype(breaks = c(&quot;Publish&quot; = &quot;publish&quot;, &quot;Archive&quot; = &quot;archive&quot;, &quot;Remove&quot; = &quot;remove&quot;)) +
+  labs(title = &quot;CRAN &amp; maintainers: building a registry&quot;,
+       subtitle = &quot;Daily actions on CRAN&quot;,
+       x = NULL) +
+  theme(legend.position = &quot;inside&quot;,
+        legend.position.inside = c(0.2, 0.8),
+        legend.box.background = element_rect(colour = &quot;black&quot;),
+        plot.title.position = &quot;plot&quot;)</code></pre>
+<p><img src="https://llrs.dev/post/2026/04/25/life-of-a-package/index.en_files/figure-html/rate-archival-1.png" alt="" width="672" /></p>
+<p>Let’s count the packages on CRAN:</p>
+<pre class="r"><code>library(&quot;tidyr&quot;)
+library(&quot;scales&quot;)
+
+first_publication_pkg &lt;- caa |&gt; 
+  summarise(.by = Package, Date = first(Date)) 
+  
+first_publication &lt;- first_publication_pkg |&gt;   
+  summarise(.by = Date, first_publish = n()) |&gt; 
+  arrange(Date)
+
+first_publication |&gt; 
+  mutate(n2 = cumsum(first_publish)) |&gt; 
+  ggplot() +
+  geom_line(aes(Date, n2)) +
+  theme_minimal() +
+  scale_x_years +
+  scale_y_continuous(limits = c(0, NA), name = &quot;Packages&quot;, 
+                     labels = scales::label_number(                                                   scale_cut = cut_short_scale()),
+                     expand = expansion_0NA,
+                     sec.axis = dup_axis(name = NULL)) +
+  labs(title = &quot;Total packages on CRAN archive&quot;,
+       subtitle = &quot;Counting archived and removed packages&quot;,
+       x = NULL) +
+  theme(plot.title.position = &quot;plot&quot;)</code></pre>
+<p><img src="https://llrs.dev/post/2026/04/25/life-of-a-package/index.en_files/figure-html/unique-packages-1.png" alt="" width="672" /></p>
+<p>Why is the total number of packages available on CRAN that big?
+Because packages can be archived</p>
+<pre class="r"><code>caa2 &lt;- caa |&gt; 
+  summarise(.by = c(Date, Action), n = n()) |&gt; 
+  arrange(Date)
+
+caa3 &lt;- caa2 |&gt; 
+  mutate(.by = Date, 
+         Publish = sum(n[Action == &quot;publish&quot;]),
+         Other = sum(n[Action != &quot;publish&quot;])) |&gt; 
+  mutate(Publish_cum = cumsum(Publish),
+         Other_cum = cumsum(Other))
+
+caa0 &lt;- caa |&gt; 
+  summarise(.by = Package,
+            archived_d = Date[which(Action != &quot;publish&quot;)[1]])
+
+cap &lt;- caa |&gt; 
+  arrange(Date) |&gt; 
+  mutate(
+  .by = Package,
+  available = Action == &quot;publish&quot;
+  )
+
+pkg_published &lt;- cap |&gt; 
+  filter(sum(available)&gt;= sum(!available)) |&gt; # 69 archived with no publication
+  mutate(.by = Package,
+         group0 = cumsum(!available),
+         group = lag(cumsum(!available), default = 0L)) |&gt; 
+  mutate(.by = c(Package, group), k = seq_len(n()) %in% 1) |&gt;
+  filter(!available | k)
+
+pp &lt;- pkg_published |&gt; 
+  summarise(.by = Date, 
+            published = sum(available),
+            not_published = sum(!available)) |&gt; 
+  mutate(published_sum = cumsum(published),
+         not_published_sum = cumsum(not_published),
+         total_packages = published_sum - not_published_sum
+         )
+
+pp |&gt; 
+  ggplot() +
+  geom_line(aes(Date, not_published_sum/published_sum, linewidth = total_packages), lineend=&#39;round&#39;) +
+  scale_x_years +
+  scale_y_continuous(labels = label_percent(), 
+                     limits = c(0, 1),
+                     expand = expansion_0NA,
+                     sec.axis = dup_axis(name = NULL)) +
+  scale_linewidth(breaks = c(100, 1000, 10000, 20000)) +
+  theme_minimal() +
+  labs(title = &quot;Rising rate of packages archived&quot;,
+       subtitle = &quot;Acumulated rate of archived packages&quot;,
+       x = NULL,
+       linewidth = &quot;Packages&quot;,
+       y = &quot;Rate&quot;) +
+  theme(plot.title.position = &quot;plot&quot;,
+        legend.position = &quot;inside&quot;,
+        legend.position.inside = c(0.2, 0.8),
+        legend.box.background = element_rect())</code></pre>
+<p><img src="https://llrs.dev/post/2026/04/25/life-of-a-package/index.en_files/figure-html/worm-1.png" alt="" width="672" /></p>
+<p>This is not something bad, packages might evolve to a new version or maintainers might move on. But is something to be aware of, most probably your package over 28 years will end up archived.</p>
+<pre class="r"><code>cap2 &lt;- cap |&gt; 
+  summarise(.by = Date,
+         n_available = n_distinct(Package[available]),
+         n_not_available = n_distinct(Package[!available])
+  ) |&gt; 
+  mutate(n_date = n_available - n_not_available,
+         n_cum_date = cumsum(n_date))
+
+any_non_publication &lt;- caa |&gt; 
+  filter(.by = Package, Action != &quot;publish&quot;) |&gt; 
+  summarise(.by = Date, other = n()) |&gt; 
+  arrange(Date)
+
+any_non_publication2 &lt;- caa |&gt; 
+  summarise(.by = Package, Date = first(Date[Action != &quot;publish&quot;])) |&gt; 
+  summarise(.by = Date, other = n()) |&gt; 
+  arrange(Date)
+
+da &lt;- merge(first_publication, any_non_publication, by = &quot;Date&quot;, all = TRUE) |&gt; 
+  arrange(Date)
+da$first_publish[is.na(da$first_publish)] &lt;- 0L
+da$other[is.na(da$other)] &lt;- 0L
+
+da &lt;- mutate(da, pkgs = cumsum(first_publish),
+         rmv = cumsum(other))
+
+pkg_published |&gt; 
+  summarise(.by = c(Date, Action),
+            n = n()) |&gt; 
+  mutate(.by = Action,
+         n_sum = cumsum(n)) |&gt; 
+  ggplot() +
+  geom_line(aes(Date, n_sum, col = Action, linetype = Action)) +
+  theme_minimal() +
+  scale_x_years +
+  scale_y_continuous(limits = c(0, NA), name = &quot;Packages&quot;, 
+                     expand = expansion_0NA,
+                     labels = scales::label_number(                                                   scale_cut = cut_short_scale()),
+                     sec.axis = dup_axis(name = NULL)) +
+  scale_color_manual(breaks = c(&quot;Publish&quot; = &quot;publish&quot;, &quot;Archive&quot; = &quot;archive&quot;, &quot;Remove&quot; = &quot;remove&quot;),
+                     values = c(&quot;publish&quot; = &quot;green&quot;, &quot;archive&quot; = &quot;orange&quot;, &quot;remove&quot; = &quot;red&quot;)) +
+  scale_linetype(breaks = c(&quot;Publish&quot; = &quot;publish&quot;, &quot;Archive&quot; = &quot;archive&quot;, &quot;Remove&quot; = &quot;remove&quot;)) +
+  labs(title = &quot;Packages published and those which were archived&quot;,
+       subtitle = &quot;Published vs archived&quot;,
+       x = NULL,
+       linetype = &quot;Type&quot;, 
+       color = &quot;Type&quot;) +
+  theme(legend.position = &quot;inside&quot;,
+        legend.position.inside = c(0.2, 0.8),
+        legend.box.background = element_rect(color = &quot;black&quot;),
+        plot.title.position = &quot;plot&quot;)</code></pre>
+<p><img src="https://llrs.dev/post/2026/04/25/life-of-a-package/index.en_files/figure-html/counting-split-1.png" alt="" width="672" /></p>
+</div>
+<div id="how-fast-are-packages-archived" class="section level2">
+<h2>How fast are packages archived?</h2>
+<p>We’ve seen that less than 40% packages are archived.
+But knowing when they are archived would provide a new dimension.
+While this metric doesn’t mean much in isolation I think it is a good metric to know.</p>
+<p>It might be bad if a package is archived 2 hours after being public.
+This indicates a mismatch between submission and being on CRAN or someone picking something that has slipped through the submission process.</p>
+<p>While archiving is often considered bad it is also a sign that things have moved on.
+I requested archiving rtweet as the platform didn’t provide free access to the API (see <a href="https://llrs.dev/post/2023/02/16/rtweet-future/">post about rtweet</a>).
+Similarly, people might move on to next version of the package, prioritize other projects and stop maintaining it.
+While I would like to see more maintenance transfers, I think it is very hard for highly specialized tools.</p>
+<pre class="r"><code>caa_n &lt;- caa |&gt; 
+  arrange(Package, Date, Time) |&gt; 
+    mutate(.by = Package, 
+         publish_n = cumsum(Action == &quot;publish&quot;),
+         archive_n = cumsum(Action != &quot;publish&quot;)
+         ) 
+caa_n |&gt; 
+  filter(Action == &quot;publish&quot;) |&gt; 
+  summarise(.by = Package, n = max(publish_n)) |&gt; 
+  count(n, name = &quot;nn&quot;) |&gt; 
+  ggplot() +
+  geom_col(aes(n, nn)) +
+  scale_x_continuous(expand = expansion_0NA) +
+  scale_y_continuous(expand = expansion_0NA, breaks = 1000*0:10,
+                     labels = scales::label_number(scale_cut= cut_short_scale())) +
+  theme_minimal() +
+  labs(title = &quot;Most packages release very few versions&quot;,
+       subtitle = &quot;Versions released&quot;,
+       y = &quot;Packages&quot;, x = &quot;Versions released&quot;) +
+  coord_cartesian(xlim = c(NA, 25)) +
+  theme(plot.title.position = &quot;plot&quot;)</code></pre>
+<p><img src="https://llrs.dev/post/2026/04/25/life-of-a-package/index.en_files/figure-html/time-archival-1.png" alt="" width="672" /></p>
+<p>Let’s check what happens to those being checked:</p>
+<pre class="r"><code>archived_packages &lt;- caa |&gt; 
+  filter(.by = Package, any(Action != &quot;publish&quot;)) |&gt; 
+  arrange(Package, Date, Time) |&gt; 
+  mutate(
+    Time = if_else(is.na(Time), &quot;12:00:00&quot;, Time),
+    dt = as.POSIXlt(
+    paste(Date, Time), 
+    format = &quot;%Y-%m-%d %H:%M:%OS&quot;, 
+    tz = &quot;Europe/Vienna&quot;)) |&gt; 
+  arrange(dt)
+
+ap &lt;- archived_packages |&gt; 
+  filter(Action != &quot;remove&quot;) |&gt; 
+  filter(.by = Package, lag(Action, default = &quot;publish&quot;) != Action | Action != lead(Action, default = &quot;publish&quot;)) |&gt; 
+  filter(.by = c(Package, Version), 
+         (n() %% 2) == 0L, 
+         sum(Action == &quot;publish&quot;) == sum(Action != &quot;publish&quot;)) |&gt; 
+  mutate(Action = factor(Action, levels = c(&quot;publish&quot;, &quot;archive&quot;),
+                         ordered = TRUE)) |&gt; 
+  arrange(Package, Version, dt, Action) |&gt; 
+  mutate(.by = Package, 
+         ids = lag(cumsum(Action != &quot;publish&quot;), default = 0)) |&gt; 
+  filter(.by = c(Package, ids), n() == 2L &amp; n_distinct(Action) == 2L &amp; first(Action) == &quot;publish&quot;)
+
+ap_wide &lt;- ap |&gt; 
+  select(Package, Action, ids, dt) |&gt; 
+  pivot_wider(names_from = Action, values_from = dt) |&gt; 
+  mutate(diff_t = difftime(archive, publish, units = &quot;days&quot;))
+
+p &lt;- ap_wide |&gt; 
+  ggplot() +
+  geom_histogram(aes(diff_t, group = ids, fill = ids +1), binwidth = 30) +
+  scale_y_continuous(expand = expansion_0NA, labels = scales::label_number(scale_cut= cut_short_scale())) +
+  scale_fill_continuous(palette = gradient_archived) +
+  labs(title = &quot;&quot;,
+       subtitle = &quot;Package time on CRAN before archiving&quot;,
+       fill = &quot;Archived&quot;,
+       x = &quot;Time (days)&quot;,
+       y = &quot;Archived versions&quot;) +
+  theme_minimal() +
+  theme(plot.title.position = &quot;plot&quot;)
+
+library(&quot;patchwork&quot;)
+p + 
+  scale_x_continuous(expand = expansion_0NA, breaks = 0:15*365) +
+  theme(legend.position = &quot;inside&quot;,
+        legend.position.inside = c(0.07, 0.7)) +
+  inset_element(
+    p + 
+      coord_cartesian(xlim = c(0, 365*2)) + 
+      guides(fill = &quot;none&quot;) +
+      labs(title = NULL, 
+           x = NULL, 
+           y = NULL) +
+      theme(plot.background = element_rect(colour = &quot;grey50&quot;)) +
+      scale_x_continuous(expand = expansion_0NA, 
+                         breaks = round(c(365*c(0, .5, 1, 1.5, 2)))), 
+    0.15, 0.2, 1, 1) </code></pre>
+<p><img src="https://llrs.dev/post/2026/04/25/life-of-a-package/index.en_files/figure-html/time-archival2-1.png" alt="" width="672" /></p>
+<p>Let’s check what happens per number of archival:</p>
+<pre class="r"><code>ap_wide |&gt; 
+  mutate(date = as.Date(archive)) |&gt; 
+  ggplot() +
+  geom_smooth(aes(date, diff_t, col = ids+1, group = ids +1), span = &quot;1 month&quot;,
+              method = &quot;gam&quot;, formula = y ~ s(x, bs = &quot;cs&quot;), method.args = list(family = &quot;gaussian&quot;)
+              ) +
+  scale_color_continuous(palette = gradient_archived) +
+  scale_x_years +
+  scale_y_continuous(expand = expansion_0NA, limits = c(0, NA),
+                     breaks = 365*0:7, name = &quot;Days till archiving&quot;,
+                     sec.axis = dup_axis(labels = \(x){x/365},
+                                         name = &quot;Years till archiving&quot;)) +
+  theme_minimal() +
+  labs(title = &quot;Archiving older versions&quot;, 
+       col = &quot;Times&quot;,
+       subtitle = &quot;Time a package was available till it was archived&quot;)</code></pre>
+<p><img src="https://llrs.dev/post/2026/04/25/life-of-a-package/index.en_files/figure-html/archive-version-1.png" alt="" width="672" /></p>
+<p>We can change the reference, instead of the date when the package was archived the date the package was published:</p>
+<pre class="r"><code>ap_wide |&gt; 
+  mutate(date = as.Date(publish)) |&gt; 
+  ggplot() +
+  geom_smooth(aes(date, diff_t, col = ids+1, group = ids +1), span = &quot;1 month&quot;,
+              method = &quot;gam&quot;, formula = y ~ s(x, bs = &quot;cs&quot;), method.args = list(family = &quot;gaussian&quot;)
+              ) +
+  scale_color_continuous(palette = gradient_archived) +
+  scale_x_years +
+  scale_y_continuous(expand = expansion_0NA, limits = c(0, NA),
+                     breaks = 365*0:7, name = &quot;Days till archiving&quot;,
+                     sec.axis = dup_axis(labels = \(x){x/365},
+                                         name = &quot;Years till archiving&quot;)) +
+  theme_minimal() +
+  labs(title = &quot;Archiving older versions&quot;, 
+       col = &quot;Times&quot;,
+       subtitle = &quot;Time a package was available till it was archived&quot;)</code></pre>
+<p><img src="https://llrs.dev/post/2026/04/25/life-of-a-package/index.en_files/figure-html/archive-version2-1.png" alt="" width="672" /></p>
+<p>In 2022 there was a clean up of packages that affected old packages.</p>
+<pre class="r"><code>ap_wide |&gt; 
+  arrange(archive) |&gt; 
+  mutate(date = as.Date(publish)) |&gt; 
+  mutate(.by = date, n = n()) |&gt; 
+  ggplot() +
+  geom_smooth(aes(date, diff_t), span = &quot;1 month&quot;,
+              method = &quot;gam&quot;, formula = y ~ s(x, bs = &quot;cs&quot;), method.args = list(family = &quot;gaussian&quot;)) +
+  scale_colour_gradient2() +
+  scale_x_years +
+  scale_y_continuous(expand = expansion_0NA, limits = c(0, NA),
+                     breaks = 365*0:7, 
+                     labels = \(x){x/365},
+                     name = &quot;Years till archiving&quot;,
+                     sec.axis = dup_axis(name = NULL)) +
+  theme_minimal() +
+  labs(title = &quot;Archiving older versions&quot;, 
+       x = NULL,
+       col = &quot;Times&quot;,
+       subtitle = &quot;Time a package was available till it was archived&quot;) +
+  theme(plot.title.position = &quot;plot&quot;)
+## Ignoring unknown labels:
+## • colour : &quot;Times&quot;
+## Warning: Removed 1 row containing missing values or values outside the scale range
+## (`geom_smooth()`).</code></pre>
+<p><img src="https://llrs.dev/post/2026/04/25/life-of-a-package/index.en_files/figure-html/archive-dates-1.png" alt="" width="672" /></p>
+<p>If we plot by number or archival instead we get a different (but similar) picture:</p>
+<pre class="r"><code>p &lt;- ap_wide |&gt;
+  mutate(date = as.Date(publish)) |&gt;
+  ggplot() +
+  geom_smooth(aes(date, diff_t, col = ids+1, group = ids),  span = &quot;1 month&quot;,
+              method = &quot;gam&quot;, formula = y ~ s(x, bs = &quot;cs&quot;), method.args = list(family = &quot;gaussian&quot;)) +
+  geom_abline(slope = -1, 
+              intercept = as.numeric(as.Date(max(ap_wide$publish))),
+              linetype = 2)+
+  scale_color_continuous(palette = gradient_archived) +
+  theme_minimal() +
+  labs(title = &quot;Packages are archived sooner&quot;,
+       subtitle = &quot;Time from first publication to archiving&quot;,
+       col = &quot;Times&quot;,
+       y = &quot;Time (days)&quot;,
+       x = NULL)
+
+p + 
+  scale_x_years +
+  scale_y_continuous(expand = expansion_0NA, 
+                     limits = c(0, NA),
+                     breaks = 365*0:11,
+                     labels = \(x){x/365},
+                     name = &quot;Years till archiving&quot;) +
+  theme(
+    legend.position = &#39;inside&#39;,
+    legend.position.inside = c(0.1, 0.2),
+    plot.title.position = &quot;plot&quot;,
+    legend.background = element_rect(color = &quot;black&quot;)) +
+  inset_element(p + 
+                  coord_cartesian(
+                    xlim = c(as.Date(&quot;2018-01-01&quot;), NA), 
+                    ylim = c(0, 1500)) +
+                  scale_y_continuous(expand = expansion_0NA,
+                                     breaks = 365*0:4) +
+                  labs(x = NULL, 
+                       y = NULL,
+                       title = NULL, 
+                       subtitle = NULL) +
+                  guides(col = &quot;none&quot;) +
+                  theme(plot.background = element_rect(colour = &quot;grey50&quot;))
+                , 0.3, 0.5, 1, 1)</code></pre>
+<p><img src="https://llrs.dev/post/2026/04/25/life-of-a-package/index.en_files/figure-html/archive-times-1.png" alt="" width="672" /></p>
+<p>Zooming on packages being archived:</p>
+<pre class="r"><code>p &lt;- ap_wide |&gt;
+  arrange(publish) |&gt; 
+  mutate(date = as.Date(publish)) |&gt;
+  mutate(.by = date, n = n()) |&gt; 
+  ggplot() +
+  geom_smooth(aes(date, diff_t), span = &quot;1 month&quot;,
+              method = &quot;gam&quot;, formula = y ~ s(x, bs = &quot;cs&quot;), method.args = list(family = &quot;gaussian&quot;)) +
+  theme_minimal() +
+  geom_abline(slope = -1, 
+              intercept = as.numeric(as.Date(max(ap_wide$publish))),
+              linetype = 2) +
+  labs(title = &quot;Packages are archived sooner&quot;,
+       subtitle = &quot;Time from publication to archiving&quot;,
+       y = NULL,
+       x = NULL)
+
+p + 
+  scale_x_years +
+  scale_y_continuous(expand = expansion_0NA, 
+                     limits = c(0, NA),
+                     breaks = 365*seq(from = 0, to = 11, by = 2),
+                     labels = function(x){paste(x/365, &quot; years&quot;)}) +
+  theme(
+    legend.position = &#39;inside&#39;,
+    legend.position.inside = c(0.2, 0.2)) +
+  inset_element(p + 
+                  coord_cartesian(
+                    xlim = c(as.Date(&quot;2022-01-01&quot;), NA), 
+                    ylim = c(0, 600)) +
+                  scale_y_continuous(expand = expansion_0NA,
+                                     labels = function(x){paste(x, &quot; days&quot;)}, 
+                                     breaks = 120*0:13) +
+                  labs(x = NULL, 
+                       y = NULL,
+                       title = NULL, 
+                       subtitle = NULL) +
+                  guides(col = &quot;none&quot;) +
+                  theme(plot.background = element_rect(colour = &quot;grey50&quot;))
+                , 0.3, 0.5, 1, 1)
+## Warning: Removed 1 row containing missing values or values outside the scale range
+## (`geom_smooth()`).</code></pre>
+<p><img src="https://llrs.dev/post/2026/04/25/life-of-a-package/index.en_files/figure-html/archiving-zoom-1.png" alt="" width="672" /></p>
+</div>
+<div id="how-often-are-packages-receiving-notices" class="section level2">
+<h2>How often are packages receiving notices?</h2>
+<p>Is that easy to maintain a package on CRAN? As you might have suspected to keep a package on CRAN one needs to update it.
+One can do it at their own peace except when CRAN QA team detects problems on the package. Then they will set a deadline to fix those issues identified.</p>
+<p>First, let’s clean up a bit the data:</p>
+<pre class="r"><code>ci &lt;- repo.data::cran_issues()
+## Warning in repo.data::cran_issues(): Correcting incorrect dates on Before
+
+cik &lt;- ci |&gt; 
+  mutate(si = strsplit(Info, &quot;:&quot;, fixed = TRUE),
+         et = unlist(lapply(si, function(x){
+           paste0(x[4:6], collapse = &quot;:&quot;)
+           })),
+         Title = if_else(is.na(Title) &amp; !startsWith(et, &quot;NA:&quot;), et, Title)
+  ) |&gt; 
+  mutate(
+    Title = gsub(&quot;^(NOTE|ERROR|WARNING):?_?&quot;, &quot;&quot;, Title, ignore.case = TRUE),
+    Title = gsub(&quot;(QUERIED:?.*)$&quot;, &quot;&quot;, Title),
+    Title = if_else(!nzchar(Title), NA, Title),
+    Title = tools::toTitleCase(Title),
+    Title = if_else(grepl(&quot;from:(upgrade|ugprade)&quot;, Title, ignore.case = TRUE), &quot;from upgrade&quot;, Title),
+    Title = if_else(grepl(&quot;from:archival&quot;, Title, ignore.case = TRUE), &quot;from archival&quot;, Title),
+    Title = if_else(grepl(&quot;:missing:&quot;, Title, ignore.case = TRUE), &quot;from Bioc&quot;, Title),
+    Title = if_else(grepl(&quot;:?BioC&quot;, Title, ignore.case = TRUE), &quot;from Bioc&quot;, Title),
+    Title = if_else(grepl(&quot;from:sys&quot;, Title, ignore.case = TRUE), &quot;System change&quot;, Title),
+    Title = if_else(grepl(&quot;Additional_issue&quot;, ignore.case = TRUE, Title), &quot;Additional issues&quot;, Title),
+    Title = if_else(grepl(&quot;^:?web&quot;, ignore.case = TRUE, Title), &quot;Web&quot;, Title),
+    Title = if_else(grepl(&quot;^Rd_files&quot;, ignore.case = TRUE, Title), &quot;Rd_files&quot;, Title),
+    Title = if_else(grepl(&quot;^Compiled_code&quot;, ignore.case = TRUE, Title), &quot;Compiled code&quot;, Title),
+    Title = if_else(grepl(&quot;email_to_maintainer_is_undeliverable&quot;, Title, ignore.case = TRUE), &quot;email undeliverable&quot;, Title),
+    Title = if_else(grepl(&quot;4\\..:?c?&quot;, Title), &quot;R changes&quot;, Title),
+    Title = if_else(Title == &quot;should_remove_NeedsCompilation_yes_from_DESCRIPTION&quot;, &quot;NeedsCompilation&quot;, Title),
+    # Title = if_else(Title == &quot;C++11_specification_forcing_legacy_Armadillo&quot;, &quot;C++11 forcing legacy Armadillo&quot;)
+    Title = if_else(startsWith(Title, &quot;needs_to_fix_DESCRIPTION&quot;), &quot;fix DESCRIPTION&quot;, Title),
+    Title = if_else(grepl(&quot;^user_library_mount_read_only&quot;, Title, ignore.case = TRUE), &quot;user_library_mount_read_only&quot;, Title),
+    Title = if_else(startsWith(Title, &quot;Rd_contents&quot;), &quot;Rd_contents&quot;, Title),
+    Title = if_else(startsWith(Title, &quot;QUERIED&quot;), &quot;QUERIED&quot;, Title),
+    Title = if_else(grepl(&quot;oldrelease&quot;, Title, ignore.case = TRUE), &quot;oldrelease&quot;, Title),
+    Title = if_else(grepl(&quot;Rd_cross-References&quot;, Title, ignore.case = TRUE), &quot;Rd_cross-References&quot;, Title),
+    Title = if_else(grepl(&quot;Rd_\\usage&quot;, Title, fixed = TRUE), &quot;Rd_usage&quot;, Title),
+    Label = if_else(endsWith(Label, &quot;-25&quot;), NA, Label),
+    Label = if_else(Label %in% c(&quot;RDEPENDS&quot;, &quot;RRDEPENDS&quot;), &quot;RDEPENDS&quot;, Label)
+         )</code></pre>
+<p>Now we can plot it:</p>
+<pre class="r"><code>cik |&gt; 
+  count(Title, sort = TRUE) |&gt; 
+  mutate(
+    Title = forcats::fct_na_value_to_level(Title, level = NA),
+    Title = forcats::fct_reorder(Title, n, .fun = sum, .desc = TRUE)) |&gt; 
+  ggplot() +
+  geom_col(aes(Title, n)) +
+  scale_y_continuous(expand = expansion_0NA) +
+  theme_minimal() +
+  theme(axis.text.x = element_blank(),
+        axis.ticks.x = element_blank(),
+        panel.grid.minor.x = element_blank()) +
+  labs(subtitle = &quot;Common notification for requiring updates on CRAN&quot;,
+       title = &quot;Most notifications are package specific&quot;,
+       x = &quot;Reason&quot;,
+       y = &quot;Notifications&quot;)</code></pre>
+<p><img src="https://llrs.dev/post/2026/04/25/life-of-a-package/index.en_files/figure-html/reasons-1.png" alt="" width="672" /></p>
+<p>We can see that there are some reasons that are much more common than others.
+Cleaning it up a bit more and showing it in a readable format:</p>
+<pre class="r"><code>cik |&gt; 
+  mutate(Title = forcats::fct_lump(Title, n = 20)) |&gt; 
+  count(Title, Label, sort = TRUE) |&gt; 
+  mutate(
+    Title = forcats::fct_na_value_to_level(Title, level = NA),
+    Title = forcats::fct_reorder(Title, n, .fun = sum),
+    # Title = forcats::fct_relevel(Title, rev(levels(Title)))
+    ) |&gt; 
+  ggplot() +
+  geom_col(aes(n, Title, fill = Label)) +
+  scale_x_continuous(expand = c(0, NA)) +
+  scale_fill_manual(values = c(&quot;CLOSE&quot; = &quot;red&quot;, &quot;Extend&quot; = &quot;darkgreen&quot;, &quot;FINAL&quot; = &quot;darkred&quot;, &quot;RDEPENDS&quot; = &quot;orange&quot;, &quot;REOPEN&quot; = &quot;green&quot;, &quot;REVDEPS&quot; = &quot;darkviolet&quot;))+
+  theme_minimal() +
+  labs(y = NULL,
+       x = &quot;Notifications&quot;,
+       title = &quot;Most common reasons are unkown or very particular&quot;,
+       subtitle = &quot;Notifications reasons&quot;) +
+  theme(plot.title.position = &quot;plot&quot;,
+        legend.position = &quot;inside&quot;,
+        legend.position.inside = c(0.8, 0.6),
+        legend.background = element_rect(color = &quot;black&quot;))</code></pre>
+<p><img src="https://llrs.dev/post/2026/04/25/life-of-a-package/index.en_files/figure-html/nice-reasons-1.png" alt="" width="672" /></p>
+<p>Which packages receive more notifications according to this dataset?</p>
+<pre class="r"><code>cik |&gt; 
+  count(Package, sort = TRUE) |&gt; 
+  count(n, name = &quot;Packages&quot;) |&gt; 
+  ggplot() +
+  geom_area(aes(n, Packages))+
+  theme_minimal() +
+  scale_x_continuous(expand = expansion_0NA) +
+  scale_y_log10(guide = &quot;axis_logticks&quot;, expand = expansion_0NA) +
+  labs(title = &quot;Some packages receive a lot of notifications&quot;,
+       subtitle = &quot;Notifications per package&quot;,
+       x = &quot;Notifications&quot;) +
+  theme(plot.title.position = &quot;plot&quot;)</code></pre>
+<p><img src="https://llrs.dev/post/2026/04/25/life-of-a-package/index.en_files/figure-html/notificaions-packages-1.png" alt="" width="672" /></p>
+<p>Having seen that are some packages that get more notifications than others, how is it distributed with time?</p>
+<pre class="r"><code>cik |&gt; 
+  mutate(Date = as.Date(Date)) |&gt; 
+  summarise(.by = c(Date), n = n()) |&gt; 
+  ggplot() +
+  # geom_point(aes(Date, n)) +
+  # coord_cartesian(ylim = c(0, 100)) +
+  geom_smooth(aes(Date, n), span = &quot;1 month&quot;, method = &quot;gam&quot;,
+              formula = y ~ s(x, bs = &quot;cs&quot;), method.args = list(family = &quot;poisson&quot;)) +
+  theme_minimal() +
+  labs(title = &quot;There has been a peak of notifications&quot;,
+       subtitle = &quot;Daily notifications per date&quot;,
+       x = NULL,
+       y = &quot;Notifications&quot;) +
+  theme(plot.title.position = &quot;plot&quot;)</code></pre>
+<p><img src="https://llrs.dev/post/2026/04/25/life-of-a-package/index.en_files/figure-html/notifications-date-1.png" alt="" width="672" /></p>
+<p>Notifications sent to pacakges by date.</p>
+</div>
+<div id="what-is-the-relationship-within-packages" class="section level2">
+<h2>What is the relationship within packages?</h2>
+<p>On a previous post I analyzed the links of packages and found that some R help pages linked to themselves.
+How often does this happen on packages?
+How common is to only link to their own help pages and no external help pages?</p>
+<p>Also note that many issues with packages are related to R documentation.</p>
+<pre class="r"><code>cpl &lt;- cran_pkges_links()
+## Downloading and caching CRAN&#39;s packages xrefs for this session.
+## Downloading and caching base R&#39;s aliases for this session.
+## Warning: Packages with targets not present in a OS:
+## &#39;base&#39;, &#39;grDevices&#39;, &#39;parallel&#39;
+## Downloading and caching CRAN aliases for this session.
+## Warning: Packages with targets not present in a OS:
+## &#39;sfsmisc&#39;
+## Warning: Some links are distinct depending on the OS.
+cpl &lt;- as.data.frame(cpl)
+cpl$n &lt;- as.numeric(cpl$n)
+BASE &lt;- tools::standard_package_names()$base
+cpl |&gt; 
+  summarise(.by = from_pkg, not_self = !any(from_pkg %in% to_pkg)) |&gt; 
+  count(not_self) |&gt; 
+  ggplot() +
+  geom_col(aes(not_self, n, fill = not_self)) +
+  theme_minimal() +
+  scale_y_continuous(labels = scales::label_number(scale_cut = scales::cut_short_scale()),
+              expand = expansion_0NA) +
+  scale_x_discrete(expand = expansion(), labels = c(&quot;No link to itself&quot;, &quot;Links to itself&quot;)) +
+  guides(fill = &quot;none&quot;) +
+  labs(
+    title = &quot;Many packages do not link to themselves&quot;,
+    subtitle = &quot;Links from help pages to other pages of the same package&quot;,
+    x = NULL,
+    y = &quot;Packages&quot;) +
+  theme(plot.title.position = &quot;plot&quot;)</code></pre>
+<p><img src="https://llrs.dev/post/2026/04/25/life-of-a-package/index.en_files/figure-html/help-within-1.png" alt="" width="672" /></p>
+<p>How do package link to other packages?</p>
+<pre class="r"><code>ap &lt;- available.packages()
+cpl2 &lt;- filter(cpl, 
+               !is.na(to_pkg),
+               to_pkg %in% rownames(ap),
+               from_pkg %in% rownames(ap),
+               !to_pkg %in% c(&quot;R&quot;, BASE))
+
+fp &lt;- cpl2 |&gt; 
+  summarise(.by = from_pkg, n = sum(n)) |&gt; 
+  arrange(desc(n)) |&gt; 
+  pull(from_pkg)
+cpl2 |&gt; 
+  mutate(
+    from_pkg = factor(from_pkg, levels = rev(fp)),
+    to_pkg = factor(to_pkg, levels = fp)) |&gt;
+  filter(!is.na(to_pkg)) |&gt; 
+  droplevels() |&gt; 
+  # mutate(from_pkg = forcats::fct_reorder(from_pkg, n, .fun = sum, .desc = TRUE),
+  #        to_pkg = forcats::fct_reorder(to_pkg, n, .fun = sum, .desc = TRUE)) |&gt; 
+  ggplot() +
+  geom_point(aes(from_pkg, to_pkg, size = n, col = as.character(from_pkg) == as.character(to_pkg))) +
+  scale_size_binned_area(breaks = c(3, 10, 500, 1000, 2000)) +
+  scale_color_manual(values = c(&quot;TRUE&quot; = &quot;blue&quot;, &quot;FALSE&quot; = &quot;black&quot;), 
+                     labels = c(&quot;TRUE&quot; = &quot;Self&quot;, &quot;FALSE&quot; = &quot;Other&quot;),
+                     name = NULL) +
+  theme_minimal() +
+  theme(
+    axis.text.x = element_blank(),
+    axis.ticks.x = element_blank(),
+    axis.text.y = element_blank(),
+    axis.ticks.y = element_blank(),
+    panel.grid = element_blank()
+    ) +
+labs(
+  title = &quot;Linking packages by the documentation&quot;,
+  subtitle = &quot;Packages with cross-references to CRAN packages&quot;,
+  x = &quot;From&quot;,
+  size = &quot;Links&quot;,
+  y  = &quot;To&quot;) +
+  theme(plot.title.position = &quot;plot&quot;)</code></pre>
+<p><img src="https://llrs.dev/post/2026/04/25/life-of-a-package/index.en_files/figure-html/links-1.png" alt="" width="672" /></p>
+</div>
+<div id="what-is-the-relationship-between-packages" class="section level2">
+<h2>What is the relationship between packages?</h2>
+<p>While many packages have dependencies many don’t have one, or their dependencies might be on other repositories.
+Even if they have a dependency with other packages do they link to them or just use without any further reference?</p>
+<pre class="r"><code>pd &lt;- package_dependencies(NULL)
+## Warning: Some dependencies (131) are not on available repositories. Check for &#39;Additional_repositories&#39; or other repositories (Bioconductor.org?):
+## &#39;XVector&#39;, &#39;vsn&#39;, &#39;VariantAnnotation&#39;, &#39;UCell&#39;, &#39;tximport&#39;, &#39;tweeDEseq&#39;, &#39;TSCAN&#39;, &#39;TreeSummarizedExperiment&#39;, &#39;treeio&#39;, &#39;sva&#39;, &#39;survcomp&#39;, &#39;SummarizedExperiment&#39;, &#39;STRINGdb&#39;, &#39;SpatialExperiment&#39;, &#39;sparseMatrixStats&#39;, &#39;SparseArray&#39;, &#39;snpStats&#39;, &#39;SNPRelate&#39;, &#39;singscore&#39;, &#39;SingleCellExperiment&#39;, &#39;siggenes&#39;, &#39;ShortRead&#39;, &#39;seqLogo&#39;, &#39;scuttle&#39;, &#39;scran&#39;, &#39;scater&#39;, &#39;S4Vectors&#39;, &#39;rtracklayer&#39;, &#39;Rsamtools&#39;, &#39;Rhtslib&#39;, &#39;Rhdf5lib&#39;, &#39;rhdf5&#39;, &#39;Rgraphviz&#39;, &#39;Rdisop&#39;, &#39;RCy3&#39;, &#39;RBGL&#39;, &#39;R4RNA&#39;, &#39;qvalue&#39;, &#39;qusage&#39;, &#39;QSutils&#39;, &#39;qpgraph&#39;, &#39;pwalign&#39;, &#39;preprocessCore&#39;, &#39;phyloseq&#39;, &#39;Pedixplorer&#39;, &#39;pcaMethods&#39;, &#39;pathview&#39;, &#39;multtest&#39;, &#39;MultiAssayExperiment&#39;, &#39;MLInterfaces&#39;, &#39;mixOmics&#39;, &#39;minet&#39;, &#39;microbiome&#39;, &#39;Mfuzz&#39;, &#39;metapod&#39;, &#39;MetaboCoreUtils&#39;, &#39;MatrixGenerics&#39;, &#39;MAST&#39;, &#39;MassSpecWavelet&#39;, &#39;maftools&#39;, &#39;M3C&#39;, &#39;limma&#39;, &#39;LEA&#39;, &#39;KEGGREST&#39;, &#39;IRanges&#39;, &#39;InteractiveComplexHeatmap&#39;, &#39;InteractionSet&#39;, &#39;impute&#39;, &#39;Icens&#39;, &#39;HiCParser&#39;, &#39;Heatplus&#39;, &#39;HDF5Array&#39;, &#39;GWASTools&#39;, &#39;GSVA&#39;, &#39;GSEABase&#39;, &#39;graphite&#39;, &#39;graph&#39;, &#39;globaltest&#39;, &#39;GlobalAncova&#39;, &#39;glmSparseNet&#39;, &#39;ggtree&#39;, &#39;ggmsa&#39;, &#39;ggkegg&#39;, &#39;ggbio&#39;, &#39;GEOquery&#39;, &#39;GenomicRanges&#39;, &#39;GenomicFeatures&#39;, &#39;GenomicAlignments&#39;, &#39;GenomeInfoDb&#39;, &#39;genefilter&#39;, &#39;gdsfmt&#39;, &#39;fmrs&#39;, &#39;fmcsR&#39;, &#39;fgsea&#39;, &#39;ensembldb&#39;, &#39;EmpiricalBrownsMethod&#39;, &#39;edgeR&#39;, &#39;EBImage&#39;, &#39;DNAcopy&#39;, &#39;diffHic&#39;, &#39;DESeq2&#39;, &#39;DelayedMatrixStats&#39;, &#39;DelayedArray&#39;, &#39;DECIPHER&#39;, &#39;dada2&#39;, &#39;csaw&#39;, &#39;coRdon&#39;, &#39;ConsensusClusterPlus&#39;, &#39;CompoundDb&#39;, &#39;ComplexHeatmap&#39;, &#39;clusterProfiler&#39;, &#39;ChemmineR&#39;, &#39;BSgenome&#39;, &#39;bluster&#39;, &#39;Biostrings&#39;, &#39;biomaRt&#39;, &#39;biocViews&#39;, &#39;BiocStyle&#39;, &#39;BiocParallel&#39;, &#39;BiocGenerics&#39;, &#39;BiocFileCache&#39;, &#39;Biobase&#39;, &#39;aroma.light&#39;, &#39;AnnotationHub&#39;, &#39;AnnotationFilter&#39;, &#39;AnnotationDbi&#39;, &#39;annotate&#39;, &#39;ALDEx2&#39;, &#39;affyPLM&#39;, &#39;affy&#39;, &#39;a4Core&#39;
+direct_deps &lt;- pd |&gt; 
+  summarise(.by = Package, pkgs =sum(!Name %in% c(&quot;R&quot;, BASE))) |&gt; 
+  filter(pkgs != 0L)
+
+indirect_deps &lt;- pd |&gt; 
+  filter(!Name %in% c(&quot;R&quot;, BASE)) |&gt; 
+  summarise(.by = Name, rev = n())
+ap &lt;- available.packages()
+lj &lt;- left_join(direct_deps, indirect_deps,
+          by = join_by(Package == Name)) |&gt; 
+  mutate(rev = if_else(is.na(rev), 0L, rev))
+
+deps_counts &lt;- lj |&gt; 
+  filter(Package %in% rownames(ap)) |&gt; 
+  count(rev, pkgs, sort = TRUE)
+
+dc &lt;- deps_counts |&gt;   
+  rbind(c(rev = 0L, pkgs = 0L, n = nrow(ap) - sum(deps_counts$n)))
+ann &lt;- filter(lj,
+              rev &gt; -25*pkgs + 1000,
+              rev &gt; 0)</code></pre>
+<p>Most packages have some dependencies:</p>
+<pre class="r"><code>dc |&gt; 
+  select(pkgs, n) |&gt; 
+  tidyr::uncount(weights = n) |&gt; 
+  ggplot(aes(pkgs)) +
+  stat_ecdf(geom = &quot;step&quot;) +
+  coord_cartesian(xlim = c(0, 20)) +
+  scale_x_continuous(expand = expansion_0NA, breaks = 0:20) +
+  scale_y_continuous(expand = expansion_0NA, labels = scales::label_percent())  +
+  theme_minimal() +
+  labs(title = &quot;Many packages have some dependencies&quot;,
+       subtitle = &quot;ECDF of dependencies&quot;,
+       x = &quot;Dependencies&quot;,
+       y = NULL)</code></pre>
+<p><img src="https://llrs.dev/post/2026/04/25/life-of-a-package/index.en_files/figure-html/ecdf-dependencies-1.png" alt="" width="672" /></p>
+<p>But it is less common to have someone depend on your package:</p>
+<pre class="r"><code>dc |&gt; 
+  tidyr::uncount(n) |&gt; 
+  ggplot(aes(rev)) +
+  stat_ecdf(geom = &quot;step&quot;) +
+  coord_cartesian(xlim = c(0, 10)) +
+  scale_x_continuous(expand = expansion_0NA, breaks = 0:10) +
+  scale_y_continuous(expand = expansion_0NA, labels = scales::label_percent())  +
+  theme_minimal() +
+  labs(title = &quot;Most packages have no reverse dependencies&quot;,
+       subtitle = &quot;ECDF of reverse dependencies&quot;,
+       x = &quot;Reverse dependencies&quot;,
+       y = NULL)</code></pre>
+<p><img src="https://llrs.dev/post/2026/04/25/life-of-a-package/index.en_files/figure-html/ecdf-rdependencies-1.png" alt="" width="672" /></p>
+<p>While checking dependencies is more common, most packages maintainers do not need to worry about reverse dependency checks, as less than 25% have a strong dependency.</p>
+<p>We can see these two distributions in a different way:</p>
+<pre class="r"><code>dc |&gt; 
+  ggplot() +
+  geom_point(aes(pkgs, rev, size = n)) +
+  geom_text_repel(data = ann, aes(pkgs, rev, label = Package)) +
+  # geom_abline(slope = -25, intercept = 900) +
+  scale_y_continuous(trans = pseudo_log_trans(base = 10),
+                     breaks = c(0, 1, 10, 100, 1000, 5000)) +
+  # scale_size_area(breaks = c(1, 1000, 2000)) +
+  scale_size_binned_area(breaks = c(5, 10, 30, 100, 1000, 2000)) +
+  theme_minimal() +
+  # geom_
+  guides(y = guide_axis_logticks()) +
+  labs(x = &quot;CRAN dependencies&quot;, y = &quot;Used by&quot;, size = &quot;Packages&quot;,
+       title = &quot;Packages dependencies on CRAN&quot;,
+       subtitle = &quot;Relationship between dependencies and reverse dependencies&quot;) +
+  theme(plot.title.position = &quot;plot&quot;)</code></pre>
+<p><img src="https://llrs.dev/post/2026/04/25/life-of-a-package/index.en_files/figure-html/dependencies-points-1.png" alt="" width="672" /></p>
+<p>Popular packages have many dependencies while most packages have dependencies but not many reverse dependencies.</p>
+<div id="reproducibility" class="section level3">
+<h3>Reproducibility</h3>
+<details>
+<pre><code>## ─ Session info ───────────────────────────────────────────────────────────────────────────────────────────────────────
+##  setting  value
+##  version  R version 4.6.1 (2026-06-24)
+##  os       Slimbook OS
+##  system   x86_64, linux-gnu
+##  ui       X11
+##  language en
+##  collate  en_US.UTF-8
+##  ctype    en_US.UTF-8
+##  tz       Europe/Madrid
+##  date     2026-07-27
+##  pandoc   3.8.3 @ /usr/lib/rstudio/resources/app/bin/quarto/bin/tools/x86_64/ (via rmarkdown)
+##  quarto   1.9.38 @ /usr/lib/rstudio/resources/app/bin/quarto/bin/quarto
+## 
+## ─ Packages ───────────────────────────────────────────────────────────────────────────────────────────────────────────
+##  package      * version   date (UTC) lib source
+##  blogdown       1.24      2026-06-19 [1] CRAN (R 4.6.0)
+##  bookdown       0.47      2026-06-16 [1] CRAN (R 4.6.0)
+##  bslib          0.11.0    2026-05-16 [1] CRAN (R 4.6.0)
+##  cachem         1.1.0     2024-05-16 [1] RSPM
+##  cli            3.6.6     2026-04-09 [1] CRAN (R 4.6.0)
+##  digest         0.6.39    2025-11-19 [1] RSPM
+##  dplyr        * 1.2.1     2026-04-03 [1] CRAN (R 4.6.0)
+##  evaluate       1.0.5     2025-08-27 [1] RSPM
+##  farver         2.1.2     2024-05-13 [1] CRAN (R 4.6.0)
+##  fastmap        1.2.0     2024-05-15 [1] RSPM
+##  forcats        1.0.1     2025-09-25 [1] CRAN (R 4.6.0)
+##  generics       0.1.4     2025-05-09 [1] CRAN (R 4.6.0)
+##  ggplot2      * 4.0.3     2026-04-22 [1] CRAN (R 4.6.0)
+##  ggrepel      * 0.9.8     2026-03-17 [1] CRAN (R 4.6.0)
+##  glue           1.8.1     2026-04-17 [1] CRAN (R 4.6.0)
+##  gtable         0.3.6     2024-10-25 [1] CRAN (R 4.6.0)
+##  htmltools      0.5.9     2025-12-04 [1] RSPM
+##  jquerylib      0.1.4     2021-04-26 [1] RSPM
+##  jsonlite       2.0.0     2025-03-27 [1] RSPM
+##  knitr          1.51      2025-12-20 [1] RSPM
+##  labeling       0.4.3     2023-08-29 [1] CRAN (R 4.6.0)
+##  lattice        0.22-9    2026-02-09 [2] CRAN (R 4.6.1)
+##  lifecycle      1.0.5     2026-01-08 [1] RSPM
+##  magrittr       2.0.5     2026-04-04 [1] CRAN (R 4.6.0)
+##  Matrix         1.7-5     2026-03-21 [2] CRAN (R 4.6.1)
+##  mgcv           1.9-4     2025-11-07 [2] CRAN (R 4.6.1)
+##  nlme           3.1-169   2026-03-27 [2] CRAN (R 4.6.1)
+##  otel           0.2.0     2025-08-29 [1] RSPM
+##  patchwork    * 1.3.2     2025-08-25 [1] CRAN (R 4.6.0)
+##  pillar         1.11.1    2025-09-17 [1] RSPM
+##  pkgconfig      2.0.3     2019-09-22 [1] RSPM
+##  purrr          1.2.2     2026-04-10 [1] CRAN (R 4.6.0)
+##  R6             2.6.1     2025-02-15 [1] RSPM
+##  RColorBrewer   1.1-3     2022-04-03 [1] CRAN (R 4.6.0)
+##  Rcpp           1.1.1-1.1 2026-04-24 [1] CRAN (R 4.6.0)
+##  repo.data    * 0.2.2     2026-06-20 [1] CRAN (R 4.6.0)
+##  rlang          1.2.0     2026-04-06 [1] CRAN (R 4.6.0)
+##  rmarkdown      2.31      2026-03-26 [1] CRAN (R 4.6.0)
+##  rstudioapi     0.18.0    2026-01-16 [1] RSPM
+##  S7             0.2.2     2026-04-22 [1] CRAN (R 4.6.0)
+##  sass           0.4.10    2025-04-11 [1] RSPM
+##  scales       * 1.4.0     2025-04-24 [1] CRAN (R 4.6.0)
+##  sessioninfo    1.2.3     2025-02-05 [1] RSPM
+##  tibble         3.3.1     2026-01-11 [1] RSPM
+##  tidyr        * 1.3.2     2025-12-19 [1] CRAN (R 4.6.0)
+##  tidyselect     1.2.1     2024-03-11 [1] CRAN (R 4.6.0)
+##  vctrs          0.7.3     2026-04-11 [1] CRAN (R 4.6.0)
+##  withr          3.0.2     2024-10-28 [1] RSPM
+##  xfun           0.57      2026-03-20 [1] CRAN (R 4.6.0)
+##  yaml           2.3.12    2025-12-10 [1] RSPM
+## 
+##  [1] /home/lluis/bin/R/4.6
+##  [2] /opt/R/4.6.1/lib/R/library
+##  * ── Packages attached to the search path.
+## 
+## ──────────────────────────────────────────────────────────────────────────────────────────────────────────────────────</code></pre>
+</details>
+</div>
+</div>
+
+    </div>
+
+    
+
+
+
+
+
+  
+  
+
+<p class="edit-page">
+  <a href="https://github.com/llrs/blogR/edit/master/content/post/2026-04-25-life-of-a-package/index.en.html">
+    <i class="fas fa-pen pr-2"></i>Edit this page
+  </a>
+</p>
+
+
+
+
+
+<div class="article-tags">
+  
+  <a class="badge badge-light" href="/tags/cran/">CRAN</a>
+  
+</div>
+
+
+
+<div class="share-box" aria-hidden="true">
+  <ul class="share">
+    
+      
+      
+      
+        
+      
+      
+      
+      <li>
+        <a href="https://twitter.com/intent/tweet?url=https://llrs.dev/post/2026/04/25/life-of-a-package/&amp;text=Life%20of%20a%20package" target="_blank" rel="noopener" class="share-btn-twitter">
+          <i class="fab fa-twitter"></i>
+        </a>
+      </li>
+    
+      
+      
+      
+        
+      
+      
+      
+      <li>
+        <a href="https://www.facebook.com/sharer.php?u=https://llrs.dev/post/2026/04/25/life-of-a-package/&amp;t=Life%20of%20a%20package" target="_blank" rel="noopener" class="share-btn-facebook">
+          <i class="fab fa-facebook"></i>
+        </a>
+      </li>
+    
+      
+      
+      
+        
+      
+      
+      
+      <li>
+        <a href="mailto:?subject=Life%20of%20a%20package&amp;body=https://llrs.dev/post/2026/04/25/life-of-a-package/" target="_blank" rel="noopener" class="share-btn-email">
+          <i class="fas fa-envelope"></i>
+        </a>
+      </li>
+    
+      
+      
+      
+        
+      
+      
+      
+      <li>
+        <a href="https://www.linkedin.com/shareArticle?url=https://llrs.dev/post/2026/04/25/life-of-a-package/&amp;title=Life%20of%20a%20package" target="_blank" rel="noopener" class="share-btn-linkedin">
+          <i class="fab fa-linkedin-in"></i>
+        </a>
+      </li>
+    
+      
+      
+      
+        
+      
+      
+      
+      <li>
+        <a href="https://web.whatsapp.com/send?text=Life%20of%20a%20package%20https://llrs.dev/post/2026/04/25/life-of-a-package/" target="_blank" rel="noopener" class="share-btn-whatsapp">
+          <i class="fab fa-whatsapp"></i>
+        </a>
+      </li>
+    
+  </ul>
+</div>
+
+
+
+
+
+
+
+
+
+
+
+
+  
+    
+    
+
+
+
+
+
+  
+  
+  
+    
+  
+  
+  
+  <div class="media author-card content-widget-hr">
+    
+      
+      <img class="avatar mr-3 avatar-circle" src="/authors/admin/avatar_hu41a1d1cb0c2270d3fd463263214d3794_229497_270x270_fill_lanczos_center_3.png" alt="Avatar">
+    
+
+    <div class="media-body">
+      <h5 class="card-title"><a href="https://llrs.dev/">Lluís Revilla Sancho</a></h5>
+      <h6 class="card-subtitle">Data scientist</h6>
+      <p class="card-text">Data scientist with interests in software quality, mostly R.</p>
+      <ul class="network-icon" aria-hidden="true">
+  
+    
+    
+    
+      
+    
+    
+    
+    
+    
+    <li>
+      <a href="mailto:lluis.revilla&#43;blog@gmail.com" >
+        <i class="fas fa-envelope"></i>
+      </a>
+    </li>
+  
+    
+    
+    
+      
+    
+    
+    
+    
+    
+      
+    
+    <li>
+      <a href="https://linkedin.com/in/lluisrevilla/" target="_blank" rel="noopener">
+        <i class="fab fa-linkedin-in"></i>
+      </a>
+    </li>
+  
+    
+    
+    
+      
+    
+    
+    
+    
+    
+      
+    
+    <li>
+      <a href="https://fosstodon.org/@Lluis_Revilla" target="_blank" rel="noopener">
+        <i class="fab fa-mastodon"></i>
+      </a>
+    </li>
+  
+    
+    
+    
+      
+    
+    
+    
+    
+    
+      
+    
+    <li>
+      <a href="https://github.com/llrs" target="_blank" rel="noopener">
+        <i class="fab fa-github"></i>
+      </a>
+    </li>
+  
+    
+    
+    
+    
+    
+    
+    
+      
+    
+    <li>
+      <a href="https://scholar.google.es/citations?user=Hin4p3MAAAAJ&amp;hl" target="_blank" rel="noopener">
+        <i class="ai ai-google-scholar"></i>
+      </a>
+    </li>
+  
+    
+    
+    
+    
+    
+    
+    
+      
+    
+    <li>
+      <a href="https://orcid.org/0000-0001-9747-2570" target="_blank" rel="noopener">
+        <i class="ai ai-orcid"></i>
+      </a>
+    </li>
+  
+    
+    
+    
+      
+    
+    
+    
+    
+    
+      
+    
+    <li>
+      <a href="https://www.buymeacoffee.com/llrs" target="_blank" rel="noopener">
+        <i class="fas fa-pizza-slice"></i>
+      </a>
+    </li>
+  
+</ul>
+
+    </div>
+  </div>
+
+
+  
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <div class="article-widget content-widget-hr">
+    <h3>Related</h3>
+    <ul>
+      
+      <li><a href="/post/2024/01/10/submission-cran-first-try/">Submissions accepted on the first try</a></li>
+      
+      <li><a href="/post/2023/05/03/cran-maintained-packages/">CRAN maintained packages</a></li>
+      
+      <li><a href="/post/2021/12/07/reasons-cran-archivals/">Reasons why packages are archived on CRAN</a></li>
+      
+      <li><a href="/talk/user-2021/">Packages submission and reviews; how does it work?</a></li>
+      
+      <li><a href="/post/2021/01/31/cran-review/">CRAN review</a></li>
+      
+    </ul>
+  </div>
+  
+
+
+
+  </div>
+</article>
+
+      
+
+    
+    
+    
+      <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.4.1/jquery.min.js" integrity="sha256-CSXorXvZcTkaix6Yvo6HppcZGetbYMGWSFlBw8HfCJo=" crossorigin="anonymous"></script>
+      <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery.imagesloaded/4.1.4/imagesloaded.pkgd.min.js" integrity="sha256-lqvxZrPLtfffUl2G/e7szqSvPBILGbwmsGE1MKlOi0Q=" crossorigin="anonymous"></script>
+      <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery.isotope/3.0.6/isotope.pkgd.min.js" integrity="sha256-CBrpuqrMhXwcLLUd5tvQ4euBHCdh7wGlDfNz8vbu/iI=" crossorigin="anonymous"></script>
+      <script src="https://cdnjs.cloudflare.com/ajax/libs/fancybox/3.5.7/jquery.fancybox.min.js" integrity="sha256-yt2kYMy0w8AbtF89WXb2P1rfjcP/HTHLT7097U8Y5b8=" crossorigin="anonymous"></script>
+
+      
+
+      
+        
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.18.1/highlight.min.js" integrity="sha256-eOgo0OtLL4cdq7RdwRUiGKLX9XsIJ7nGhWEKbohmVAQ=" crossorigin="anonymous"></script>
+        
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.18.1/languages/r.min.js"></script>
+        
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.18.1/languages/phython.min.js"></script>
+        
+      
+
+    
+
+    
+    
+
+    
+    
+    <script>const code_highlighting = true;</script>
+    
+
+    
+    
+    <script>const isSiteThemeDark = false;</script>
+    
+
+    
+    
+    
+    
+    
+    
+    <script>
+      const search_config = {"indexURI":"/index.json","minLength":1,"threshold":0.3};
+      const i18n = {"no_results":"No results found","placeholder":"Search...","results":"results found"};
+      const content_type = {
+        'post': "Posts",
+        'project': "Projects",
+        'publication' : "Publications",
+        'talk' : "Talks"
+        };
+    </script>
+    
+
+    
+    
+
+    
+    
+    <script id="search-hit-fuse-template" type="text/x-template">
+      <div class="search-hit" id="summary-{{key}}">
+      <div class="search-hit-content">
+        <div class="search-hit-name">
+          <a href="{{relpermalink}}">{{title}}</a>
+          <div class="article-metadata search-hit-type">{{type}}</div>
+          <p class="search-hit-description">{{snippet}}</p>
+        </div>
+      </div>
+      </div>
+    </script>
+    
+
+    
+    
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/fuse.js/3.2.1/fuse.min.js" integrity="sha256-VzgmKYmhsGNNN4Ph1kMW+BjoYJM2jV5i4IlFoeZA9XI=" crossorigin="anonymous"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/mark.js/8.11.1/jquery.mark.min.js" integrity="sha256-4HLtjeVgH0eIB3aZ9mLYF6E8oU5chNdjU6p6rrXpl9U=" crossorigin="anonymous"></script>
+    
+
+    
+    
+
+    
+    
+
+    
+    
+    
+    
+    
+    
+    
+    
+    
+      
+    
+    
+    
+    
+    <script src="/js/academic.min.6f1005d1a84220e2f466ff3d8e712f31.js"></script>
+
+    
+
+
+
+
+
+
+  
+  
+  <div class="container">
+    <footer class="site-footer">
+  
+  <p class="powered-by">
+    
+      <a href="/privacy/">Privacy Policy</a>
+    
+    
+  </p>
+  
+
+  <p class="powered-by">
+    If it is code you can copy and reuse (MIT) if it is text, please cite and reuse CC-BY 2026. &middot; 
+
+    Powered by the
+    <a href="https://sourcethemes.com/academic/" target="_blank" rel="noopener">Academic theme</a> for
+    <a href="https://gohugo.io" target="_blank" rel="noopener">Hugo</a>.
+
+    
+    <span class="float-right" aria-hidden="true">
+      <a href="#" class="back-to-top">
+        <span class="button_icon">
+          <i class="fas fa-chevron-up fa-2x"></i>
+        </span>
+      </a>
+    </span>
+    
+  </p>
+</footer>
+
+  </div>
+  
+
+  
+<div id="modal" class="modal fade" role="dialog">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title">Cite</h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+        <pre><code class="tex hljs"></code></pre>
+      </div>
+      <div class="modal-footer">
+        <a class="btn btn-outline-primary my-1 js-copy-cite" href="#" target="_blank">
+          <i class="fas fa-copy"></i> Copy
+        </a>
+        <a class="btn btn-outline-primary my-1 js-download-cite" href="#" target="_blank">
+          <i class="fas fa-download"></i> Download
+        </a>
+        <div id="modal-error"></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+</body>
+</html>

@@ -1,0 +1,2414 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes" ?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>B101nfo</title>
+    <link>https://llrs.dev/</link>
+      <atom:link href="https://llrs.dev/index.xml" rel="self" type="application/rss+xml" />
+    <description>B101nfo</description>
+    <generator>Source Themes Academic (https://sourcethemes.com/academic/)</generator><language>en-us</language><copyright>If it is code you can copy and reuse (MIT) if it is text, please cite and reuse CC-BY 2026.</copyright><lastBuildDate>Sat, 25 Apr 2026 00:00:00 +0000</lastBuildDate>
+    <image>
+      <url>img/map[gravatar:%!s(bool=false) shape:circle]</url>
+      <title>B101nfo</title>
+      <link>https://llrs.dev/</link>
+    </image>
+    
+    <item>
+      <title>About</title>
+      <link>https://llrs.dev/home/</link>
+      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
+      <guid>https://llrs.dev/home/</guid>
+      <description></description>
+    </item>
+    
+    <item>
+      <title>Life of a package</title>
+      <link>https://llrs.dev/post/2026/04/25/life-of-a-package/</link>
+      <pubDate>Sat, 25 Apr 2026 00:00:00 +0000</pubDate>
+      <guid>https://llrs.dev/post/2026/04/25/life-of-a-package/</guid>
+      <description>
+
+
+&lt;p&gt;Recently the CRAN team lead by Kurt Hornik has made available some more information about the process of CRAN.
+The information is gathered now at posteriority via analyzing emails they have archived.&lt;/p&gt;
+&lt;p&gt;Previously I was given access to some data (what I call actions) but there is more that was made public.
+This fell right within the project I had embarked to create a package to retrieve and ease access to this data.
+I created the repo.data package in order to analyze it and help developers to use it and repositories to generate this (that later idea is just that at the moment).&lt;/p&gt;
+&lt;p&gt;Another recently released dataset are the issues: some notifications that CRAN QA team have sent to package maintainers through some years.&lt;/p&gt;
+&lt;p&gt;With these new datasets now we can know more about how packages fare on CRAN.
+I am going to analyze it here and present it at useR!2026.&lt;/p&gt;
+&lt;p&gt;This is a blogpost I make in advance to share and analyze what I’ll present there. Let me know of any feedback and questions that might be possible to answer (or not) that you might have about them.&lt;/p&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;library(&amp;quot;repo.data&amp;quot;)
+## 
+## Attaching package: &amp;#39;repo.data&amp;#39;
+## The following object is masked from &amp;#39;package:stats&amp;#39;:
+## 
+##     alias
+ca &amp;lt;- cran_archive()
+## Warning: There are 5 packages both archived and published
+## This indicate manual CRAN intervention.&lt;/code&gt;&lt;/pre&gt;
+&lt;div id=&#34;how-often-are-packages-archived&#34; class=&#34;section level2&#34;&gt;
+&lt;h2&gt;How often are packages archived?&lt;/h2&gt;
+&lt;p&gt;One first answer is to compare the archive of CRAN with the list of packages available (0).
+This provides an approximate answer (177678) but misses the most interesting cases in my opinion: packages that were archived and went back to CRAN.
+With the new actions file we can check what the “internal” records of CRAN say about this.&lt;/p&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;library(&amp;quot;dplyr&amp;quot;)
+## 
+## Attaching package: &amp;#39;dplyr&amp;#39;
+## The following objects are masked from &amp;#39;package:stats&amp;#39;:
+## 
+##     filter, lag
+## The following objects are masked from &amp;#39;package:base&amp;#39;:
+## 
+##     intersect, setdiff, setequal, union
+library(&amp;quot;ggplot2&amp;quot;)
+library(&amp;quot;ggrepel&amp;quot;)
+caa &amp;lt;- cran_actions()
+## Warning: There are 35 packages starting with an archive action!
+## Warning: There are 271 packages with duplicated actions for the same version.
+## Explanation: These indicate a manual intervention of the CRAN team.
+pkg_actions &amp;lt;- caa |&amp;gt; 
+  summarise(.by = c(Date, Action), n = n()) |&amp;gt; 
+  arrange(Date)
+#   
+# pkg_actions |&amp;gt; 
+#   summarise(.by = Date, n2 = sum(n[Action == &amp;quot;publish&amp;quot;]) - sum(n[Action != &amp;quot;publish&amp;quot;])) |&amp;gt; 
+#   mutate(n3 = cumsum(n2)) |&amp;gt; 
+#   View()
+#   ggplot() +
+#   geom_smooth(aes(Date, n3)) +
+#   theme_minimal() +
+#   scale_x_date(date_breaks = &amp;quot;2 years&amp;quot;, date_labels = &amp;quot;%y&amp;quot;, name = &amp;quot;Year&amp;quot;) +
+#   scale_y_continuous(limits = c(0, NA), expand = expansion_0NA, name = &amp;quot;Packages on CRAN&amp;quot;) +
+#   labs(title = &amp;quot;CRAN size&amp;quot;)&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;The above figure might be familiar to you if you check the R-journal and read the report by CRAN on it.&lt;/p&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;expansion_0NA &amp;lt;- expansion(c(0, NA), c(0, NA))
+scale_x_years &amp;lt;- scale_x_date(date_breaks = &amp;quot;2 years&amp;quot;, date_labels = &amp;quot;%Y&amp;quot;)
+gradient_archived &amp;lt;- scales::pal_seq_gradient(low = &amp;quot;black&amp;quot;, &amp;quot;red&amp;quot;)
+pkg_actions |&amp;gt; 
+  ggplot() +
+  geom_smooth(aes(Date, n, col = Action, linetype = Action), span = &amp;quot;1 month&amp;quot;,
+              method = &amp;quot;gam&amp;quot;, formula = y ~ s(x, bs = &amp;quot;cs&amp;quot;), method.args = list(family = &amp;quot;poisson&amp;quot;)) +
+  theme_minimal() +
+  scale_x_years +
+  scale_y_continuous(limits = c(0, NA), name = &amp;quot;Actions&amp;quot;, expand = c(0, NA),
+                     sec.axis = dup_axis(name = NULL)) +
+  scale_color_manual(breaks = c(&amp;quot;Publish&amp;quot; = &amp;quot;publish&amp;quot;, &amp;quot;Archive&amp;quot; = &amp;quot;archive&amp;quot;, &amp;quot;Remove&amp;quot; = &amp;quot;remove&amp;quot;),
+                     values = c(&amp;quot;publish&amp;quot; = &amp;quot;green&amp;quot;, &amp;quot;archive&amp;quot; = &amp;quot;orange&amp;quot;, &amp;quot;remove&amp;quot; = &amp;quot;red&amp;quot;)) +
+  scale_linetype(breaks = c(&amp;quot;Publish&amp;quot; = &amp;quot;publish&amp;quot;, &amp;quot;Archive&amp;quot; = &amp;quot;archive&amp;quot;, &amp;quot;Remove&amp;quot; = &amp;quot;remove&amp;quot;)) +
+  labs(title = &amp;quot;CRAN &amp;amp; maintainers: building a registry&amp;quot;,
+       subtitle = &amp;quot;Daily actions on CRAN&amp;quot;,
+       x = NULL) +
+  theme(legend.position = &amp;quot;inside&amp;quot;,
+        legend.position.inside = c(0.2, 0.8),
+        legend.box.background = element_rect(colour = &amp;quot;black&amp;quot;),
+        plot.title.position = &amp;quot;plot&amp;quot;)&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;&lt;img src=&#34;https://llrs.dev/post/2026/04/25/life-of-a-package/index.en_files/figure-html/rate-archival-1.png&#34; alt=&#34;&#34; width=&#34;672&#34; /&gt;&lt;/p&gt;
+&lt;p&gt;Let’s count the packages on CRAN:&lt;/p&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;library(&amp;quot;tidyr&amp;quot;)
+library(&amp;quot;scales&amp;quot;)
+
+first_publication_pkg &amp;lt;- caa |&amp;gt; 
+  summarise(.by = Package, Date = first(Date)) 
+  
+first_publication &amp;lt;- first_publication_pkg |&amp;gt;   
+  summarise(.by = Date, first_publish = n()) |&amp;gt; 
+  arrange(Date)
+
+first_publication |&amp;gt; 
+  mutate(n2 = cumsum(first_publish)) |&amp;gt; 
+  ggplot() +
+  geom_line(aes(Date, n2)) +
+  theme_minimal() +
+  scale_x_years +
+  scale_y_continuous(limits = c(0, NA), name = &amp;quot;Packages&amp;quot;, 
+                     labels = scales::label_number(                                                   scale_cut = cut_short_scale()),
+                     expand = expansion_0NA,
+                     sec.axis = dup_axis(name = NULL)) +
+  labs(title = &amp;quot;Total packages on CRAN archive&amp;quot;,
+       subtitle = &amp;quot;Counting archived and removed packages&amp;quot;,
+       x = NULL) +
+  theme(plot.title.position = &amp;quot;plot&amp;quot;)&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;&lt;img src=&#34;https://llrs.dev/post/2026/04/25/life-of-a-package/index.en_files/figure-html/unique-packages-1.png&#34; alt=&#34;&#34; width=&#34;672&#34; /&gt;&lt;/p&gt;
+&lt;p&gt;Why is the total number of packages available on CRAN that big?
+Because packages can be archived&lt;/p&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;caa2 &amp;lt;- caa |&amp;gt; 
+  summarise(.by = c(Date, Action), n = n()) |&amp;gt; 
+  arrange(Date)
+
+caa3 &amp;lt;- caa2 |&amp;gt; 
+  mutate(.by = Date, 
+         Publish = sum(n[Action == &amp;quot;publish&amp;quot;]),
+         Other = sum(n[Action != &amp;quot;publish&amp;quot;])) |&amp;gt; 
+  mutate(Publish_cum = cumsum(Publish),
+         Other_cum = cumsum(Other))
+
+caa0 &amp;lt;- caa |&amp;gt; 
+  summarise(.by = Package,
+            archived_d = Date[which(Action != &amp;quot;publish&amp;quot;)[1]])
+
+cap &amp;lt;- caa |&amp;gt; 
+  arrange(Date) |&amp;gt; 
+  mutate(
+  .by = Package,
+  available = Action == &amp;quot;publish&amp;quot;
+  )
+
+pkg_published &amp;lt;- cap |&amp;gt; 
+  filter(sum(available)&amp;gt;= sum(!available)) |&amp;gt; # 69 archived with no publication
+  mutate(.by = Package,
+         group0 = cumsum(!available),
+         group = lag(cumsum(!available), default = 0L)) |&amp;gt; 
+  mutate(.by = c(Package, group), k = seq_len(n()) %in% 1) |&amp;gt;
+  filter(!available | k)
+
+pp &amp;lt;- pkg_published |&amp;gt; 
+  summarise(.by = Date, 
+            published = sum(available),
+            not_published = sum(!available)) |&amp;gt; 
+  mutate(published_sum = cumsum(published),
+         not_published_sum = cumsum(not_published),
+         total_packages = published_sum - not_published_sum
+         )
+
+pp |&amp;gt; 
+  ggplot() +
+  geom_line(aes(Date, not_published_sum/published_sum, linewidth = total_packages), lineend=&amp;#39;round&amp;#39;) +
+  scale_x_years +
+  scale_y_continuous(labels = label_percent(), 
+                     limits = c(0, 1),
+                     expand = expansion_0NA,
+                     sec.axis = dup_axis(name = NULL)) +
+  scale_linewidth(breaks = c(100, 1000, 10000, 20000)) +
+  theme_minimal() +
+  labs(title = &amp;quot;Rising rate of packages archived&amp;quot;,
+       subtitle = &amp;quot;Acumulated rate of archived packages&amp;quot;,
+       x = NULL,
+       linewidth = &amp;quot;Packages&amp;quot;,
+       y = &amp;quot;Rate&amp;quot;) +
+  theme(plot.title.position = &amp;quot;plot&amp;quot;,
+        legend.position = &amp;quot;inside&amp;quot;,
+        legend.position.inside = c(0.2, 0.8),
+        legend.box.background = element_rect())&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;&lt;img src=&#34;https://llrs.dev/post/2026/04/25/life-of-a-package/index.en_files/figure-html/worm-1.png&#34; alt=&#34;&#34; width=&#34;672&#34; /&gt;&lt;/p&gt;
+&lt;p&gt;This is not something bad, packages might evolve to a new version or maintainers might move on. But is something to be aware of, most probably your package over 28 years will end up archived.&lt;/p&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;cap2 &amp;lt;- cap |&amp;gt; 
+  summarise(.by = Date,
+         n_available = n_distinct(Package[available]),
+         n_not_available = n_distinct(Package[!available])
+  ) |&amp;gt; 
+  mutate(n_date = n_available - n_not_available,
+         n_cum_date = cumsum(n_date))
+
+any_non_publication &amp;lt;- caa |&amp;gt; 
+  filter(.by = Package, Action != &amp;quot;publish&amp;quot;) |&amp;gt; 
+  summarise(.by = Date, other = n()) |&amp;gt; 
+  arrange(Date)
+
+any_non_publication2 &amp;lt;- caa |&amp;gt; 
+  summarise(.by = Package, Date = first(Date[Action != &amp;quot;publish&amp;quot;])) |&amp;gt; 
+  summarise(.by = Date, other = n()) |&amp;gt; 
+  arrange(Date)
+
+da &amp;lt;- merge(first_publication, any_non_publication, by = &amp;quot;Date&amp;quot;, all = TRUE) |&amp;gt; 
+  arrange(Date)
+da$first_publish[is.na(da$first_publish)] &amp;lt;- 0L
+da$other[is.na(da$other)] &amp;lt;- 0L
+
+da &amp;lt;- mutate(da, pkgs = cumsum(first_publish),
+         rmv = cumsum(other))
+
+pkg_published |&amp;gt; 
+  summarise(.by = c(Date, Action),
+            n = n()) |&amp;gt; 
+  mutate(.by = Action,
+         n_sum = cumsum(n)) |&amp;gt; 
+  ggplot() +
+  geom_line(aes(Date, n_sum, col = Action, linetype = Action)) +
+  theme_minimal() +
+  scale_x_years +
+  scale_y_continuous(limits = c(0, NA), name = &amp;quot;Packages&amp;quot;, 
+                     expand = expansion_0NA,
+                     labels = scales::label_number(                                                   scale_cut = cut_short_scale()),
+                     sec.axis = dup_axis(name = NULL)) +
+  scale_color_manual(breaks = c(&amp;quot;Publish&amp;quot; = &amp;quot;publish&amp;quot;, &amp;quot;Archive&amp;quot; = &amp;quot;archive&amp;quot;, &amp;quot;Remove&amp;quot; = &amp;quot;remove&amp;quot;),
+                     values = c(&amp;quot;publish&amp;quot; = &amp;quot;green&amp;quot;, &amp;quot;archive&amp;quot; = &amp;quot;orange&amp;quot;, &amp;quot;remove&amp;quot; = &amp;quot;red&amp;quot;)) +
+  scale_linetype(breaks = c(&amp;quot;Publish&amp;quot; = &amp;quot;publish&amp;quot;, &amp;quot;Archive&amp;quot; = &amp;quot;archive&amp;quot;, &amp;quot;Remove&amp;quot; = &amp;quot;remove&amp;quot;)) +
+  labs(title = &amp;quot;Packages published and those which were archived&amp;quot;,
+       subtitle = &amp;quot;Published vs archived&amp;quot;,
+       x = NULL,
+       linetype = &amp;quot;Type&amp;quot;, 
+       color = &amp;quot;Type&amp;quot;) +
+  theme(legend.position = &amp;quot;inside&amp;quot;,
+        legend.position.inside = c(0.2, 0.8),
+        legend.box.background = element_rect(color = &amp;quot;black&amp;quot;),
+        plot.title.position = &amp;quot;plot&amp;quot;)&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;&lt;img src=&#34;https://llrs.dev/post/2026/04/25/life-of-a-package/index.en_files/figure-html/counting-split-1.png&#34; alt=&#34;&#34; width=&#34;672&#34; /&gt;&lt;/p&gt;
+&lt;/div&gt;
+&lt;div id=&#34;how-fast-are-packages-archived&#34; class=&#34;section level2&#34;&gt;
+&lt;h2&gt;How fast are packages archived?&lt;/h2&gt;
+&lt;p&gt;We’ve seen that less than 40% packages are archived.
+But knowing when they are archived would provide a new dimension.
+While this metric doesn’t mean much in isolation I think it is a good metric to know.&lt;/p&gt;
+&lt;p&gt;It might be bad if a package is archived 2 hours after being public.
+This indicates a mismatch between submission and being on CRAN or someone picking something that has slipped through the submission process.&lt;/p&gt;
+&lt;p&gt;While archiving is often considered bad it is also a sign that things have moved on.
+I requested archiving rtweet as the platform didn’t provide free access to the API (see &lt;a href=&#34;https://llrs.dev/post/2023/02/16/rtweet-future/&#34;&gt;post about rtweet&lt;/a&gt;).
+Similarly, people might move on to next version of the package, prioritize other projects and stop maintaining it.
+While I would like to see more maintenance transfers, I think it is very hard for highly specialized tools.&lt;/p&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;caa_n &amp;lt;- caa |&amp;gt; 
+  arrange(Package, Date, Time) |&amp;gt; 
+    mutate(.by = Package, 
+         publish_n = cumsum(Action == &amp;quot;publish&amp;quot;),
+         archive_n = cumsum(Action != &amp;quot;publish&amp;quot;)
+         ) 
+caa_n |&amp;gt; 
+  filter(Action == &amp;quot;publish&amp;quot;) |&amp;gt; 
+  summarise(.by = Package, n = max(publish_n)) |&amp;gt; 
+  count(n, name = &amp;quot;nn&amp;quot;) |&amp;gt; 
+  ggplot() +
+  geom_col(aes(n, nn)) +
+  scale_x_continuous(expand = expansion_0NA) +
+  scale_y_continuous(expand = expansion_0NA, breaks = 1000*0:10,
+                     labels = scales::label_number(scale_cut= cut_short_scale())) +
+  theme_minimal() +
+  labs(title = &amp;quot;Most packages release very few versions&amp;quot;,
+       subtitle = &amp;quot;Versions released&amp;quot;,
+       y = &amp;quot;Packages&amp;quot;, x = &amp;quot;Versions released&amp;quot;) +
+  coord_cartesian(xlim = c(NA, 25)) +
+  theme(plot.title.position = &amp;quot;plot&amp;quot;)&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;&lt;img src=&#34;https://llrs.dev/post/2026/04/25/life-of-a-package/index.en_files/figure-html/time-archival-1.png&#34; alt=&#34;&#34; width=&#34;672&#34; /&gt;&lt;/p&gt;
+&lt;p&gt;Let’s check what happens to those being checked:&lt;/p&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;archived_packages &amp;lt;- caa |&amp;gt; 
+  filter(.by = Package, any(Action != &amp;quot;publish&amp;quot;)) |&amp;gt; 
+  arrange(Package, Date, Time) |&amp;gt; 
+  mutate(
+    Time = if_else(is.na(Time), &amp;quot;12:00:00&amp;quot;, Time),
+    dt = as.POSIXlt(
+    paste(Date, Time), 
+    format = &amp;quot;%Y-%m-%d %H:%M:%OS&amp;quot;, 
+    tz = &amp;quot;Europe/Vienna&amp;quot;)) |&amp;gt; 
+  arrange(dt)
+
+ap &amp;lt;- archived_packages |&amp;gt; 
+  filter(Action != &amp;quot;remove&amp;quot;) |&amp;gt; 
+  filter(.by = Package, lag(Action, default = &amp;quot;publish&amp;quot;) != Action | Action != lead(Action, default = &amp;quot;publish&amp;quot;)) |&amp;gt; 
+  filter(.by = c(Package, Version), 
+         (n() %% 2) == 0L, 
+         sum(Action == &amp;quot;publish&amp;quot;) == sum(Action != &amp;quot;publish&amp;quot;)) |&amp;gt; 
+  mutate(Action = factor(Action, levels = c(&amp;quot;publish&amp;quot;, &amp;quot;archive&amp;quot;),
+                         ordered = TRUE)) |&amp;gt; 
+  arrange(Package, Version, dt, Action) |&amp;gt; 
+  mutate(.by = Package, 
+         ids = lag(cumsum(Action != &amp;quot;publish&amp;quot;), default = 0)) |&amp;gt; 
+  filter(.by = c(Package, ids), n() == 2L &amp;amp; n_distinct(Action) == 2L &amp;amp; first(Action) == &amp;quot;publish&amp;quot;)
+
+ap_wide &amp;lt;- ap |&amp;gt; 
+  select(Package, Action, ids, dt) |&amp;gt; 
+  pivot_wider(names_from = Action, values_from = dt) |&amp;gt; 
+  mutate(diff_t = difftime(archive, publish, units = &amp;quot;days&amp;quot;))
+
+p &amp;lt;- ap_wide |&amp;gt; 
+  ggplot() +
+  geom_histogram(aes(diff_t, group = ids, fill = ids +1), binwidth = 30) +
+  scale_y_continuous(expand = expansion_0NA, labels = scales::label_number(scale_cut= cut_short_scale())) +
+  scale_fill_continuous(palette = gradient_archived) +
+  labs(title = &amp;quot;&amp;quot;,
+       subtitle = &amp;quot;Package time on CRAN before archiving&amp;quot;,
+       fill = &amp;quot;Archived&amp;quot;,
+       x = &amp;quot;Time (days)&amp;quot;,
+       y = &amp;quot;Archived versions&amp;quot;) +
+  theme_minimal() +
+  theme(plot.title.position = &amp;quot;plot&amp;quot;)
+
+library(&amp;quot;patchwork&amp;quot;)
+p + 
+  scale_x_continuous(expand = expansion_0NA, breaks = 0:15*365) +
+  theme(legend.position = &amp;quot;inside&amp;quot;,
+        legend.position.inside = c(0.07, 0.7)) +
+  inset_element(
+    p + 
+      coord_cartesian(xlim = c(0, 365*2)) + 
+      guides(fill = &amp;quot;none&amp;quot;) +
+      labs(title = NULL, 
+           x = NULL, 
+           y = NULL) +
+      theme(plot.background = element_rect(colour = &amp;quot;grey50&amp;quot;)) +
+      scale_x_continuous(expand = expansion_0NA, 
+                         breaks = round(c(365*c(0, .5, 1, 1.5, 2)))), 
+    0.15, 0.2, 1, 1) &lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;&lt;img src=&#34;https://llrs.dev/post/2026/04/25/life-of-a-package/index.en_files/figure-html/time-archival2-1.png&#34; alt=&#34;&#34; width=&#34;672&#34; /&gt;&lt;/p&gt;
+&lt;p&gt;Let’s check what happens per number of archival:&lt;/p&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;ap_wide |&amp;gt; 
+  mutate(date = as.Date(archive)) |&amp;gt; 
+  ggplot() +
+  geom_smooth(aes(date, diff_t, col = ids+1, group = ids +1), span = &amp;quot;1 month&amp;quot;,
+              method = &amp;quot;gam&amp;quot;, formula = y ~ s(x, bs = &amp;quot;cs&amp;quot;), method.args = list(family = &amp;quot;gaussian&amp;quot;)
+              ) +
+  scale_color_continuous(palette = gradient_archived) +
+  scale_x_years +
+  scale_y_continuous(expand = expansion_0NA, limits = c(0, NA),
+                     breaks = 365*0:7, name = &amp;quot;Days till archiving&amp;quot;,
+                     sec.axis = dup_axis(labels = \(x){x/365},
+                                         name = &amp;quot;Years till archiving&amp;quot;)) +
+  theme_minimal() +
+  labs(title = &amp;quot;Archiving older versions&amp;quot;, 
+       col = &amp;quot;Times&amp;quot;,
+       subtitle = &amp;quot;Time a package was available till it was archived&amp;quot;)&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;&lt;img src=&#34;https://llrs.dev/post/2026/04/25/life-of-a-package/index.en_files/figure-html/archive-version-1.png&#34; alt=&#34;&#34; width=&#34;672&#34; /&gt;&lt;/p&gt;
+&lt;p&gt;We can change the reference, instead of the date when the package was archived the date the package was published:&lt;/p&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;ap_wide |&amp;gt; 
+  mutate(date = as.Date(publish)) |&amp;gt; 
+  ggplot() +
+  geom_smooth(aes(date, diff_t, col = ids+1, group = ids +1), span = &amp;quot;1 month&amp;quot;,
+              method = &amp;quot;gam&amp;quot;, formula = y ~ s(x, bs = &amp;quot;cs&amp;quot;), method.args = list(family = &amp;quot;gaussian&amp;quot;)
+              ) +
+  scale_color_continuous(palette = gradient_archived) +
+  scale_x_years +
+  scale_y_continuous(expand = expansion_0NA, limits = c(0, NA),
+                     breaks = 365*0:7, name = &amp;quot;Days till archiving&amp;quot;,
+                     sec.axis = dup_axis(labels = \(x){x/365},
+                                         name = &amp;quot;Years till archiving&amp;quot;)) +
+  theme_minimal() +
+  labs(title = &amp;quot;Archiving older versions&amp;quot;, 
+       col = &amp;quot;Times&amp;quot;,
+       subtitle = &amp;quot;Time a package was available till it was archived&amp;quot;)&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;&lt;img src=&#34;https://llrs.dev/post/2026/04/25/life-of-a-package/index.en_files/figure-html/archive-version2-1.png&#34; alt=&#34;&#34; width=&#34;672&#34; /&gt;&lt;/p&gt;
+&lt;p&gt;In 2022 there was a clean up of packages that affected old packages.&lt;/p&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;ap_wide |&amp;gt; 
+  arrange(archive) |&amp;gt; 
+  mutate(date = as.Date(publish)) |&amp;gt; 
+  mutate(.by = date, n = n()) |&amp;gt; 
+  ggplot() +
+  geom_smooth(aes(date, diff_t), span = &amp;quot;1 month&amp;quot;,
+              method = &amp;quot;gam&amp;quot;, formula = y ~ s(x, bs = &amp;quot;cs&amp;quot;), method.args = list(family = &amp;quot;gaussian&amp;quot;)) +
+  scale_colour_gradient2() +
+  scale_x_years +
+  scale_y_continuous(expand = expansion_0NA, limits = c(0, NA),
+                     breaks = 365*0:7, 
+                     labels = \(x){x/365},
+                     name = &amp;quot;Years till archiving&amp;quot;,
+                     sec.axis = dup_axis(name = NULL)) +
+  theme_minimal() +
+  labs(title = &amp;quot;Archiving older versions&amp;quot;, 
+       x = NULL,
+       col = &amp;quot;Times&amp;quot;,
+       subtitle = &amp;quot;Time a package was available till it was archived&amp;quot;) +
+  theme(plot.title.position = &amp;quot;plot&amp;quot;)
+## Ignoring unknown labels:
+## • colour : &amp;quot;Times&amp;quot;
+## Warning: Removed 1 row containing missing values or values outside the scale range
+## (`geom_smooth()`).&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;&lt;img src=&#34;https://llrs.dev/post/2026/04/25/life-of-a-package/index.en_files/figure-html/archive-dates-1.png&#34; alt=&#34;&#34; width=&#34;672&#34; /&gt;&lt;/p&gt;
+&lt;p&gt;If we plot by number or archival instead we get a different (but similar) picture:&lt;/p&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;p &amp;lt;- ap_wide |&amp;gt;
+  mutate(date = as.Date(publish)) |&amp;gt;
+  ggplot() +
+  geom_smooth(aes(date, diff_t, col = ids+1, group = ids),  span = &amp;quot;1 month&amp;quot;,
+              method = &amp;quot;gam&amp;quot;, formula = y ~ s(x, bs = &amp;quot;cs&amp;quot;), method.args = list(family = &amp;quot;gaussian&amp;quot;)) +
+  geom_abline(slope = -1, 
+              intercept = as.numeric(as.Date(max(ap_wide$publish))),
+              linetype = 2)+
+  scale_color_continuous(palette = gradient_archived) +
+  theme_minimal() +
+  labs(title = &amp;quot;Packages are archived sooner&amp;quot;,
+       subtitle = &amp;quot;Time from first publication to archiving&amp;quot;,
+       col = &amp;quot;Times&amp;quot;,
+       y = &amp;quot;Time (days)&amp;quot;,
+       x = NULL)
+
+p + 
+  scale_x_years +
+  scale_y_continuous(expand = expansion_0NA, 
+                     limits = c(0, NA),
+                     breaks = 365*0:11,
+                     labels = \(x){x/365},
+                     name = &amp;quot;Years till archiving&amp;quot;) +
+  theme(
+    legend.position = &amp;#39;inside&amp;#39;,
+    legend.position.inside = c(0.1, 0.2),
+    plot.title.position = &amp;quot;plot&amp;quot;,
+    legend.background = element_rect(color = &amp;quot;black&amp;quot;)) +
+  inset_element(p + 
+                  coord_cartesian(
+                    xlim = c(as.Date(&amp;quot;2018-01-01&amp;quot;), NA), 
+                    ylim = c(0, 1500)) +
+                  scale_y_continuous(expand = expansion_0NA,
+                                     breaks = 365*0:4) +
+                  labs(x = NULL, 
+                       y = NULL,
+                       title = NULL, 
+                       subtitle = NULL) +
+                  guides(col = &amp;quot;none&amp;quot;) +
+                  theme(plot.background = element_rect(colour = &amp;quot;grey50&amp;quot;))
+                , 0.3, 0.5, 1, 1)&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;&lt;img src=&#34;https://llrs.dev/post/2026/04/25/life-of-a-package/index.en_files/figure-html/archive-times-1.png&#34; alt=&#34;&#34; width=&#34;672&#34; /&gt;&lt;/p&gt;
+&lt;p&gt;Zooming on packages being archived:&lt;/p&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;p &amp;lt;- ap_wide |&amp;gt;
+  arrange(publish) |&amp;gt; 
+  mutate(date = as.Date(publish)) |&amp;gt;
+  mutate(.by = date, n = n()) |&amp;gt; 
+  ggplot() +
+  geom_smooth(aes(date, diff_t), span = &amp;quot;1 month&amp;quot;,
+              method = &amp;quot;gam&amp;quot;, formula = y ~ s(x, bs = &amp;quot;cs&amp;quot;), method.args = list(family = &amp;quot;gaussian&amp;quot;)) +
+  theme_minimal() +
+  geom_abline(slope = -1, 
+              intercept = as.numeric(as.Date(max(ap_wide$publish))),
+              linetype = 2) +
+  labs(title = &amp;quot;Packages are archived sooner&amp;quot;,
+       subtitle = &amp;quot;Time from publication to archiving&amp;quot;,
+       y = NULL,
+       x = NULL)
+
+p + 
+  scale_x_years +
+  scale_y_continuous(expand = expansion_0NA, 
+                     limits = c(0, NA),
+                     breaks = 365*seq(from = 0, to = 11, by = 2),
+                     labels = function(x){paste(x/365, &amp;quot; years&amp;quot;)}) +
+  theme(
+    legend.position = &amp;#39;inside&amp;#39;,
+    legend.position.inside = c(0.2, 0.2)) +
+  inset_element(p + 
+                  coord_cartesian(
+                    xlim = c(as.Date(&amp;quot;2022-01-01&amp;quot;), NA), 
+                    ylim = c(0, 600)) +
+                  scale_y_continuous(expand = expansion_0NA,
+                                     labels = function(x){paste(x, &amp;quot; days&amp;quot;)}, 
+                                     breaks = 120*0:13) +
+                  labs(x = NULL, 
+                       y = NULL,
+                       title = NULL, 
+                       subtitle = NULL) +
+                  guides(col = &amp;quot;none&amp;quot;) +
+                  theme(plot.background = element_rect(colour = &amp;quot;grey50&amp;quot;))
+                , 0.3, 0.5, 1, 1)
+## Warning: Removed 1 row containing missing values or values outside the scale range
+## (`geom_smooth()`).&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;&lt;img src=&#34;https://llrs.dev/post/2026/04/25/life-of-a-package/index.en_files/figure-html/archiving-zoom-1.png&#34; alt=&#34;&#34; width=&#34;672&#34; /&gt;&lt;/p&gt;
+&lt;/div&gt;
+&lt;div id=&#34;how-often-are-packages-receiving-notices&#34; class=&#34;section level2&#34;&gt;
+&lt;h2&gt;How often are packages receiving notices?&lt;/h2&gt;
+&lt;p&gt;Is that easy to maintain a package on CRAN? As you might have suspected to keep a package on CRAN one needs to update it.
+One can do it at their own peace except when CRAN QA team detects problems on the package. Then they will set a deadline to fix those issues identified.&lt;/p&gt;
+&lt;p&gt;First, let’s clean up a bit the data:&lt;/p&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;ci &amp;lt;- repo.data::cran_issues()
+## Warning in repo.data::cran_issues(): Correcting incorrect dates on Before
+
+cik &amp;lt;- ci |&amp;gt; 
+  mutate(si = strsplit(Info, &amp;quot;:&amp;quot;, fixed = TRUE),
+         et = unlist(lapply(si, function(x){
+           paste0(x[4:6], collapse = &amp;quot;:&amp;quot;)
+           })),
+         Title = if_else(is.na(Title) &amp;amp; !startsWith(et, &amp;quot;NA:&amp;quot;), et, Title)
+  ) |&amp;gt; 
+  mutate(
+    Title = gsub(&amp;quot;^(NOTE|ERROR|WARNING):?_?&amp;quot;, &amp;quot;&amp;quot;, Title, ignore.case = TRUE),
+    Title = gsub(&amp;quot;(QUERIED:?.*)$&amp;quot;, &amp;quot;&amp;quot;, Title),
+    Title = if_else(!nzchar(Title), NA, Title),
+    Title = tools::toTitleCase(Title),
+    Title = if_else(grepl(&amp;quot;from:(upgrade|ugprade)&amp;quot;, Title, ignore.case = TRUE), &amp;quot;from upgrade&amp;quot;, Title),
+    Title = if_else(grepl(&amp;quot;from:archival&amp;quot;, Title, ignore.case = TRUE), &amp;quot;from archival&amp;quot;, Title),
+    Title = if_else(grepl(&amp;quot;:missing:&amp;quot;, Title, ignore.case = TRUE), &amp;quot;from Bioc&amp;quot;, Title),
+    Title = if_else(grepl(&amp;quot;:?BioC&amp;quot;, Title, ignore.case = TRUE), &amp;quot;from Bioc&amp;quot;, Title),
+    Title = if_else(grepl(&amp;quot;from:sys&amp;quot;, Title, ignore.case = TRUE), &amp;quot;System change&amp;quot;, Title),
+    Title = if_else(grepl(&amp;quot;Additional_issue&amp;quot;, ignore.case = TRUE, Title), &amp;quot;Additional issues&amp;quot;, Title),
+    Title = if_else(grepl(&amp;quot;^:?web&amp;quot;, ignore.case = TRUE, Title), &amp;quot;Web&amp;quot;, Title),
+    Title = if_else(grepl(&amp;quot;^Rd_files&amp;quot;, ignore.case = TRUE, Title), &amp;quot;Rd_files&amp;quot;, Title),
+    Title = if_else(grepl(&amp;quot;^Compiled_code&amp;quot;, ignore.case = TRUE, Title), &amp;quot;Compiled code&amp;quot;, Title),
+    Title = if_else(grepl(&amp;quot;email_to_maintainer_is_undeliverable&amp;quot;, Title, ignore.case = TRUE), &amp;quot;email undeliverable&amp;quot;, Title),
+    Title = if_else(grepl(&amp;quot;4\\..:?c?&amp;quot;, Title), &amp;quot;R changes&amp;quot;, Title),
+    Title = if_else(Title == &amp;quot;should_remove_NeedsCompilation_yes_from_DESCRIPTION&amp;quot;, &amp;quot;NeedsCompilation&amp;quot;, Title),
+    # Title = if_else(Title == &amp;quot;C++11_specification_forcing_legacy_Armadillo&amp;quot;, &amp;quot;C++11 forcing legacy Armadillo&amp;quot;)
+    Title = if_else(startsWith(Title, &amp;quot;needs_to_fix_DESCRIPTION&amp;quot;), &amp;quot;fix DESCRIPTION&amp;quot;, Title),
+    Title = if_else(grepl(&amp;quot;^user_library_mount_read_only&amp;quot;, Title, ignore.case = TRUE), &amp;quot;user_library_mount_read_only&amp;quot;, Title),
+    Title = if_else(startsWith(Title, &amp;quot;Rd_contents&amp;quot;), &amp;quot;Rd_contents&amp;quot;, Title),
+    Title = if_else(startsWith(Title, &amp;quot;QUERIED&amp;quot;), &amp;quot;QUERIED&amp;quot;, Title),
+    Title = if_else(grepl(&amp;quot;oldrelease&amp;quot;, Title, ignore.case = TRUE), &amp;quot;oldrelease&amp;quot;, Title),
+    Title = if_else(grepl(&amp;quot;Rd_cross-References&amp;quot;, Title, ignore.case = TRUE), &amp;quot;Rd_cross-References&amp;quot;, Title),
+    Title = if_else(grepl(&amp;quot;Rd_\\usage&amp;quot;, Title, fixed = TRUE), &amp;quot;Rd_usage&amp;quot;, Title),
+    Label = if_else(endsWith(Label, &amp;quot;-25&amp;quot;), NA, Label),
+    Label = if_else(Label %in% c(&amp;quot;RDEPENDS&amp;quot;, &amp;quot;RRDEPENDS&amp;quot;), &amp;quot;RDEPENDS&amp;quot;, Label)
+         )&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;Now we can plot it:&lt;/p&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;cik |&amp;gt; 
+  count(Title, sort = TRUE) |&amp;gt; 
+  mutate(
+    Title = forcats::fct_na_value_to_level(Title, level = NA),
+    Title = forcats::fct_reorder(Title, n, .fun = sum, .desc = TRUE)) |&amp;gt; 
+  ggplot() +
+  geom_col(aes(Title, n)) +
+  scale_y_continuous(expand = expansion_0NA) +
+  theme_minimal() +
+  theme(axis.text.x = element_blank(),
+        axis.ticks.x = element_blank(),
+        panel.grid.minor.x = element_blank()) +
+  labs(subtitle = &amp;quot;Common notification for requiring updates on CRAN&amp;quot;,
+       title = &amp;quot;Most notifications are package specific&amp;quot;,
+       x = &amp;quot;Reason&amp;quot;,
+       y = &amp;quot;Notifications&amp;quot;)&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;&lt;img src=&#34;https://llrs.dev/post/2026/04/25/life-of-a-package/index.en_files/figure-html/reasons-1.png&#34; alt=&#34;&#34; width=&#34;672&#34; /&gt;&lt;/p&gt;
+&lt;p&gt;We can see that there are some reasons that are much more common than others.
+Cleaning it up a bit more and showing it in a readable format:&lt;/p&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;cik |&amp;gt; 
+  mutate(Title = forcats::fct_lump(Title, n = 20)) |&amp;gt; 
+  count(Title, Label, sort = TRUE) |&amp;gt; 
+  mutate(
+    Title = forcats::fct_na_value_to_level(Title, level = NA),
+    Title = forcats::fct_reorder(Title, n, .fun = sum),
+    # Title = forcats::fct_relevel(Title, rev(levels(Title)))
+    ) |&amp;gt; 
+  ggplot() +
+  geom_col(aes(n, Title, fill = Label)) +
+  scale_x_continuous(expand = c(0, NA)) +
+  scale_fill_manual(values = c(&amp;quot;CLOSE&amp;quot; = &amp;quot;red&amp;quot;, &amp;quot;Extend&amp;quot; = &amp;quot;darkgreen&amp;quot;, &amp;quot;FINAL&amp;quot; = &amp;quot;darkred&amp;quot;, &amp;quot;RDEPENDS&amp;quot; = &amp;quot;orange&amp;quot;, &amp;quot;REOPEN&amp;quot; = &amp;quot;green&amp;quot;, &amp;quot;REVDEPS&amp;quot; = &amp;quot;darkviolet&amp;quot;))+
+  theme_minimal() +
+  labs(y = NULL,
+       x = &amp;quot;Notifications&amp;quot;,
+       title = &amp;quot;Most common reasons are unkown or very particular&amp;quot;,
+       subtitle = &amp;quot;Notifications reasons&amp;quot;) +
+  theme(plot.title.position = &amp;quot;plot&amp;quot;,
+        legend.position = &amp;quot;inside&amp;quot;,
+        legend.position.inside = c(0.8, 0.6),
+        legend.background = element_rect(color = &amp;quot;black&amp;quot;))&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;&lt;img src=&#34;https://llrs.dev/post/2026/04/25/life-of-a-package/index.en_files/figure-html/nice-reasons-1.png&#34; alt=&#34;&#34; width=&#34;672&#34; /&gt;&lt;/p&gt;
+&lt;p&gt;Which packages receive more notifications according to this dataset?&lt;/p&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;cik |&amp;gt; 
+  count(Package, sort = TRUE) |&amp;gt; 
+  count(n, name = &amp;quot;Packages&amp;quot;) |&amp;gt; 
+  ggplot() +
+  geom_area(aes(n, Packages))+
+  theme_minimal() +
+  scale_x_continuous(expand = expansion_0NA) +
+  scale_y_log10(guide = &amp;quot;axis_logticks&amp;quot;, expand = expansion_0NA) +
+  labs(title = &amp;quot;Some packages receive a lot of notifications&amp;quot;,
+       subtitle = &amp;quot;Notifications per package&amp;quot;,
+       x = &amp;quot;Notifications&amp;quot;) +
+  theme(plot.title.position = &amp;quot;plot&amp;quot;)&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;&lt;img src=&#34;https://llrs.dev/post/2026/04/25/life-of-a-package/index.en_files/figure-html/notificaions-packages-1.png&#34; alt=&#34;&#34; width=&#34;672&#34; /&gt;&lt;/p&gt;
+&lt;p&gt;Having seen that are some packages that get more notifications than others, how is it distributed with time?&lt;/p&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;cik |&amp;gt; 
+  mutate(Date = as.Date(Date)) |&amp;gt; 
+  summarise(.by = c(Date), n = n()) |&amp;gt; 
+  ggplot() +
+  # geom_point(aes(Date, n)) +
+  # coord_cartesian(ylim = c(0, 100)) +
+  geom_smooth(aes(Date, n), span = &amp;quot;1 month&amp;quot;, method = &amp;quot;gam&amp;quot;,
+              formula = y ~ s(x, bs = &amp;quot;cs&amp;quot;), method.args = list(family = &amp;quot;poisson&amp;quot;)) +
+  theme_minimal() +
+  labs(title = &amp;quot;There has been a peak of notifications&amp;quot;,
+       subtitle = &amp;quot;Daily notifications per date&amp;quot;,
+       x = NULL,
+       y = &amp;quot;Notifications&amp;quot;) +
+  theme(plot.title.position = &amp;quot;plot&amp;quot;)&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;&lt;img src=&#34;https://llrs.dev/post/2026/04/25/life-of-a-package/index.en_files/figure-html/notifications-date-1.png&#34; alt=&#34;&#34; width=&#34;672&#34; /&gt;&lt;/p&gt;
+&lt;p&gt;Notifications sent to pacakges by date.&lt;/p&gt;
+&lt;/div&gt;
+&lt;div id=&#34;what-is-the-relationship-within-packages&#34; class=&#34;section level2&#34;&gt;
+&lt;h2&gt;What is the relationship within packages?&lt;/h2&gt;
+&lt;p&gt;On a previous post I analyzed the links of packages and found that some R help pages linked to themselves.
+How often does this happen on packages?
+How common is to only link to their own help pages and no external help pages?&lt;/p&gt;
+&lt;p&gt;Also note that many issues with packages are related to R documentation.&lt;/p&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;cpl &amp;lt;- cran_pkges_links()
+## Downloading and caching CRAN&amp;#39;s packages xrefs for this session.
+## Downloading and caching base R&amp;#39;s aliases for this session.
+## Warning: Packages with targets not present in a OS:
+## &amp;#39;base&amp;#39;, &amp;#39;grDevices&amp;#39;, &amp;#39;parallel&amp;#39;
+## Downloading and caching CRAN aliases for this session.
+## Warning: Packages with targets not present in a OS:
+## &amp;#39;sfsmisc&amp;#39;
+## Warning: Some links are distinct depending on the OS.
+cpl &amp;lt;- as.data.frame(cpl)
+cpl$n &amp;lt;- as.numeric(cpl$n)
+BASE &amp;lt;- tools::standard_package_names()$base
+cpl |&amp;gt; 
+  summarise(.by = from_pkg, not_self = !any(from_pkg %in% to_pkg)) |&amp;gt; 
+  count(not_self) |&amp;gt; 
+  ggplot() +
+  geom_col(aes(not_self, n, fill = not_self)) +
+  theme_minimal() +
+  scale_y_continuous(labels = scales::label_number(scale_cut = scales::cut_short_scale()),
+              expand = expansion_0NA) +
+  scale_x_discrete(expand = expansion(), labels = c(&amp;quot;No link to itself&amp;quot;, &amp;quot;Links to itself&amp;quot;)) +
+  guides(fill = &amp;quot;none&amp;quot;) +
+  labs(
+    title = &amp;quot;Many packages do not link to themselves&amp;quot;,
+    subtitle = &amp;quot;Links from help pages to other pages of the same package&amp;quot;,
+    x = NULL,
+    y = &amp;quot;Packages&amp;quot;) +
+  theme(plot.title.position = &amp;quot;plot&amp;quot;)&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;&lt;img src=&#34;https://llrs.dev/post/2026/04/25/life-of-a-package/index.en_files/figure-html/help-within-1.png&#34; alt=&#34;&#34; width=&#34;672&#34; /&gt;&lt;/p&gt;
+&lt;p&gt;How do package link to other packages?&lt;/p&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;ap &amp;lt;- available.packages()
+cpl2 &amp;lt;- filter(cpl, 
+               !is.na(to_pkg),
+               to_pkg %in% rownames(ap),
+               from_pkg %in% rownames(ap),
+               !to_pkg %in% c(&amp;quot;R&amp;quot;, BASE))
+
+fp &amp;lt;- cpl2 |&amp;gt; 
+  summarise(.by = from_pkg, n = sum(n)) |&amp;gt; 
+  arrange(desc(n)) |&amp;gt; 
+  pull(from_pkg)
+cpl2 |&amp;gt; 
+  mutate(
+    from_pkg = factor(from_pkg, levels = rev(fp)),
+    to_pkg = factor(to_pkg, levels = fp)) |&amp;gt;
+  filter(!is.na(to_pkg)) |&amp;gt; 
+  droplevels() |&amp;gt; 
+  # mutate(from_pkg = forcats::fct_reorder(from_pkg, n, .fun = sum, .desc = TRUE),
+  #        to_pkg = forcats::fct_reorder(to_pkg, n, .fun = sum, .desc = TRUE)) |&amp;gt; 
+  ggplot() +
+  geom_point(aes(from_pkg, to_pkg, size = n, col = as.character(from_pkg) == as.character(to_pkg))) +
+  scale_size_binned_area(breaks = c(3, 10, 500, 1000, 2000)) +
+  scale_color_manual(values = c(&amp;quot;TRUE&amp;quot; = &amp;quot;blue&amp;quot;, &amp;quot;FALSE&amp;quot; = &amp;quot;black&amp;quot;), 
+                     labels = c(&amp;quot;TRUE&amp;quot; = &amp;quot;Self&amp;quot;, &amp;quot;FALSE&amp;quot; = &amp;quot;Other&amp;quot;),
+                     name = NULL) +
+  theme_minimal() +
+  theme(
+    axis.text.x = element_blank(),
+    axis.ticks.x = element_blank(),
+    axis.text.y = element_blank(),
+    axis.ticks.y = element_blank(),
+    panel.grid = element_blank()
+    ) +
+labs(
+  title = &amp;quot;Linking packages by the documentation&amp;quot;,
+  subtitle = &amp;quot;Packages with cross-references to CRAN packages&amp;quot;,
+  x = &amp;quot;From&amp;quot;,
+  size = &amp;quot;Links&amp;quot;,
+  y  = &amp;quot;To&amp;quot;) +
+  theme(plot.title.position = &amp;quot;plot&amp;quot;)&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;&lt;img src=&#34;https://llrs.dev/post/2026/04/25/life-of-a-package/index.en_files/figure-html/links-1.png&#34; alt=&#34;&#34; width=&#34;672&#34; /&gt;&lt;/p&gt;
+&lt;/div&gt;
+&lt;div id=&#34;what-is-the-relationship-between-packages&#34; class=&#34;section level2&#34;&gt;
+&lt;h2&gt;What is the relationship between packages?&lt;/h2&gt;
+&lt;p&gt;While many packages have dependencies many don’t have one, or their dependencies might be on other repositories.
+Even if they have a dependency with other packages do they link to them or just use without any further reference?&lt;/p&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;pd &amp;lt;- package_dependencies(NULL)
+## Warning: Some dependencies (131) are not on available repositories. Check for &amp;#39;Additional_repositories&amp;#39; or other repositories (Bioconductor.org?):
+## &amp;#39;XVector&amp;#39;, &amp;#39;vsn&amp;#39;, &amp;#39;VariantAnnotation&amp;#39;, &amp;#39;UCell&amp;#39;, &amp;#39;tximport&amp;#39;, &amp;#39;tweeDEseq&amp;#39;, &amp;#39;TSCAN&amp;#39;, &amp;#39;TreeSummarizedExperiment&amp;#39;, &amp;#39;treeio&amp;#39;, &amp;#39;sva&amp;#39;, &amp;#39;survcomp&amp;#39;, &amp;#39;SummarizedExperiment&amp;#39;, &amp;#39;STRINGdb&amp;#39;, &amp;#39;SpatialExperiment&amp;#39;, &amp;#39;sparseMatrixStats&amp;#39;, &amp;#39;SparseArray&amp;#39;, &amp;#39;snpStats&amp;#39;, &amp;#39;SNPRelate&amp;#39;, &amp;#39;singscore&amp;#39;, &amp;#39;SingleCellExperiment&amp;#39;, &amp;#39;siggenes&amp;#39;, &amp;#39;ShortRead&amp;#39;, &amp;#39;seqLogo&amp;#39;, &amp;#39;scuttle&amp;#39;, &amp;#39;scran&amp;#39;, &amp;#39;scater&amp;#39;, &amp;#39;S4Vectors&amp;#39;, &amp;#39;rtracklayer&amp;#39;, &amp;#39;Rsamtools&amp;#39;, &amp;#39;Rhtslib&amp;#39;, &amp;#39;Rhdf5lib&amp;#39;, &amp;#39;rhdf5&amp;#39;, &amp;#39;Rgraphviz&amp;#39;, &amp;#39;Rdisop&amp;#39;, &amp;#39;RCy3&amp;#39;, &amp;#39;RBGL&amp;#39;, &amp;#39;R4RNA&amp;#39;, &amp;#39;qvalue&amp;#39;, &amp;#39;qusage&amp;#39;, &amp;#39;QSutils&amp;#39;, &amp;#39;qpgraph&amp;#39;, &amp;#39;pwalign&amp;#39;, &amp;#39;preprocessCore&amp;#39;, &amp;#39;phyloseq&amp;#39;, &amp;#39;Pedixplorer&amp;#39;, &amp;#39;pcaMethods&amp;#39;, &amp;#39;pathview&amp;#39;, &amp;#39;multtest&amp;#39;, &amp;#39;MultiAssayExperiment&amp;#39;, &amp;#39;MLInterfaces&amp;#39;, &amp;#39;mixOmics&amp;#39;, &amp;#39;minet&amp;#39;, &amp;#39;microbiome&amp;#39;, &amp;#39;Mfuzz&amp;#39;, &amp;#39;metapod&amp;#39;, &amp;#39;MetaboCoreUtils&amp;#39;, &amp;#39;MatrixGenerics&amp;#39;, &amp;#39;MAST&amp;#39;, &amp;#39;MassSpecWavelet&amp;#39;, &amp;#39;maftools&amp;#39;, &amp;#39;M3C&amp;#39;, &amp;#39;limma&amp;#39;, &amp;#39;LEA&amp;#39;, &amp;#39;KEGGREST&amp;#39;, &amp;#39;IRanges&amp;#39;, &amp;#39;InteractiveComplexHeatmap&amp;#39;, &amp;#39;InteractionSet&amp;#39;, &amp;#39;impute&amp;#39;, &amp;#39;Icens&amp;#39;, &amp;#39;HiCParser&amp;#39;, &amp;#39;Heatplus&amp;#39;, &amp;#39;HDF5Array&amp;#39;, &amp;#39;GWASTools&amp;#39;, &amp;#39;GSVA&amp;#39;, &amp;#39;GSEABase&amp;#39;, &amp;#39;graphite&amp;#39;, &amp;#39;graph&amp;#39;, &amp;#39;globaltest&amp;#39;, &amp;#39;GlobalAncova&amp;#39;, &amp;#39;glmSparseNet&amp;#39;, &amp;#39;ggtree&amp;#39;, &amp;#39;ggmsa&amp;#39;, &amp;#39;ggkegg&amp;#39;, &amp;#39;ggbio&amp;#39;, &amp;#39;GEOquery&amp;#39;, &amp;#39;GenomicRanges&amp;#39;, &amp;#39;GenomicFeatures&amp;#39;, &amp;#39;GenomicAlignments&amp;#39;, &amp;#39;GenomeInfoDb&amp;#39;, &amp;#39;genefilter&amp;#39;, &amp;#39;gdsfmt&amp;#39;, &amp;#39;fmrs&amp;#39;, &amp;#39;fmcsR&amp;#39;, &amp;#39;fgsea&amp;#39;, &amp;#39;ensembldb&amp;#39;, &amp;#39;EmpiricalBrownsMethod&amp;#39;, &amp;#39;edgeR&amp;#39;, &amp;#39;EBImage&amp;#39;, &amp;#39;DNAcopy&amp;#39;, &amp;#39;diffHic&amp;#39;, &amp;#39;DESeq2&amp;#39;, &amp;#39;DelayedMatrixStats&amp;#39;, &amp;#39;DelayedArray&amp;#39;, &amp;#39;DECIPHER&amp;#39;, &amp;#39;dada2&amp;#39;, &amp;#39;csaw&amp;#39;, &amp;#39;coRdon&amp;#39;, &amp;#39;ConsensusClusterPlus&amp;#39;, &amp;#39;CompoundDb&amp;#39;, &amp;#39;ComplexHeatmap&amp;#39;, &amp;#39;clusterProfiler&amp;#39;, &amp;#39;ChemmineR&amp;#39;, &amp;#39;BSgenome&amp;#39;, &amp;#39;bluster&amp;#39;, &amp;#39;Biostrings&amp;#39;, &amp;#39;biomaRt&amp;#39;, &amp;#39;biocViews&amp;#39;, &amp;#39;BiocStyle&amp;#39;, &amp;#39;BiocParallel&amp;#39;, &amp;#39;BiocGenerics&amp;#39;, &amp;#39;BiocFileCache&amp;#39;, &amp;#39;Biobase&amp;#39;, &amp;#39;aroma.light&amp;#39;, &amp;#39;AnnotationHub&amp;#39;, &amp;#39;AnnotationFilter&amp;#39;, &amp;#39;AnnotationDbi&amp;#39;, &amp;#39;annotate&amp;#39;, &amp;#39;ALDEx2&amp;#39;, &amp;#39;affyPLM&amp;#39;, &amp;#39;affy&amp;#39;, &amp;#39;a4Core&amp;#39;
+direct_deps &amp;lt;- pd |&amp;gt; 
+  summarise(.by = Package, pkgs =sum(!Name %in% c(&amp;quot;R&amp;quot;, BASE))) |&amp;gt; 
+  filter(pkgs != 0L)
+
+indirect_deps &amp;lt;- pd |&amp;gt; 
+  filter(!Name %in% c(&amp;quot;R&amp;quot;, BASE)) |&amp;gt; 
+  summarise(.by = Name, rev = n())
+ap &amp;lt;- available.packages()
+lj &amp;lt;- left_join(direct_deps, indirect_deps,
+          by = join_by(Package == Name)) |&amp;gt; 
+  mutate(rev = if_else(is.na(rev), 0L, rev))
+
+deps_counts &amp;lt;- lj |&amp;gt; 
+  filter(Package %in% rownames(ap)) |&amp;gt; 
+  count(rev, pkgs, sort = TRUE)
+
+dc &amp;lt;- deps_counts |&amp;gt;   
+  rbind(c(rev = 0L, pkgs = 0L, n = nrow(ap) - sum(deps_counts$n)))
+ann &amp;lt;- filter(lj,
+              rev &amp;gt; -25*pkgs + 1000,
+              rev &amp;gt; 0)&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;Most packages have some dependencies:&lt;/p&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;dc |&amp;gt; 
+  select(pkgs, n) |&amp;gt; 
+  tidyr::uncount(weights = n) |&amp;gt; 
+  ggplot(aes(pkgs)) +
+  stat_ecdf(geom = &amp;quot;step&amp;quot;) +
+  coord_cartesian(xlim = c(0, 20)) +
+  scale_x_continuous(expand = expansion_0NA, breaks = 0:20) +
+  scale_y_continuous(expand = expansion_0NA, labels = scales::label_percent())  +
+  theme_minimal() +
+  labs(title = &amp;quot;Many packages have some dependencies&amp;quot;,
+       subtitle = &amp;quot;ECDF of dependencies&amp;quot;,
+       x = &amp;quot;Dependencies&amp;quot;,
+       y = NULL)&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;&lt;img src=&#34;https://llrs.dev/post/2026/04/25/life-of-a-package/index.en_files/figure-html/ecdf-dependencies-1.png&#34; alt=&#34;&#34; width=&#34;672&#34; /&gt;&lt;/p&gt;
+&lt;p&gt;But it is less common to have someone depend on your package:&lt;/p&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;dc |&amp;gt; 
+  tidyr::uncount(n) |&amp;gt; 
+  ggplot(aes(rev)) +
+  stat_ecdf(geom = &amp;quot;step&amp;quot;) +
+  coord_cartesian(xlim = c(0, 10)) +
+  scale_x_continuous(expand = expansion_0NA, breaks = 0:10) +
+  scale_y_continuous(expand = expansion_0NA, labels = scales::label_percent())  +
+  theme_minimal() +
+  labs(title = &amp;quot;Most packages have no reverse dependencies&amp;quot;,
+       subtitle = &amp;quot;ECDF of reverse dependencies&amp;quot;,
+       x = &amp;quot;Reverse dependencies&amp;quot;,
+       y = NULL)&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;&lt;img src=&#34;https://llrs.dev/post/2026/04/25/life-of-a-package/index.en_files/figure-html/ecdf-rdependencies-1.png&#34; alt=&#34;&#34; width=&#34;672&#34; /&gt;&lt;/p&gt;
+&lt;p&gt;While checking dependencies is more common, most packages maintainers do not need to worry about reverse dependency checks, as less than 25% have a strong dependency.&lt;/p&gt;
+&lt;p&gt;We can see these two distributions in a different way:&lt;/p&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;dc |&amp;gt; 
+  ggplot() +
+  geom_point(aes(pkgs, rev, size = n)) +
+  geom_text_repel(data = ann, aes(pkgs, rev, label = Package)) +
+  # geom_abline(slope = -25, intercept = 900) +
+  scale_y_continuous(trans = pseudo_log_trans(base = 10),
+                     breaks = c(0, 1, 10, 100, 1000, 5000)) +
+  # scale_size_area(breaks = c(1, 1000, 2000)) +
+  scale_size_binned_area(breaks = c(5, 10, 30, 100, 1000, 2000)) +
+  theme_minimal() +
+  # geom_
+  guides(y = guide_axis_logticks()) +
+  labs(x = &amp;quot;CRAN dependencies&amp;quot;, y = &amp;quot;Used by&amp;quot;, size = &amp;quot;Packages&amp;quot;,
+       title = &amp;quot;Packages dependencies on CRAN&amp;quot;,
+       subtitle = &amp;quot;Relationship between dependencies and reverse dependencies&amp;quot;) +
+  theme(plot.title.position = &amp;quot;plot&amp;quot;)&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;&lt;img src=&#34;https://llrs.dev/post/2026/04/25/life-of-a-package/index.en_files/figure-html/dependencies-points-1.png&#34; alt=&#34;&#34; width=&#34;672&#34; /&gt;&lt;/p&gt;
+&lt;p&gt;Popular packages have many dependencies while most packages have dependencies but not many reverse dependencies.&lt;/p&gt;
+&lt;div id=&#34;reproducibility&#34; class=&#34;section level3&#34;&gt;
+&lt;h3&gt;Reproducibility&lt;/h3&gt;
+&lt;details&gt;
+&lt;pre&gt;&lt;code&gt;## ─ Session info ───────────────────────────────────────────────────────────────────────────────────────────────────────
+##  setting  value
+##  version  R version 4.6.1 (2026-06-24)
+##  os       Slimbook OS
+##  system   x86_64, linux-gnu
+##  ui       X11
+##  language en
+##  collate  en_US.UTF-8
+##  ctype    en_US.UTF-8
+##  tz       Europe/Madrid
+##  date     2026-07-27
+##  pandoc   3.8.3 @ /usr/lib/rstudio/resources/app/bin/quarto/bin/tools/x86_64/ (via rmarkdown)
+##  quarto   1.9.38 @ /usr/lib/rstudio/resources/app/bin/quarto/bin/quarto
+## 
+## ─ Packages ───────────────────────────────────────────────────────────────────────────────────────────────────────────
+##  package      * version   date (UTC) lib source
+##  blogdown       1.24      2026-06-19 [1] CRAN (R 4.6.0)
+##  bookdown       0.47      2026-06-16 [1] CRAN (R 4.6.0)
+##  bslib          0.11.0    2026-05-16 [1] CRAN (R 4.6.0)
+##  cachem         1.1.0     2024-05-16 [1] RSPM
+##  cli            3.6.6     2026-04-09 [1] CRAN (R 4.6.0)
+##  digest         0.6.39    2025-11-19 [1] RSPM
+##  dplyr        * 1.2.1     2026-04-03 [1] CRAN (R 4.6.0)
+##  evaluate       1.0.5     2025-08-27 [1] RSPM
+##  farver         2.1.2     2024-05-13 [1] CRAN (R 4.6.0)
+##  fastmap        1.2.0     2024-05-15 [1] RSPM
+##  forcats        1.0.1     2025-09-25 [1] CRAN (R 4.6.0)
+##  generics       0.1.4     2025-05-09 [1] CRAN (R 4.6.0)
+##  ggplot2      * 4.0.3     2026-04-22 [1] CRAN (R 4.6.0)
+##  ggrepel      * 0.9.8     2026-03-17 [1] CRAN (R 4.6.0)
+##  glue           1.8.1     2026-04-17 [1] CRAN (R 4.6.0)
+##  gtable         0.3.6     2024-10-25 [1] CRAN (R 4.6.0)
+##  htmltools      0.5.9     2025-12-04 [1] RSPM
+##  jquerylib      0.1.4     2021-04-26 [1] RSPM
+##  jsonlite       2.0.0     2025-03-27 [1] RSPM
+##  knitr          1.51      2025-12-20 [1] RSPM
+##  labeling       0.4.3     2023-08-29 [1] CRAN (R 4.6.0)
+##  lattice        0.22-9    2026-02-09 [2] CRAN (R 4.6.1)
+##  lifecycle      1.0.5     2026-01-08 [1] RSPM
+##  magrittr       2.0.5     2026-04-04 [1] CRAN (R 4.6.0)
+##  Matrix         1.7-5     2026-03-21 [2] CRAN (R 4.6.1)
+##  mgcv           1.9-4     2025-11-07 [2] CRAN (R 4.6.1)
+##  nlme           3.1-169   2026-03-27 [2] CRAN (R 4.6.1)
+##  otel           0.2.0     2025-08-29 [1] RSPM
+##  patchwork    * 1.3.2     2025-08-25 [1] CRAN (R 4.6.0)
+##  pillar         1.11.1    2025-09-17 [1] RSPM
+##  pkgconfig      2.0.3     2019-09-22 [1] RSPM
+##  purrr          1.2.2     2026-04-10 [1] CRAN (R 4.6.0)
+##  R6             2.6.1     2025-02-15 [1] RSPM
+##  RColorBrewer   1.1-3     2022-04-03 [1] CRAN (R 4.6.0)
+##  Rcpp           1.1.1-1.1 2026-04-24 [1] CRAN (R 4.6.0)
+##  repo.data    * 0.2.2     2026-06-20 [1] CRAN (R 4.6.0)
+##  rlang          1.2.0     2026-04-06 [1] CRAN (R 4.6.0)
+##  rmarkdown      2.31      2026-03-26 [1] CRAN (R 4.6.0)
+##  rstudioapi     0.18.0    2026-01-16 [1] RSPM
+##  S7             0.2.2     2026-04-22 [1] CRAN (R 4.6.0)
+##  sass           0.4.10    2025-04-11 [1] RSPM
+##  scales       * 1.4.0     2025-04-24 [1] CRAN (R 4.6.0)
+##  sessioninfo    1.2.3     2025-02-05 [1] RSPM
+##  tibble         3.3.1     2026-01-11 [1] RSPM
+##  tidyr        * 1.3.2     2025-12-19 [1] CRAN (R 4.6.0)
+##  tidyselect     1.2.1     2024-03-11 [1] CRAN (R 4.6.0)
+##  vctrs          0.7.3     2026-04-11 [1] CRAN (R 4.6.0)
+##  withr          3.0.2     2024-10-28 [1] RSPM
+##  xfun           0.57      2026-03-20 [1] CRAN (R 4.6.0)
+##  yaml           2.3.12    2025-12-10 [1] RSPM
+## 
+##  [1] /home/lluis/bin/R/4.6
+##  [2] /opt/R/4.6.1/lib/R/library
+##  * ── Packages attached to the search path.
+## 
+## ──────────────────────────────────────────────────────────────────────────────────────────────────────────────────────&lt;/code&gt;&lt;/pre&gt;
+&lt;/details&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+</description>
+    </item>
+    
+    <item>
+      <title>Volunteer Responsibility Amnesty Day</title>
+      <link>https://llrs.dev/post/2025/06/11/volunteer-responsibility-amnesty-day/</link>
+      <pubDate>Wed, 11 Jun 2025 00:00:00 +0000</pubDate>
+      <guid>https://llrs.dev/post/2025/06/11/volunteer-responsibility-amnesty-day/</guid>
+      <description>
+
+
+&lt;p&gt;Recently I was pointed to &lt;a href=&#34;https://www.volunteeramnestyday.net/&#34;&gt;Volunteer Responsibility Amnesty Day&lt;/a&gt; and given my situation and recent behavior I decided to re-evaluate my participation in at least one project:&lt;/p&gt;
+&lt;p&gt;Bioconductor:&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;strong&gt;Responsibilities&lt;/strong&gt;: CAB member: Enabling productive and respectful participation, empowering developers at all levels of experience.&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;What I’ll keep&lt;/strong&gt;: answering developers’ requests/questions by email.&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;Next steps&lt;/strong&gt;:
+&lt;ul&gt;
+&lt;li&gt;I have notified the CAB secretary that I will take a long leave.&lt;/li&gt;
+&lt;li&gt;I have disengaged from current discussions within Bioconductor.&lt;/li&gt;
+&lt;li&gt;I notified the &lt;a href=&#34;https://eurobioc2025.bioconductor.org/&#34;&gt;EuroBioc2025&lt;/a&gt; organizer I won’t attend or contribute more towards the conference organization.&lt;/li&gt;
+&lt;li&gt;I have paused the notifications from the bioc-devel mailing list.&lt;/li&gt;
+&lt;/ul&gt;&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;I am researching how/what to improve in my implication and participation with this and other projects. Other projects might be paused or won’t keep volunteering (might update the post or write new ones).&lt;/p&gt;
+</description>
+    </item>
+    
+    <item>
+      <title>A Code of Conduct committee</title>
+      <link>https://llrs.dev/post/2025/02/10/a-code-of-conduct-committee/</link>
+      <pubDate>Mon, 10 Feb 2025 00:00:00 +0000</pubDate>
+      <guid>https://llrs.dev/post/2025/02/10/a-code-of-conduct-committee/</guid>
+      <description>
+
+
+&lt;p&gt;For the last 2 years I served as part of the Code of Conduct (CoC) committee of Bioconductor.
+I partially served to learn how these committees worked, as it was unclear from outside what they did.
+The following is a blog post with my observations and opinions on the Code of Conduct committee (CoCC) I saw.
+This content has been reviewed by the current serving committee.&lt;/p&gt;
+&lt;div id=&#34;volunteering&#34; class=&#34;section level2&#34;&gt;
+&lt;h2&gt;Volunteering&lt;/h2&gt;
+&lt;p&gt;I volunteered after a direct message through Bioconductor slack from the then president of the committee.
+She asked me to serve it as she noted I could be a good candidate.
+I think what moved her was my activity on Bioconductor’s slack.
+The inclusion process is simple, when there are some spots open they open a form to get candidates.
+As a candidate I filled it and waited to see if I was selected.&lt;/p&gt;
+&lt;p&gt;The form has some basic introduction questions, name, origin, … whether one had read the CoC and a couple of questions related to the CoC: not wrong or right questions but one’s opinion and merits.
+I was unsure what to write on those questions. I
+wrote around one short paragraph on those questions.&lt;/p&gt;
+&lt;/div&gt;
+&lt;div id=&#34;onboarding&#34; class=&#34;section level2&#34;&gt;
+&lt;h2&gt;Onboarding&lt;/h2&gt;
+&lt;p&gt;Needless to say I got accepted.
+A couple of weeks after finishing the selection process, we had a video call with a couple of people on the CoCC.
+We got a brief introduction on how it works and some internal documentation and files.&lt;/p&gt;
+&lt;p&gt;In this onboarding meeting it was highlighted the confidentiality of the work we would take on and which measures we took to reduce the possibility of leaking information.
+It was stressed that we were not the police, we were not supposed to be actively patrolling.
+We should wait and expect the members of the community to come to us.
+However, if we saw something we should raise the issue but our duties didn’t mean looking for incidents actively.&lt;/p&gt;
+&lt;/div&gt;
+&lt;div id=&#34;quarterly-duties&#34; class=&#34;section level2&#34;&gt;
+&lt;h2&gt;Quarterly duties&lt;/h2&gt;
+&lt;p&gt;From then on we meet once a quarter.
+If there were any reports we might replace a scheduled meeting by one about the reported incident.
+Other than that, we would rarely communicate via the private slack channel we had.&lt;/p&gt;
+&lt;p&gt;The meetings were usually about discussing other cases, or related news or improving the wording of the CoC.
+Some of these meetings were also about the people stepping down and the new elections.
+The serving period is 2 years. People might step off earlier or be candidates for re-election.
+We would also meet around those dates but we kept many interactions asynchronous.&lt;/p&gt;
+&lt;/div&gt;
+&lt;div id=&#34;on-demand-duties&#34; class=&#34;section level2&#34;&gt;
+&lt;h2&gt;On demand duties&lt;/h2&gt;
+&lt;p&gt;During my servicing period we received several communications we had to consider how to resolve.
+Some of them were incidents that people in the community wanted to check in with the CoC to see if a specific person’s behavior was within the expected behavior.
+Other were about receiving the CoCC opinion on some matters.&lt;/p&gt;
+&lt;/div&gt;
+&lt;div id=&#34;out-boarding&#34; class=&#34;section level2&#34;&gt;
+&lt;h2&gt;Out boarding&lt;/h2&gt;
+&lt;p&gt;Two years after my election, once a new election selected the new members I resigned.
+I had the opportunity to be at the introduction meeting of the new members.
+I waited a bit after my period ended but I left without much ceremony or specific recommendations.&lt;/p&gt;
+&lt;/div&gt;
+&lt;div id=&#34;other-considerations&#34; class=&#34;section level2&#34;&gt;
+&lt;h2&gt;Other considerations&lt;/h2&gt;
+&lt;p&gt;During the elections of new members, I saw some signs that we looked up for similar traits to those on the committee.
+I think this is especially important when selecting new members that will participate in future decisions.
+But at the same time just because someone came from a different background or with different experience doesn’t make that person better suited for such a committee.&lt;/p&gt;
+&lt;p&gt;In addition, during the discussions for incidents or cases there were always a few people that voiced their opinions.
+I hardly ever heard of some of them and/or some attended few meetings.
+I think that the CoCC should hear from each one of the members at least if they agree or disagree with a particular position.
+I think that silence in such a committee might not always mean they agree.
+Even if they agree with a given decision they might have a different way to see it that could improve (the wording of) the resolution.&lt;/p&gt;
+&lt;p&gt;Last and not least, as in any system where there are different independent bodies/boards, the power of the CoCC is enforced by someone else.
+I’m worried because at least once, the CoCC’s decisions were not fully implemented.
+Likely due to overlapping or unclear communication or roles.&lt;/p&gt;
+&lt;p&gt;I hope the Code of Conduct committee continues to help Bioconductor users and beyond.&lt;/p&gt;
+&lt;/div&gt;
+</description>
+    </item>
+    
+    <item>
+      <title>Exploring CRAN&#39;s files: part 3</title>
+      <link>https://llrs.dev/post/2024/12/23/cran-files-3/</link>
+      <pubDate>Mon, 23 Dec 2024 00:00:00 +0000</pubDate>
+      <guid>https://llrs.dev/post/2024/12/23/cran-files-3/</guid>
+      <description>
+
+
+&lt;p&gt;In the blog post of CRAN files, I &lt;a href=&#34;https://llrs.dev/post/2022/07/23/cran-files-1/&#34;&gt;initially explored the database&lt;/a&gt; (mostly around &lt;code&gt;CRAN_package_db()&lt;/code&gt;). On the &lt;a href=&#34;https://llrs.dev/post/2022/07/28/cran-files-2/&#34;&gt;second post&lt;/a&gt; I moved to analyze the archive around &lt;code&gt;CRAN_archive_db()&lt;/code&gt;.&lt;/p&gt;
+&lt;p&gt;Recently at useR!2024, Kurt Hornik offered to export data from CRAN. After an email &lt;a href=&#34;https://developer.r-project.org/blosxom.cgi/R-devel/NEWS/2024/08/22#n2024-08-22&#34;&gt;several new functions were exported&lt;/a&gt; and introduced to base R.&lt;/p&gt;
+&lt;p&gt;In that presentation and in a previous exchange with Kurt, he explained his project about providing the HTML manual pages of all CRAN packages.
+One of the problems with this projects is providing links to the right pages of the packages (others are making it accessible for all users).&lt;/p&gt;
+&lt;p&gt;In R-devel now there are test that ensure links to other pages are in the right format &lt;a href=&#34;#fn1&#34; class=&#34;footnote-ref&#34; id=&#34;fnref1&#34;&gt;&lt;sup&gt;1&lt;/sup&gt;&lt;/a&gt;.
+In this post we we’ll explore links between documentation pages, what manuals say about them and what is the state of base R and the CRAN packages.&lt;/p&gt;
+&lt;div id=&#34;introduction&#34; class=&#34;section level1&#34;&gt;
+&lt;h1&gt;Introduction&lt;/h1&gt;
+&lt;p&gt;Help pages are defined in R documentation files, commonly with the &lt;code&gt;.Rd&lt;/code&gt; extension.
+Each documentation file can have multiple topics.
+A topic is defined in R documentation format with &lt;code&gt;\alias{topic}&lt;/code&gt;, so once can use interchangeably alias and topics.
+Links, or cross-references (xref for short) &lt;a href=&#34;https://cran.r-project.org/doc/manuals/r-devel/R-exts.html#Cross_002dreferences&#34;&gt;should be to an alias&lt;/a&gt;, not to files (allowing to move topics between help pages)&lt;a href=&#34;#fn2&#34; class=&#34;footnote-ref&#34; id=&#34;fnref2&#34;&gt;&lt;sup&gt;2&lt;/sup&gt;&lt;/a&gt;.&lt;/p&gt;
+&lt;p&gt;One can define links with &lt;code&gt;\link{alias}&lt;/code&gt; or &lt;code&gt;\link[=alias]{name}&lt;/code&gt; if the link is to a different place than the name &lt;a href=&#34;#fn3&#34; class=&#34;footnote-ref&#34; id=&#34;fnref3&#34;&gt;&lt;sup&gt;3&lt;/sup&gt;&lt;/a&gt;.
+In the second form the content within the square bracket is known as anchor.&lt;/p&gt;
+&lt;p&gt;There are two other forms accepted: &lt;code&gt;\link[pkg]{alias}&lt;/code&gt; and &lt;code&gt;\link[pkg:alias]{name}&lt;/code&gt; which do not use the &lt;code&gt;=&lt;/code&gt; inside the anchor &lt;a href=&#34;#fn4&#34; class=&#34;footnote-ref&#34; id=&#34;fnref4&#34;&gt;&lt;sup&gt;4&lt;/sup&gt;&lt;/a&gt;.
+These last two forms are only used in the HTML format.
+Packages referred to on these square brackets should be declared in the DESCRIPTION file, in the ‘Depends’, ‘Imports’, ‘Suggests’ or ‘Enhances’ fields.&lt;/p&gt;
+&lt;p&gt;One important thing is that links are case sensitive: &lt;code&gt;?Complex&lt;/code&gt; leads to a different help page than &lt;code&gt;?complex&lt;/code&gt;.&lt;/p&gt;
+&lt;p&gt;With this in mind we can check to which packages have more manual pages, have more cross-references, or have an overview help page (those with &lt;em&gt;pkgname&lt;/em&gt;-package.Rd).
+We will also check which documentation pages have more links, are more linked to, or needs its links fixed.&lt;/p&gt;
+&lt;/div&gt;
+&lt;div id=&#34;base-r&#34; class=&#34;section level1&#34;&gt;
+&lt;h1&gt;Base R&lt;/h1&gt;
+&lt;p&gt;Before looking to CRAN packages we can start by looking to R base packages.&lt;/p&gt;
+&lt;p&gt;Previously there wasn’t a way to know the links and aliases in base R. Since recently (~2024/08/20) we can download them (on R-devel till it is released on R 4.5) with &lt;code&gt;tools::base_aliases_db()&lt;/code&gt; and &lt;code&gt;tools::base_rdxrefs_db()&lt;/code&gt;.&lt;/p&gt;
+&lt;div id=&#34;aliases&#34; class=&#34;section level2&#34;&gt;
+&lt;h2&gt;Aliases&lt;/h2&gt;
+&lt;p&gt;On base R there are 1458 help pages with 4676 topics/aliases.&lt;/p&gt;
+&lt;p&gt;There are some help files with the same name in base R that can be accessed via their targets (via &lt;code&gt;?Target&lt;/code&gt;).
+Those files are dev.Rd, format.Rd, units.Rd.&lt;br /&gt;
+To distinguish between those files one need to check the title(s) and content of the pages.&lt;/p&gt;
+&lt;p&gt;Similarly there are multiple help pages of different packages with the same topics:&lt;/p&gt;
+&lt;table&gt;
+&lt;caption&gt;&lt;span id=&#34;tab:base-dup-targets&#34;&gt;Table 1: &lt;/span&gt;&lt;strong&gt;Duplicate alias on R base packages.&lt;/strong&gt; Alias and packages with the same alias.&lt;/caption&gt;
+&lt;thead&gt;
+&lt;tr class=&#34;header&#34;&gt;
+&lt;th align=&#34;left&#34;&gt;Alias&lt;/th&gt;
+&lt;th align=&#34;left&#34;&gt;Packages&lt;/th&gt;
+&lt;/tr&gt;
+&lt;/thead&gt;
+&lt;tbody&gt;
+&lt;tr class=&#34;odd&#34;&gt;
+&lt;td align=&#34;left&#34;&gt;Complex&lt;/td&gt;
+&lt;td align=&#34;left&#34;&gt;base, methods&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr class=&#34;even&#34;&gt;
+&lt;td align=&#34;left&#34;&gt;GSC&lt;/td&gt;
+&lt;td align=&#34;left&#34;&gt;base, tools&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr class=&#34;odd&#34;&gt;
+&lt;td align=&#34;left&#34;&gt;Logic&lt;/td&gt;
+&lt;td align=&#34;left&#34;&gt;base, methods&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr class=&#34;even&#34;&gt;
+&lt;td align=&#34;left&#34;&gt;Math&lt;/td&gt;
+&lt;td align=&#34;left&#34;&gt;base, methods&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr class=&#34;odd&#34;&gt;
+&lt;td align=&#34;left&#34;&gt;Ops&lt;/td&gt;
+&lt;td align=&#34;left&#34;&gt;base, methods&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr class=&#34;even&#34;&gt;
+&lt;td align=&#34;left&#34;&gt;R_GSCMD&lt;/td&gt;
+&lt;td align=&#34;left&#34;&gt;base, tools&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr class=&#34;odd&#34;&gt;
+&lt;td align=&#34;left&#34;&gt;S4&lt;/td&gt;
+&lt;td align=&#34;left&#34;&gt;base, methods&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr class=&#34;even&#34;&gt;
+&lt;td align=&#34;left&#34;&gt;Summary&lt;/td&gt;
+&lt;td align=&#34;left&#34;&gt;base, methods&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr class=&#34;odd&#34;&gt;
+&lt;td align=&#34;left&#34;&gt;clipboard&lt;/td&gt;
+&lt;td align=&#34;left&#34;&gt;base, utils&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr class=&#34;even&#34;&gt;
+&lt;td align=&#34;left&#34;&gt;hat&lt;/td&gt;
+&lt;td align=&#34;left&#34;&gt;grDevices, stats&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr class=&#34;odd&#34;&gt;
+&lt;td align=&#34;left&#34;&gt;matrixOps&lt;/td&gt;
+&lt;td align=&#34;left&#34;&gt;base, methods&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr class=&#34;even&#34;&gt;
+&lt;td align=&#34;left&#34;&gt;plot&lt;/td&gt;
+&lt;td align=&#34;left&#34;&gt;base, graphics&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr class=&#34;odd&#34;&gt;
+&lt;td align=&#34;left&#34;&gt;show-methods&lt;/td&gt;
+&lt;td align=&#34;left&#34;&gt;methods, stats4&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr class=&#34;even&#34;&gt;
+&lt;td align=&#34;left&#34;&gt;symbol&lt;/td&gt;
+&lt;td align=&#34;left&#34;&gt;base, grDevices&lt;/td&gt;
+&lt;/tr&gt;
+&lt;/tbody&gt;
+&lt;/table&gt;
+&lt;p&gt;Most of them are in base and other packages, from the methods package to tools, grDevices, graphics, and utils.&lt;/p&gt;
+&lt;p&gt;To access them directly one needs to use &lt;code&gt;help()&lt;/code&gt;: &lt;code&gt;help(&#34;clipboard&#34;, package = &#34;utils&#34;)&lt;/code&gt; otherwise one will need to choose them from the menu it will pop up from using &lt;code&gt;?clipboard&lt;/code&gt;.
+This works to access any other help page too.&lt;/p&gt;
+&lt;p&gt;There are 665 help pages that only have one alias.
+For example, &lt;code&gt;.BasicFunsList&lt;/code&gt;, &lt;code&gt;.Platform&lt;/code&gt; or &lt;code&gt;.Last.value&lt;/code&gt;.
+Some of these are datasets or very specific help pages.&lt;/p&gt;
+&lt;p&gt;Last, we can check the topics for the packages’ help page.
+While usually packages have at least two alias, &lt;code&gt;pkg&lt;/code&gt; and one &lt;code&gt;pkgname-package&lt;/code&gt;, there are two packages that do not have this, &lt;strong&gt;grid&lt;/strong&gt; and &lt;strong&gt;methods&lt;/strong&gt; packages.&lt;br /&gt;
+These packages do not have the alias for &lt;code&gt;pkgname&lt;/code&gt; to their own package help page.
+&lt;code&gt;?grid&lt;/code&gt; could be confused with &lt;code&gt;graphics::grid&lt;/code&gt; and &lt;code&gt;?methods&lt;/code&gt; could be confused with &lt;code&gt;utils::methods&lt;/code&gt;.&lt;/p&gt;
+&lt;/div&gt;
+&lt;div id=&#34;cross-references&#34; class=&#34;section level2&#34;&gt;
+&lt;h2&gt;Cross references&lt;/h2&gt;
+&lt;p&gt;Having explored the topics on the help pages, it is time to move to the cross references on R.&lt;/p&gt;
+&lt;p&gt;We can check where these help pages link to, starting by knowing how many are directly to the alias or those that use an anchor:&lt;/p&gt;
+&lt;div class=&#34;figure&#34;&gt;&lt;span style=&#34;display:block;&#34; id=&#34;fig:links-base&#34;&gt;&lt;/span&gt;
+&lt;img src=&#34;https://llrs.dev/post/2024/12/23/cran-files-3/index.en_files/figure-html/links-base-1.png&#34; alt=&#34;**Packages with links using alias per help page.** Each point is a help pages with different number of links. Some packages directly link a lot while others are more mixed.&#34; width=&#34;672&#34; /&gt;
+&lt;p class=&#34;caption&#34;&gt;
+Figure 1: &lt;strong&gt;Packages with links using alias per help page.&lt;/strong&gt; Each point is a help pages with different number of links. Some packages directly link a lot while others are more mixed.
+&lt;/p&gt;
+&lt;/div&gt;
+&lt;p&gt;We can further explore to where they link if we find out the package and topic, instead of just the topic used.&lt;/p&gt;
+&lt;p&gt;We can check for pages that link to themselves.
+The cross-reference system doesn’t provide a way to link to a specific section (yet?).
+When users follow those links they are redirected to the top of the same help page,
+while probably they were expecting to go to another help page.
+At least this is something I have felt in the past.
+In my opinion these links could be deleted and rewritten to explain which section should the user read:&lt;/p&gt;
+&lt;table&gt;
+&lt;caption&gt;&lt;span id=&#34;tab:self-references&#34;&gt;Table 2: &lt;/span&gt;&lt;strong&gt;Help pages on base with links to themselves&lt;/strong&gt;. These links could be removed or perhaps a linking to a specific section could be implemented.&lt;/caption&gt;
+&lt;thead&gt;
+&lt;tr class=&#34;header&#34;&gt;
+&lt;th align=&#34;left&#34;&gt;Package&lt;/th&gt;
+&lt;th align=&#34;left&#34;&gt;Help page&lt;/th&gt;
+&lt;/tr&gt;
+&lt;/thead&gt;
+&lt;tbody&gt;
+&lt;tr class=&#34;odd&#34;&gt;
+&lt;td align=&#34;left&#34;&gt;base&lt;/td&gt;
+&lt;td align=&#34;left&#34;&gt;double.Rd&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr class=&#34;even&#34;&gt;
+&lt;td align=&#34;left&#34;&gt;base&lt;/td&gt;
+&lt;td align=&#34;left&#34;&gt;numeric.Rd&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr class=&#34;odd&#34;&gt;
+&lt;td align=&#34;left&#34;&gt;base&lt;/td&gt;
+&lt;td align=&#34;left&#34;&gt;parse.Rd&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr class=&#34;even&#34;&gt;
+&lt;td align=&#34;left&#34;&gt;base&lt;/td&gt;
+&lt;td align=&#34;left&#34;&gt;call.Rd&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr class=&#34;odd&#34;&gt;
+&lt;td align=&#34;left&#34;&gt;base&lt;/td&gt;
+&lt;td align=&#34;left&#34;&gt;is.unsorted.Rd&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr class=&#34;even&#34;&gt;
+&lt;td align=&#34;left&#34;&gt;base&lt;/td&gt;
+&lt;td align=&#34;left&#34;&gt;showConnections.Rd&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr class=&#34;odd&#34;&gt;
+&lt;td align=&#34;left&#34;&gt;base&lt;/td&gt;
+&lt;td align=&#34;left&#34;&gt;taskCallback.Rd&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr class=&#34;even&#34;&gt;
+&lt;td align=&#34;left&#34;&gt;grDevices&lt;/td&gt;
+&lt;td align=&#34;left&#34;&gt;axisTicks.Rd&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr class=&#34;odd&#34;&gt;
+&lt;td align=&#34;left&#34;&gt;grid&lt;/td&gt;
+&lt;td align=&#34;left&#34;&gt;grid.add.Rd&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr class=&#34;even&#34;&gt;
+&lt;td align=&#34;left&#34;&gt;grid&lt;/td&gt;
+&lt;td align=&#34;left&#34;&gt;grid.get.Rd&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr class=&#34;odd&#34;&gt;
+&lt;td align=&#34;left&#34;&gt;methods&lt;/td&gt;
+&lt;td align=&#34;left&#34;&gt;setIs.Rd&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr class=&#34;even&#34;&gt;
+&lt;td align=&#34;left&#34;&gt;parallel&lt;/td&gt;
+&lt;td align=&#34;left&#34;&gt;makeCluster.Rd&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr class=&#34;odd&#34;&gt;
+&lt;td align=&#34;left&#34;&gt;parallel&lt;/td&gt;
+&lt;td align=&#34;left&#34;&gt;unix/children.Rd&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr class=&#34;even&#34;&gt;
+&lt;td align=&#34;left&#34;&gt;stats&lt;/td&gt;
+&lt;td align=&#34;left&#34;&gt;uniroot.Rd&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr class=&#34;odd&#34;&gt;
+&lt;td align=&#34;left&#34;&gt;stats&lt;/td&gt;
+&lt;td align=&#34;left&#34;&gt;NLSstRtAsymptote.Rd&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr class=&#34;even&#34;&gt;
+&lt;td align=&#34;left&#34;&gt;stats&lt;/td&gt;
+&lt;td align=&#34;left&#34;&gt;dist.Rd&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr class=&#34;odd&#34;&gt;
+&lt;td align=&#34;left&#34;&gt;stats&lt;/td&gt;
+&lt;td align=&#34;left&#34;&gt;dendrogram.Rd&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr class=&#34;even&#34;&gt;
+&lt;td align=&#34;left&#34;&gt;stats&lt;/td&gt;
+&lt;td align=&#34;left&#34;&gt;stepfun.Rd&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr class=&#34;odd&#34;&gt;
+&lt;td align=&#34;left&#34;&gt;utils&lt;/td&gt;
+&lt;td align=&#34;left&#34;&gt;update.packages.Rd&lt;/td&gt;
+&lt;/tr&gt;
+&lt;/tbody&gt;
+&lt;/table&gt;
+&lt;p&gt;There are 19 links to their own help pages that could be removed.&lt;/p&gt;
+&lt;p&gt;R documentation files with references to other help pages:&lt;/p&gt;
+&lt;div class=&#34;figure&#34;&gt;&lt;span style=&#34;display:block;&#34; id=&#34;fig:plot-base-package-links&#34;&gt;&lt;/span&gt;
+&lt;img src=&#34;https://llrs.dev/post/2024/12/23/cran-files-3/index.en_files/figure-html/plot-base-package-links-1.png&#34; alt=&#34;**Links between R help pages are predominantly to their own package.** Base is more connected than any other package. Some packages recieve links from very few packages.&#34; width=&#34;672&#34; /&gt;
+&lt;p class=&#34;caption&#34;&gt;
+Figure 2: &lt;strong&gt;Links between R help pages are predominantly to their own package.&lt;/strong&gt; Base is more connected than any other package. Some packages recieve links from very few packages.
+&lt;/p&gt;
+&lt;/div&gt;
+&lt;p&gt;We can clearly see that the packages link more between their own package but there are some heavily connected packages like utils and base or stats and base.
+Surprisingly, &lt;strong&gt;compiler&lt;/strong&gt; package doesn’t have any reference to other packages.&lt;/p&gt;
+&lt;p&gt;There were help pages that use the file names instead of topics to link pages&lt;a href=&#34;#fn5&#34; class=&#34;footnote-ref&#34; id=&#34;fnref5&#34;&gt;&lt;sup&gt;5&lt;/sup&gt;&lt;/a&gt;.
+I raised this issue on the &lt;a href=&#34;https://stat.ethz.ch/pipermail/r-devel/2024-September/083626.html&#34;&gt;mailing list&lt;/a&gt; and submitted a patch later on &lt;a href=&#34;https://bugs.r-project.org/show_bug.cgi?id=18815&#34;&gt;18815&lt;/a&gt; that got them fixed before publishing this post.&lt;/p&gt;
+&lt;p&gt;We also observed that some packages do not provide links.
+How frequent is this and how it affects base R?&lt;/p&gt;
+&lt;table&gt;
+&lt;caption&gt;&lt;span id=&#34;tab:base-pages-links&#34;&gt;Table 3: &lt;/span&gt;&lt;strong&gt;References on help pages.&lt;/strong&gt; Most base help pages are referenced and link to other help pages.&lt;/caption&gt;
+&lt;thead&gt;
+&lt;tr class=&#34;header&#34;&gt;
+&lt;th align=&#34;left&#34;&gt;Link from&lt;/th&gt;
+&lt;th align=&#34;left&#34;&gt;Reference to&lt;/th&gt;
+&lt;th align=&#34;right&#34;&gt;Help pages&lt;/th&gt;
+&lt;th align=&#34;left&#34;&gt;perc&lt;/th&gt;
+&lt;/tr&gt;
+&lt;/thead&gt;
+&lt;tbody&gt;
+&lt;tr class=&#34;odd&#34;&gt;
+&lt;td align=&#34;left&#34;&gt;TRUE&lt;/td&gt;
+&lt;td align=&#34;left&#34;&gt;TRUE&lt;/td&gt;
+&lt;td align=&#34;right&#34;&gt;1093&lt;/td&gt;
+&lt;td align=&#34;left&#34;&gt;74.8%&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr class=&#34;even&#34;&gt;
+&lt;td align=&#34;left&#34;&gt;TRUE&lt;/td&gt;
+&lt;td align=&#34;left&#34;&gt;FALSE&lt;/td&gt;
+&lt;td align=&#34;right&#34;&gt;211&lt;/td&gt;
+&lt;td align=&#34;left&#34;&gt;14.4%&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr class=&#34;odd&#34;&gt;
+&lt;td align=&#34;left&#34;&gt;FALSE&lt;/td&gt;
+&lt;td align=&#34;left&#34;&gt;FALSE&lt;/td&gt;
+&lt;td align=&#34;right&#34;&gt;113&lt;/td&gt;
+&lt;td align=&#34;left&#34;&gt;7.7%&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr class=&#34;even&#34;&gt;
+&lt;td align=&#34;left&#34;&gt;FALSE&lt;/td&gt;
+&lt;td align=&#34;left&#34;&gt;TRUE&lt;/td&gt;
+&lt;td align=&#34;right&#34;&gt;44&lt;/td&gt;
+&lt;td align=&#34;left&#34;&gt;3.0%&lt;/td&gt;
+&lt;/tr&gt;
+&lt;/tbody&gt;
+&lt;/table&gt;
+&lt;p&gt;Almost all help pages have links and most of them receive references from other help pages (compre this with Table &lt;a href=&#34;#tab:cran-pages-links&#34;&gt;9&lt;/a&gt;).
+Only 113 help pages do not have links or receive references, so unless they are documented somewhere else, like &lt;a href=&#34;https://cran.r-project.org/doc/manuals/r-devel/R-ints.html&#34;&gt;R internals&lt;/a&gt;, &lt;a href=&#34;https://cran.r-project.org/doc/manuals/r-devel/R-exts.html&#34;&gt;Writing R extensions&lt;/a&gt;, &lt;a href=&#34;https://cran.r-project.org/doc/manuals/r-devel/R-admin.html&#34;&gt;R Installation and Administration&lt;/a&gt;, it will be hard to find them.&lt;/p&gt;
+&lt;p&gt;This seems a good opportunity to patch documentation and make it easier to find and use those help pages.
+For example there is currently no CRAN package, or base package that links to &lt;code&gt;Rmcd()&lt;/code&gt;.
+This makes it harder to discover and use it.&lt;/p&gt;
+&lt;div class=&#34;figure&#34;&gt;&lt;span style=&#34;display:block;&#34; id=&#34;fig:base-pages-links2&#34;&gt;&lt;/span&gt;
+&lt;img src=&#34;https://llrs.dev/post/2024/12/23/cran-files-3/index.en_files/figure-html/base-pages-links2-1.png&#34; alt=&#34;**Help pages receiving and sending references to other help pages.** The help page more linked on base is the options help page&#34; width=&#34;672&#34; /&gt;
+&lt;p class=&#34;caption&#34;&gt;
+Figure 3: &lt;strong&gt;Help pages receiving and sending references to other help pages.&lt;/strong&gt; The help page more linked on base is the options help page
+&lt;/p&gt;
+&lt;/div&gt;
+&lt;p&gt;While so far we focus on links if we compare that with the existing help pages we might find some interesting patterns:&lt;/p&gt;
+&lt;table&gt;
+&lt;caption&gt;&lt;span id=&#34;tab:base-no-link&#34;&gt;Table 4: &lt;/span&gt;&lt;strong&gt;Help pages with no links to them&lt;/strong&gt;.&lt;/caption&gt;
+&lt;thead&gt;
+&lt;tr class=&#34;header&#34;&gt;
+&lt;th align=&#34;left&#34;&gt;Package&lt;/th&gt;
+&lt;th align=&#34;right&#34;&gt;Help pages&lt;/th&gt;
+&lt;/tr&gt;
+&lt;/thead&gt;
+&lt;tbody&gt;
+&lt;tr class=&#34;odd&#34;&gt;
+&lt;td align=&#34;left&#34;&gt;datasets&lt;/td&gt;
+&lt;td align=&#34;right&#34;&gt;67&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr class=&#34;even&#34;&gt;
+&lt;td align=&#34;left&#34;&gt;grid&lt;/td&gt;
+&lt;td align=&#34;right&#34;&gt;50&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr class=&#34;odd&#34;&gt;
+&lt;td align=&#34;left&#34;&gt;base&lt;/td&gt;
+&lt;td align=&#34;right&#34;&gt;46&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr class=&#34;even&#34;&gt;
+&lt;td align=&#34;left&#34;&gt;stats&lt;/td&gt;
+&lt;td align=&#34;right&#34;&gt;40&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr class=&#34;odd&#34;&gt;
+&lt;td align=&#34;left&#34;&gt;utils&lt;/td&gt;
+&lt;td align=&#34;right&#34;&gt;32&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr class=&#34;even&#34;&gt;
+&lt;td align=&#34;left&#34;&gt;tools&lt;/td&gt;
+&lt;td align=&#34;right&#34;&gt;28&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr class=&#34;odd&#34;&gt;
+&lt;td align=&#34;left&#34;&gt;methods&lt;/td&gt;
+&lt;td align=&#34;right&#34;&gt;20&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr class=&#34;even&#34;&gt;
+&lt;td align=&#34;left&#34;&gt;graphics&lt;/td&gt;
+&lt;td align=&#34;right&#34;&gt;10&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr class=&#34;odd&#34;&gt;
+&lt;td align=&#34;left&#34;&gt;stats4&lt;/td&gt;
+&lt;td align=&#34;right&#34;&gt;10&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr class=&#34;even&#34;&gt;
+&lt;td align=&#34;left&#34;&gt;grDevices&lt;/td&gt;
+&lt;td align=&#34;right&#34;&gt;7&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr class=&#34;odd&#34;&gt;
+&lt;td align=&#34;left&#34;&gt;tcltk&lt;/td&gt;
+&lt;td align=&#34;right&#34;&gt;6&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr class=&#34;even&#34;&gt;
+&lt;td align=&#34;left&#34;&gt;splines&lt;/td&gt;
+&lt;td align=&#34;right&#34;&gt;5&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr class=&#34;odd&#34;&gt;
+&lt;td align=&#34;left&#34;&gt;parallel&lt;/td&gt;
+&lt;td align=&#34;right&#34;&gt;3&lt;/td&gt;
+&lt;/tr&gt;
+&lt;/tbody&gt;
+&lt;/table&gt;
+&lt;p&gt;As one could expect there aren’t many links on documentation help pages from datasets.
+Surprisingly grid is the next package without links from other base packages, followed by base itself.
+It would be interesting to see which help pages, as connecting these help pages to other topics might help users to find what R is capable.&lt;/p&gt;
+&lt;table&gt;
+&lt;caption&gt;&lt;span id=&#34;tab:base-no-ref&#34;&gt;Table 5: &lt;/span&gt;&lt;strong&gt;Help pages with no references from them&lt;/strong&gt;.&lt;/caption&gt;
+&lt;thead&gt;
+&lt;tr class=&#34;header&#34;&gt;
+&lt;th align=&#34;left&#34;&gt;Package&lt;/th&gt;
+&lt;th align=&#34;right&#34;&gt;Help pages&lt;/th&gt;
+&lt;/tr&gt;
+&lt;/thead&gt;
+&lt;tbody&gt;
+&lt;tr class=&#34;odd&#34;&gt;
+&lt;td align=&#34;left&#34;&gt;datasets&lt;/td&gt;
+&lt;td align=&#34;right&#34;&gt;71&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr class=&#34;even&#34;&gt;
+&lt;td align=&#34;left&#34;&gt;base&lt;/td&gt;
+&lt;td align=&#34;right&#34;&gt;20&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr class=&#34;odd&#34;&gt;
+&lt;td align=&#34;left&#34;&gt;grid&lt;/td&gt;
+&lt;td align=&#34;right&#34;&gt;13&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr class=&#34;even&#34;&gt;
+&lt;td align=&#34;left&#34;&gt;stats&lt;/td&gt;
+&lt;td align=&#34;right&#34;&gt;12&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr class=&#34;odd&#34;&gt;
+&lt;td align=&#34;left&#34;&gt;tools&lt;/td&gt;
+&lt;td align=&#34;right&#34;&gt;12&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr class=&#34;even&#34;&gt;
+&lt;td align=&#34;left&#34;&gt;utils&lt;/td&gt;
+&lt;td align=&#34;right&#34;&gt;11&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr class=&#34;odd&#34;&gt;
+&lt;td align=&#34;left&#34;&gt;grDevices&lt;/td&gt;
+&lt;td align=&#34;right&#34;&gt;6&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr class=&#34;even&#34;&gt;
+&lt;td align=&#34;left&#34;&gt;methods&lt;/td&gt;
+&lt;td align=&#34;right&#34;&gt;2&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr class=&#34;odd&#34;&gt;
+&lt;td align=&#34;left&#34;&gt;parallel&lt;/td&gt;
+&lt;td align=&#34;right&#34;&gt;2&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr class=&#34;even&#34;&gt;
+&lt;td align=&#34;left&#34;&gt;splines&lt;/td&gt;
+&lt;td align=&#34;right&#34;&gt;2&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr class=&#34;odd&#34;&gt;
+&lt;td align=&#34;left&#34;&gt;stats4&lt;/td&gt;
+&lt;td align=&#34;right&#34;&gt;2&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr class=&#34;even&#34;&gt;
+&lt;td align=&#34;left&#34;&gt;tcltk&lt;/td&gt;
+&lt;td align=&#34;right&#34;&gt;2&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr class=&#34;odd&#34;&gt;
+&lt;td align=&#34;left&#34;&gt;compiler&lt;/td&gt;
+&lt;td align=&#34;right&#34;&gt;1&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr class=&#34;even&#34;&gt;
+&lt;td align=&#34;left&#34;&gt;graphics&lt;/td&gt;
+&lt;td align=&#34;right&#34;&gt;1&lt;/td&gt;
+&lt;/tr&gt;
+&lt;/tbody&gt;
+&lt;/table&gt;
+&lt;p&gt;Similar to the table above there are many help pages that do not link to them&lt;/p&gt;
+&lt;p&gt;But having links to and from help pages is not enough for discovering them.
+They could form a closed graph, where some pages are unreachable from the others.&lt;/p&gt;
+&lt;div class=&#34;figure&#34;&gt;&lt;span style=&#34;display:block;&#34; id=&#34;fig:plot-base-links-files&#34;&gt;&lt;/span&gt;
+&lt;img src=&#34;https://llrs.dev/post/2024/12/23/cran-files-3/index.en_files/figure-html/plot-base-links-files-1.png&#34; alt=&#34;**Graph of all the links between help pages of base R**. There are some help pages that are not connected to any other help page&#34; width=&#34;672&#34; /&gt;
+&lt;p class=&#34;caption&#34;&gt;
+Figure 4: &lt;strong&gt;Graph of all the links between help pages of base R&lt;/strong&gt;. There are some help pages that are not connected to any other help page
+&lt;/p&gt;
+&lt;/div&gt;
+&lt;p&gt;Apparently there are some help page on base R that don’t have links to navigate to the rest of the documentation.
+There are 4 isolated clusters of help pages.
+These are tools:toHTML.Rd, tools:HTMLheader.Rd, grid:absolute.size.Rd, grid:widthDetails.Rd, grid:gridCoords.Rd, grid:grobCoords.Rd.
+These help pages would be easier to find if at least they were linked from other help pages from base R.&lt;/p&gt;
+&lt;div id=&#34;to-cran&#34; class=&#34;section level3&#34;&gt;
+&lt;h3&gt;To CRAN&lt;/h3&gt;
+&lt;p&gt;We can also ask which packages are linked from R that are not part of R.&lt;/p&gt;
+&lt;table&gt;
+&lt;caption&gt;&lt;span id=&#34;tab:cran-database&#34;&gt;Table 6: &lt;/span&gt;&lt;strong&gt;Most packages linked from base R are from current R core members.&lt;/strong&gt; Information about non-base packages linked from base R.&lt;/caption&gt;
+&lt;thead&gt;
+&lt;tr class=&#34;header&#34;&gt;
+&lt;th align=&#34;left&#34;&gt;Package&lt;/th&gt;
+&lt;th align=&#34;right&#34;&gt;links&lt;/th&gt;
+&lt;th align=&#34;left&#34;&gt;Priority&lt;/th&gt;
+&lt;th align=&#34;left&#34;&gt;Maintainer&lt;/th&gt;
+&lt;th align=&#34;left&#34;&gt;Core member&lt;/th&gt;
+&lt;/tr&gt;
+&lt;/thead&gt;
+&lt;tbody&gt;
+&lt;tr class=&#34;odd&#34;&gt;
+&lt;td align=&#34;left&#34;&gt;MASS&lt;/td&gt;
+&lt;td align=&#34;right&#34;&gt;23&lt;/td&gt;
+&lt;td align=&#34;left&#34;&gt;recommended&lt;/td&gt;
+&lt;td align=&#34;left&#34;&gt;Brian Ripley&lt;/td&gt;
+&lt;td align=&#34;left&#34;&gt;TRUE&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr class=&#34;even&#34;&gt;
+&lt;td align=&#34;left&#34;&gt;Matrix&lt;/td&gt;
+&lt;td align=&#34;right&#34;&gt;10&lt;/td&gt;
+&lt;td align=&#34;left&#34;&gt;recommended&lt;/td&gt;
+&lt;td align=&#34;left&#34;&gt;Martin Maechler&lt;/td&gt;
+&lt;td align=&#34;left&#34;&gt;TRUE&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr class=&#34;odd&#34;&gt;
+&lt;td align=&#34;left&#34;&gt;KernSmooth&lt;/td&gt;
+&lt;td align=&#34;right&#34;&gt;9&lt;/td&gt;
+&lt;td align=&#34;left&#34;&gt;recommended&lt;/td&gt;
+&lt;td align=&#34;left&#34;&gt;Brian Ripley&lt;/td&gt;
+&lt;td align=&#34;left&#34;&gt;TRUE&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr class=&#34;even&#34;&gt;
+&lt;td align=&#34;left&#34;&gt;lattice&lt;/td&gt;
+&lt;td align=&#34;right&#34;&gt;8&lt;/td&gt;
+&lt;td align=&#34;left&#34;&gt;recommended&lt;/td&gt;
+&lt;td align=&#34;left&#34;&gt;Deepayan Sarkar&lt;/td&gt;
+&lt;td align=&#34;left&#34;&gt;TRUE&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr class=&#34;odd&#34;&gt;
+&lt;td align=&#34;left&#34;&gt;nlme&lt;/td&gt;
+&lt;td align=&#34;right&#34;&gt;7&lt;/td&gt;
+&lt;td align=&#34;left&#34;&gt;recommended&lt;/td&gt;
+&lt;td align=&#34;left&#34;&gt;R Core Team&lt;/td&gt;
+&lt;td align=&#34;left&#34;&gt;TRUE&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr class=&#34;even&#34;&gt;
+&lt;td align=&#34;left&#34;&gt;cluster&lt;/td&gt;
+&lt;td align=&#34;right&#34;&gt;6&lt;/td&gt;
+&lt;td align=&#34;left&#34;&gt;recommended&lt;/td&gt;
+&lt;td align=&#34;left&#34;&gt;Martin Maechler&lt;/td&gt;
+&lt;td align=&#34;left&#34;&gt;TRUE&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr class=&#34;odd&#34;&gt;
+&lt;td align=&#34;left&#34;&gt;survival&lt;/td&gt;
+&lt;td align=&#34;right&#34;&gt;3&lt;/td&gt;
+&lt;td align=&#34;left&#34;&gt;recommended&lt;/td&gt;
+&lt;td align=&#34;left&#34;&gt;Terry M Therneau&lt;/td&gt;
+&lt;td align=&#34;left&#34;&gt;FALSE&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr class=&#34;even&#34;&gt;
+&lt;td align=&#34;left&#34;&gt;SuppDists&lt;/td&gt;
+&lt;td align=&#34;right&#34;&gt;3&lt;/td&gt;
+&lt;td align=&#34;left&#34;&gt;&lt;/td&gt;
+&lt;td align=&#34;left&#34;&gt;Thorsten Pohlert&lt;/td&gt;
+&lt;td align=&#34;left&#34;&gt;FALSE&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr class=&#34;odd&#34;&gt;
+&lt;td align=&#34;left&#34;&gt;coin&lt;/td&gt;
+&lt;td align=&#34;right&#34;&gt;3&lt;/td&gt;
+&lt;td align=&#34;left&#34;&gt;&lt;/td&gt;
+&lt;td align=&#34;left&#34;&gt;Torsten Hothorn&lt;/td&gt;
+&lt;td align=&#34;left&#34;&gt;FALSE&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr class=&#34;even&#34;&gt;
+&lt;td align=&#34;left&#34;&gt;knitr&lt;/td&gt;
+&lt;td align=&#34;right&#34;&gt;2&lt;/td&gt;
+&lt;td align=&#34;left&#34;&gt;&lt;/td&gt;
+&lt;td align=&#34;left&#34;&gt;Yihui Xie&lt;/td&gt;
+&lt;td align=&#34;left&#34;&gt;FALSE&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr class=&#34;odd&#34;&gt;
+&lt;td align=&#34;left&#34;&gt;mathjaxr&lt;/td&gt;
+&lt;td align=&#34;right&#34;&gt;2&lt;/td&gt;
+&lt;td align=&#34;left&#34;&gt;&lt;/td&gt;
+&lt;td align=&#34;left&#34;&gt;Wolfgang Viechtbauer&lt;/td&gt;
+&lt;td align=&#34;left&#34;&gt;FALSE&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr class=&#34;even&#34;&gt;
+&lt;td align=&#34;left&#34;&gt;vcd&lt;/td&gt;
+&lt;td align=&#34;right&#34;&gt;2&lt;/td&gt;
+&lt;td align=&#34;left&#34;&gt;&lt;/td&gt;
+&lt;td align=&#34;left&#34;&gt;David Meyer&lt;/td&gt;
+&lt;td align=&#34;left&#34;&gt;FALSE&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr class=&#34;odd&#34;&gt;
+&lt;td align=&#34;left&#34;&gt;nnet&lt;/td&gt;
+&lt;td align=&#34;right&#34;&gt;1&lt;/td&gt;
+&lt;td align=&#34;left&#34;&gt;recommended&lt;/td&gt;
+&lt;td align=&#34;left&#34;&gt;Brian Ripley&lt;/td&gt;
+&lt;td align=&#34;left&#34;&gt;TRUE&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr class=&#34;even&#34;&gt;
+&lt;td align=&#34;left&#34;&gt;rpart&lt;/td&gt;
+&lt;td align=&#34;right&#34;&gt;1&lt;/td&gt;
+&lt;td align=&#34;left&#34;&gt;recommended&lt;/td&gt;
+&lt;td align=&#34;left&#34;&gt;Beth Atkinson&lt;/td&gt;
+&lt;td align=&#34;left&#34;&gt;FALSE&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr class=&#34;odd&#34;&gt;
+&lt;td align=&#34;left&#34;&gt;chron&lt;/td&gt;
+&lt;td align=&#34;right&#34;&gt;1&lt;/td&gt;
+&lt;td align=&#34;left&#34;&gt;&lt;/td&gt;
+&lt;td align=&#34;left&#34;&gt;Kurt Hornik&lt;/td&gt;
+&lt;td align=&#34;left&#34;&gt;TRUE&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr class=&#34;even&#34;&gt;
+&lt;td align=&#34;left&#34;&gt;date&lt;/td&gt;
+&lt;td align=&#34;right&#34;&gt;1&lt;/td&gt;
+&lt;td align=&#34;left&#34;&gt;&lt;/td&gt;
+&lt;td align=&#34;left&#34;&gt;Kurt Hornik&lt;/td&gt;
+&lt;td align=&#34;left&#34;&gt;TRUE&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr class=&#34;odd&#34;&gt;
+&lt;td align=&#34;left&#34;&gt;robustbase&lt;/td&gt;
+&lt;td align=&#34;right&#34;&gt;1&lt;/td&gt;
+&lt;td align=&#34;left&#34;&gt;&lt;/td&gt;
+&lt;td align=&#34;left&#34;&gt;Martin Maechler&lt;/td&gt;
+&lt;td align=&#34;left&#34;&gt;TRUE&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr class=&#34;even&#34;&gt;
+&lt;td align=&#34;left&#34;&gt;round&lt;/td&gt;
+&lt;td align=&#34;right&#34;&gt;1&lt;/td&gt;
+&lt;td align=&#34;left&#34;&gt;&lt;/td&gt;
+&lt;td align=&#34;left&#34;&gt;Martin Maechler&lt;/td&gt;
+&lt;td align=&#34;left&#34;&gt;TRUE&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr class=&#34;odd&#34;&gt;
+&lt;td align=&#34;left&#34;&gt;Kendall&lt;/td&gt;
+&lt;td align=&#34;right&#34;&gt;1&lt;/td&gt;
+&lt;td align=&#34;left&#34;&gt;&lt;/td&gt;
+&lt;td align=&#34;left&#34;&gt;A.I. McLeod&lt;/td&gt;
+&lt;td align=&#34;left&#34;&gt;FALSE&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr class=&#34;even&#34;&gt;
+&lt;td align=&#34;left&#34;&gt;multcomp&lt;/td&gt;
+&lt;td align=&#34;right&#34;&gt;1&lt;/td&gt;
+&lt;td align=&#34;left&#34;&gt;&lt;/td&gt;
+&lt;td align=&#34;left&#34;&gt;Torsten Hothorn&lt;/td&gt;
+&lt;td align=&#34;left&#34;&gt;FALSE&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr class=&#34;odd&#34;&gt;
+&lt;td align=&#34;left&#34;&gt;pcaPP&lt;/td&gt;
+&lt;td align=&#34;right&#34;&gt;1&lt;/td&gt;
+&lt;td align=&#34;left&#34;&gt;&lt;/td&gt;
+&lt;td align=&#34;left&#34;&gt;Valentin Todorov&lt;/td&gt;
+&lt;td align=&#34;left&#34;&gt;FALSE&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr class=&#34;even&#34;&gt;
+&lt;td align=&#34;left&#34;&gt;pspearman&lt;/td&gt;
+&lt;td align=&#34;right&#34;&gt;1&lt;/td&gt;
+&lt;td align=&#34;left&#34;&gt;&lt;/td&gt;
+&lt;td align=&#34;left&#34;&gt;Petr Savicky&lt;/td&gt;
+&lt;td align=&#34;left&#34;&gt;FALSE&lt;/td&gt;
+&lt;/tr&gt;
+&lt;/tbody&gt;
+&lt;/table&gt;
+&lt;p&gt;We can see that some packages linked from base R are from the recommended packages and many from the R core members or maintained by the whole R core group.
+Some other links include popular packages, while others are not so popular.&lt;/p&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;div id=&#34;cran-packages&#34; class=&#34;section level1&#34;&gt;
+&lt;h1&gt;CRAN packages&lt;/h1&gt;
+&lt;p&gt;Now that we explored base R packages we can also explore CRAN’s help pages.&lt;/p&gt;
+&lt;p&gt;1## Aliases&lt;/p&gt;
+&lt;p&gt;As before we start exploring CRAN aliases.
+Which are the packages that have more aliases?&lt;/p&gt;
+&lt;table&gt;
+&lt;caption&gt;&lt;span id=&#34;tab:cran-count-aliases&#34;&gt;Table 7: &lt;/span&gt;&lt;strong&gt;Help pages per CRAN package&lt;/strong&gt;. Top 10 packages with more help pages.&lt;/caption&gt;
+&lt;thead&gt;
+&lt;tr class=&#34;header&#34;&gt;
+&lt;th align=&#34;left&#34;&gt;Package&lt;/th&gt;
+&lt;th align=&#34;right&#34;&gt;Help page&lt;/th&gt;
+&lt;/tr&gt;
+&lt;/thead&gt;
+&lt;tbody&gt;
+&lt;tr class=&#34;odd&#34;&gt;
+&lt;td align=&#34;left&#34;&gt;aroma.affymetrix&lt;/td&gt;
+&lt;td align=&#34;right&#34;&gt;2158&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr class=&#34;even&#34;&gt;
+&lt;td align=&#34;left&#34;&gt;Matrix&lt;/td&gt;
+&lt;td align=&#34;right&#34;&gt;1997&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr class=&#34;odd&#34;&gt;
+&lt;td align=&#34;left&#34;&gt;VGAM&lt;/td&gt;
+&lt;td align=&#34;right&#34;&gt;1948&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr class=&#34;even&#34;&gt;
+&lt;td align=&#34;left&#34;&gt;CVXR&lt;/td&gt;
+&lt;td align=&#34;right&#34;&gt;1723&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr class=&#34;odd&#34;&gt;
+&lt;td align=&#34;left&#34;&gt;paws.management&lt;/td&gt;
+&lt;td align=&#34;right&#34;&gt;1580&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr class=&#34;even&#34;&gt;
+&lt;td align=&#34;left&#34;&gt;paws.security.identity&lt;/td&gt;
+&lt;td align=&#34;right&#34;&gt;1580&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr class=&#34;odd&#34;&gt;
+&lt;td align=&#34;left&#34;&gt;aroma.core&lt;/td&gt;
+&lt;td align=&#34;right&#34;&gt;1566&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr class=&#34;even&#34;&gt;
+&lt;td align=&#34;left&#34;&gt;paws.compute&lt;/td&gt;
+&lt;td align=&#34;right&#34;&gt;1429&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr class=&#34;odd&#34;&gt;
+&lt;td align=&#34;left&#34;&gt;paws.analytics&lt;/td&gt;
+&lt;td align=&#34;right&#34;&gt;1349&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr class=&#34;even&#34;&gt;
+&lt;td align=&#34;left&#34;&gt;photobiology&lt;/td&gt;
+&lt;td align=&#34;right&#34;&gt;1319&lt;/td&gt;
+&lt;/tr&gt;
+&lt;/tbody&gt;
+&lt;/table&gt;
+&lt;p&gt;The top packages with more help pages have more than 2000!
+On the other side there are more than 800 packages (835) with only one alias.&lt;/p&gt;
+&lt;div class=&#34;figure&#34;&gt;&lt;span style=&#34;display:block;&#34; id=&#34;fig:plot-cran-alias-hist&#34;&gt;&lt;/span&gt;
+&lt;img src=&#34;https://llrs.dev/post/2024/12/23/cran-files-3/index.en_files/figure-html/plot-cran-alias-hist-1.png&#34; alt=&#34;**Most CRAN packages have 14 aliases.** Aliases distribution on CRAN.&#34; width=&#34;672&#34; /&gt;
+&lt;p class=&#34;caption&#34;&gt;
+Figure 5: &lt;strong&gt;Most CRAN packages have 14 aliases.&lt;/strong&gt; Aliases distribution on CRAN.
+&lt;/p&gt;
+&lt;/div&gt;
+&lt;p&gt;I’m surprised to see so many packages with just one alias.
+This might indicates packages that only try to do just one thing, while more complex packages will have more aliases and maybe also more help pages.&lt;/p&gt;
+&lt;p&gt;We can also find those targets that are duplicated on CRAN:&lt;/p&gt;
+&lt;div class=&#34;figure&#34;&gt;&lt;span style=&#34;display:block;&#34; id=&#34;fig:plot-cran-dup-targets&#34;&gt;&lt;/span&gt;
+&lt;img src=&#34;https://llrs.dev/post/2024/12/23/cran-files-3/index.en_files/figure-html/plot-cran-dup-targets-1.png&#34; alt=&#34;**Top 25 duplicated topics on CRAN.** Common methods and the magrittr pipe dominate the most frequent topics.&#34; width=&#34;672&#34; /&gt;
+&lt;p class=&#34;caption&#34;&gt;
+Figure 6: &lt;strong&gt;Top 25 duplicated topics on CRAN.&lt;/strong&gt; Common methods and the magrittr pipe dominate the most frequent topics.
+&lt;/p&gt;
+&lt;/div&gt;
+&lt;p&gt;The most repeated topic is the magrittr pipe &lt;code&gt;%&amp;gt;%&lt;/code&gt; followed by reexports (curious as usually the pipe is also re-exported).
+We can see some common methods like &lt;code&gt;plot&lt;/code&gt;, &lt;code&gt;print&lt;/code&gt;, &lt;code&gt;show&lt;/code&gt; and some that are related to the dplyr and shiny, mixed between some methods used for statistics.&lt;/p&gt;
+&lt;div id=&#34;help-pages&#34; class=&#34;section level2&#34;&gt;
+&lt;h2&gt;Help pages&lt;/h2&gt;
+&lt;p&gt;Similar to the alias on CRAN we can check what happens with help pages:&lt;/p&gt;
+&lt;table&gt;
+&lt;caption&gt;&lt;span id=&#34;tab:cran-help-counts&#34;&gt;Table 8: &lt;/span&gt;&lt;strong&gt;Number of help pages of top 10 packages.&lt;/strong&gt; Some packages have many help pages.&lt;/caption&gt;
+&lt;thead&gt;
+&lt;tr class=&#34;header&#34;&gt;
+&lt;th align=&#34;right&#34;&gt;Help page&lt;/th&gt;
+&lt;/tr&gt;
+&lt;/thead&gt;
+&lt;tbody&gt;
+&lt;tr class=&#34;odd&#34;&gt;
+&lt;td align=&#34;right&#34;&gt;1573&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr class=&#34;even&#34;&gt;
+&lt;td align=&#34;right&#34;&gt;1573&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr class=&#34;odd&#34;&gt;
+&lt;td align=&#34;right&#34;&gt;1422&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr class=&#34;even&#34;&gt;
+&lt;td align=&#34;right&#34;&gt;1342&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr class=&#34;odd&#34;&gt;
+&lt;td align=&#34;right&#34;&gt;1283&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr class=&#34;even&#34;&gt;
+&lt;td align=&#34;right&#34;&gt;1091&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr class=&#34;odd&#34;&gt;
+&lt;td align=&#34;right&#34;&gt;970&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr class=&#34;even&#34;&gt;
+&lt;td align=&#34;right&#34;&gt;911&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr class=&#34;odd&#34;&gt;
+&lt;td align=&#34;right&#34;&gt;901&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr class=&#34;even&#34;&gt;
+&lt;td align=&#34;right&#34;&gt;874&lt;/td&gt;
+&lt;/tr&gt;
+&lt;/tbody&gt;
+&lt;/table&gt;
+&lt;p&gt;The top packages with more help pages have more than 800!
+On the other side there are more than 1000 packages (1086) with only one help page.&lt;/p&gt;
+&lt;p&gt;Overall doesn’t seem like there is a distribution pattern.
+Packages end up with as many aliases as maintainers see fit.&lt;/p&gt;
+&lt;div class=&#34;figure&#34;&gt;&lt;span style=&#34;display:block;&#34; id=&#34;fig:plot-cran-help-pages-hist&#34;&gt;&lt;/span&gt;
+&lt;img src=&#34;https://llrs.dev/post/2024/12/23/cran-files-3/index.en_files/figure-html/plot-cran-help-pages-hist-1.png&#34; alt=&#34;**Most CRAN packages have 11 help pages.** Help page distribution.&#34; width=&#34;672&#34; /&gt;
+&lt;p class=&#34;caption&#34;&gt;
+Figure 7: &lt;strong&gt;Most CRAN packages have 11 help pages.&lt;/strong&gt; Help page distribution.
+&lt;/p&gt;
+&lt;/div&gt;
+&lt;p&gt;We can check the ratio of alias per help page and number of help pages by package:&lt;/p&gt;
+&lt;div class=&#34;figure&#34;&gt;&lt;span style=&#34;display:block;&#34; id=&#34;fig:plot-cran-help-topics&#34;&gt;&lt;/span&gt;
+&lt;img src=&#34;https://llrs.dev/post/2024/12/23/cran-files-3/index.en_files/figure-html/plot-cran-help-topics-1.png&#34; alt=&#34;**Some packages have many alias per help pages.** Packages with high number of alias per help page are colored in green while packages with high number of help pages and alias are in black. The dashed line correspond to a perfect match between help pages and alias.&#34; width=&#34;672&#34; /&gt;
+&lt;p class=&#34;caption&#34;&gt;
+Figure 8: &lt;strong&gt;Some packages have many alias per help pages.&lt;/strong&gt; Packages with high number of alias per help page are colored in green while packages with high number of help pages and alias are in black. The dashed line correspond to a perfect match between help pages and alias.
+&lt;/p&gt;
+&lt;/div&gt;
+&lt;p&gt;It is clear that more help pages might lead to more topic pages but there are some packages with low number of help pages but high number of alias (those in green on the plot above).
+These packages tend to have 5 alias per help page or more.&lt;/p&gt;
+&lt;p&gt;However this is not normal, the median number of help pages is 11 and the median number of topics is 14.
+So usually CRAN packages tend to be much smaller.&lt;/p&gt;
+&lt;/div&gt;
+&lt;div id=&#34;cross-references-1&#34; class=&#34;section level2&#34;&gt;
+&lt;h2&gt;Cross references&lt;/h2&gt;
+&lt;p&gt;So far we analyzed CRAN help pages by the number of alias and help pages they have.
+While this is interesting I think it can be more revealing checking what they are linking to.&lt;/p&gt;
+&lt;p&gt;Similar to what we did with R cross-references we first start finding links to base packages and then we’ll search for links across CRAN packages.&lt;/p&gt;
+&lt;p&gt;Now that I have corrected many issues I’ll check if it matches CRAN’s output.&lt;/p&gt;
+&lt;/div&gt;
+&lt;div id=&#34;comparing-links-with-crans-checks&#34; class=&#34;section level2&#34;&gt;
+&lt;h2&gt;Comparing links with CRAN’s checks&lt;/h2&gt;
+&lt;p&gt;We can compare the data with CRAN’s package details of issues found related to cross-references.&lt;/p&gt;
+&lt;p&gt;There are 1876 packages with issues in “Rd cross-references” across all flavors.
+These can be found online too, for example for &lt;a href=&#34;https://cran.r-project.org/web/checks/check_details_r-devel-linux-x86_64-debian-clang.html&#34;&gt;r-devel in debian&lt;/a&gt;, (pick your &lt;a href=&#34;https://cran.r-project.org/web/checks/check_summary.html&#34;&gt;flavor&lt;/a&gt;).&lt;/p&gt;
+&lt;!-- To compare with CRAN we need to prepare the data collected.  --&gt;
+&lt;!-- First thing, CRAN packages can depend on packages in Bioconductor and other additional repositories for which we don&#39;t have the data.  --&gt;
+&lt;!-- Identifying those packages will help to avoid any false positive.  --&gt;
+&lt;!-- To further check what is happening we can compare directly with what CRAN reports. --&gt;
+&lt;p&gt;There are 176 packages currently with cross references notes that could be improved by using topics on the cross-references (instead of file names).
+There are 1159 that are currently not detected by CRAN that could be improved the same way, by instead of using file names of other CRAN packages use their topic.&lt;/p&gt;
+&lt;!-- Now that we found that they mostly agree let&#39;s analyse the data. --&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;div id=&#34;further-analysis&#34; class=&#34;section level1&#34;&gt;
+&lt;h1&gt;Further analysis&lt;/h1&gt;
+&lt;div id=&#34;pages-with-links&#34; class=&#34;section level2&#34;&gt;
+&lt;h2&gt;Pages with links&lt;/h2&gt;
+&lt;table&gt;
+&lt;caption&gt;&lt;span id=&#34;tab:cran-pages-links&#34;&gt;Table 9: &lt;/span&gt;&lt;strong&gt;More than half of CRAN’s help pages do not have links to other help pages&lt;/strong&gt;.&lt;/caption&gt;
+&lt;thead&gt;
+&lt;tr class=&#34;header&#34;&gt;
+&lt;th align=&#34;left&#34;&gt;Link from&lt;/th&gt;
+&lt;th align=&#34;left&#34;&gt;References to&lt;/th&gt;
+&lt;th align=&#34;right&#34;&gt;Help pages&lt;/th&gt;
+&lt;th align=&#34;left&#34;&gt;perc&lt;/th&gt;
+&lt;/tr&gt;
+&lt;/thead&gt;
+&lt;tbody&gt;
+&lt;tr class=&#34;odd&#34;&gt;
+&lt;td align=&#34;left&#34;&gt;FALSE&lt;/td&gt;
+&lt;td align=&#34;left&#34;&gt;FALSE&lt;/td&gt;
+&lt;td align=&#34;right&#34;&gt;220340&lt;/td&gt;
+&lt;td align=&#34;left&#34;&gt;47.5%&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr class=&#34;even&#34;&gt;
+&lt;td align=&#34;left&#34;&gt;TRUE&lt;/td&gt;
+&lt;td align=&#34;left&#34;&gt;TRUE&lt;/td&gt;
+&lt;td align=&#34;right&#34;&gt;136230&lt;/td&gt;
+&lt;td align=&#34;left&#34;&gt;29.4%&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr class=&#34;odd&#34;&gt;
+&lt;td align=&#34;left&#34;&gt;TRUE&lt;/td&gt;
+&lt;td align=&#34;left&#34;&gt;FALSE&lt;/td&gt;
+&lt;td align=&#34;right&#34;&gt;73727&lt;/td&gt;
+&lt;td align=&#34;left&#34;&gt;15.9%&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr class=&#34;even&#34;&gt;
+&lt;td align=&#34;left&#34;&gt;FALSE&lt;/td&gt;
+&lt;td align=&#34;left&#34;&gt;TRUE&lt;/td&gt;
+&lt;td align=&#34;right&#34;&gt;33351&lt;/td&gt;
+&lt;td align=&#34;left&#34;&gt;7.2%&lt;/td&gt;
+&lt;/tr&gt;
+&lt;/tbody&gt;
+&lt;/table&gt;
+&lt;p&gt;CRAN help pages by contrast with base help pages have many less references to other help pages (See &lt;a href=&#34;#tab:cran-pages-links&#34;&gt;9&lt;/a&gt;).
+Almost 50% receive no reference or links to other help pages, but the next biggest group is those that have links and receive references.
+Surprising there are some help pages that receive reference that do not link to other help pages.&lt;/p&gt;
+&lt;div class=&#34;figure&#34;&gt;&lt;span style=&#34;display:block;&#34; id=&#34;fig:cran-pages-links2&#34;&gt;&lt;/span&gt;
+&lt;img src=&#34;https://llrs.dev/post/2024/12/23/cran-files-3/index.en_files/figure-html/cran-pages-links2-1.png&#34; alt=&#34;**Links on CRAN&#39;s help pages.** Many pages are either linked a lot or link a lot. Dashed line represents pages recevigin same number of links than those they have.&#34; width=&#34;672&#34; /&gt;
+&lt;p class=&#34;caption&#34;&gt;
+Figure 9: &lt;strong&gt;Links on CRAN’s help pages.&lt;/strong&gt; Many pages are either linked a lot or link a lot. Dashed line represents pages recevigin same number of links than those they have.
+&lt;/p&gt;
+&lt;/div&gt;
+&lt;p&gt;Most CRAN’s help pages are not linked , not even by their own package, or have links.
+Followed by those with links to and from the help page, then by those that are linked but do not have a link.
+Last, those that have a link but are not linked elsewhere.&lt;/p&gt;
+&lt;/div&gt;
+&lt;div id=&#34;links-to-base&#34; class=&#34;section level2&#34;&gt;
+&lt;h2&gt;Links to base&lt;/h2&gt;
+&lt;p&gt;First we can check the number of links to base R:&lt;/p&gt;
+&lt;div class=&#34;figure&#34;&gt;&lt;span style=&#34;display:block;&#34; id=&#34;fig:plot-base-links&#34;&gt;&lt;/span&gt;
+&lt;img src=&#34;https://llrs.dev/post/2024/12/23/cran-files-3/index.en_files/figure-html/plot-base-links-1.png&#34; alt=&#34;**Base is the most linked package.** Packages sorted by number of links they receive from CRAN&#39;s packages.&#34; width=&#34;672&#34; /&gt;
+&lt;p class=&#34;caption&#34;&gt;
+Figure 10: &lt;strong&gt;Base is the most linked package.&lt;/strong&gt; Packages sorted by number of links they receive from CRAN’s packages.
+&lt;/p&gt;
+&lt;/div&gt;
+&lt;p&gt;There are many packages that link a lot base R, but most of them link them fairly few.&lt;/p&gt;
+&lt;div class=&#34;figure&#34;&gt;&lt;span style=&#34;display:block;&#34; id=&#34;fig:plot-base-links2&#34;&gt;&lt;/span&gt;
+&lt;img src=&#34;https://llrs.dev/post/2024/12/23/cran-files-3/index.en_files/figure-html/plot-base-links2-1.png&#34; alt=&#34;**Base is the most linked package.** Packages sorted by number of links they receive from CRAN&#39;s packages.&#34; width=&#34;672&#34; /&gt;
+&lt;p class=&#34;caption&#34;&gt;
+Figure 11: &lt;strong&gt;Base is the most linked package.&lt;/strong&gt; Packages sorted by number of links they receive from CRAN’s packages.
+&lt;/p&gt;
+&lt;/div&gt;
+&lt;p&gt;From the above plot I find surprising there are these few links to the utils package.
+Perhaps looking at which files are linked could help.&lt;/p&gt;
+&lt;div class=&#34;figure&#34;&gt;&lt;span style=&#34;display:block;&#34; id=&#34;fig:base-links-packages&#34;&gt;&lt;/span&gt;
+&lt;img src=&#34;https://llrs.dev/post/2024/12/23/cran-files-3/index.en_files/figure-html/base-links-packages-1.png&#34; alt=&#34;**Links to base from different pacakges**&#34; width=&#34;672&#34; /&gt;
+&lt;p class=&#34;caption&#34;&gt;
+Figure 12: &lt;strong&gt;Links to base from different pacakges&lt;/strong&gt;
+&lt;/p&gt;
+&lt;/div&gt;
+&lt;p&gt;As previously reported there are many links to different help pages across packages.
+Many of the most popular pages are linked from different many different packages too.
+Surprisingly all links to the compiler package are to a single page: &lt;code&gt;help(&#34;compile&#34;, package = &#34;compiler&#34;)&lt;/code&gt;&lt;/p&gt;
+&lt;div class=&#34;figure&#34;&gt;&lt;span style=&#34;display:block;&#34; id=&#34;fig:base-links-sources&#34;&gt;&lt;/span&gt;
+&lt;img src=&#34;https://llrs.dev/post/2024/12/23/cran-files-3/index.en_files/figure-html/base-links-sources-1.png&#34; alt=&#34;**Most linked pages by packages.** Some data types are the most linked as well as some plot parameters and methods for model fitting or representation.&#34; width=&#34;672&#34; /&gt;
+&lt;p class=&#34;caption&#34;&gt;
+Figure 13: &lt;strong&gt;Most linked pages by packages.&lt;/strong&gt; Some data types are the most linked as well as some plot parameters and methods for model fitting or representation.
+&lt;/p&gt;
+&lt;/div&gt;
+&lt;div class=&#34;figure&#34;&gt;&lt;span style=&#34;display:block;&#34; id=&#34;fig:missing-anchors&#34;&gt;&lt;/span&gt;
+&lt;img src=&#34;https://llrs.dev/post/2024/12/23/cran-files-3/index.en_files/figure-html/missing-anchors-1.png&#34; alt=&#34;**Usually there are slightly more topics per help page.** &#34; width=&#34;672&#34; /&gt;
+&lt;p class=&#34;caption&#34;&gt;
+Figure 14: &lt;strong&gt;Usually there are slightly more topics per help page.&lt;/strong&gt;
+&lt;/p&gt;
+&lt;/div&gt;
+&lt;!-- Surprisingly there are more than 7000 packages with no links to other documentation pages, while the median is to link to ` median(pt$diff_target)` different help pages, from ` median(pt$diff_source)` different help pages. --&gt;
+&lt;!-- We can see some packages that have many help pages but only link to the same help page and some other packages that have few help pages that link to several pages. --&gt;
+&lt;/div&gt;
+&lt;div id=&#34;cran-packages-1&#34; class=&#34;section level2&#34;&gt;
+&lt;h2&gt;CRAN packages&lt;/h2&gt;
+&lt;p&gt;Now it is time to check for CRAN packages.&lt;/p&gt;
+&lt;p&gt;There are 1387 packages that lack destination of the R document.
+There are also 11684 that miss anchors, the majority of these are to their own R documentation help pages.
+There are 695 packages that link to a packages that is not on the dependency, while these could be packages using “LinkingTo” this could also be packages linking to archived packages.
+There are 1335 packages that link to a file instead of a topic. While this is not forbidden (yet)&lt;/p&gt;
+&lt;p&gt;We can look at packages are CRAN packages linking to (excluding themselves):&lt;/p&gt;
+&lt;div class=&#34;figure&#34;&gt;&lt;span style=&#34;display:block;&#34; id=&#34;fig:cran-linksto&#34;&gt;&lt;/span&gt;
+&lt;img src=&#34;https://llrs.dev/post/2024/12/23/cran-files-3/index.en_files/figure-html/cran-linksto-1.png&#34; alt=&#34;**Links to other packages** Most packages receive links  from few packages, but there are some that receive links from few packages and many help pages&#34; width=&#34;672&#34; /&gt;
+&lt;p class=&#34;caption&#34;&gt;
+Figure 15: &lt;strong&gt;Links to other packages&lt;/strong&gt; Most packages receive links from few packages, but there are some that receive links from few packages and many help pages
+&lt;/p&gt;
+&lt;/div&gt;
+&lt;p&gt;There are few packages thightly linked together (those that start with &lt;code&gt;paws.*&lt;/code&gt;) and then there are the base packages linked by many different packages.&lt;/p&gt;
+&lt;p&gt;If we focus more on the most common packages we might find some other common practices:&lt;/p&gt;
+&lt;div class=&#34;figure&#34;&gt;&lt;span style=&#34;display:block;&#34; id=&#34;fig:cran-linksto-zoom&#34;&gt;&lt;/span&gt;
+&lt;img src=&#34;https://llrs.dev/post/2024/12/23/cran-files-3/index.en_files/figure-html/cran-linksto-zoom-1.png&#34; alt=&#34;**Zooming to links to other packages** Focusing on packages with less than 400 help pages linked and less than 1000 packages being referenced.&#34; width=&#34;672&#34; /&gt;
+&lt;p class=&#34;caption&#34;&gt;
+Figure 16: &lt;strong&gt;Zooming to links to other packages&lt;/strong&gt; Focusing on packages with less than 400 help pages linked and less than 1000 packages being referenced.
+&lt;/p&gt;
+&lt;/div&gt;
+&lt;p&gt;But who is linking to these packages?&lt;/p&gt;
+&lt;div class=&#34;figure&#34;&gt;&lt;span style=&#34;display:block;&#34; id=&#34;fig:cran-linksto2&#34;&gt;&lt;/span&gt;
+&lt;img src=&#34;https://llrs.dev/post/2024/12/23/cran-files-3/index.en_files/figure-html/cran-linksto2-1.png&#34; alt=&#34;**Links to other packages** Most packages receive links  from few packages, but there are some that receive links from &#34; width=&#34;672&#34; /&gt;
+&lt;p class=&#34;caption&#34;&gt;
+Figure 17: &lt;strong&gt;Links to other packages&lt;/strong&gt; Most packages receive links from few packages, but there are some that receive links from
+&lt;/p&gt;
+&lt;/div&gt;
+&lt;p&gt;There are many packages that link to few packages but from many help pages.
+There are some that link to many packages from relatively few help pages.
+There is broom that links to many distinct packages from many help pages.&lt;/p&gt;
+&lt;p&gt;Putting this together we can explore which packages are more connected, those that provide links, those that recieve and those that do both or neither.&lt;/p&gt;
+&lt;table&gt;
+&lt;caption&gt;&lt;span id=&#34;tab:cran-packages-links&#34;&gt;Table 10: &lt;/span&gt;&lt;strong&gt;Table describing packages cross reference status.&lt;/strong&gt; Most packages are not linked, most provides link and few receive links but do not link to other packages.&lt;/caption&gt;
+&lt;thead&gt;
+&lt;tr class=&#34;header&#34;&gt;
+&lt;th align=&#34;left&#34;&gt;Receives_links&lt;/th&gt;
+&lt;th align=&#34;left&#34;&gt;Provides_links&lt;/th&gt;
+&lt;th align=&#34;right&#34;&gt;Packages&lt;/th&gt;
+&lt;/tr&gt;
+&lt;/thead&gt;
+&lt;tbody&gt;
+&lt;tr class=&#34;odd&#34;&gt;
+&lt;td align=&#34;left&#34;&gt;FALSE&lt;/td&gt;
+&lt;td align=&#34;left&#34;&gt;FALSE&lt;/td&gt;
+&lt;td align=&#34;right&#34;&gt;11056&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr class=&#34;even&#34;&gt;
+&lt;td align=&#34;left&#34;&gt;FALSE&lt;/td&gt;
+&lt;td align=&#34;left&#34;&gt;TRUE&lt;/td&gt;
+&lt;td align=&#34;right&#34;&gt;7466&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr class=&#34;odd&#34;&gt;
+&lt;td align=&#34;left&#34;&gt;TRUE&lt;/td&gt;
+&lt;td align=&#34;left&#34;&gt;TRUE&lt;/td&gt;
+&lt;td align=&#34;right&#34;&gt;2578&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr class=&#34;even&#34;&gt;
+&lt;td align=&#34;left&#34;&gt;TRUE&lt;/td&gt;
+&lt;td align=&#34;left&#34;&gt;FALSE&lt;/td&gt;
+&lt;td align=&#34;right&#34;&gt;743&lt;/td&gt;
+&lt;/tr&gt;
+&lt;/tbody&gt;
+&lt;/table&gt;
+&lt;p&gt;Most packages do not provide links to external packages or receive them.
+Next come those that link to other packages but are not linked back, followed by those that are linked to and are linked back.
+Last there are those package that receives links but do not link to other resources.&lt;/p&gt;
+&lt;div class=&#34;figure&#34;&gt;&lt;span style=&#34;display:block;&#34; id=&#34;fig:cran-links&#34;&gt;&lt;/span&gt;
+&lt;img src=&#34;https://llrs.dev/post/2024/12/23/cran-files-3/index.en_files/figure-html/cran-links-1.png&#34; alt=&#34;**Packages receiveing and giving links.** Very few packages link to many others. While some other packages are linked by many.&#34; width=&#34;672&#34; /&gt;
+&lt;p class=&#34;caption&#34;&gt;
+Figure 18: &lt;strong&gt;Packages receiveing and giving links.&lt;/strong&gt; Very few packages link to many others. While some other packages are linked by many.
+&lt;/p&gt;
+&lt;/div&gt;
+&lt;p&gt;broom is a package that receives few links from packages but link to multiple packages.&lt;/p&gt;
+&lt;div class=&#34;figure&#34;&gt;&lt;span style=&#34;display:block;&#34; id=&#34;fig:links-distribution&#34;&gt;&lt;/span&gt;
+&lt;img src=&#34;https://llrs.dev/post/2024/12/23/cran-files-3/index.en_files/figure-html/links-distribution-1.png&#34; alt=&#34;**Distribution of links on help pages with links.** CRAN packages have more links than base packages.&#34; width=&#34;672&#34; /&gt;
+&lt;p class=&#34;caption&#34;&gt;
+Figure 19: &lt;strong&gt;Distribution of links on help pages with links.&lt;/strong&gt; CRAN packages have more links than base packages.
+&lt;/p&gt;
+&lt;/div&gt;
+&lt;p&gt;CRAN’s packages tend to have more links to other packages than base R.&lt;/p&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;div id=&#34;conclusions&#34; class=&#34;section level1&#34;&gt;
+&lt;h1&gt;Conclusions&lt;/h1&gt;
+&lt;p&gt;As a summary of the analysis of the links and alias.
+About base:&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;Help page more linked to from base: options.Rd&lt;/li&gt;
+&lt;li&gt;Help page more linked to from CRAN: character.Rd&lt;/li&gt;
+&lt;li&gt;Help page with more links: par.Rd&lt;/li&gt;
+&lt;li&gt;Package more linked to from CRAN: base&lt;/li&gt;
+&lt;li&gt;Page more linked from different packages: par.Rd&lt;/li&gt;
+&lt;li&gt;Package with more links: base&lt;/li&gt;
+&lt;li&gt;Package with less links: compiler&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;About CRAN packages:&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;Package with more help pages: paws.management&lt;/li&gt;
+&lt;li&gt;Package more linked by other packages: ggplot2&lt;/li&gt;
+&lt;li&gt;Package help with more links: spatstat-package.Rd&lt;/li&gt;
+&lt;li&gt;Help page more repeated: reexports&lt;/li&gt;
+&lt;li&gt;Package help with linked to: R6Class.Rd&lt;/li&gt;
+&lt;li&gt;Package with more links to other packages: paws&lt;/li&gt;
+&lt;li&gt;Package with more links : keras3&lt;/li&gt;
+&lt;li&gt;Topic more repeated: &lt;code&gt;%&amp;gt;%&lt;/code&gt;&lt;/li&gt;
+&lt;li&gt;Links I couldn’t resolve: 5358&lt;/li&gt;
+&lt;li&gt;Packages with link related problems:&lt;/li&gt;
+&lt;li&gt;Packages linking to Bioconductor:&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;Wrong assumptions I had about cross-references:&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;All packages will have one link to other help pages.&lt;/li&gt;
+&lt;li&gt;One cannot link to a file.&lt;/li&gt;
+&lt;li&gt;Base packages wouldn’t link to CRAN packages.&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;I don’t think I was ever aware of the compiler package.&lt;/p&gt;
+&lt;div id=&#34;reproducibility&#34; class=&#34;section level3&#34;&gt;
+&lt;h3&gt;Reproducibility&lt;/h3&gt;
+&lt;details&gt;
+&lt;summary&gt;
+Session info
+&lt;/summary&gt;
+&lt;pre&gt;&lt;code&gt;## - Session info -------------------------------------------------------------------------------------------------------
+##  setting  value
+##  version  R Under development (unstable) (2024-12-20 r87452)
+##  os       Ubuntu 24.04.1 LTS
+##  system   x86_64, linux-gnu
+##  ui       X11
+##  language en
+##  collate  C
+##  ctype    C
+##  tz       Europe/Madrid
+##  date     2025-01-01
+##  pandoc   3.2 @ /usr/lib/rstudio/resources/app/bin/quarto/bin/tools/x86_64/ (via rmarkdown)
+##  quarto   1.4.553 @ /usr/local/bin/quarto
+## 
+## - Packages -----------------------------------------------------------------------------------------------------------
+##  package      * version    date (UTC) lib source
+##  BiocManager    1.30.25    2024-08-28 [1] CRAN (R 4.5.0)
+##  blogdown       1.19       2024-02-01 [1] CRAN (R 4.5.0)
+##  bookdown       0.41       2024-10-16 [1] CRAN (R 4.5.0)
+##  bslib          0.8.0      2024-07-29 [1] CRAN (R 4.5.0)
+##  cachem         1.1.0      2024-05-16 [1] CRAN (R 4.5.0)
+##  cli            3.6.3      2024-06-21 [1] CRAN (R 4.5.0)
+##  codetools      0.2-20     2024-03-31 [2] CRAN (R 4.5.0)
+##  colorspace     2.1-1      2024-07-26 [1] CRAN (R 4.5.0)
+##  digest         0.6.37     2024-08-19 [1] CRAN (R 4.5.0)
+##  dplyr        * 1.1.4      2023-11-17 [1] CRAN (R 4.5.0)
+##  evaluate       1.0.1      2024-10-10 [1] CRAN (R 4.5.0)
+##  fansi          1.0.6      2023-12-08 [1] CRAN (R 4.5.0)
+##  farver         2.1.2      2024-05-13 [1] CRAN (R 4.5.0)
+##  fastmap        1.2.0      2024-05-15 [1] CRAN (R 4.5.0)
+##  forcats      * 1.0.0      2023-01-29 [1] CRAN (R 4.5.0)
+##  generics       0.1.3      2022-07-05 [1] CRAN (R 4.5.0)
+##  ggforce        0.4.2      2024-02-19 [1] CRAN (R 4.5.0)
+##  ggplot2      * 3.5.1      2024-04-23 [1] CRAN (R 4.5.0)
+##  ggraph       * 2.2.1      2024-03-07 [1] CRAN (R 4.5.0)
+##  ggrepel      * 0.9.6      2024-09-07 [1] CRAN (R 4.5.0)
+##  glue           1.8.0      2024-09-30 [1] CRAN (R 4.5.0)
+##  graphlayouts   1.2.1      2024-11-18 [1] CRAN (R 4.5.0)
+##  gridExtra      2.3        2017-09-09 [1] CRAN (R 4.5.0)
+##  gtable         0.3.6      2024-10-25 [1] CRAN (R 4.5.0)
+##  htmltools      0.5.8.1    2024-04-04 [1] CRAN (R 4.5.0)
+##  igraph         2.1.1      2024-10-19 [1] CRAN (R 4.5.0)
+##  jquerylib      0.1.4      2021-04-26 [1] CRAN (R 4.5.0)
+##  jsonlite       1.8.9      2024-09-20 [1] CRAN (R 4.5.0)
+##  knitr        * 1.49       2024-11-08 [1] CRAN (R 4.5.0)
+##  labeling       0.4.3      2023-08-29 [1] CRAN (R 4.5.0)
+##  lifecycle      1.0.4      2023-11-07 [1] CRAN (R 4.5.0)
+##  magrittr       2.0.3      2022-03-30 [1] CRAN (R 4.5.0)
+##  MASS           7.3-61     2024-06-13 [2] CRAN (R 4.5.0)
+##  memoise        2.0.1      2021-11-26 [1] CRAN (R 4.5.0)
+##  munsell        0.5.1      2024-04-01 [1] CRAN (R 4.5.0)
+##  pillar         1.9.0      2023-03-22 [1] CRAN (R 4.5.0)
+##  pkgconfig      2.0.3      2019-09-22 [1] CRAN (R 4.5.0)
+##  polyclip       1.10-7     2024-07-23 [1] CRAN (R 4.5.0)
+##  purrr          1.0.2      2023-08-10 [1] CRAN (R 4.5.0)
+##  R6             2.5.1      2021-08-19 [1] CRAN (R 4.5.0)
+##  Rcpp           1.0.13-1   2024-11-02 [1] CRAN (R 4.5.0)
+##  rlang          1.1.4      2024-06-04 [1] CRAN (R 4.5.0)
+##  rmarkdown      2.29       2024-11-04 [1] CRAN (R 4.5.0)
+##  rstudioapi     0.17.1     2024-10-22 [1] CRAN (R 4.5.0)
+##  sass           0.4.9      2024-03-15 [1] CRAN (R 4.5.0)
+##  scales         1.3.0      2023-11-28 [1] CRAN (R 4.5.0)
+##  sessioninfo    1.2.2.9000 2024-09-15 [1] Github (r-lib/sessioninfo@442a686)
+##  tibble         3.2.1      2023-03-20 [1] CRAN (R 4.5.0)
+##  tidygraph    * 1.3.1      2024-01-30 [1] CRAN (R 4.5.0)
+##  tidyr          1.3.1      2024-01-24 [1] CRAN (R 4.5.0)
+##  tidyselect     1.2.1      2024-03-11 [1] CRAN (R 4.5.0)
+##  tweenr         2.0.3      2024-02-26 [1] CRAN (R 4.5.0)
+##  utf8           1.2.4      2023-10-22 [1] CRAN (R 4.5.0)
+##  vctrs          0.6.5      2023-12-01 [1] CRAN (R 4.5.0)
+##  viridis        0.6.5      2024-01-29 [1] CRAN (R 4.5.0)
+##  viridisLite    0.4.2      2023-05-02 [1] CRAN (R 4.5.0)
+##  withr          3.0.2      2024-10-28 [1] CRAN (R 4.5.0)
+##  xfun           0.49       2024-10-31 [1] CRAN (R 4.5.0)
+##  yaml           2.3.10     2024-07-26 [1] CRAN (R 4.5.0)
+## 
+##  [1] /home/lluis/bin/R/4.5
+##  [2] /opt/R/devel/lib/R/library
+##  * -- Packages attached to the search path.
+## 
+## ----------------------------------------------------------------------------------------------------------------------&lt;/code&gt;&lt;/pre&gt;
+&lt;/details&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;div class=&#34;footnotes footnotes-end-of-document&#34;&gt;
+&lt;hr /&gt;
+&lt;ol&gt;
+&lt;li id=&#34;fn1&#34;&gt;&lt;p&gt;By setting &lt;code&gt;_R_CHECK_XREFS_NOTE_MISSING_PACKAGE_ANCHORS_=true&lt;/code&gt; as environmental variable.&lt;a href=&#34;#fnref1&#34; class=&#34;footnote-back&#34;&gt;↩︎&lt;/a&gt;&lt;/p&gt;&lt;/li&gt;
+&lt;li id=&#34;fn2&#34;&gt;&lt;p&gt;But using links to files is still fine.&lt;a href=&#34;#fnref2&#34; class=&#34;footnote-back&#34;&gt;↩︎&lt;/a&gt;&lt;/p&gt;&lt;/li&gt;
+&lt;li id=&#34;fn3&#34;&gt;&lt;p&gt;There is also the &lt;code&gt;\linkS4class{abc}&lt;/code&gt; that expands to &lt;code&gt;\link[=abc-class]{abc}&lt;/code&gt; for S4 classes.&lt;a href=&#34;#fnref3&#34; class=&#34;footnote-back&#34;&gt;↩︎&lt;/a&gt;&lt;/p&gt;&lt;/li&gt;
+&lt;li id=&#34;fn4&#34;&gt;&lt;p&gt;So there are three names for (almost) the same thing: topic, alias and anchor. Anchors do not need to start with &lt;code&gt;=&lt;/code&gt; but should be resolvable.&lt;a href=&#34;#fnref4&#34; class=&#34;footnote-back&#34;&gt;↩︎&lt;/a&gt;&lt;/p&gt;&lt;/li&gt;
+&lt;li id=&#34;fn5&#34;&gt;&lt;p&gt;Yes, even though the documentation makes it clear that this shouldn’t be done the help system works around this issue.&lt;a href=&#34;#fnref5&#34; class=&#34;footnote-back&#34;&gt;↩︎&lt;/a&gt;&lt;/p&gt;&lt;/li&gt;
+&lt;/ol&gt;
+&lt;/div&gt;
+</description>
+    </item>
+    
+    <item>
+      <title>The missing R generation</title>
+      <link>https://llrs.dev/post/2024/07/28/the-missing-r-generation/</link>
+      <pubDate>Sun, 28 Jul 2024 00:00:00 +0000</pubDate>
+      <guid>https://llrs.dev/post/2024/07/28/the-missing-r-generation/</guid>
+      <description>
+
+
+&lt;div id=&#34;sunday&#34; class=&#34;section level2&#34;&gt;
+&lt;h2&gt;Sunday&lt;/h2&gt;
+&lt;p&gt;I was a bit down before going to Salzburg, as I was considering if spending my monthly salary in a week for useR!2
+024 was worth it.
+While I was looking to some talks and content I was mainly interested in meeting people.&lt;/p&gt;
+&lt;p&gt;I cherished soon, as I met with Emilio López Cano on my flight to Salzburg&lt;a href=&#34;#fn1&#34; class=&#34;footnote-ref&#34; id=&#34;fnref1&#34;&gt;&lt;sup&gt;1&lt;/sup&gt;&lt;/a&gt;.
+Once on the flight, we met with more people going to the conference from Appsilon, a sponsor of the conference.&lt;/p&gt;
+&lt;p&gt;The day before the conference was great already: I had registered to the guided tour.
+Despite the light rain, we were like 30 people in the park to visit the city with other useRs!
+Lucky for me, there were people I already interacted online there too.
+Shannon Pileggi and Yann Féat were in my group, which Robert Müller from Roche (another sponsor of the conference), guided as an expert through the city.
+I particularly liked that he had made some notes to provide details of what he was explaining to us.
+We finished the tour in a bribery drinking and eating in a relaxed environment.
+Which lead to meeting Max and Fonti Kar, where their enthusiasm and their experience with R was very different from mine.&lt;/p&gt;
+&lt;div class=&#34;float&#34;&gt;
+&lt;img src=&#34;images/Salzburg_river.jpg&#34; alt=&#34;Picture of the river of Salzburg&#34; /&gt;
+&lt;div class=&#34;figcaption&#34;&gt;Picture of the river of Salzburg&lt;/div&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;div id=&#34;monday&#34; class=&#34;section level2&#34;&gt;
+&lt;h2&gt;Monday&lt;/h2&gt;
+&lt;p&gt;The next day, the conference started officially.
+I won’t talk much about the content of the conference, as I have posted it live during the conference&lt;a href=&#34;#fn2&#34; class=&#34;footnote-ref&#34; id=&#34;fnref2&#34;&gt;&lt;sup&gt;2&lt;/sup&gt;&lt;/a&gt;.
+But I want to write about the people I met (and those that I missed) and the environment I saw.&lt;/p&gt;
+&lt;p&gt;In the morning I saw several R core members there, as they took the opportunity to have a long day meeting to discuss things.&lt;/p&gt;
+&lt;p&gt;I had registered to two tutorials: The one on the morning from Shannon about debugging R.
+There I met with Maëlle Salmon for the second time, after meeting her in the previous Spanish R conference, as she was helping in the workshop.&lt;/p&gt;
+&lt;p&gt;On the afternoon I went to Gabe Becker’s workshop about contributing to R, who I had meet at the R contributor working group a couple of years ago.
+After it, while I was talking with him I could greet Michael Lawrence which supervised my work on the &lt;a href=&#34;https://contributor.r-project.org/rdevguide/&#34;&gt;R dev guide&lt;/a&gt;.&lt;/p&gt;
+&lt;p&gt;On the evening, some of us went to have dinner at the center of the city, and we end up 5 at a beer garden.&lt;/p&gt;
+&lt;div class=&#34;float&#34;&gt;
+&lt;img src=&#34;images/Salzburg_09.jpeg&#34; alt=&#34;Roche explaining why they sponsor useR! conference&#34; /&gt;
+&lt;div class=&#34;figcaption&#34;&gt;Roche explaining why they sponsor useR! conference&lt;/div&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;div id=&#34;tuesday&#34; class=&#34;section level2&#34;&gt;
+&lt;h2&gt;Tuesday&lt;/h2&gt;
+&lt;p&gt;On Tuesday the keynotes and the conference itself started in full swig.
+We finally got our badges around our necks and prepared for the only keynote of a R core member.
+Before the proper keynote there was a brief summary of the major contributions of Friedch Leisch to R and the programming world.
+I knew his name was in the &lt;a href=&#34;https://www.r-project.org/contributors.html&#34;&gt;Contributors’ page&lt;/a&gt;, but didn’t know much about his contributions.&lt;/p&gt;
+&lt;p&gt;After his talk I could talk with Kurt about some ongoing collaboration we have and about the data presented.
+Similarly I also take the opportunity to talk with Uwe Liegges, another CRAN member, to talk about the submission process.
+It struck to me the admiration he spoke of Brian Ripley’s contributions to R and code in general&lt;a href=&#34;#fn3&#34; class=&#34;footnote-ref&#34; id=&#34;fnref3&#34;&gt;&lt;sup&gt;3&lt;/sup&gt;&lt;/a&gt;.&lt;/p&gt;
+&lt;p&gt;During the talks, I could meet Hugo Gruson, and ask him a couple of questions.
+I also could greet Martin Morgan, a former R core member and ex-leader of the &lt;a href=&#34;https://bioconductor.org&#34;&gt;Bioconductor project&lt;/a&gt; &lt;a href=&#34;#fn4&#34; class=&#34;footnote-ref&#34; id=&#34;fnref4&#34;&gt;&lt;sup&gt;4&lt;/sup&gt;&lt;/a&gt;.
+For those that don’t know Bioconductor is also an “official” R repository focused on biology related packages &lt;a href=&#34;#fn5&#34; class=&#34;footnote-ref&#34; id=&#34;fnref5&#34;&gt;&lt;sup&gt;5&lt;/sup&gt;&lt;/a&gt;.&lt;/p&gt;
+&lt;p&gt;During lunch with Heather Turner, which is behind the &lt;a href=&#34;https://contributor.r-project.org/&#34;&gt;R contributor working group&lt;/a&gt; and the R dev days (continue reading), we talked about the different background of useRs.&lt;/p&gt;
+&lt;p&gt;In one of the previous talks I could exchange some sticker with Kelly Bodwin the last keynote of the day.
+In her keynote Kelly explained how weird R is and how her parents, both computational scientists don’t like it.
+But beyond weird, R is funny and more than a programming language but about a community.&lt;/p&gt;
+&lt;p&gt;During the day I saw several R core members talking between them.
+From time to time I saw some senior attendees talking with them but rarely someone young.&lt;/p&gt;
+&lt;p&gt;That night I had dinner with other people from the conference, and I end up meeting Hilary Parker.&lt;/p&gt;
+&lt;div class=&#34;float&#34;&gt;
+&lt;img src=&#34;images/Salzburg_10.jpg&#34; alt=&#34;The gardens of Mirabell (where the guided tour started on Sunday)&#34; /&gt;
+&lt;div class=&#34;figcaption&#34;&gt;The gardens of Mirabell (where the guided tour started on Sunday)&lt;/div&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;div id=&#34;wednesday&#34; class=&#34;section level2&#34;&gt;
+&lt;h2&gt;Wednesday&lt;/h2&gt;
+&lt;p&gt;On Wednesday we started with Maëlle Salmon keynote, a great talk with many references about code maintenance.
+During the conference you could find her with reading a book; she reads a lot!&lt;/p&gt;
+&lt;p&gt;After the provocative talk titled “I’m only Giving This Talk Because I’m a Woman”, I had the opportunity to explain to another attendee how a Code of Conduct committee works &lt;a href=&#34;#fn6&#34; class=&#34;footnote-ref&#34; id=&#34;fnref6&#34;&gt;&lt;sup&gt;6&lt;/sup&gt;&lt;/a&gt;.&lt;/p&gt;
+&lt;p&gt;During dinner I was sitting with Henrik Bengtsson and Charlie Gao when Martin Mächler and Luke Tierney came to sit with us.
+I took the opportunity to ask how Luke ended up writing about the pipe operator, while his background and work is statistics, which lead to funny stories shared by Martin Mächler.&lt;/p&gt;
+&lt;p&gt;On the afternoon there was also the poster session.
+As I had a poster about &lt;a href=&#34;https://cranhaven.org&#34;&gt;CRANHaven&lt;/a&gt; I couldn’t go around much, but I got to talk to lots of people that came to learn what was this about (protecting users from installing packages that. Among them came Sebastian Meyer, who I was surprised to find out that he doesn’t have a permanent position as professor.&lt;/p&gt;
+&lt;p&gt;The afternoons keynote talk from Torsten Hothorn was also inspiring about a life of work related to his package mvtnorm and how it has shaped his work, friends, family.&lt;/p&gt;
+&lt;div class=&#34;float&#34;&gt;
+&lt;img src=&#34;images/Salzburg_11.jpg&#34; alt=&#34;Views from the hills of the Salzburg towards the center of the old city with the castle on the top of another hill&#34; /&gt;
+&lt;div class=&#34;figcaption&#34;&gt;Views from the hills of the Salzburg towards the center of the old city with the castle on the top of another hill&lt;/div&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;div id=&#34;thursday&#34; class=&#34;section level2&#34;&gt;
+&lt;h2&gt;Thursday&lt;/h2&gt;
+&lt;p&gt;We started with a refreshingly direct and honest talk from one of the sponsors Raiffesen, about why they support R.&lt;/p&gt;
+&lt;p&gt;Then we heard about the the effort to convert R journal articles to html webpages from Abhishek Ulayil who I had met earlier.
+His direct demo of how pdfs were converted back to dynamic html pages was funny and energizing.&lt;/p&gt;
+&lt;p&gt;This day there were many short talks and I couldn’t talk much with the presenters or many people as I was running from one site to another.&lt;/p&gt;
+&lt;p&gt;I think there were fewer R core members as many had to go back to their jobs and families.&lt;/p&gt;
+&lt;p&gt;The last keynote of the conference was a provocative talk about Large Language Models from Hilary Parker.&lt;/p&gt;
+&lt;p&gt;The conference ended requesting participation of users to organize the next in-person conference.&lt;/p&gt;
+&lt;div class=&#34;float&#34;&gt;
+&lt;img src=&#34;images/Salzburg_10c.jpg&#34; style=&#34;height:40.0%&#34; alt=&#34;Notes on the conference venue&#34; /&gt;
+&lt;div class=&#34;figcaption&#34;&gt;Notes on the conference venue&lt;/div&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;div id=&#34;friday&#34; class=&#34;section level2&#34;&gt;
+&lt;h2&gt;Friday&lt;/h2&gt;
+&lt;p&gt;This day was booked by the R-Dev event, this is an event where R core members hang out with interested people to fix some pending issues on R (not packages!).&lt;/p&gt;
+&lt;p&gt;It was great to see R core members sitting in the row behind me: Martin Mächler, Michael Lawrence, Tomas Kalibera, Paul Murrell, Peter Dalgaard, Luke Tierney, and Sebastian Meyer (apologies if I mix names I didn’t talk to all of them, and I don’t know their faces well).
+Together with a mix of R users and developers like Edzer Pebesma, Paola Corrales, Fonti Kar, Mitchell O’Hara-Wild or Audrey Yeo.&lt;/p&gt;
+&lt;p&gt;There were lots of young people in the R dev and new people contributing for the first time to R.
+Some of them were a bit intimidated by submitting patches and interacting with R core members.
+However, the event ended very successfully with many patches and improvements. At the end we&lt;/p&gt;
+&lt;div class=&#34;float&#34;&gt;
+&lt;img src=&#34;images/Salzburg_12.jpg&#34; alt=&#34;The R dev contributors after getting back to it after lunch&#34; /&gt;
+&lt;div class=&#34;figcaption&#34;&gt;The R dev contributors after getting back to it after lunch&lt;/div&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;div id=&#34;summary&#34; class=&#34;section level1&#34;&gt;
+&lt;h1&gt;Summary&lt;/h1&gt;
+&lt;p&gt;The conference environment was fantastic, and I had the chance to meet many people attending their first useR conference, like myself.
+There were also many seasoned useRs who had attended multiple conferences.
+I can’t speak to how they found this conference compared to previous ones, but for me, it was a valuable opportunity to connect with people I had previously only met online and to make new connections.&lt;/p&gt;
+&lt;p&gt;Although I didn’t take many photos with people, I noticed others taking photos with their groups, such as R Ladies, company teams, or selfies with fellow attendees and online friends (including Hadley Wickham).
+Interestingly, not many people approached the R core members, without whom this event wouldn’t be possible.
+I must admit, I wasn’t sure how to approach them myself.
+I see two possible approaches: either go up to them like a fan asking for a selfie or engage them with questions or requests about R.
+Neither extreme seemed ideal to me.
+Instead, there might be more value in understanding their perspectives on R and finding ways to collaborate with them.&lt;/p&gt;
+&lt;p&gt;One useR mentioned to me that the R core can’t continue operating as it has, especially now that companies are investing money and relying on it.
+While this poses challenges for businesses, I also see it as an opportunity for positive changes within the R core.
+I believe that through increased collaboration, we can overcome upcoming challenges.
+I hope that experienced R developers who already have a rapport with the R core will take the lead.&lt;/p&gt;
+&lt;p&gt;What was your experience at useR!2024? Do you agree on supporting and collaborating more the R core? We can continue the conversation at &lt;a href=&#34;https://fosstodon.org/@Lluis_Revilla&#34;&gt;&lt;span class=&#34;citation&#34;&gt;@Lluis_Revilla&lt;/span&gt;&lt;span class=&#34;citation&#34;&gt;@fosstodon.org&lt;/span&gt;&lt;/a&gt;&lt;/p&gt;
+&lt;/div&gt;
+&lt;div class=&#34;footnotes footnotes-end-of-document&#34;&gt;
+&lt;hr /&gt;
+&lt;ol&gt;
+&lt;li id=&#34;fn1&#34;&gt;&lt;p&gt;He is the president of the Spanish association of R.&lt;a href=&#34;#fnref1&#34; class=&#34;footnote-back&#34;&gt;↩︎&lt;/a&gt;&lt;/p&gt;&lt;/li&gt;
+&lt;li id=&#34;fn2&#34;&gt;&lt;p&gt;I posted it on Fosstodon: &lt;a href=&#34;https://fosstodon.org/search&#34;&gt;search&lt;/a&gt; for &lt;code&gt;from:@Lluis_Revilla@fosstodon.org #useR2024&lt;/code&gt;.&lt;a href=&#34;#fnref2&#34; class=&#34;footnote-back&#34;&gt;↩︎&lt;/a&gt;&lt;/p&gt;&lt;/li&gt;
+&lt;li id=&#34;fn3&#34;&gt;&lt;p&gt;But at the same time making it clear that his decisions are only his.&lt;a href=&#34;#fnref3&#34; class=&#34;footnote-back&#34;&gt;↩︎&lt;/a&gt;&lt;/p&gt;&lt;/li&gt;
+&lt;li id=&#34;fn4&#34;&gt;&lt;p&gt;I was surprised he was the only Bioconductor member I found at the conference.
+I expected that more people of the Bioconductor project would come here, and I saw some posters using packages shared there but no mention to the project in any talk I went.&lt;a href=&#34;#fnref4&#34; class=&#34;footnote-back&#34;&gt;↩︎&lt;/a&gt;&lt;/p&gt;&lt;/li&gt;
+&lt;li id=&#34;fn5&#34;&gt;&lt;p&gt;Official in the sense that packages in CRAN cannot have the same name as in packages in Bioconductor and &lt;em&gt;vice-versa&lt;/em&gt;, and its repository can be set from R via &lt;code&gt;setRepositories()&lt;/code&gt; and with environmental variable &lt;code&gt;R_BIOC_VERSION&lt;/code&gt;.&lt;a href=&#34;#fnref5&#34; class=&#34;footnote-back&#34;&gt;↩︎&lt;/a&gt;&lt;/p&gt;&lt;/li&gt;
+&lt;li id=&#34;fn6&#34;&gt;&lt;p&gt;My term at &lt;a href=&#34;https://bioconductor.github.io/bioc_coc_multilingual/&#34;&gt;Bioconductor’s code of conduct committee&lt;/a&gt; is about to finish, but I served for close to 2 years.&lt;a href=&#34;#fnref6&#34; class=&#34;footnote-back&#34;&gt;↩︎&lt;/a&gt;&lt;/p&gt;&lt;/li&gt;
+&lt;/ol&gt;
+&lt;/div&gt;
+</description>
+    </item>
+    
+    <item>
+      <title>Packaging R: getting in repositories</title>
+      <link>https://llrs.dev/post/2024/05/05/packaging-r-getting-in/</link>
+      <pubDate>Sun, 05 May 2024 00:00:00 +0000</pubDate>
+      <guid>https://llrs.dev/post/2024/05/05/packaging-r-getting-in/</guid>
+      <description>
+
+
+&lt;p&gt;After the previous post collecting information about repositories I want to collect here my thoughts on adding a package in a repository and how repositories are recognized.
+As in the previous post this is built on the assumption that one already has a package or more and wants to distribute it.&lt;/p&gt;
+&lt;p&gt;This is meant as a reflection of what is an R repository and not intended for R package developers.
+However, their feedback is appreciated to consider how an ideal repository would be.&lt;/p&gt;
+&lt;div id=&#34;package-submission&#34; class=&#34;section level2&#34;&gt;
+&lt;h2&gt;Package submission&lt;/h2&gt;
+&lt;p&gt;An R repository will have a way to incorporate a package.
+CRAN submission process starts with &lt;a href=&#34;https://cran.r-project.org/submit.html&#34;&gt;a form&lt;/a&gt;, while Bioconductor is done through a &lt;a href=&#34;https://github.com/Bioconductor/Contributions/issues/new&#34;&gt;Github issue&lt;/a&gt;.&lt;/p&gt;
+&lt;p&gt;The process will usually then start with an automated process.
+Until the automated process check hasn’t passed probably no one will look into the package submission.
+This reduce the hours a human must dedicate to manage submissions.
+If a man is kept in the loop one could appeal the automatic process contacting them, or if it is a random failing re-submitting the package again.&lt;/p&gt;
+&lt;div class=&#34;float&#34;&gt;
+&lt;img src=&#34;images/submissions.png&#34; alt=&#34;Package submission checks: first a check of the package, if it is not new a dependency check from the repository if all checks pass the package is added to the repository.&#34; /&gt;
+&lt;div class=&#34;figcaption&#34;&gt;&lt;strong&gt;Package submission checks&lt;/strong&gt;: first a check of the package, if it is not new a dependency check from the repository if all checks pass the package is added to the repository.&lt;/div&gt;
+&lt;/div&gt;
+&lt;p&gt;Generally a package must first pass a package quality check before it is considered for further integration test.
+This integration test is usually checking the new version of a package with packages that depend on it, also known as reverse dependencies.&lt;/p&gt;
+&lt;/div&gt;
+&lt;div id=&#34;package-maintenance&#34; class=&#34;section level2&#34;&gt;
+&lt;h2&gt;Package maintenance&lt;/h2&gt;
+&lt;p&gt;Once a package is included in a repository it usually needs to be maintained.&lt;/p&gt;
+&lt;p&gt;There are many moving pieces, chips architecture, OS, R, other packages.
+This all lead that authors need to maintain the packages in good shape if they want it to remain useful to users.
+Of course, if one doesn’t want to do that they do not need to create a repository to share their package.&lt;/p&gt;
+&lt;div class=&#34;float&#34;&gt;
+&lt;img src=&#34;images/checks.png&#34; alt=&#34;Graphic showing time and different R versions and checks. Repositories check the packages on them on multiple levels.&#34; /&gt;
+&lt;div class=&#34;figcaption&#34;&gt;&lt;strong&gt;Graphic showing time and different R versions and checks.&lt;/strong&gt; Repositories check the packages on them on multiple levels.&lt;/div&gt;
+&lt;/div&gt;
+&lt;p&gt;This leads that at any given time point there must be some tests for any given package under different conditions as shown in image 2.
+This leads to the possibility of having a package archived from the repository for failing the checks in place.&lt;/p&gt;
+&lt;p&gt;Repositories provide these checks as a service to the users.
+They guarantee that R packages in the repository work well together and pass the same set of packages (mostly).
+This is what leads to their reputation and usage among users (this is true beyond R, DEBIAN, Ubuntu, …).&lt;/p&gt;
+&lt;/div&gt;
+&lt;div id=&#34;closing-remarks&#34; class=&#34;section level2&#34;&gt;
+&lt;h2&gt;Closing remarks&lt;/h2&gt;
+&lt;p&gt;There are several official repositories how the package submission works when a package is submitted to one but it is related, via dependencies to other repositories is a matter of another post.&lt;/p&gt;
+&lt;p&gt;There are some discussion on what is an R repository.
+The importance of CRAN and Bioconductor has lead to some confusion.
+There are generally two meanings of what a cran-like repository is:&lt;/p&gt;
+&lt;ol style=&#34;list-style-type: decimal&#34;&gt;
+&lt;li&gt;&lt;p&gt;One where &lt;code&gt;install.packages()&lt;/code&gt; works (This is defined by how the files and binaries are organized and will be a theme for another time).&lt;/p&gt;&lt;/li&gt;
+&lt;li&gt;&lt;p&gt;One were all the checks described here are in place and &lt;code&gt;install.packages()&lt;/code&gt; works too.&lt;/p&gt;&lt;/li&gt;
+&lt;/ol&gt;
+&lt;p&gt;r-universe is using the first definition but could be used to generate repositories with checks that comply with the second definition.
+Other repositories that use that are the &lt;a href=&#34;https://packagemanager.posit.co/client/#/&#34;&gt;&lt;em&gt;Posit&lt;/em&gt; Public &lt;em&gt;Package Manager&lt;/em&gt;&lt;/a&gt;, or the &lt;a href=&#34;https://r4pi.org/&#34;&gt;R4Pi repository&lt;/a&gt; (which provides binaries for Raspberry Pi OS).&lt;/p&gt;
+&lt;p&gt;As the second definition is more strict I’ll focus on it as this post has explained.&lt;/p&gt;
+&lt;p&gt;PS: This post might be edited as it has been siting in my computer for several months.
+I prefer to post it and be improved with feedback, so let me know if you have any addition.&lt;/p&gt;
+&lt;/div&gt;
+</description>
+    </item>
+    
+    <item>
+      <title>Future FOSS contributions</title>
+      <link>https://llrs.dev/post/2024/04/02/foss-contributions/</link>
+      <pubDate>Tue, 02 Apr 2024 00:00:00 +0000</pubDate>
+      <guid>https://llrs.dev/post/2024/04/02/foss-contributions/</guid>
+      <description>
+
+
+&lt;p&gt;I write this post after several weeks/months of consideration of why I am feeling a burden when I contribute to the FOSS community, mostly the R community.
+I want to make public some rules I set for myself for future references and in case it helps others.&lt;/p&gt;
+&lt;div id=&#34;how-i-end-up-here&#34; class=&#34;section level1&#34;&gt;
+&lt;h1&gt;How I end up here&lt;/h1&gt;
+&lt;p&gt;I use R for my work and I realized I could use it for my interests.
+With the creativity of a computer language that I know well, I could answer question I had and help others in the process.&lt;/p&gt;
+&lt;p&gt;As the questions I answered were more general or more community centered I got involved in more meetings and working groups.
+Some decisions/commitments were carefully considered, and known to be temporal, others were/are more open ended with an unclear end.&lt;/p&gt;
+&lt;div class=&#34;float&#34;&gt;
+&lt;img src=&#34;images/rataplan.JPG&#34; style=&#34;width:30.0%;height:30.0%&#34; alt=&#34;An image of Rataplan the dog of Lucky Luck.&#34; /&gt;
+&lt;div class=&#34;figcaption&#34;&gt;An image of Rataplan the dog of Lucky Luck.&lt;/div&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;div id=&#34;current-situation&#34; class=&#34;section level1&#34;&gt;
+&lt;h1&gt;Current situation&lt;/h1&gt;
+&lt;ol style=&#34;list-style-type: decimal&#34;&gt;
+&lt;li&gt;I often participate to the &lt;a href=&#34;https://contributor.r-project.org/working-group&#34; title=&#34;RCWG webpage&#34;&gt;R Contributors working group (RCWG)&lt;/a&gt;, not only meetings but other activities and task.&lt;/li&gt;
+&lt;li&gt;I am member of the &lt;a href=&#34;https://bioconductor.org&#34;&gt;Bioconductor&lt;/a&gt;, helping in the forum from time to time&lt;a href=&#34;#fn1&#34; class=&#34;footnote-ref&#34; id=&#34;fnref1&#34;&gt;&lt;sup&gt;1&lt;/sup&gt;&lt;/a&gt;.&lt;/li&gt;
+&lt;li&gt;I am member of the Bioconductor code of conduct committee.&lt;/li&gt;
+&lt;li&gt;I am member of the &lt;a href=&#34;https://ropensci.org&#34;&gt;rOpenSci community&lt;/a&gt;, helping in the slack and in the forum if the questions are related to the packages I have in their organization.&lt;/li&gt;
+&lt;li&gt;I am member of the &lt;a href=&#34;https://github.com/RConsortium/r-repositories-wg&#34; title=&#34;RRepoWG github repository&#34;&gt;R repository working group (RRepoWG) from the R Foundation&lt;/a&gt;.&lt;/li&gt;
+&lt;li&gt;I impulsed the Bioconductor Classes and Methods Working Group (although there isn’t much activity for the last year and a half).&lt;/li&gt;
+&lt;li&gt;I co-organized the local R conference of my country for 2023.&lt;/li&gt;
+&lt;li&gt;I co-organized the local R user group of my city last year (2-3 events) and I’ve been trying to restart it this year 2024 and contributed to others RUGs.&lt;/li&gt;
+&lt;li&gt;I maintain 3-4 packages on CRAN and Bioconductor&lt;a href=&#34;#fn2&#34; class=&#34;footnote-ref&#34; id=&#34;fnref2&#34;&gt;&lt;sup&gt;2&lt;/sup&gt;&lt;/a&gt;.&lt;/li&gt;
+&lt;/ol&gt;
+&lt;p&gt;I am sure there are several people doing more but after reflection I came to the conclusion that this is not sustainable/worth it for me.&lt;/p&gt;
+&lt;/div&gt;
+&lt;div id=&#34;reasons-to-keep-giving&#34; class=&#34;section level1&#34;&gt;
+&lt;h1&gt;Reasons to keep giving&lt;/h1&gt;
+&lt;p&gt;From now on when I contribute something there are 3 reasons I will keep in mind:&lt;/p&gt;
+&lt;ol style=&#34;list-style-type: decimal&#34;&gt;
+&lt;li&gt;&lt;p&gt;It is part of my &lt;strong&gt;work&lt;/strong&gt; or related to it.&lt;/p&gt;
+&lt;p&gt;When I go to these working groups I do not represent my employer or any comunity.
+I am not paid for anything of the previous list and I need to recover the hours when I have meetings during working hours.&lt;/p&gt;
+&lt;p&gt;Here I also include contributions to something that might make help my career.
+This includes gig jobs or consulting that I am open to do.&lt;/p&gt;&lt;/li&gt;
+&lt;li&gt;&lt;p&gt;It is &lt;strong&gt;fun&lt;/strong&gt;ny/rewarding.&lt;/p&gt;
+&lt;p&gt;These contributions might interest me because I find funny, for example plotting a simple tree with ggplot2.&lt;/p&gt;
+&lt;p&gt;Or because it is rewarding helping someone to solve their problems, such as helping a family member to claim her wage for their overtime.&lt;/p&gt;&lt;/li&gt;
+&lt;li&gt;&lt;p&gt;I &lt;strong&gt;learn&lt;/strong&gt; something.&lt;/p&gt;
+&lt;p&gt;I don’t like to learn new things for the sake of learning.
+But I enjoy learning something that could be useful: a technology, a solution, a community or new data I never analyzed.
+This might be for my personal interest or work related: recently having learn how to parse html/xml helped me at work doing a task in 5 minutes a simple task my boss would have need half an hour or more but I learned it for a hobby project.&lt;/p&gt;&lt;/li&gt;
+&lt;/ol&gt;
+&lt;p&gt;If I see a project/proposal doesn’t fit any of these three I will stop contributing/maintaining.
+I’ll try to avoid commitments that I think that should be done that I could step up or do it but do not fit in these three rules.
+This includes contributing to books, mentoring, being the glue between different communities or simply sending a PR.&lt;/p&gt;
+&lt;p&gt;As my time is more stretched with commitments away from the keyword.
+I feel torn apart between contributing more effectively or stopping.
+Each hour I spend in a meeting that could/was an email is 2 hours or more that I lose, not only the opportunity cost but also the motivation&lt;a href=&#34;#fn3&#34; class=&#34;footnote-ref&#34; id=&#34;fnref3&#34;&gt;&lt;sup&gt;3&lt;/sup&gt;&lt;/a&gt; and the time I spent preparing the meeting.&lt;/p&gt;
+&lt;/div&gt;
+&lt;div id=&#34;future-contributions&#34; class=&#34;section level1&#34;&gt;
+&lt;h1&gt;Future contributions&lt;/h1&gt;
+&lt;p&gt;Aside from that and some previous commitments I will finish serving the community.
+I will no longer prioritize what is good for the community over what is good for me.
+If they overlap it will be great if it doesn’t, I’m sorry.&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;images/ikigai.png&#34; style=&#34;width:30.0%;height:30.0%&#34; alt=&#34;ikigai scheme from Wikipedia&#34; /&gt;.&lt;/p&gt;
+&lt;p&gt;As you now know you can appeal to either of the three motivations now: Ask me something I might find funny/rewarding, ask me to learn something I could use or simply provide a payment or a way forward for my career.&lt;/p&gt;
+&lt;p&gt;I am open to consulting or developing something, you can contact me useing the &lt;a href=&#34;lluis.revilla@gmail.com&#34; class=&#34;mailito&#34;&gt;email on the blog&lt;/a&gt;.&lt;/p&gt;
+&lt;/div&gt;
+&lt;div class=&#34;footnotes footnotes-end-of-document&#34;&gt;
+&lt;hr /&gt;
+&lt;ol&gt;
+&lt;li id=&#34;fn1&#34;&gt;&lt;p&gt;I also receive answers and help too when I occasionally ask too.
+I also benefit of many questions from online forums (although now it is rare those I search are about R).&lt;a href=&#34;#fnref1&#34; class=&#34;footnote-back&#34;&gt;↩︎&lt;/a&gt;&lt;/p&gt;&lt;/li&gt;
+&lt;li id=&#34;fn2&#34;&gt;&lt;p&gt;There are many more only in github or some other communities.&lt;a href=&#34;#fnref2&#34; class=&#34;footnote-back&#34;&gt;↩︎&lt;/a&gt;&lt;/p&gt;&lt;/li&gt;
+&lt;li id=&#34;fn3&#34;&gt;&lt;p&gt;Which frankly lately is very low.
+I won’t get into details.&lt;a href=&#34;#fnref3&#34; class=&#34;footnote-back&#34;&gt;↩︎&lt;/a&gt;&lt;/p&gt;&lt;/li&gt;
+&lt;/ol&gt;
+&lt;/div&gt;
+</description>
+    </item>
+    
+    <item>
+      <title>useR madrid: rtweet</title>
+      <link>https://llrs.dev/talk/user-madrid-rtweet/</link>
+      <pubDate>Thu, 29 Feb 2024 19:00:00 +0200</pubDate>
+      <guid>https://llrs.dev/talk/user-madrid-rtweet/</guid>
+      <description>
+
+
+&lt;p&gt;This presentation was in Spanish. I shared the history of my involvement with rtweet and what is happening with the package and Twitter API.&lt;/p&gt;
+</description>
+    </item>
+    
+    <item>
+      <title>New rtweet release: 2.0.0</title>
+      <link>https://llrs.dev/post/2024/02/16/new-rtweet-release-2-0-0/</link>
+      <pubDate>Fri, 16 Feb 2024 00:00:00 +0000</pubDate>
+      <guid>https://llrs.dev/post/2024/02/16/new-rtweet-release-2-0-0/</guid>
+      <description>
+
+
+&lt;p&gt;This is a brief announcement of rtweet version 2.0.0.
+This major version changes signals the move from the API v1.1 to the API v2.&lt;/p&gt;
+&lt;p&gt;There haven’t been many changes since 1.2.1 but this is to signal that the API v1.1 is deprecated.&lt;/p&gt;
+&lt;p&gt;The previous release was a bit of a rush to meet with the requirements of CRAN maintainers to fix an error and it wasn’t polished.
+Some users complained that it was difficult to find what worked.
+In this release I focused mostly to make life easier for users:&lt;/p&gt;
+&lt;p&gt;Now there is a document the deprecated functions from API v1.1 to API v2: see &lt;code&gt;help(&#34;rtweet-deprecated&#34;, &#34;rtweet&#34;)&lt;/code&gt;.
+I also made it easier for the rtweet to work with API v2: the release of httr2 1.0.0 version helped to avoid some workarounds with the authentication process.&lt;/p&gt;
+&lt;p&gt;I also focused on updating the vignettes to the most up to date recommendations.
+I am not sure the streaming vignettes is up to date (but keep reading why I left it as is).&lt;/p&gt;
+&lt;p&gt;Last, following CRAN policy: if users create rtweet data they can now delete it with &lt;code&gt;client_clean()&lt;/code&gt; and &lt;code&gt;auth_clean()&lt;/code&gt;.&lt;/p&gt;
+&lt;div id=&#34;future-releases&#34; class=&#34;section level1&#34;&gt;
+&lt;h1&gt;Future releases&lt;/h1&gt;
+&lt;p&gt;For the last year I &lt;a href=&#34;https://github.com/ropensci/rtweet/issues/763&#34;&gt;asked the community&lt;/a&gt; for a co-maintainer with interest in the package.
+Unfortunately, people that showed some interest at the end didn’t commit to it.&lt;/p&gt;
+&lt;p&gt;At the same time I &lt;a href=&#34;https://llrs.dev/post/2023/02/16/rtweet-future/&#34;&gt;also asked&lt;/a&gt; for &lt;a href=&#34;https://www.buymeacoffee.com/llrs&#34;&gt;donations&lt;/a&gt; to support an API access.
+It currently costs 100€ to access most endpoints which is needed to test and develop the package.
+However, this is more than half of what I spend in groceries last month.&lt;br /&gt;
+Other packages like &lt;a href=&#34;https://cran.r-project.org/package=academictwitteR&#34;&gt;academictwitteR&lt;/a&gt; are also stopping development/support.
+Although not archived from CRAN, it has a note in the README:&lt;/p&gt;
+&lt;blockquote&gt;
+&lt;p&gt;Note this repo is now ARCHVIED due to changes to the Twitter API. The paid API means open-source development of this package is no longer feasible.&lt;/p&gt;
+&lt;/blockquote&gt;
+&lt;p&gt;Similarly without financial help and community interest I won’t invest more time on it.&lt;br /&gt;
+This is the last version that I release.
+I have other interests and I would like to focus on other projects.
+My focus will be on updating and releasing some packages I have.
+I also want to focus more on my own company to help the R community (and beyond).
+I will write about the company shortly.&lt;/p&gt;
+&lt;p&gt;There have been some discussions on social media how to signal deprecation of packages.
+The only method available on CRAN that I know is to declare a package ORPHANATED.
+I have requested to CRAN to declared the package ORPHANATED.&lt;/p&gt;
+&lt;div id=&#34;reproducibility&#34; class=&#34;section level3&#34;&gt;
+&lt;h3&gt;Reproducibility&lt;/h3&gt;
+&lt;details&gt;
+&lt;pre&gt;&lt;code&gt;## ─ Session info ───────────────────────────────────────────────────────────────────────────────────────────────────────
+##  setting  value
+##  version  R version 4.3.1 (2023-06-16)
+##  os       Ubuntu 22.04.4 LTS
+##  system   x86_64, linux-gnu
+##  ui       X11
+##  language en
+##  collate  en_US.UTF-8
+##  ctype    en_US.UTF-8
+##  tz       Europe/Madrid
+##  date     2024-02-24
+##  pandoc   3.1.1 @ /usr/lib/rstudio/resources/app/bin/quarto/bin/tools/ (via rmarkdown)
+## 
+## ─ Packages ───────────────────────────────────────────────────────────────────────────────────────────────────────────
+##  package     * version date (UTC) lib source
+##  blogdown      1.18    2023-06-19 [1] CRAN (R 4.3.1)
+##  bookdown      0.37    2023-12-01 [1] CRAN (R 4.3.1)
+##  bslib         0.6.1   2023-11-28 [1] CRAN (R 4.3.1)
+##  cachem        1.0.8   2023-05-01 [1] CRAN (R 4.3.1)
+##  cli           3.6.2   2023-12-11 [1] CRAN (R 4.3.1)
+##  digest        0.6.34  2024-01-11 [1] CRAN (R 4.3.1)
+##  evaluate      0.23    2023-11-01 [1] CRAN (R 4.3.2)
+##  fastmap       1.1.1   2023-02-24 [1] CRAN (R 4.3.1)
+##  htmltools     0.5.7   2023-11-03 [1] CRAN (R 4.3.2)
+##  jquerylib     0.1.4   2021-04-26 [1] CRAN (R 4.3.1)
+##  jsonlite      1.8.8   2023-12-04 [1] CRAN (R 4.3.1)
+##  knitr         1.45    2023-10-30 [1] CRAN (R 4.3.2)
+##  lifecycle     1.0.4   2023-11-07 [1] CRAN (R 4.3.2)
+##  R6            2.5.1   2021-08-19 [1] CRAN (R 4.3.1)
+##  rlang         1.1.3   2024-01-10 [1] CRAN (R 4.3.1)
+##  rmarkdown     2.25    2023-09-18 [1] CRAN (R 4.3.1)
+##  rstudioapi    0.15.0  2023-07-07 [1] CRAN (R 4.3.1)
+##  sass          0.4.8   2023-12-06 [1] CRAN (R 4.3.1)
+##  sessioninfo   1.2.2   2021-12-06 [1] CRAN (R 4.3.1)
+##  xfun          0.42    2024-02-08 [1] CRAN (R 4.3.1)
+##  yaml          2.3.8   2023-12-11 [1] CRAN (R 4.3.1)
+## 
+##  [1] /home/lluis/bin/R/4.3.1
+##  [2] /opt/R/4.3.1/lib/R/library
+## 
+## ──────────────────────────────────────────────────────────────────────────────────────────────────────────────────────&lt;/code&gt;&lt;/pre&gt;
+&lt;/details&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+</description>
+    </item>
+    
+  </channel>
+</rss>

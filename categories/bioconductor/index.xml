@@ -1,0 +1,1216 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes" ?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>Bioconductor | B101nfo</title>
+    <link>https://llrs.dev/categories/bioconductor/</link>
+      <atom:link href="https://llrs.dev/categories/bioconductor/index.xml" rel="self" type="application/rss+xml" />
+    <description>Bioconductor</description>
+    <generator>Source Themes Academic (https://sourcethemes.com/academic/)</generator><language>en-us</language><copyright>If it is code you can copy and reuse (MIT) if it is text, please cite and reuse CC-BY 2026.</copyright><lastBuildDate>Mon, 10 Feb 2025 00:00:00 +0000</lastBuildDate>
+    <image>
+      <url>img/map[gravatar:%!s(bool=false) shape:circle]</url>
+      <title>Bioconductor</title>
+      <link>https://llrs.dev/categories/bioconductor/</link>
+    </image>
+    
+    <item>
+      <title>A Code of Conduct committee</title>
+      <link>https://llrs.dev/post/2025/02/10/a-code-of-conduct-committee/</link>
+      <pubDate>Mon, 10 Feb 2025 00:00:00 +0000</pubDate>
+      <guid>https://llrs.dev/post/2025/02/10/a-code-of-conduct-committee/</guid>
+      <description>
+
+
+&lt;p&gt;For the last 2 years I served as part of the Code of Conduct (CoC) committee of Bioconductor.
+I partially served to learn how these committees worked, as it was unclear from outside what they did.
+The following is a blog post with my observations and opinions on the Code of Conduct committee (CoCC) I saw.
+This content has been reviewed by the current serving committee.&lt;/p&gt;
+&lt;div id=&#34;volunteering&#34; class=&#34;section level2&#34;&gt;
+&lt;h2&gt;Volunteering&lt;/h2&gt;
+&lt;p&gt;I volunteered after a direct message through Bioconductor slack from the then president of the committee.
+She asked me to serve it as she noted I could be a good candidate.
+I think what moved her was my activity on Bioconductor’s slack.
+The inclusion process is simple, when there are some spots open they open a form to get candidates.
+As a candidate I filled it and waited to see if I was selected.&lt;/p&gt;
+&lt;p&gt;The form has some basic introduction questions, name, origin, … whether one had read the CoC and a couple of questions related to the CoC: not wrong or right questions but one’s opinion and merits.
+I was unsure what to write on those questions. I
+wrote around one short paragraph on those questions.&lt;/p&gt;
+&lt;/div&gt;
+&lt;div id=&#34;onboarding&#34; class=&#34;section level2&#34;&gt;
+&lt;h2&gt;Onboarding&lt;/h2&gt;
+&lt;p&gt;Needless to say I got accepted.
+A couple of weeks after finishing the selection process, we had a video call with a couple of people on the CoCC.
+We got a brief introduction on how it works and some internal documentation and files.&lt;/p&gt;
+&lt;p&gt;In this onboarding meeting it was highlighted the confidentiality of the work we would take on and which measures we took to reduce the possibility of leaking information.
+It was stressed that we were not the police, we were not supposed to be actively patrolling.
+We should wait and expect the members of the community to come to us.
+However, if we saw something we should raise the issue but our duties didn’t mean looking for incidents actively.&lt;/p&gt;
+&lt;/div&gt;
+&lt;div id=&#34;quarterly-duties&#34; class=&#34;section level2&#34;&gt;
+&lt;h2&gt;Quarterly duties&lt;/h2&gt;
+&lt;p&gt;From then on we meet once a quarter.
+If there were any reports we might replace a scheduled meeting by one about the reported incident.
+Other than that, we would rarely communicate via the private slack channel we had.&lt;/p&gt;
+&lt;p&gt;The meetings were usually about discussing other cases, or related news or improving the wording of the CoC.
+Some of these meetings were also about the people stepping down and the new elections.
+The serving period is 2 years. People might step off earlier or be candidates for re-election.
+We would also meet around those dates but we kept many interactions asynchronous.&lt;/p&gt;
+&lt;/div&gt;
+&lt;div id=&#34;on-demand-duties&#34; class=&#34;section level2&#34;&gt;
+&lt;h2&gt;On demand duties&lt;/h2&gt;
+&lt;p&gt;During my servicing period we received several communications we had to consider how to resolve.
+Some of them were incidents that people in the community wanted to check in with the CoC to see if a specific person’s behavior was within the expected behavior.
+Other were about receiving the CoCC opinion on some matters.&lt;/p&gt;
+&lt;/div&gt;
+&lt;div id=&#34;out-boarding&#34; class=&#34;section level2&#34;&gt;
+&lt;h2&gt;Out boarding&lt;/h2&gt;
+&lt;p&gt;Two years after my election, once a new election selected the new members I resigned.
+I had the opportunity to be at the introduction meeting of the new members.
+I waited a bit after my period ended but I left without much ceremony or specific recommendations.&lt;/p&gt;
+&lt;/div&gt;
+&lt;div id=&#34;other-considerations&#34; class=&#34;section level2&#34;&gt;
+&lt;h2&gt;Other considerations&lt;/h2&gt;
+&lt;p&gt;During the elections of new members, I saw some signs that we looked up for similar traits to those on the committee.
+I think this is especially important when selecting new members that will participate in future decisions.
+But at the same time just because someone came from a different background or with different experience doesn’t make that person better suited for such a committee.&lt;/p&gt;
+&lt;p&gt;In addition, during the discussions for incidents or cases there were always a few people that voiced their opinions.
+I hardly ever heard of some of them and/or some attended few meetings.
+I think that the CoCC should hear from each one of the members at least if they agree or disagree with a particular position.
+I think that silence in such a committee might not always mean they agree.
+Even if they agree with a given decision they might have a different way to see it that could improve (the wording of) the resolution.&lt;/p&gt;
+&lt;p&gt;Last and not least, as in any system where there are different independent bodies/boards, the power of the CoCC is enforced by someone else.
+I’m worried because at least once, the CoCC’s decisions were not fully implemented.
+Likely due to overlapping or unclear communication or roles.&lt;/p&gt;
+&lt;p&gt;I hope the Code of Conduct committee continues to help Bioconductor users and beyond.&lt;/p&gt;
+&lt;/div&gt;
+</description>
+    </item>
+    
+    <item>
+      <title>Packaging R: getting in repositories</title>
+      <link>https://llrs.dev/post/2024/05/05/packaging-r-getting-in/</link>
+      <pubDate>Sun, 05 May 2024 00:00:00 +0000</pubDate>
+      <guid>https://llrs.dev/post/2024/05/05/packaging-r-getting-in/</guid>
+      <description>
+
+
+&lt;p&gt;After the previous post collecting information about repositories I want to collect here my thoughts on adding a package in a repository and how repositories are recognized.
+As in the previous post this is built on the assumption that one already has a package or more and wants to distribute it.&lt;/p&gt;
+&lt;p&gt;This is meant as a reflection of what is an R repository and not intended for R package developers.
+However, their feedback is appreciated to consider how an ideal repository would be.&lt;/p&gt;
+&lt;div id=&#34;package-submission&#34; class=&#34;section level2&#34;&gt;
+&lt;h2&gt;Package submission&lt;/h2&gt;
+&lt;p&gt;An R repository will have a way to incorporate a package.
+CRAN submission process starts with &lt;a href=&#34;https://cran.r-project.org/submit.html&#34;&gt;a form&lt;/a&gt;, while Bioconductor is done through a &lt;a href=&#34;https://github.com/Bioconductor/Contributions/issues/new&#34;&gt;Github issue&lt;/a&gt;.&lt;/p&gt;
+&lt;p&gt;The process will usually then start with an automated process.
+Until the automated process check hasn’t passed probably no one will look into the package submission.
+This reduce the hours a human must dedicate to manage submissions.
+If a man is kept in the loop one could appeal the automatic process contacting them, or if it is a random failing re-submitting the package again.&lt;/p&gt;
+&lt;div class=&#34;float&#34;&gt;
+&lt;img src=&#34;images/submissions.png&#34; alt=&#34;Package submission checks: first a check of the package, if it is not new a dependency check from the repository if all checks pass the package is added to the repository.&#34; /&gt;
+&lt;div class=&#34;figcaption&#34;&gt;&lt;strong&gt;Package submission checks&lt;/strong&gt;: first a check of the package, if it is not new a dependency check from the repository if all checks pass the package is added to the repository.&lt;/div&gt;
+&lt;/div&gt;
+&lt;p&gt;Generally a package must first pass a package quality check before it is considered for further integration test.
+This integration test is usually checking the new version of a package with packages that depend on it, also known as reverse dependencies.&lt;/p&gt;
+&lt;/div&gt;
+&lt;div id=&#34;package-maintenance&#34; class=&#34;section level2&#34;&gt;
+&lt;h2&gt;Package maintenance&lt;/h2&gt;
+&lt;p&gt;Once a package is included in a repository it usually needs to be maintained.&lt;/p&gt;
+&lt;p&gt;There are many moving pieces, chips architecture, OS, R, other packages.
+This all lead that authors need to maintain the packages in good shape if they want it to remain useful to users.
+Of course, if one doesn’t want to do that they do not need to create a repository to share their package.&lt;/p&gt;
+&lt;div class=&#34;float&#34;&gt;
+&lt;img src=&#34;images/checks.png&#34; alt=&#34;Graphic showing time and different R versions and checks. Repositories check the packages on them on multiple levels.&#34; /&gt;
+&lt;div class=&#34;figcaption&#34;&gt;&lt;strong&gt;Graphic showing time and different R versions and checks.&lt;/strong&gt; Repositories check the packages on them on multiple levels.&lt;/div&gt;
+&lt;/div&gt;
+&lt;p&gt;This leads that at any given time point there must be some tests for any given package under different conditions as shown in image 2.
+This leads to the possibility of having a package archived from the repository for failing the checks in place.&lt;/p&gt;
+&lt;p&gt;Repositories provide these checks as a service to the users.
+They guarantee that R packages in the repository work well together and pass the same set of packages (mostly).
+This is what leads to their reputation and usage among users (this is true beyond R, DEBIAN, Ubuntu, …).&lt;/p&gt;
+&lt;/div&gt;
+&lt;div id=&#34;closing-remarks&#34; class=&#34;section level2&#34;&gt;
+&lt;h2&gt;Closing remarks&lt;/h2&gt;
+&lt;p&gt;There are several official repositories how the package submission works when a package is submitted to one but it is related, via dependencies to other repositories is a matter of another post.&lt;/p&gt;
+&lt;p&gt;There are some discussion on what is an R repository.
+The importance of CRAN and Bioconductor has lead to some confusion.
+There are generally two meanings of what a cran-like repository is:&lt;/p&gt;
+&lt;ol style=&#34;list-style-type: decimal&#34;&gt;
+&lt;li&gt;&lt;p&gt;One where &lt;code&gt;install.packages()&lt;/code&gt; works (This is defined by how the files and binaries are organized and will be a theme for another time).&lt;/p&gt;&lt;/li&gt;
+&lt;li&gt;&lt;p&gt;One were all the checks described here are in place and &lt;code&gt;install.packages()&lt;/code&gt; works too.&lt;/p&gt;&lt;/li&gt;
+&lt;/ol&gt;
+&lt;p&gt;r-universe is using the first definition but could be used to generate repositories with checks that comply with the second definition.
+Other repositories that use that are the &lt;a href=&#34;https://packagemanager.posit.co/client/#/&#34;&gt;&lt;em&gt;Posit&lt;/em&gt; Public &lt;em&gt;Package Manager&lt;/em&gt;&lt;/a&gt;, or the &lt;a href=&#34;https://r4pi.org/&#34;&gt;R4Pi repository&lt;/a&gt; (which provides binaries for Raspberry Pi OS).&lt;/p&gt;
+&lt;p&gt;As the second definition is more strict I’ll focus on it as this post has explained.&lt;/p&gt;
+&lt;p&gt;PS: This post might be edited as it has been siting in my computer for several months.
+I prefer to post it and be improved with feedback, so let me know if you have any addition.&lt;/p&gt;
+&lt;/div&gt;
+</description>
+    </item>
+    
+    <item>
+      <title>Packaging R: repositories</title>
+      <link>https://llrs.dev/post/2023/12/09/packaging-r-repositories/</link>
+      <pubDate>Sat, 09 Dec 2023 00:00:00 +0000</pubDate>
+      <guid>https://llrs.dev/post/2023/12/09/packaging-r-repositories/</guid>
+      <description>
+
+
+&lt;p&gt;In this post I want to collect some thoughts about R repositories.
+In R we have multiple repositories that store packages for users.
+In this post I want to write about the purpose, functionality, benefits and drawbacks of R repositories and how packages are managed.
+The goal is to summarize what I’ve learnt these last years about them.
+I’ll also collect some information about them from various sources to make it easier for myself to find it later on.&lt;/p&gt;
+&lt;p&gt;I am writing this because I am worried about the future of CRAN and R.
+Due to multiple circumstances, the current position is not sustainable as is.
+I hope that this post, will help me to understand the past, present and create some concrete steps to do.&lt;/p&gt;
+&lt;div id=&#34;history&#34; class=&#34;section level1&#34;&gt;
+&lt;h1&gt;History&lt;/h1&gt;
+&lt;p&gt;I was not there, but the first repository started around April 1997.
+This repository is CRAN: the Comprehensive R Archive Network.
+The &lt;a href=&#34;https://stat.ethz.ch/pipermail/r-devel/1997-April/017026.html&#34;&gt;first mention&lt;/a&gt; I found is already about changes in it, but it was not until the end of the month when &lt;a href=&#34;https://stat.ethz.ch/pipermail/r-announce/1997/000001.html&#34;&gt;it was announced&lt;/a&gt;.&lt;/p&gt;
+&lt;p&gt;CRAN was created by a few volunteers, some of which are still mainting it 25 years later.
+The current team is listed on &lt;a href=&#34;https://cran.r-project.org/CRAN_team.htm&#34;&gt;their website&lt;/a&gt;.
+From the beginning it was “a collection of sites which carry identical material, consisting of the R&amp;amp;R R distribution(s), the contributed extensions, documentation for R, and binaries.”&lt;/p&gt;
+&lt;p&gt;Omegahat was another repository created &lt;a href=&#34;https://omegahat.net/&#34;&gt;shortly after CRAN&lt;/a&gt;:&lt;/p&gt;
+&lt;blockquote&gt;
+&lt;p&gt;The Omega project began in July, 1998, with discussions among designers responsible for three current statistical languages (S, R, and Lisp-Stat), with the idea of working together on new directions with special emphasis on web-based software, Java, the Java virtual machine, and distributed computing.&lt;/p&gt;
+&lt;/blockquote&gt;
+&lt;p&gt;Many developers of Omegahat were in the R Core or CRAN team.
+It was available as a repository from the R source code but was removed definitely in version R 4.1, in 2021&lt;a href=&#34;#fn1&#34; class=&#34;footnote-ref&#34; id=&#34;fnref1&#34;&gt;&lt;sup&gt;1&lt;/sup&gt;&lt;/a&gt;.&lt;/p&gt;
+&lt;p&gt;Bioconductor, was the next major repository that appeared.
+It was funded by Robert Gentleman and others in 2004 (it started the mailing list).
+A paper describing it &lt;a href=&#34;https://doi.org/10.1186/gb-2004-5-10-r80&#34;&gt;appeared in late 2004&lt;/a&gt;:&lt;/p&gt;
+&lt;blockquote&gt;
+&lt;p&gt;an initiative for the collaborative creation of extensible software for computational biology and bioinformatics.&lt;/p&gt;
+&lt;/blockquote&gt;
+&lt;p&gt;Through its history repositories have evolved with R and R with them.
+For example: R was released twice a year at the beginning, and Bioconductor did too.
+But when R moved to be released once per year (in 2013 with version 3.0) Bioconductor kept using two releases a year.
+This introduced some problems when installing packages from Bioconductor, when a single R release can be compatible with two Bioconductor releases&lt;a href=&#34;#fn2&#34; class=&#34;footnote-ref&#34; id=&#34;fnref2&#34;&gt;&lt;sup&gt;2&lt;/sup&gt;&lt;/a&gt;.&lt;/p&gt;
+&lt;p&gt;In other cases, checks have evolved.
+For instance &lt;a href=&#34;https://en.wikipedia.org/wiki/Oracle_Solaris&#34;&gt;Solaris&lt;/a&gt; was used to test packages in CRAN until 2021, if I recall correctly, because it allowed to test in a proprietary C or C++ compiler.
+This lead to discover bugs but also to more distress in R-package developers which had difficulties checking their packages in that environment.&lt;/p&gt;
+&lt;p&gt;Other checks evolve with R, becoming more strict with time: In the early versions of R the use of NAMESPACE was not regulated.
+But since R version 2.15, 2012 it was compulsory even for data-only packages&lt;a href=&#34;#fn3&#34; class=&#34;footnote-ref&#34; id=&#34;fnref3&#34;&gt;&lt;sup&gt;3&lt;/sup&gt;&lt;/a&gt;.
+This was synchronized with repositories checks.&lt;/p&gt;
+&lt;p&gt;Last, some goals/desires of CRAN are not fulfilled (or where abandoned).
+For example, from the start CRAN aimed to have packages authenticated (see the bottom of &lt;a href=&#34;https://stat.ethz.ch/pipermail/r-announce/1997/000001.html&#34;&gt;the announcement&lt;/a&gt;).
+This might be due to lack of time, resources or that the plans are in progress but require (volunteer) time.&lt;/p&gt;
+&lt;p&gt;With time, different repositories arose:&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;p&gt;MRAN, which was available since September 17th, 2014 to July 1st, 2022.&lt;/p&gt;&lt;/li&gt;
+&lt;li&gt;&lt;p&gt;The Rstudio Public Package Manager later renamed &lt;a href=&#34;https://packagemanager.posit.co/&#34;&gt;Posit Public Package Manager&lt;/a&gt; has &lt;a href=&#34;https://posit.co/blog/the-road-to-building-ten-million-binaries/&#34;&gt;binaries for several OS&lt;/a&gt; since 2019.&lt;/p&gt;&lt;/li&gt;
+&lt;li&gt;&lt;p&gt;There is the &lt;a href=&#34;https://pkgs.r4pi.org/&#34;&gt;R4pi repository&lt;/a&gt; with binaries for Raspberry Pi.&lt;/p&gt;&lt;/li&gt;
+&lt;li&gt;&lt;p&gt;I remember a proteomics repository available.&lt;/p&gt;&lt;/li&gt;
+&lt;li&gt;&lt;p&gt;rOpenSci started its own repository which later evolved into the &lt;a href=&#34;https://r-universe.org&#34;&gt;r-universe&lt;/a&gt;.
+The r-universe currently can provide binaries of packages that are hosted in a git repository.&lt;/p&gt;&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/div&gt;
+&lt;div id=&#34;literature&#34; class=&#34;section level1&#34;&gt;
+&lt;h1&gt;Literature&lt;/h1&gt;
+&lt;p&gt;The role and prominence of the repositories has lead to many articles being written about it.
+I wanted to link and collect some of them for easier retrieval.&lt;/p&gt;
+&lt;p&gt;I was wondering how CRAN is described by the volunteers that built it.
+From the announcing email:&lt;/p&gt;
+&lt;blockquote&gt;
+&lt;p&gt;CRAN is a collection of sites which carry identical material, consisting of the R&amp;amp;R R distribution(s), the contributed extensions, documentation for R, and binaries.&lt;/p&gt;
+&lt;/blockquote&gt;
+&lt;p&gt;From the &lt;a href=&#34;https://cran.r-project.org&#34;&gt;website&lt;/a&gt; (at 2023/12/09):&lt;/p&gt;
+&lt;blockquote&gt;
+&lt;p&gt;CRAN is a network of ftp and web servers around the world that store identical, up-to-date, versions of code and documentation for R.&lt;/p&gt;
+&lt;/blockquote&gt;
+&lt;p&gt;Initially there was R NEWS, with an article dedicated to CRAN and one to Omegahat too.
+These articles usually describe new package additions but sometimes they also provide information about changes:&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;p&gt;&lt;a href=&#34;https://journal.r-project.org/news/RN-2001-1-cran&#34;&gt;CRAN-2001-1&lt;/a&gt;: It list new packages, &lt;a href=&#34;https://journal.r-project.org/news/RN-2001-2-cran&#34;&gt;CRAN-2001-2&lt;/a&gt;, &lt;a href=&#34;https://journal.r-project.org/news/RN-2001-3-cran&#34;&gt;CRAN-2001-3&lt;/a&gt;, &lt;a href=&#34;https://journal.r-project.org/articles/RN-2001-008/&#34;&gt;Omegahat-2001-3&lt;/a&gt;&lt;/p&gt;&lt;/li&gt;
+&lt;li&gt;&lt;p&gt;&lt;a href=&#34;https://journal.r-project.org/news/RN-2002-1-cran&#34;&gt;CRAN-2002-1&lt;/a&gt;, &lt;a href=&#34;https://journal.r-project.org/news/RN-2002-2-cran/&#34;&gt;CRAN-2002-2&lt;/a&gt;, &lt;a href=&#34;https://journal.r-project.org/news/RN-2002-3-cran/&#34;&gt;CRAN-2002-3&lt;/a&gt;&lt;/p&gt;&lt;/li&gt;
+&lt;li&gt;&lt;p&gt;&lt;a href=&#34;https://journal.r-project.org/news/RN-2003-1-cran/&#34;&gt;CRAN-2003-1&lt;/a&gt;, &lt;a href=&#34;https://journal.r-project.org/news/RN-2003-2-cran/&#34;&gt;CRAN-2003-2&lt;/a&gt;, &lt;a href=&#34;https://journal.r-project.org/news/RN-2003-3-cran/&#34;&gt;CRAN-2003-3&lt;/a&gt;&lt;/p&gt;&lt;/li&gt;
+&lt;li&gt;&lt;p&gt;&lt;a href=&#34;https://journal.r-project.org/news/RN-2004-1-cran/&#34;&gt;CRAN-2004-1&lt;/a&gt;, &lt;a href=&#34;https://journal.r-project.org/news/RN-2004-2-cran/&#34;&gt;CRAN-2004-2&lt;/a&gt;&lt;/p&gt;&lt;/li&gt;
+&lt;li&gt;&lt;p&gt;&lt;a href=&#34;https://journal.r-project.org/news/RN-2005-1-cran/&#34;&gt;CRAN-2005-1&lt;/a&gt;, &lt;a href=&#34;https://journal.r-project.org/news/RN-2005-2-cran/&#34;&gt;CRAN-2005-2&lt;/a&gt;&lt;/p&gt;
+&lt;p&gt;Since 2006 there is also an article about Bioconductor.&lt;/p&gt;&lt;/li&gt;
+&lt;li&gt;&lt;p&gt;&lt;a href=&#34;https://journal.r-project.org/news/RN-2006-2-cran/&#34;&gt;CRAN-2006-2&lt;/a&gt;, &lt;a href=&#34;https://journal.r-project.org/news/RN-2006-2-bioc&#34;&gt;Bioc-2006-2&lt;/a&gt;&lt;/p&gt;&lt;/li&gt;
+&lt;li&gt;&lt;p&gt;&lt;a href=&#34;https://journal.r-project.org/news/RN-2007-1-cran/&#34;&gt;CRAN-2007-1&lt;/a&gt;, &lt;a href=&#34;https://journal.r-project.org/news/RN-2007-2-cran/&#34;&gt;CRAN-2007-2&lt;/a&gt;, &lt;a href=&#34;https://journal.r-project.org/news/RN-2007-2-bioc&#34;&gt;Bioc-2007-2&lt;/a&gt;, &lt;a href=&#34;https://journal.r-project.org/news/RN-2007-3-cran/&#34;&gt;CRAN-2007-3&lt;/a&gt;&lt;/p&gt;&lt;/li&gt;
+&lt;li&gt;&lt;p&gt;&lt;a href=&#34;https://journal.r-project.org/news/RN-2008-1-cran/&#34;&gt;CRAN-2008-1&lt;/a&gt;, &lt;a href=&#34;https://journal.r-project.org/news/RN-2008-1-bioc&#34;&gt;Bioc-2008-1&lt;/a&gt; &lt;a href=&#34;https://journal.r-project.org/news/RN-2008-2-cran/&#34;&gt;CRAN-2008-2&lt;/a&gt;, &lt;a href=&#34;https://journal.r-project.org/news/RN-2008-2-bioc&#34;&gt;Bioc-2008-2&lt;/a&gt;&lt;/p&gt;&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;Later it became the &lt;a href=&#34;https://journal.r-project.org/&#34;&gt;R Journal&lt;/a&gt;:&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;p&gt;&lt;a href=&#34;https://journal.r-project.org/issues/2009-1/RJ-2009-1.pdf&#34;&gt;CRAN-2009-1&lt;/a&gt;, &lt;a href=&#34;https://journal.r-project.org/issues/2009-2/RJ-2009-2.pdf&#34;&gt;CRAN-2009-2&lt;/a&gt;&lt;/p&gt;&lt;/li&gt;
+&lt;li&gt;&lt;p&gt;&lt;a href=&#34;https://journal.r-project.org/issues/2010-1/RJ-2010-1.pdf&#34;&gt;CRAN-2010-1&lt;/a&gt;, &lt;a href=&#34;https://journal.r-project.org/issues/2010-2/RJ-2010-2.pdf&#34;&gt;CRAN-2010-2&lt;/a&gt;&lt;/p&gt;&lt;/li&gt;
+&lt;li&gt;&lt;p&gt;&lt;a href=&#34;https://journal.r-project.org/issues/2011-1/RJ-2011-1.pdf&#34;&gt;CRAN-2011-1&lt;/a&gt;, &lt;a href=&#34;https://journal.r-project.org/issues/2011-2/RJ-2011-2.pdf&#34;&gt;CRAN and Bioconductor 2011-2&lt;/a&gt;.
+In the bioconductor section it mentions conference, and important directions for the Bioconductor core.&lt;/p&gt;&lt;/li&gt;
+&lt;li&gt;&lt;p&gt;&lt;a href=&#34;https://journal.r-project.org/issues/2012-1/RJ-2012-1.pdf&#34;&gt;CRAN-2012-1&lt;/a&gt;, &lt;a href=&#34;https://journal.r-project.org/issues/2012-2/RJ-2012-2.pdf&#34;&gt;CRAN and Bioconductor 2012-2&lt;/a&gt;: Mentions &lt;code&gt;biocLite()&lt;/code&gt; to install packages.&lt;/p&gt;&lt;/li&gt;
+&lt;li&gt;&lt;p&gt;&lt;a href=&#34;https://journal.r-project.org/news/RJ-2013-1-cran&#34;&gt;CRAN-2013-1&lt;/a&gt; &lt;a href=&#34;https://journal.r-project.org/news/RJ-2013-1-bioconductor/&#34;&gt;Bioc-2013-1&lt;/a&gt;: mentions better integration of parallel evaluation.&lt;br /&gt;
+&lt;a href=&#34;https://journal.r-project.org/news/RJ-2013-2-cran/&#34;&gt;CRAN-2013-2&lt;/a&gt;, &lt;a href=&#34;https://journal.r-project.org/news/RJ-2013-2-bioconductor/&#34;&gt;Bioc-2013-2&lt;/a&gt;: Mentions again AnnotationHub&lt;/p&gt;&lt;/li&gt;
+&lt;li&gt;&lt;p&gt;&lt;a href=&#34;https://journal.r-project.org/news/RJ-2014-1-cran/&#34;&gt;CRAN-2014-1&lt;/a&gt;, &lt;a href=&#34;https://journal.r-project.org/news/RJ-2014-1-bioconductor/&#34;&gt;Bioc-2014-1&lt;/a&gt;: Mentions the git-svn bridge to synchronize git and svn repository.&lt;br /&gt;
+&lt;a href=&#34;https://journal.r-project.org/news/RJ-2014-2-cran/&#34;&gt;CRAN-2014-2&lt;/a&gt;, &lt;a href=&#34;https://journal.r-project.org/news/RJ-2014-2-bioconductor/&#34;&gt;Bioc-2014-2&lt;/a&gt;: Bioconductor 3.0 release, besides some packages Amazon Machine Image are offered as well as docker images.
+Packages are required to pass BiocCheck, checks in a different package specific for Bioconductor.&lt;/p&gt;&lt;/li&gt;
+&lt;li&gt;&lt;p&gt;&lt;a href=&#34;https://journal.r-project.org/news/RJ-2015-1-cran/&#34;&gt;CRAN-2015-1&lt;/a&gt;, &lt;a href=&#34;https://journal.r-project.org/news/RJ-2015-1-bioconductor/&#34;&gt;Bioc-2015-1&lt;/a&gt;: Same mentions as the previous and encouragement to guidelines an package submission.&lt;br /&gt;
+&lt;a href=&#34;https://journal.r-project.org/news/RJ-2015-2-cran/&#34;&gt;CRAN-2015-2&lt;/a&gt;, &lt;a href=&#34;https://journal.r-project.org/news/RJ-2015-2-bioconductor/&#34;&gt;Bioc-2015-2&lt;/a&gt;&lt;/p&gt;&lt;/li&gt;
+&lt;li&gt;&lt;p&gt;&lt;a href=&#34;https://journal.r-project.org/news/RJ-2016-1-cran/&#34;&gt;CRAN-2016-1&lt;/a&gt;: on this article there is a plot of the number of CRAN packages and time, and doesn’t list all packages listed.
+It explicitly mentions that the CRAN team asked for help processing package submissions and some people stepped up.
+&lt;a href=&#34;https://journal.r-project.org/news/RJ-2016-1-bioconductor/&#34;&gt;Bioc-2016-1&lt;/a&gt;&lt;/p&gt;
+&lt;p&gt;&lt;a href=&#34;https://journal.r-project.org/news/RJ-2016-2-cran/&#34;&gt;CRAN-2016-2&lt;/a&gt;, &lt;a href=&#34;https://journal.r-project.org/news/RJ-2016-2-bioc/&#34;&gt;Bioc-2016-2&lt;/a&gt;&lt;/p&gt;&lt;/li&gt;
+&lt;li&gt;&lt;p&gt;&lt;a href=&#34;https://journal.r-project.org/news/RJ-2017-1-cran/&#34;&gt;CRAN-2017-1&lt;/a&gt;: mentions changes in CRAN checks, adding new memory access and static code analysis checks.
+It mentions that the submission has moved to a more automated one.
+It also mentions changes in the CRAN Repository Policy.
+&lt;a href=&#34;https://journal.r-project.org/news/RJ-2017-1-bioc/&#34;&gt;Bioc-2017-1&lt;/a&gt;&lt;/p&gt;&lt;/li&gt;
+&lt;li&gt;&lt;p&gt;&lt;a href=&#34;https://journal.r-project.org/news/RJ-2018-1-cran/&#34;&gt;CRAN-2018-1&lt;/a&gt;: checks in alternative BLAS/LAPACK implementations, the submission pipeline is defined.
+First time the amount of action taken by CRAN reviewers is listed in two categories automatic and manual.
+Changes in repository policy are listed.
+Changes in location of package repository archive , &lt;a href=&#34;https://journal.r-project.org/news/RJ-2018-1-bioc/&#34;&gt;Bioc-2018-1&lt;/a&gt;&lt;br /&gt;
+&lt;a href=&#34;https://journal.r-project.org/news/RJ-2018-2-cran/&#34;&gt;CRAN-2018-2&lt;/a&gt;: Changes in policy; packages should not give a check warning nor error.
+&lt;a href=&#34;https://journal.r-project.org/news/RJ-2018-2-bioc/&#34;&gt;Bioc-2018-2&lt;/a&gt;: Moved to BiocManager to install packages.&lt;/p&gt;&lt;/li&gt;
+&lt;li&gt;&lt;p&gt;&lt;a href=&#34;https://journal.r-project.org/news/RJ-2019-1-cran/&#34;&gt;CRAN-2019-1&lt;/a&gt;: More mentions to CRAN mirror security.&lt;/p&gt;
+&lt;p&gt;&lt;a href=&#34;https://journal.r-project.org/news/RJ-2019-2-cran/&#34;&gt;CRAN-2019-2&lt;/a&gt;: Updates in checklist for CRAN submissions, &lt;a href=&#34;https://journal.r-project.org/news/RJ-2019-2-bioc/&#34;&gt;Bioc-2019-2&lt;/a&gt;&lt;/p&gt;&lt;/li&gt;
+&lt;li&gt;&lt;p&gt;&lt;a href=&#34;https://journal.r-project.org/news/RJ-2020-1-cran/&#34;&gt;CRAN-2020-1&lt;/a&gt;: Many changes in CRAN policies.
+&lt;a href=&#34;https://journal.r-project.org/news/RJ-2020-2-cran/&#34;&gt;CRAN-2020-2&lt;/a&gt;: Many changes to CRAN policies.
+&lt;a href=&#34;https://journal.r-project.org/news/RJ-2020-2-bioc/&#34;&gt;Bioc-2020-2&lt;/a&gt;: Announces the Technical and Community advisory boards (as well as the project-wide Code of Conduct).&lt;/p&gt;&lt;/li&gt;
+&lt;li&gt;&lt;p&gt;&lt;a href=&#34;https://journal.r-project.org/news/RJ-2021-1-cran/&#34;&gt;CRAN-2021-1&lt;/a&gt;, &lt;a href=&#34;https://journal.r-project.org/news/RJ-2021-1-bioc/&#34;&gt;Bioc-2021-1&lt;/a&gt;: Mentions conferences that will be virtual.&lt;br /&gt;
+&lt;a href=&#34;https://journal.r-project.org/news/RJ-2021-2-cran/&#34;&gt;CRAN-2021-2&lt;/a&gt;: Shows an &lt;a href=&#34;https://cran.r-project.org/incoming/&#34;&gt;incomig&lt;/a&gt; path [See &lt;a href=&#34;https://r-hub.github.io/cransays/articles/dashboard.html&#34;&gt;this friendly viewer&lt;/a&gt;, &lt;a href=&#34;https://journal.r-project.org/news/RJ-2021-2-bioc/&#34;&gt;Bioc-2021-2&lt;/a&gt;: Mentions AnVIL and two online workshops to develop workflows.&lt;/p&gt;&lt;/li&gt;
+&lt;li&gt;&lt;p&gt;&lt;a href=&#34;https://journal.r-project.org/news/RJ-2022-1-cran/&#34;&gt;CRAN-2022-1&lt;/a&gt;: List a change in CRAN policy and the CRAN Task View Initiative.&lt;br /&gt;
+&lt;a href=&#34;https://journal.r-project.org/news/RJ-2022-2-cran/&#34;&gt;CRAN-2022-2&lt;/a&gt;: List some more repository policies.
+&lt;a href=&#34;https://journal.r-project.org/news/RJ-2022-2-bioconductor/&#34;&gt;Bioc-2022-2&lt;/a&gt;: Lists infrastructure updates (and its funding), changes in the core team and new initiatives.&lt;br /&gt;
+&lt;a href=&#34;https://journal.r-project.org/news/RJ-2022-3-cran/&#34;&gt;CRAN-2022-3&lt;/a&gt;, &lt;a href=&#34;https://journal.r-project.org/news/RJ-2022-3-bioconductor/&#34;&gt;Bioc-2022-3&lt;/a&gt;&lt;br /&gt;
+&lt;a href=&#34;https://journal.r-project.org/news/RJ-2022-4-cran/&#34;&gt;CRAN-2022-4&lt;/a&gt;, &lt;a href=&#34;https://journal.r-project.org/news/RJ-2022-4-bioconductor/&#34;&gt;Bioc-2022-4&lt;/a&gt;: default branch renaming, partnership with Outreachy and blog are featured.
+Several working groups provide updates&lt;/p&gt;&lt;/li&gt;
+&lt;li&gt;&lt;p&gt;&lt;a href=&#34;https://journal.r-project.org/news/RJ-2023-1-cran/&#34;&gt;CRAN-2023-1&lt;/a&gt;&lt;/p&gt;&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;In addition, several articles and blog posts have appeared.
+From those I found it is worth mentioning the following:&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;p&gt;&lt;a href=&#34;https://doi.org/10.17713/ajs.v41i1.188&#34;&gt;Are There Too Many R Packages?&lt;/a&gt; and &lt;a href=&#34;https://www.r-bloggers.com/2014/04/does-r-have-too-many-packages/&#34;&gt;derived posts&lt;/a&gt;&lt;/p&gt;&lt;/li&gt;
+&lt;li&gt;&lt;p&gt;&lt;a href=&#34;https://www.jumpingrivers.com/blog/security-r-hacking-bioconductor/&#34;&gt;Hacking Bioconductor&lt;/a&gt;&lt;/p&gt;&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;And my own posts:&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;p&gt;&lt;a href=&#34;https://llrs.dev/post/2021/12/07/reasons-cran-archivals/&#34;&gt;Reasons CRAN packages are archived&lt;/a&gt;&lt;/p&gt;&lt;/li&gt;
+&lt;li&gt;&lt;p&gt;&lt;a href=&#34;https://llrs.dev/post/2022/07/23/cran-files-1/&#34;&gt;CRAN files part 1&lt;/a&gt;&lt;/p&gt;&lt;/li&gt;
+&lt;li&gt;&lt;p&gt;&lt;a href=&#34;https://llrs.dev/post/2022/07/28/cran-files-2/&#34;&gt;CRAN files part 2&lt;/a&gt;&lt;/p&gt;&lt;/li&gt;
+&lt;li&gt;&lt;p&gt;&lt;a href=&#34;https://llrs.dev/post/2023/05/03/cran-maintained-packages/&#34;&gt;CRAN maintained packages&lt;/a&gt;&lt;/p&gt;&lt;/li&gt;
+&lt;li&gt;&lt;p&gt;&lt;a href=&#34;https://llrs.dev/post/2021/01/31/cran-review/&#34;&gt;CRAN review&lt;/a&gt; (and the &lt;a href=&#34;https://llrs.dev/talk/user-2021/&#34;&gt;talk at useRs 2021&lt;/a&gt;)&lt;/p&gt;&lt;/li&gt;
+&lt;li&gt;&lt;p&gt;&lt;a href=&#34;https://llrs.dev/post/2020/07/31/bioconductor-submissions-reviews/&#34;&gt;Bioconductor review&lt;/a&gt;&lt;/p&gt;&lt;/li&gt;
+&lt;li&gt;&lt;p&gt;&lt;a href=&#34;https://llrs.dev/post/2020/09/02/ropensci-submissions/&#34;&gt;rOpenSci&lt;/a&gt; reviews&lt;/p&gt;&lt;/li&gt;
+&lt;li&gt;&lt;p&gt;&lt;a href=&#34;https://llrs.dev/2020/07/bioconductor-submissions-reviews/&#34;&gt;Bioconductor reviews&lt;/a&gt;&lt;/p&gt;&lt;/li&gt;
+&lt;li&gt;&lt;p&gt;The article &lt;a href=&#34;https://journal.r-project.org/articles/RJ-2009-014/&#34;&gt;“Aspects of the Social Organization and Trajectory of the R Project”&lt;/a&gt;, from the R Journal 2009, also has a section about CRAN, noting that it “is challenged by its own success”.&lt;/p&gt;&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/div&gt;
+&lt;div id=&#34;characteristics&#34; class=&#34;section level1&#34;&gt;
+&lt;h1&gt;Characteristics&lt;/h1&gt;
+&lt;p&gt;The predominance of CRAN and its role as primary and default R repository has lead to some special treatment of the repository.&lt;/p&gt;
+&lt;p&gt;CRAN checks are in the R source code itself.
+While other repositories have their own checks in different tools.
+In addition, the CRAN environmental variables used are documented in the &lt;a href=&#34;https://cran.r-project.org/doc/manuals/r-release/R-ints.html&#34;&gt;R-internals&lt;/a&gt; (they are more or less accessible in the &lt;a href=&#34;https://svn.r-project.org/R-dev-web/trunk/CRAN/&#34;&gt;svn repository&lt;/a&gt; too).&lt;/p&gt;
+&lt;p&gt;Others who know more have stated the benefits of CRAN too: This text is copied from Henrik Bengstsson in &lt;a href=&#34;https://community-bioc.slack.com/archives/CLF37V6C8/p1698869264884649?thread_ts=1698804037.467439&amp;amp;cid=CLF37V6C8&#34; title=&#34;Link to the thread&#34;&gt;Bioconductor Slack&lt;/a&gt;:&lt;/p&gt;
+&lt;blockquote&gt;
+&lt;p&gt;FOREVER ARCHIVE:&lt;/p&gt;
+&lt;p&gt;The first one is that it publishes packages and versions of them until the end of time.
+When a package has been published on CRAN, it takes a lot for it to be removed from there.
+I don’t know if it ever happened, but I can imagine a package can be fully removed if it was illegally published in the first place (e.g. copyright, illegal content, ...) or malicious.&lt;/p&gt;
+&lt;p&gt;INSTALLATION SERVICE:&lt;/p&gt;
+&lt;p&gt;Then CRAN also provides a R package repository service for installing packages on CRAN using built-in R functions.
+The set of packages in the package repo is a subset of all packages on CRAN.
+The CRAN package repo makes a promise that all packages listed in PACKAGES can be installed.
+If they cannot make that promise, they’ll archive the package (=remove it from PACKAGES).
+I should also say, install.packages(url) can be used to install from the set of packages that are archived.
+Technically, old package versions are always archived.&lt;/p&gt;
+&lt;p&gt;CHECK SERVICE:&lt;/p&gt;
+&lt;p&gt;The content of the R package repository is guided by the CRAN package checks that run on R-oldrel, R-release, and R-devel across multiple platforms.
+The minimal requirement is that no package should remain in the package repository if the checks detects ERRORs (and those errors are not due to recently introduced bugs in R-devel).
+WARNINGs can also cause a package to be archived, but that process often takes longer.
+AFAIK, NOTEs are not a cause for a package being archived (but I could be wrong).
+The CRAN incoming checks, which you have to pass when you submit a new package, or an updated version, will make sure that the published package pass with all OKs.
+(It’s possible to argue for NOTEs being false positives, or for them not to be fixed, but that requires a manual approval by the CRAN Team).&lt;/p&gt;
+&lt;/blockquote&gt;
+&lt;p&gt;I think there are many more resources discussing R repositories.
+If you know more I’ll be happy to update this post.&lt;/p&gt;
+&lt;p&gt;I think before I drag too much on the steps I’ll post this and collect some more articles I might have missed.&lt;/p&gt;
+&lt;p&gt;Last, Uwe Liegges presented about &lt;a href=&#34;https://www.youtube.com/watch?v=-vX-CDiiZKI&#34;&gt;CRAN in useR!2017&lt;/a&gt;, thanks Tim Taylor for &lt;a href=&#34;https://fosstodon.org/@_TimTaylor/111612010185631808&#34;&gt;sharing it&lt;/a&gt;. In this video there is an explanation of why the solaris OS was used.&lt;/p&gt;
+&lt;p&gt;It has come to my attention that there is an article, by G. Brooke Anderson and Dirk Eddelbuette, about the R package repositories structure (among other things): &lt;a href=&#34;https://journal.r-project.org/archive/2017/RJ-2017-026/RJ-2017-026.pdf&#34;&gt;Hosting Data Packages via drat: A Case Study with Hurricane Exposure Data&lt;/a&gt;&lt;/p&gt;
+&lt;div id=&#34;reproducibility&#34; class=&#34;section level3&#34;&gt;
+&lt;h3&gt;Reproducibility&lt;/h3&gt;
+&lt;details&gt;
+&lt;pre&gt;&lt;code&gt;## ─ Session info ───────────────────────────────────────────────────────────────────────────────────────────────────────
+##  setting  value
+##  version  R version 4.3.1 (2023-06-16)
+##  os       Ubuntu 22.04.3 LTS
+##  system   x86_64, linux-gnu
+##  ui       X11
+##  language (EN)
+##  collate  en_US.UTF-8
+##  ctype    en_US.UTF-8
+##  tz       Europe/Madrid
+##  date     2024-01-15
+##  pandoc   3.1.1 @ /usr/lib/rstudio/resources/app/bin/quarto/bin/tools/ (via rmarkdown)
+## 
+## ─ Packages ───────────────────────────────────────────────────────────────────────────────────────────────────────────
+##  package     * version date (UTC) lib source
+##  blogdown      1.18    2023-06-19 [1] CRAN (R 4.3.1)
+##  bookdown      0.37    2023-12-01 [1] CRAN (R 4.3.1)
+##  bslib         0.6.1   2023-11-28 [1] CRAN (R 4.3.1)
+##  cachem        1.0.8   2023-05-01 [1] CRAN (R 4.3.1)
+##  cli           3.6.2   2023-12-11 [1] CRAN (R 4.3.1)
+##  digest        0.6.33  2023-07-07 [1] CRAN (R 4.3.1)
+##  evaluate      0.23    2023-11-01 [1] CRAN (R 4.3.2)
+##  fastmap       1.1.1   2023-02-24 [1] CRAN (R 4.3.1)
+##  htmltools     0.5.7   2023-11-03 [1] CRAN (R 4.3.2)
+##  jquerylib     0.1.4   2021-04-26 [1] CRAN (R 4.3.1)
+##  jsonlite      1.8.8   2023-12-04 [1] CRAN (R 4.3.1)
+##  knitr         1.45    2023-10-30 [1] CRAN (R 4.3.2)
+##  lifecycle     1.0.4   2023-11-07 [1] CRAN (R 4.3.2)
+##  R6            2.5.1   2021-08-19 [1] CRAN (R 4.3.1)
+##  rlang         1.1.3   2024-01-10 [1] CRAN (R 4.3.1)
+##  rmarkdown     2.25    2023-09-18 [1] CRAN (R 4.3.1)
+##  rstudioapi    0.15.0  2023-07-07 [1] CRAN (R 4.3.1)
+##  sass          0.4.8   2023-12-06 [1] CRAN (R 4.3.1)
+##  sessioninfo   1.2.2   2021-12-06 [1] CRAN (R 4.3.1)
+##  xfun          0.41    2023-11-01 [1] CRAN (R 4.3.2)
+##  yaml          2.3.8   2023-12-11 [1] CRAN (R 4.3.1)
+## 
+##  [1] /home/lluis/bin/R/4.3.1
+##  [2] /opt/R/4.3.1/lib/R/library
+## 
+## ──────────────────────────────────────────────────────────────────────────────────────────────────────────────────────&lt;/code&gt;&lt;/pre&gt;
+&lt;/details&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;div class=&#34;footnotes footnotes-end-of-document&#34;&gt;
+&lt;hr /&gt;
+&lt;ol&gt;
+&lt;li id=&#34;fn1&#34;&gt;&lt;p&gt;In version 3.1.2 &lt;a href=&#34;https://cran.r-project.org/doc/manuals/NEWS.3&#34;&gt;Omegahat didn’t provide&lt;/a&gt; Windows binaries and in 4.1 from the default repositories (See 4.1 in &lt;a href=&#34;https://cran.r-project.org/doc/manuals/r-release/NEWS.html&#34;&gt;NEWS(.4)&lt;/a&gt;).&lt;a href=&#34;#fnref1&#34; class=&#34;footnote-back&#34;&gt;↩︎&lt;/a&gt;&lt;/p&gt;&lt;/li&gt;
+&lt;li id=&#34;fn2&#34;&gt;&lt;p&gt;This lead to the need of having a special function to install packages from Bioconductor.
+Initially a function &lt;code&gt;biocLite&lt;/code&gt; and later with the &lt;a href=&#34;https://cran.r-project.org/package=BiocManager&#34;&gt;BiocManager package&lt;/a&gt;.&lt;a href=&#34;#fnref2&#34; class=&#34;footnote-back&#34;&gt;↩︎&lt;/a&gt;&lt;/p&gt;&lt;/li&gt;
+&lt;li id=&#34;fn3&#34;&gt;&lt;p&gt;&lt;a href=&#34;https://cran.r-project.org/doc/manuals/NEWS.2&#34;&gt;NEWS in 2.15 section&lt;/a&gt;&lt;a href=&#34;#fnref3&#34; class=&#34;footnote-back&#34;&gt;↩︎&lt;/a&gt;&lt;/p&gt;&lt;/li&gt;
+&lt;/ol&gt;
+&lt;/div&gt;
+</description>
+    </item>
+    
+    <item>
+      <title>Bioconductor submissions: reviews</title>
+      <link>https://llrs.dev/post/2020/07/31/bioconductor-submissions-reviews/</link>
+      <pubDate>Fri, 31 Jul 2020 00:00:00 +0000</pubDate>
+      <guid>https://llrs.dev/post/2020/07/31/bioconductor-submissions-reviews/</guid>
+      <description>
+&lt;script src=&#34;https://llrs.dev/post/2020/07/31/bioconductor-submissions-reviews/index_files/header-attrs/header-attrs.js&#34;&gt;&lt;/script&gt;
+
+
+&lt;p&gt;First post is on &lt;a href=&#34;https://llrs.dev/2020/06/bioconductor-submissions/&#34;&gt;Bioconductor submissions&lt;/a&gt; raised some questions comments but at the time I didn’t have a good way to answer them:&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;issues get closed after they got assigned a reviewer and before the reviewer actually gets a chance to start the review.&lt;/li&gt;
+&lt;li&gt;issues assigned to multiple people or issues that switched reviewers&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;To answer both of them I needed more information.
+On the &lt;a href=&#34;https://llrs.dev/2020/06/bioconductor-submissions/&#34;&gt;previous post&lt;/a&gt; I only gathered the information of the state of the issues at that moment.
+This excluded label changes, reviewer changes, renaming the issues, who commented on the issues and many more things.
+To retrieve these information from github I developed a &lt;a href=&#34;https://llrs.dev/2020/06/social-github/&#34;&gt;new package&lt;/a&gt; &lt;a href=&#34;https://github.com/llrs/socialGH&#34;&gt;&lt;code&gt;{socialGH}&lt;/code&gt;&lt;/a&gt; which downloads it from &lt;a href=&#34;https://github.com&#34;&gt;Github&lt;/a&gt; to make this analysis possible.&lt;/p&gt;
+&lt;p&gt;I gathered all the information on issues using &lt;a href=&#34;https://github.com/llrs/socialGH&#34;&gt;&lt;code&gt;{socialGH}&lt;/code&gt;&lt;/a&gt; on the 2020/08/18 and stored them in a tidy format.
+Now that we have more data about the issues we can plot them similarly to what we did on the previous post:&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;https://llrs.dev/post/2020/07/31/bioconductor-submissions-reviews/index_files/figure-html/first_plot-1.png&#34; width=&#34;672&#34; /&gt;&lt;/p&gt;
+&lt;p&gt;We can see that sometimes the issues remained silent for several months and then had a high level of events, or a single one (closing mainly).&lt;/p&gt;
+&lt;p&gt;Compare to the previous version it is surprising to see that one of the earliest issues still gets new events to date.
+Apparently &lt;a href=&#34;https://github.com/Bioconductor/Contributions/issues/51&#34;&gt;issue 51&lt;/a&gt;, and &lt;a href=&#34;https://github.com/Bioconductor/Contributions/issues?q=label%3ATESTING+is%3Aclosed&#34;&gt;others&lt;/a&gt;, are being used to test the Bioconductor builder or the bot used to automate the process.&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;https://llrs.dev/post/2020/07/31/bioconductor-submissions-reviews/index_files/figure-html/by_user-1.png&#34; width=&#34;672&#34; /&gt;&lt;/p&gt;
+&lt;p&gt;We can see that some reviewers comment more and are involved in more issues, but there is a group of fairly similar comments and issues.&lt;/p&gt;
+&lt;p&gt;Clearly this will not be the same with users who submit packages:&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;https://llrs.dev/post/2020/07/31/bioconductor-submissions-reviews/index_files/figure-html/by_user2-1.png&#34; width=&#34;672&#34; /&gt;&lt;/p&gt;
+&lt;p&gt;We can clearly see that most users are mainly only involved on submitting packages on one issue, but some people participate a lot and/or in several issues.&lt;/p&gt;
+&lt;div id=&#34;events&#34; class=&#34;section level1&#34;&gt;
+&lt;h1&gt;Events&lt;/h1&gt;
+&lt;p&gt;We cab count how many users and issues have been involved with each event type:&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;https://llrs.dev/post/2020/07/31/bioconductor-submissions-reviews/index_files/figure-html/events_view-1.png&#34; width=&#34;672&#34; /&gt;&lt;/p&gt;
+&lt;p&gt;We can see that few issues are locked (remember that it is different than closing the issue) or comments deleted.
+There is an almost equal amount of labeling and unlabeling, performed by few people but on lots of issues.
+There is a group of mentioning, commenting and subscribing too.
+Many people is involved on commenting and creating submissions.&lt;/p&gt;
+&lt;p&gt;Looking a bit further on the issues we can look at the events that take place:&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;https://llrs.dev/post/2020/07/31/bioconductor-submissions-reviews/index_files/figure-html/second_plot-1.png&#34; width=&#34;672&#34; /&gt;&lt;/p&gt;
+&lt;p&gt;We can see that most issues have few events which agrees with the previous findings that issues are handled fairly and expeditiously.&lt;/p&gt;
+&lt;p&gt;The most common event are comments, mentions and the rarest events are deleting comments, locking or referencing them.&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;https://llrs.dev/post/2020/07/31/bioconductor-submissions-reviews/index_files/figure-html/events_time-1.png&#34; width=&#34;672&#34; /&gt;&lt;/p&gt;
+&lt;p&gt;We can see that most issues get around 50 events, but we can clearly see lots of issues that receive very few events.&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;https://llrs.dev/post/2020/07/31/bioconductor-submissions-reviews/index_files/figure-html/events_time2-1.png&#34; width=&#34;672&#34; /&gt;&lt;/p&gt;
+&lt;p&gt;However, looking at the distribution along time most of the events are on the first 6 months after opening the issue.&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;https://llrs.dev/post/2020/07/31/bioconductor-submissions-reviews/index_files/figure-html/events_time3-1.png&#34; width=&#34;672&#34; /&gt;&lt;/p&gt;
+&lt;p&gt;Some submissions have many events while others have few events but last longer.
+This is without looking at issues that were closed and later reopened, or the involvement of bioc-issue-bot.
+We can see that in a short amount of days a lot of events can be triggered.
+This is mostly that for each version update there are at least two messages on the issue.&lt;/p&gt;
+&lt;/div&gt;
+&lt;div id=&#34;reviews&#34; class=&#34;section level1&#34;&gt;
+&lt;h1&gt;Reviews&lt;/h1&gt;
+&lt;p&gt;Most of the differences are due to the automatic or manual review of the submissions.&lt;/p&gt;
+&lt;p&gt;After passing some preliminary checks a reviewer is assigned to manually review the package:&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;https://llrs.dev/post/2020/07/31/bioconductor-submissions-reviews/index_files/figure-html/assignments-1.png&#34; width=&#34;672&#34; /&gt;&lt;/p&gt;
+&lt;p&gt;We can see that usually some adjustment to reviewers is made usually changing them but some times they are added to have more than 1 reviewer (194).
+Almost all the submitted packages without a reviewer (537 submissions) were rejected except for three: &lt;a href=&#34;https://github.com/Bioconductor/Contributions/issues/81&#34;&gt;81&lt;/a&gt;, &lt;a href=&#34;https://github.com/Bioconductor/Contributions/issues/82&#34;&gt;82&lt;/a&gt;, &lt;a href=&#34;https://github.com/Bioconductor/Contributions/issues/83&#34;&gt;83&lt;/a&gt; that were reviewed by &lt;a href=&#34;https://github.com/vobencha&#34;&gt;vobencha&lt;/a&gt; even if not officially assigned.
+Some of these were rejected because they didn’t pass some automatic check and other after preliminary inspection.&lt;/p&gt;
+&lt;p&gt;If some of these preliminary checks aren’t corrected the issue is closed:&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;https://llrs.dev/post/2020/07/31/bioconductor-submissions-reviews/index_files/figure-html/open_close2-1.png&#34; width=&#34;672&#34; /&gt;&lt;/p&gt;
+&lt;p&gt;We can see that is common to close and reopen issues, but they are generally done by the same people (the reviewer, the original submitter or the bot).&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;https://llrs.dev/post/2020/07/31/bioconductor-submissions-reviews/index_files/figure-html/submission_acceptance-1.png&#34; width=&#34;672&#34; /&gt;&lt;/p&gt;
+&lt;p&gt;On submissions with a reviewer assigned that were closed by someone (not the submitter), we can see here that reviews with more than one reviewer do not lead to significantly more comments from the reviewers.&lt;/p&gt;
+&lt;p&gt;Although it seems like this leads to have the package approved.&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;https://llrs.dev/post/2020/07/31/bioconductor-submissions-reviews/index_files/figure-html/reviews-1.png&#34; width=&#34;672&#34; /&gt;&lt;/p&gt;
+&lt;p&gt;We can see that there are slightly more comments from reviewers on the approved packages.
+Perhaps because they provide more feedback once the review starts.&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;https://llrs.dev/post/2020/07/31/bioconductor-submissions-reviews/index_files/figure-html/submission_acceptance2-1.png&#34; width=&#34;672&#34; /&gt;&lt;img src=&#34;https://llrs.dev/post/2020/07/31/bioconductor-submissions-reviews/index_files/figure-html/submission_acceptance2-2.png&#34; width=&#34;672&#34; /&gt;&lt;/p&gt;
+&lt;p&gt;We can see that the percentage of approved on those issues where the reviewer commented is fairly similar and around 80% or above.
+However there is also at least a 5% of submissions that are closed despite the comments from reviewers.
+Usually this has to be with unresponsiveness from the submitter:&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;https://llrs.dev/post/2020/07/31/bioconductor-submissions-reviews/index_files/figure-html/events_days-1.png&#34; width=&#34;672&#34; /&gt;&lt;/p&gt;
+&lt;p&gt;We can see that on the approved packages there are usually more events on the same time period.
+So make sure to follow the advice of the reviewers and the bot and make all the errors and warnings disappear.&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;https://llrs.dev/post/2020/07/31/bioconductor-submissions-reviews/index_files/figure-html/events_user_distribution-1.png&#34; width=&#34;672&#34; /&gt;&lt;/p&gt;
+&lt;p&gt;While most issues have at least 8 different events they usually have 4 users involved.
+Presumably the creator of the issue, bioc-issue-bot, a reviewer and someone else.&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;https://llrs.dev/post/2020/07/31/bioconductor-submissions-reviews/index_files/figure-html/actor_event_types-1.png&#34; width=&#34;672&#34; /&gt;&lt;/p&gt;
+&lt;p&gt;The more users involved, more different type of events are triggered.
+Presumably more people get subscribed or is mentioned.&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;https://llrs.dev/post/2020/07/31/bioconductor-submissions-reviews/index_files/figure-html/actors_events-1.png&#34; width=&#34;672&#34; /&gt;&lt;/p&gt;
+&lt;p&gt;As expected the more users are involved in an issue more events are produced.
+We can also see the submissions that are closed by the bioc-issue-bot with few comments and users.&lt;/p&gt;
+&lt;/div&gt;
+&lt;div id=&#34;who-does-each-action&#34; class=&#34;section level1&#34;&gt;
+&lt;h1&gt;Who does each action ?&lt;/h1&gt;
+&lt;p&gt;We can look now at who performs what, we know there are 951 participants:&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;https://llrs.dev/post/2020/07/31/bioconductor-submissions-reviews/index_files/figure-html/who-1.png&#34; width=&#34;672&#34; /&gt;&lt;/p&gt;
+&lt;p&gt;Here I cut the top 35 people who have triggered more than events.
+We can clearly see who are official reviewers (as seen on the previous post) because they labeled and unlabeled issues.
+bioc-issue-bot is an special user that makes lots of comments and assigning reviewers to issues.
+We can also see that it previously renamed the issues or unassigned reviewers.&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;https://llrs.dev/post/2020/07/31/bioconductor-submissions-reviews/index_files/figure-html/comments_plot-1.png&#34; width=&#34;672&#34; /&gt;&lt;/p&gt;
+&lt;p&gt;Comments by users (excluding the bot), usually only the author, the reviewer comment, frequently mtmorgan also suggests.&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;https://llrs.dev/post/2020/07/31/bioconductor-submissions-reviews/index_files/figure-html/comment_plot2-1.png&#34; width=&#34;672&#34; /&gt;&lt;/p&gt;
+&lt;p&gt;We can see that Martin Morgan has commented on almost all the submissions.
+The odd issue where there are some comments from mtmorgan but no other is the &lt;a href=&#34;https://github.com/Bioconductor.org/Contributions/issue/611&#34;&gt;issue 611&lt;/a&gt; where he is the reviewer and the submitter of a package.&lt;/p&gt;
+&lt;/div&gt;
+&lt;div id=&#34;bioconductor-bot&#34; class=&#34;section level1&#34;&gt;
+&lt;h1&gt;Bioconductor Bot&lt;/h1&gt;
+&lt;p&gt;We have seen that one of the most relevant “users” is bioc-issue-bot.&lt;br /&gt;
+It is a bot that performs and report automatic checks on the submissions (The code can be found &lt;a href=&#34;https://github.com/Bioconductor/issue_tracker_github&#34;&gt;here&lt;/a&gt;).
+Let’s explore what does and what does it report&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;https://llrs.dev/post/2020/07/31/bioconductor-submissions-reviews/index_files/figure-html/bioc_bot_plot-1.png&#34; width=&#34;672&#34; /&gt;&lt;/p&gt;
+&lt;p&gt;Classifying the comments reports that most of the comments are build results or that received a valid push.
+We can also see some changes on the bot, like changing the messages or reporting differently the process triggered.
+However, it also reports common problems on the submission: missing repository, unmatch between the repository name and the package name, reposting the same package, missing SSH key (needed to be able to push to Bioconductor git server), …
+We can see that most of them are related to building the packages being submitted.&lt;/p&gt;
+&lt;p&gt;Let’s check if there is some differences on the comments according to if they are later accepted or not.&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;https://llrs.dev/post/2020/07/31/bioconductor-submissions-reviews/index_files/figure-html/user_events-1.png&#34; width=&#34;672&#34; /&gt;&lt;/p&gt;
+&lt;p&gt;We can see clearly differences on the behavior of the issues, some type of comments are all of the non-accepted packages.
+It seems like some are not corrected.
+We can see here some common areas when submissions fail: failing to provide a valid link to the repository or many links to several repositories, or failing to comply with the guidelines about the repository name and the package name.
+Reposting the same package is also a common reason of not getting that submission approved.&lt;/p&gt;
+&lt;p&gt;The only significant are the build results, the build results, the valid push, received, unmatch between the package name and the repository, and the update version.&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;https://llrs.dev/post/2020/07/31/bioconductor-submissions-reviews/index_files/figure-html/common_feedback-1.png&#34; width=&#34;672&#34; /&gt;&lt;/p&gt;
+&lt;p&gt;We can see, (and I expected so) that comments of bioc-issue-bot are driven by the build system.&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;https://llrs.dev/post/2020/07/31/bioconductor-submissions-reviews/index_files/figure-html/bot_comments_approve-1.png&#34; width=&#34;672&#34; /&gt;&lt;/p&gt;
+&lt;p&gt;But the other comments are more frequent among the not approved packages, mainly errors and other automatically detected problems.&lt;/p&gt;
+&lt;p&gt;Aside from the bot, other users might comment on issues too:&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;https://llrs.dev/post/2020/07/31/bioconductor-submissions-reviews/index_files/figure-html/comments_issues-1.png&#34; width=&#34;672&#34; /&gt;&lt;/p&gt;
+&lt;p&gt;In some issues reviewers comment more than authors, while on some there are more comments from authors than reviewers.
+Surprisingly, in some issues there are more comments from other users than authors or reviewers.&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;https://llrs.dev/post/2020/07/31/bioconductor-submissions-reviews/index_files/figure-html/comments_approved-1.png&#34; width=&#34;672&#34; /&gt;&lt;/p&gt;
+&lt;p&gt;Usually packages not approved have less comments from authors, reviewers and other users.&lt;/p&gt;
+&lt;p&gt;About the time to get feedback we have previously seen that most of the issues were fast.
+However it included automatic actions from the bot, so let’s check again without the automatic events.&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;https://llrs.dev/post/2020/07/31/bioconductor-submissions-reviews/index_files/figure-html/delays-1.png&#34; width=&#34;672&#34; /&gt;&lt;/p&gt;
+&lt;p&gt;Here the squares indicate when a issue is closed, and we can see most comments are before the issues are closed.&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;https://llrs.dev/post/2020/07/31/bioconductor-submissions-reviews/index_files/figure-html/closing-1.png&#34; width=&#34;672&#34; /&gt;&lt;/p&gt;
+&lt;p&gt;And there doesn’t seem to be any difference between approved and not approved packages.&lt;/p&gt;
+&lt;p&gt;I would have expected more comments after closing an issue in the not approved submissions.
+This might indicate that the discussion happens before and/or that the process after closing the issue is not clear enough.&lt;/p&gt;
+&lt;/div&gt;
+&lt;div id=&#34;steps&#34; class=&#34;section level1&#34;&gt;
+&lt;h1&gt;Steps&lt;/h1&gt;
+&lt;p&gt;So far we have compared closed and open issues, users, comments, events, but we haven’t looked how does the proccess goes.&lt;/p&gt;
+&lt;p&gt;Let’s see how much time does it take to start the review and the time till the reviewer comments:&lt;/p&gt;
+&lt;table&gt;
+&lt;thead&gt;
+&lt;tr class=&#34;header&#34;&gt;
+&lt;th align=&#34;left&#34;&gt;Successful build?&lt;/th&gt;
+&lt;th align=&#34;left&#34;&gt;Approved?&lt;/th&gt;
+&lt;th align=&#34;right&#34;&gt;Submissions&lt;/th&gt;
+&lt;/tr&gt;
+&lt;/thead&gt;
+&lt;tbody&gt;
+&lt;tr class=&#34;odd&#34;&gt;
+&lt;td align=&#34;left&#34;&gt;No&lt;/td&gt;
+&lt;td align=&#34;left&#34;&gt;No&lt;/td&gt;
+&lt;td align=&#34;right&#34;&gt;608&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr class=&#34;even&#34;&gt;
+&lt;td align=&#34;left&#34;&gt;Yes&lt;/td&gt;
+&lt;td align=&#34;left&#34;&gt;No&lt;/td&gt;
+&lt;td align=&#34;right&#34;&gt;78&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr class=&#34;odd&#34;&gt;
+&lt;td align=&#34;left&#34;&gt;Yes&lt;/td&gt;
+&lt;td align=&#34;left&#34;&gt;Ongoing&lt;/td&gt;
+&lt;td align=&#34;right&#34;&gt;28&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr class=&#34;even&#34;&gt;
+&lt;td align=&#34;left&#34;&gt;No&lt;/td&gt;
+&lt;td align=&#34;left&#34;&gt;Ongoing&lt;/td&gt;
+&lt;td align=&#34;right&#34;&gt;19&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr class=&#34;odd&#34;&gt;
+&lt;td align=&#34;left&#34;&gt;Yes&lt;/td&gt;
+&lt;td align=&#34;left&#34;&gt;Yes&lt;/td&gt;
+&lt;td align=&#34;right&#34;&gt;723&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr class=&#34;even&#34;&gt;
+&lt;td align=&#34;left&#34;&gt;No&lt;/td&gt;
+&lt;td align=&#34;left&#34;&gt;Yes&lt;/td&gt;
+&lt;td align=&#34;right&#34;&gt;125&lt;/td&gt;
+&lt;/tr&gt;
+&lt;/tbody&gt;
+&lt;/table&gt;
+&lt;p&gt;We can see that most not approved packages do not have a successful build.&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;https://llrs.dev/post/2020/07/31/bioconductor-submissions-reviews/index_files/figure-html/trans_builds-1.png&#34; width=&#34;672&#34; /&gt;&lt;/p&gt;
+&lt;p&gt;An overview of the submissions, when was the first successful build and when was the first comment of the reviewer after the successful build.&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;https://llrs.dev/post/2020/07/31/bioconductor-submissions-reviews/index_files/figure-html/time_comment-1.png&#34; width=&#34;672&#34; /&gt;&lt;/p&gt;
+&lt;p&gt;Usually it takes close to 3 days to have the first successful build on Bioconductor (if there is any as we have seen).&lt;/p&gt;
+&lt;p&gt;After it it takes close to 10 days to the reviewer to comment.&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;https://llrs.dev/post/2020/07/31/bioconductor-submissions-reviews/index_files/figure-html/time_accepted-1.png&#34; width=&#34;672&#34; /&gt;&lt;/p&gt;
+&lt;p&gt;This comment might be the review of the package, as it is only done after the submissions passes all the checks.&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;https://llrs.dev/post/2020/07/31/bioconductor-submissions-reviews/index_files/figure-html/time_build_plot-1.png&#34; width=&#34;672&#34; /&gt;&lt;/p&gt;
+&lt;p&gt;A we have seen on the first table the main blocking point is that many submitted packages do not successfully build on Bioconductor servers.&lt;br /&gt;
+But as we can see approved packages built slightly earlier.
+However the time between the first successful built and the first reviewer comment might be different, let’s check:&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;https://llrs.dev/post/2020/07/31/bioconductor-submissions-reviews/index_files/figure-html/time_review_plot_zoom-1.png&#34; width=&#34;672&#34; /&gt;&lt;/p&gt;
+&lt;p&gt;We can see there aren’t many differences on the time between the first successful built and the first reviewer comment.
+Once a package has built and has the review it takes some time to address the comments till it is accepted:&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;https://llrs.dev/post/2020/07/31/bioconductor-submissions-reviews/index_files/figure-html/acceptance_plot-1.png&#34; width=&#34;672&#34; /&gt;&lt;/p&gt;
+&lt;p&gt;We can see that since submission it usually takes two weeks to have the package accepted.
+However, the time between the first reviewer comment (after the first successful built) and the acceptance of the package might be different:&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;https://llrs.dev/post/2020/07/31/bioconductor-submissions-reviews/index_files/figure-html/time_acceptance_plot-1.png&#34; width=&#34;672&#34; /&gt;&lt;/p&gt;
+&lt;p&gt;We can see that few packages take more than 50 days till acceptance.
+To have a complete picture we can see all the issues on a single plot with how much do they take to move to the next phase:&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;https://llrs.dev/post/2020/07/31/bioconductor-submissions-reviews/index_files/figure-html/times_phases-1.png&#34; width=&#34;672&#34; /&gt;&lt;/p&gt;
+&lt;p&gt;We can see odd packages like the one that built correctly in short time but had some issues and finally got renamed and submitted on a different issue, or the issue that took more than 100 days to build correctly for the first time (and was later rejected).&lt;/p&gt;
+&lt;p&gt;We can see that the steps that take more time is doing the review and later modify the package to address the comments pointed by the reviewers.&lt;/p&gt;
+&lt;table&gt;
+&lt;colgroup&gt;
+&lt;col width=&#34;4%&#34; /&gt;
+&lt;col width=&#34;13%&#34; /&gt;
+&lt;col width=&#34;23%&#34; /&gt;
+&lt;col width=&#34;8%&#34; /&gt;
+&lt;col width=&#34;25%&#34; /&gt;
+&lt;col width=&#34;23%&#34; /&gt;
+&lt;/colgroup&gt;
+&lt;thead&gt;
+&lt;tr class=&#34;header&#34;&gt;
+&lt;th align=&#34;left&#34;&gt;Approved&lt;/th&gt;
+&lt;th align=&#34;right&#34;&gt;Succcessful built (days)&lt;/th&gt;
+&lt;th align=&#34;right&#34;&gt;First reviewer comment after build (days)&lt;/th&gt;
+&lt;th align=&#34;right&#34;&gt;Accepted (days)&lt;/th&gt;
+&lt;th align=&#34;right&#34;&gt;Time between build and reviewer comment (days)&lt;/th&gt;
+&lt;th align=&#34;right&#34;&gt;Time between review and acceptance (days)&lt;/th&gt;
+&lt;/tr&gt;
+&lt;/thead&gt;
+&lt;tbody&gt;
+&lt;tr class=&#34;odd&#34;&gt;
+&lt;td align=&#34;left&#34;&gt;No&lt;/td&gt;
+&lt;td align=&#34;right&#34;&gt;5&lt;/td&gt;
+&lt;td align=&#34;right&#34;&gt;19&lt;/td&gt;
+&lt;td align=&#34;right&#34;&gt;NA&lt;/td&gt;
+&lt;td align=&#34;right&#34;&gt;14&lt;/td&gt;
+&lt;td align=&#34;right&#34;&gt;NA&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr class=&#34;even&#34;&gt;
+&lt;td align=&#34;left&#34;&gt;Ongoing&lt;/td&gt;
+&lt;td align=&#34;right&#34;&gt;3&lt;/td&gt;
+&lt;td align=&#34;right&#34;&gt;25&lt;/td&gt;
+&lt;td align=&#34;right&#34;&gt;NA&lt;/td&gt;
+&lt;td align=&#34;right&#34;&gt;19&lt;/td&gt;
+&lt;td align=&#34;right&#34;&gt;NA&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr class=&#34;odd&#34;&gt;
+&lt;td align=&#34;left&#34;&gt;Yes&lt;/td&gt;
+&lt;td align=&#34;right&#34;&gt;3&lt;/td&gt;
+&lt;td align=&#34;right&#34;&gt;14&lt;/td&gt;
+&lt;td align=&#34;right&#34;&gt;37&lt;/td&gt;
+&lt;td align=&#34;right&#34;&gt;10&lt;/td&gt;
+&lt;td align=&#34;right&#34;&gt;19&lt;/td&gt;
+&lt;/tr&gt;
+&lt;/tbody&gt;
+&lt;/table&gt;
+&lt;p&gt;Looking at the median times of each step we can clearly see the same pattern.&lt;/p&gt;
+&lt;/div&gt;
+&lt;div id=&#34;labels&#34; class=&#34;section level1&#34;&gt;
+&lt;h1&gt;Labels&lt;/h1&gt;
+&lt;p&gt;So far we have looked via a combination of comments from reviewers and labels. However, the official way of showing on which step is a review is using labels.&lt;/p&gt;
+&lt;p&gt;We have seen is the second most frequent event, around 1100 submissions have at least one label annotation. We can see here how many:&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;https://llrs.dev/post/2020/07/31/bioconductor-submissions-reviews/index_files/figure-html/labels_plot_overview-1.png&#34; width=&#34;672&#34; /&gt;&lt;/p&gt;
+&lt;p&gt;We can see that the version bump, and the state of the build are the most frequent labels.&lt;/p&gt;
+&lt;p&gt;Looking into each label we can see differences between acceoted and declined submissions:&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;https://llrs.dev/post/2020/07/31/bioconductor-submissions-reviews/index_files/figure-html/label_differences-1.png&#34; width=&#34;672&#34; /&gt;&lt;/p&gt;
+&lt;p&gt;Here we can see the differences in label assignment on each issue (labels which are assigned only to approved or rejected packages are not shown).&lt;/p&gt;
+&lt;p&gt;Some submissions were initially declined but later got approved, as well as some issues that for some time went inactive but ended up being accepted.&lt;/p&gt;
+&lt;p&gt;The main difference is how many times there are errors, timeouts, warnings, version bump required or OK on the issues approved. Successful packages have more!
+If you submit a package and get those errors don’t worry, it is normal!!&lt;/p&gt;
+&lt;table&gt;
+&lt;colgroup&gt;
+&lt;col width=&#34;6%&#34; /&gt;
+&lt;col width=&#34;14%&#34; /&gt;
+&lt;col width=&#34;4%&#34; /&gt;
+&lt;col width=&#34;6%&#34; /&gt;
+&lt;col width=&#34;2%&#34; /&gt;
+&lt;col width=&#34;5%&#34; /&gt;
+&lt;col width=&#34;6%&#34; /&gt;
+&lt;col width=&#34;15%&#34; /&gt;
+&lt;col width=&#34;8%&#34; /&gt;
+&lt;col width=&#34;14%&#34; /&gt;
+&lt;col width=&#34;8%&#34; /&gt;
+&lt;col width=&#34;8%&#34; /&gt;
+&lt;/colgroup&gt;
+&lt;thead&gt;
+&lt;tr class=&#34;header&#34;&gt;
+&lt;th align=&#34;left&#34;&gt;Approved&lt;/th&gt;
+&lt;th align=&#34;right&#34;&gt;VERSION BUMP REQUIRED&lt;/th&gt;
+&lt;th align=&#34;right&#34;&gt;ERROR&lt;/th&gt;
+&lt;th align=&#34;right&#34;&gt;WARNINGS&lt;/th&gt;
+&lt;th align=&#34;right&#34;&gt;OK&lt;/th&gt;
+&lt;th align=&#34;right&#34;&gt;TIMEOUT&lt;/th&gt;
+&lt;th align=&#34;right&#34;&gt;ABNORMAL&lt;/th&gt;
+&lt;th align=&#34;right&#34;&gt;1. awaiting moderation&lt;/th&gt;
+&lt;th align=&#34;right&#34;&gt;3a. accepted&lt;/th&gt;
+&lt;th align=&#34;right&#34;&gt;2. review in progress&lt;/th&gt;
+&lt;th align=&#34;right&#34;&gt;3c. inactive&lt;/th&gt;
+&lt;th align=&#34;right&#34;&gt;3b. declined&lt;/th&gt;
+&lt;/tr&gt;
+&lt;/thead&gt;
+&lt;tbody&gt;
+&lt;tr class=&#34;odd&#34;&gt;
+&lt;td align=&#34;left&#34;&gt;No&lt;/td&gt;
+&lt;td align=&#34;right&#34;&gt;0&lt;/td&gt;
+&lt;td align=&#34;right&#34;&gt;1&lt;/td&gt;
+&lt;td align=&#34;right&#34;&gt;0&lt;/td&gt;
+&lt;td align=&#34;right&#34;&gt;0&lt;/td&gt;
+&lt;td align=&#34;right&#34;&gt;0&lt;/td&gt;
+&lt;td align=&#34;right&#34;&gt;0&lt;/td&gt;
+&lt;td align=&#34;right&#34;&gt;1&lt;/td&gt;
+&lt;td align=&#34;right&#34;&gt;0&lt;/td&gt;
+&lt;td align=&#34;right&#34;&gt;1&lt;/td&gt;
+&lt;td align=&#34;right&#34;&gt;0&lt;/td&gt;
+&lt;td align=&#34;right&#34;&gt;0&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr class=&#34;even&#34;&gt;
+&lt;td align=&#34;left&#34;&gt;Yes&lt;/td&gt;
+&lt;td align=&#34;right&#34;&gt;2&lt;/td&gt;
+&lt;td align=&#34;right&#34;&gt;2&lt;/td&gt;
+&lt;td align=&#34;right&#34;&gt;1&lt;/td&gt;
+&lt;td align=&#34;right&#34;&gt;2&lt;/td&gt;
+&lt;td align=&#34;right&#34;&gt;0&lt;/td&gt;
+&lt;td align=&#34;right&#34;&gt;0&lt;/td&gt;
+&lt;td align=&#34;right&#34;&gt;1&lt;/td&gt;
+&lt;td align=&#34;right&#34;&gt;1&lt;/td&gt;
+&lt;td align=&#34;right&#34;&gt;1&lt;/td&gt;
+&lt;td align=&#34;right&#34;&gt;0&lt;/td&gt;
+&lt;td align=&#34;right&#34;&gt;0&lt;/td&gt;
+&lt;/tr&gt;
+&lt;/tbody&gt;
+&lt;/table&gt;
+&lt;p&gt;We can see that is more common to have more “troubles” on packages that end up accepted than those than not.
+Note that there are at least two OK per submission, one required before the review start and the other one after the changes before acceptance.&lt;/p&gt;
+&lt;/div&gt;
+&lt;div id=&#34;conclusions&#34; class=&#34;section level1&#34;&gt;
+&lt;h1&gt;Conclusions&lt;/h1&gt;
+&lt;p&gt;Most of the problems with the submissions are formal and automatically detected by the bot.
+Next come problems from the package itself not passing the checks performed on Bioconductor.
+So if you want to have your package included make sure that the package builds on Bioconductor and respond fast to the feedback provided by the bot.
+Once your package successfully builds, then address the comments from the reviewer.
+Follow the steps and if you don’t drop out you’ll see your package accepted.&lt;/p&gt;
+&lt;p&gt;On the next post I’ll explore the data from &lt;a href=&#34;https://ropensci.org/&#34;&gt;rOpenSci&lt;/a&gt;, which also does the &lt;a href=&#34;https://github.com/ropensci/software-review/issues/&#34;&gt;reviews on GitHub&lt;/a&gt;.&lt;/p&gt;
+&lt;div id=&#34;reproducibility&#34; class=&#34;section level3&#34;&gt;
+&lt;h3&gt;Reproducibility&lt;/h3&gt;
+&lt;details&gt;
+&lt;pre&gt;&lt;code&gt;## ─ Session info ───────────────────────────────────────────────────────────────────────────────────────────────────────
+##  setting  value                       
+##  version  R version 4.0.1 (2020-06-06)
+##  os       Ubuntu 20.04.1 LTS          
+##  system   x86_64, linux-gnu           
+##  ui       X11                         
+##  language (EN)                        
+##  collate  en_US.UTF-8                 
+##  ctype    en_US.UTF-8                 
+##  tz       Europe/Madrid               
+##  date     2021-01-08                  
+## 
+## ─ Packages ───────────────────────────────────────────────────────────────────────────────────────────────────────────
+##  package      * version date       lib source                           
+##  assertthat     0.2.1   2019-03-21 [1] CRAN (R 4.0.1)                   
+##  backports      1.2.1   2020-12-09 [1] CRAN (R 4.0.1)                   
+##  blogdown       0.21.84 2021-01-07 [1] Github (rstudio/blogdown@c4fbb58)
+##  bookdown       0.21    2020-10-13 [1] CRAN (R 4.0.1)                   
+##  broom          0.7.3   2020-12-16 [1] CRAN (R 4.0.1)                   
+##  cellranger     1.1.0   2016-07-27 [1] CRAN (R 4.0.1)                   
+##  cli            2.2.0   2020-11-20 [1] CRAN (R 4.0.1)                   
+##  codetools      0.2-18  2020-11-04 [1] CRAN (R 4.0.1)                   
+##  colorspace     2.0-0   2020-11-11 [1] CRAN (R 4.0.1)                   
+##  crayon         1.3.4   2017-09-16 [1] CRAN (R 4.0.1)                   
+##  DBI            1.1.0   2019-12-15 [1] CRAN (R 4.0.1)                   
+##  dbplyr         2.0.0   2020-11-03 [1] CRAN (R 4.0.1)                   
+##  digest         0.6.27  2020-10-24 [1] CRAN (R 4.0.1)                   
+##  dplyr        * 1.0.2   2020-08-18 [1] CRAN (R 4.0.1)                   
+##  ellipsis       0.3.1   2020-05-15 [1] CRAN (R 4.0.1)                   
+##  evaluate       0.14    2019-05-28 [1] CRAN (R 4.0.1)                   
+##  fansi          0.4.1   2020-01-08 [1] CRAN (R 4.0.1)                   
+##  farver         2.0.3   2020-01-16 [1] CRAN (R 4.0.1)                   
+##  forcats      * 0.5.0   2020-03-01 [1] CRAN (R 4.0.1)                   
+##  fs             1.5.0   2020-07-31 [1] CRAN (R 4.0.1)                   
+##  generics       0.1.0   2020-10-31 [1] CRAN (R 4.0.1)                   
+##  ggplot2      * 3.3.3   2020-12-30 [1] CRAN (R 4.0.1)                   
+##  ggrepel      * 0.9.0   2020-12-16 [1] CRAN (R 4.0.1)                   
+##  gh             1.2.0   2020-11-27 [1] CRAN (R 4.0.1)                   
+##  glue           1.4.2   2020-08-27 [1] CRAN (R 4.0.1)                   
+##  gtable         0.3.0   2019-03-25 [1] CRAN (R 4.0.1)                   
+##  haven          2.3.1   2020-06-01 [1] CRAN (R 4.0.1)                   
+##  here           1.0.1   2020-12-13 [1] CRAN (R 4.0.1)                   
+##  highr          0.8     2019-03-20 [1] CRAN (R 4.0.1)                   
+##  hms            0.5.3   2020-01-08 [1] CRAN (R 4.0.1)                   
+##  htmltools      0.5.0   2020-06-16 [1] CRAN (R 4.0.1)                   
+##  httr           1.4.2   2020-07-20 [1] CRAN (R 4.0.1)                   
+##  jsonlite       1.7.2   2020-12-09 [1] CRAN (R 4.0.1)                   
+##  knitr          1.30    2020-09-22 [1] CRAN (R 4.0.1)                   
+##  labeling       0.4.2   2020-10-20 [1] CRAN (R 4.0.1)                   
+##  lifecycle      0.2.0   2020-03-06 [1] CRAN (R 4.0.1)                   
+##  lubridate      1.7.9.2 2020-11-13 [1] CRAN (R 4.0.1)                   
+##  magrittr       2.0.1   2020-11-17 [1] CRAN (R 4.0.1)                   
+##  modelr         0.1.8   2020-05-19 [1] CRAN (R 4.0.1)                   
+##  munsell        0.5.0   2018-06-12 [1] CRAN (R 4.0.1)                   
+##  patchwork    * 1.1.1   2020-12-17 [1] CRAN (R 4.0.1)                   
+##  pillar         1.4.7   2020-11-20 [1] CRAN (R 4.0.1)                   
+##  pkgconfig      2.0.3   2019-09-22 [1] CRAN (R 4.0.1)                   
+##  purrr        * 0.3.4   2020-04-17 [1] CRAN (R 4.0.1)                   
+##  R6             2.5.0   2020-10-28 [1] CRAN (R 4.0.1)                   
+##  RColorBrewer   1.1-2   2014-12-07 [1] CRAN (R 4.0.1)                   
+##  Rcpp           1.0.5   2020-07-06 [1] CRAN (R 4.0.1)                   
+##  readr        * 1.4.0   2020-10-05 [1] CRAN (R 4.0.1)                   
+##  readxl         1.3.1   2019-03-13 [1] CRAN (R 4.0.1)                   
+##  reprex         0.3.0   2019-05-16 [1] CRAN (R 4.0.1)                   
+##  rlang          0.4.10  2020-12-30 [1] CRAN (R 4.0.1)                   
+##  rmarkdown      2.6     2020-12-14 [1] CRAN (R 4.0.1)                   
+##  rprojroot      2.0.2   2020-11-15 [1] CRAN (R 4.0.1)                   
+##  rstudioapi     0.13    2020-11-12 [1] CRAN (R 4.0.1)                   
+##  rvest          0.3.6   2020-07-25 [1] CRAN (R 4.0.1)                   
+##  scales         1.1.1   2020-05-11 [1] CRAN (R 4.0.1)                   
+##  sessioninfo    1.1.1   2018-11-05 [1] CRAN (R 4.0.1)                   
+##  socialGH     * 0.0.3   2020-08-17 [1] local                            
+##  stringi        1.5.3   2020-09-09 [1] CRAN (R 4.0.1)                   
+##  stringr      * 1.4.0   2019-02-10 [1] CRAN (R 4.0.1)                   
+##  tibble       * 3.0.4   2020-10-12 [1] CRAN (R 4.0.1)                   
+##  tidyr        * 1.1.2   2020-08-27 [1] CRAN (R 4.0.1)                   
+##  tidyselect     1.1.0   2020-05-11 [1] CRAN (R 4.0.1)                   
+##  tidyverse    * 1.3.0   2019-11-21 [1] CRAN (R 4.0.1)                   
+##  vctrs          0.3.6   2020-12-17 [1] CRAN (R 4.0.1)                   
+##  viridisLite    0.3.0   2018-02-01 [1] CRAN (R 4.0.1)                   
+##  withr          2.3.0   2020-09-22 [1] CRAN (R 4.0.1)                   
+##  xfun           0.20    2021-01-06 [1] CRAN (R 4.0.1)                   
+##  xml2           1.3.2   2020-04-23 [1] CRAN (R 4.0.1)                   
+##  yaml           2.2.1   2020-02-01 [1] CRAN (R 4.0.1)                   
+## 
+## [1] /home/lluis/bin/R/4.0.1/lib/R/library&lt;/code&gt;&lt;/pre&gt;
+&lt;/details&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+</description>
+    </item>
+    
+    <item>
+      <title>Bioconductor submissions</title>
+      <link>https://llrs.dev/post/2020/06/15/bioconductor-submissions/</link>
+      <pubDate>Mon, 15 Jun 2020 00:00:00 +0000</pubDate>
+      <guid>https://llrs.dev/post/2020/06/15/bioconductor-submissions/</guid>
+      <description>
+&lt;script src=&#34;https://llrs.dev/post/2020/06/15/bioconductor-submissions/index_files/header-attrs/header-attrs.js&#34;&gt;&lt;/script&gt;
+
+
+&lt;p&gt;The other day I was curious about how many submissions are on Bioconductor and how do they work, is there any pattern toward the release cycle or not?
+In this brief post I’ll explore some data available from the &lt;a href=&#34;https://github.com/Bioconductor/Contributions/&#34;&gt;github repository&lt;/a&gt; where the submissions are done as issues.
+I mostly focus on what happens when one submits a package so that it can help future submissions.&lt;/p&gt;
+&lt;p&gt;There are around 1826 issues, I extract the interesting information: date of creation, who creates them, where is the linked package. when are they closed, labels at the moment, reviewers…&lt;/p&gt;
+&lt;p&gt;We can further mark those approved because they are on bioconductor but do not have the &lt;a href=&#34;https://github.com/Bioconductor/Contributions/labels/3a.%20accepted&#34;&gt;approved label&lt;/a&gt; (Sometimes they get accepted but they forget to change labels on the issue).&lt;/p&gt;
+&lt;p&gt;I didn’t mark as accepted packages that were submitted several times (184 packages have been submitted more than once). Some of them are due to being on the old tracker and were not approved on this repository.&lt;br /&gt;
+Using also the CRAN repository we could find which packages where submitted to Bioconductor but end up on CRAN. But as I expect a low number of these I won’t check them.&lt;/p&gt;
+&lt;div id=&#34;exploring-the-submissions&#34; class=&#34;section level2&#34;&gt;
+&lt;h2&gt;Exploring the submissions&lt;/h2&gt;
+&lt;p&gt;First of all a general overview of the data available:&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;https://llrs.dev/post/2020/06/15/bioconductor-submissions/index_files/figure-html/eda-1.png&#34; width=&#34;120%&#34; /&gt;&lt;/p&gt;
+&lt;p&gt;On this plot we can see almost everything, date of creation, time opened, when was closed, in which release is included if accepted and the rate of submissions to Bioconductor.
+What we miss is about the authors submitting the packages and about the packages themselves.&lt;/p&gt;
+&lt;/div&gt;
+&lt;div id=&#34;submitting-authors&#34; class=&#34;section level2&#34;&gt;
+&lt;h2&gt;Submitting authors&lt;/h2&gt;
+&lt;p&gt;One of the core strength of R is the open community. There have been 749 different users submitting at least one package.&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;https://llrs.dev/post/2020/06/15/bioconductor-submissions/index_files/figure-html/users_submitting-1.png&#34; width=&#34;120%&#34; /&gt;&lt;/p&gt;
+&lt;p&gt;We can clearly see that most authors submit just one package but some submit a few more, with an outlier who have submitted more than 10 packages.&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;https://llrs.dev/post/2020/06/15/bioconductor-submissions/index_files/figure-html/users_ratio-1.png&#34; width=&#34;120%&#34; /&gt;&lt;/p&gt;
+&lt;p&gt;Most of the authors get their submission included at Bioconductor at the first try. Few need two submissions and some do not get their package included on Bioconductor. This can be because they withdraw the submission, or they decide to submit elsewhere or simply they do not go through the review.&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;https://llrs.dev/post/2020/06/15/bioconductor-submissions/index_files/figure-html/users-1.png&#34; width=&#34;120%&#34; /&gt;&lt;/p&gt;
+&lt;p&gt;If authors submit more packages they usually get them approved. Although we can also see some users that make several submissions.&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;https://llrs.dev/post/2020/06/15/bioconductor-submissions/index_files/figure-html/users_progression-1.png&#34; width=&#34;120%&#34; /&gt;&lt;/p&gt;
+&lt;p&gt;Regardless if the package is submitted just once or several times.
+More submissions do not make the package get accepted. Make sure that the submission is right on the first or second try. One big source of errors is not changing the template name of the repository for a link to your repository.&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;https://llrs.dev/post/2020/06/15/bioconductor-submissions/index_files/figure-html/user_submission_progression-1.png&#34; width=&#34;120%&#34; /&gt;&lt;/p&gt;
+&lt;p&gt;We can see that some users that created 14 issues didn’t have any package approved.&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;https://llrs.dev/post/2020/06/15/bioconductor-submissions/index_files/figure-html/submissions-1.png&#34; width=&#34;120%&#34; /&gt;&lt;/p&gt;
+&lt;p&gt;Around 50% of the ~400 yearly packages submitted are approved.&lt;/p&gt;
+&lt;p&gt;So if you have a package that fits Bioconductor you’ll get fairly well on the submission process.
+But I always recommend the lengthy pages for developers about the &lt;a href=&#34;https://bioconductor.org/developers/package-submission/&#34;&gt;submission process&lt;/a&gt; and the &lt;a href=&#34;https://bioconductor.org/developers/package-guidelines/&#34;&gt;packages guidelinines and requirements&lt;/a&gt;.
+Also make sure that you understand the expectations on what to fill of the template and what to expect after submitting: Don’t post several issues for the same package if you haven’t got any reply, but you can send a reminder on the issue and an email to the mailing list.
+Many times the reason for not accepting a package is because they do not follow the guidelines.&lt;/p&gt;
+&lt;/div&gt;
+&lt;div id=&#34;reviewers&#34; class=&#34;section level1&#34;&gt;
+&lt;h1&gt;Reviewers&lt;/h1&gt;
+&lt;p&gt;If your package fits Bioconductor a bot will assign a reviewer to check the package.
+Many submissions (~33%) do not get a reviewer assigned and the package is not included on Bioconductor’s repository, most (~90%) of the cases this happens the same day of the submission.
+But once they get one reviewer ~82% of them are approved.&lt;/p&gt;
+&lt;p&gt;There core members of Bioconductor are 9 usual reviewers:&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;https://llrs.dev/post/2020/06/15/bioconductor-submissions/index_files/figure-html/reviewers_frequency-1.png&#34; width=&#34;120%&#34; /&gt;&lt;/p&gt;
+&lt;p&gt;Probably you might get assigned the project leader Martin Morgan, but you can work with any other reviewer, as the work load is quite distributed: mtmorgan, lshep, LiNk-NY, nturaga, dvantwisk, hpages, Kayla-Morrell, Liubuntu, vobencha.&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;https://llrs.dev/post/2020/06/15/bioconductor-submissions/index_files/figure-html/reviewer_comments-1.png&#34; width=&#34;120%&#34; /&gt;&lt;/p&gt;
+&lt;p&gt;The reviews are fairly done by all the members. We can see that all of them approves more than 75% of the packages assigned.&lt;/p&gt;
+&lt;p&gt;Most of the reviewers take few days until the issue is closed.&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;https://llrs.dev/post/2020/06/15/bioconductor-submissions/index_files/figure-html/reviewers_time-1.png&#34; width=&#34;120%&#34; /&gt;&lt;img src=&#34;https://llrs.dev/post/2020/06/15/bioconductor-submissions/index_files/figure-html/reviewers_time-2.png&#34; width=&#34;120%&#34; /&gt;&lt;/p&gt;
+&lt;p&gt;Looking at these plots more time reviewing do not mean closing the issue without being accepted.&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;https://llrs.dev/post/2020/06/15/bioconductor-submissions/index_files/figure-html/reviewer_time_diff-1.png&#34; width=&#34;120%&#34; /&gt;&lt;/p&gt;
+&lt;p&gt;Correction! If we divide by approved submissions, some reviewers close later submissions that are not approved.
+They might wait longer to close the issues without approving them, or maybe they prefer to suggest modifications and a second submission of the same package.
+Others close faster than they accept the packages but as you can see by the error bars it is quite variable.
+In general you can expect more than 40 days review.&lt;/p&gt;
+&lt;p&gt;They might accept faster packages but it is because they provide faster feedback with more comments?&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;https://llrs.dev/post/2020/06/15/bioconductor-submissions/index_files/figure-html/reviewers_comments-1.png&#34; width=&#34;120%&#34; /&gt;&lt;/p&gt;
+&lt;p&gt;Many of the comments I suspect are automatic messages from the bot about building and receiving commits. But apparently there isn’t a difference between them.&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;https://llrs.dev/post/2020/06/15/bioconductor-submissions/index_files/figure-html/reviewer_comment_diff-1.png&#34; width=&#34;120%&#34; /&gt;&lt;/p&gt;
+&lt;p&gt;Here almost all the reviewers have more comments on approved packages.
+Also, there is less variability on the number of comments than on the time they are open.
+Answering doubts and giving feedback to the reviewers and contributors increases acceptance, even if this comment increase is due to automatic messages.&lt;/p&gt;
+&lt;p&gt;Usually more than 20 comments on the issue will be enough but the more feedback, the better.&lt;/p&gt;
+&lt;p&gt;Taking both information together we can see the pattern for all the reviewers:&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;https://llrs.dev/post/2020/06/15/bioconductor-submissions/index_files/figure-html/reviewers_comments_time-1.png&#34; width=&#34;120%&#34; /&gt;&lt;/p&gt;
+&lt;p&gt;Most of the not approved issues have less comments and usually remain less days open.&lt;/p&gt;
+&lt;div id=&#34;rushing&#34; class=&#34;section level2&#34;&gt;
+&lt;h2&gt;Rushing?&lt;/h2&gt;
+&lt;p&gt;Reviewers take their time to accept or reject the packages.
+But do contributors have some rush to get them accepted at the end of an academic year, before a Bioconductor release or before a publication?
+While I cannot check if there is an article accompanying the package, I can check other time trends.&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;https://llrs.dev/post/2020/06/15/bioconductor-submissions/index_files/figure-html/submission_rate-1.png&#34; width=&#34;120%&#34; /&gt;&lt;/p&gt;
+&lt;p&gt;So most days there is a new package submission and on the best day there are 8.
+There doesn’t seem to be a seasonality towards the end of the course, maybe because the contributors are international and do not share the same schedule or holidays.&lt;/p&gt;
+&lt;p&gt;Using the dates of new &lt;a href=&#34;https://bioconductor.org/about/release-announcements/&#34;&gt;Bioconductor releases&lt;/a&gt; we can check if there is some rush to submit packages closer to the new release:&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;https://llrs.dev/post/2020/06/15/bioconductor-submissions/index_files/figure-html/margin_submission-1.png&#34; width=&#34;120%&#34; /&gt;&lt;/p&gt;
+&lt;p&gt;The vertical line indicates the usual time the submissions are no longer accepted (around 30 days before the release day).
+So it seems like people submit close to the date but much consistently around the year as previously seen.&lt;/p&gt;
+&lt;p&gt;Those that submit closer to the date of release have higher rates of not being included on Bioconductor.&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;https://llrs.dev/post/2020/06/15/bioconductor-submissions/index_files/figure-html/worst_scenario-1.png&#34; width=&#34;120%&#34; /&gt;&lt;/p&gt;
+&lt;p&gt;Very few packages went to the worst scenario: submitted right before a deadline and then it wasn’t accepted until many releases later.
+However there is a curious effect, the closer the submission is to the release day, the shorter are the reviews of the accepted packages.&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;https://llrs.dev/post/2020/06/15/bioconductor-submissions/index_files/figure-html/open_releases-1.png&#34; width=&#34;120%&#34; /&gt;&lt;/p&gt;
+&lt;p&gt;Here we can observe this effect on the latest release.&lt;/p&gt;
+&lt;p&gt;I expected to see longer review time for the issues submitted closer to the release but we don’t see it.
+This indicates a sustained effort to review the submissions.&lt;/p&gt;
+&lt;/div&gt;
+&lt;div id=&#34;pitfalls&#34; class=&#34;section level2&#34;&gt;
+&lt;h2&gt;Pitfalls&lt;/h2&gt;
+&lt;p&gt;We have seen mostly the path to success, but in order to improve the process we must look what lead to having the packages not approved.&lt;/p&gt;
+&lt;p&gt;We can check if packages&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;https://llrs.dev/post/2020/06/15/bioconductor-submissions/index_files/figure-html/pkg_source-1.png&#34; width=&#34;120%&#34; /&gt;&lt;/p&gt;
+&lt;p&gt;When the user that submits the package is the owner of the repository then it is more likely that the package is accepted.
+Probably because it is easier to manage the version control system that way.&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;https://llrs.dev/post/2020/06/15/bioconductor-submissions/index_files/figure-html/time_rejected-1.png&#34; width=&#34;120%&#34; /&gt;&lt;/p&gt;
+&lt;p&gt;Most packages are closed fast but some review take longer than a year!
+Those closed fast are automatically done by the bot due to several reasons.
+Among these reasons:&lt;/p&gt;
+&lt;table&gt;
+&lt;caption&gt;&lt;span id=&#34;tab:repolink&#34;&gt;Table 1: &lt;/span&gt;Issues with more than one package&lt;/caption&gt;
+&lt;thead&gt;
+&lt;tr class=&#34;header&#34;&gt;
+&lt;th align=&#34;center&#34;&gt;Number of packages&lt;/th&gt;
+&lt;th align=&#34;center&#34;&gt;Times&lt;/th&gt;
+&lt;/tr&gt;
+&lt;/thead&gt;
+&lt;tbody&gt;
+&lt;tr class=&#34;odd&#34;&gt;
+&lt;td align=&#34;center&#34;&gt;0&lt;/td&gt;
+&lt;td align=&#34;center&#34;&gt;13&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr class=&#34;even&#34;&gt;
+&lt;td align=&#34;center&#34;&gt;2&lt;/td&gt;
+&lt;td align=&#34;center&#34;&gt;11&lt;/td&gt;
+&lt;/tr&gt;
+&lt;/tbody&gt;
+&lt;/table&gt;
+&lt;table&gt;
+&lt;caption&gt;&lt;span id=&#34;tab:repolinks&#34;&gt;Table 2: &lt;/span&gt;Multiple submission for the same package&lt;/caption&gt;
+&lt;thead&gt;
+&lt;tr class=&#34;header&#34;&gt;
+&lt;th align=&#34;center&#34;&gt;Name&lt;/th&gt;
+&lt;th align=&#34;center&#34;&gt;Packages&lt;/th&gt;
+&lt;/tr&gt;
+&lt;/thead&gt;
+&lt;tbody&gt;
+&lt;tr class=&#34;odd&#34;&gt;
+&lt;td align=&#34;center&#34;&gt;yourpackagename&lt;/td&gt;
+&lt;td align=&#34;center&#34;&gt;68&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr class=&#34;even&#34;&gt;
+&lt;td align=&#34;center&#34;&gt;cytofkit2&lt;/td&gt;
+&lt;td align=&#34;center&#34;&gt;8&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr class=&#34;odd&#34;&gt;
+&lt;td align=&#34;center&#34;&gt;test-package&lt;/td&gt;
+&lt;td align=&#34;center&#34;&gt;7&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr class=&#34;even&#34;&gt;
+&lt;td align=&#34;center&#34;&gt;PoTRA&lt;/td&gt;
+&lt;td align=&#34;center&#34;&gt;6&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr class=&#34;odd&#34;&gt;
+&lt;td align=&#34;center&#34;&gt;PFP&lt;/td&gt;
+&lt;td align=&#34;center&#34;&gt;6&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr class=&#34;even&#34;&gt;
+&lt;td align=&#34;center&#34;&gt;Summix&lt;/td&gt;
+&lt;td align=&#34;center&#34;&gt;6&lt;/td&gt;
+&lt;/tr&gt;
+&lt;/tbody&gt;
+&lt;/table&gt;
+&lt;p&gt;It is equally probable to not provide a link or to provide two.
+However many times the template is used as is and the link to the name of the repository remains “yourpackagename”, which is detected by the bot and closed.&lt;/p&gt;
+&lt;table&gt;
+&lt;caption&gt;&lt;span id=&#34;tab:comments&#34;&gt;Table 3: &lt;/span&gt;Comments on not approved submissions&lt;/caption&gt;
+&lt;thead&gt;
+&lt;tr class=&#34;header&#34;&gt;
+&lt;th align=&#34;center&#34;&gt;Comments&lt;/th&gt;
+&lt;th align=&#34;center&#34;&gt;Submissions&lt;/th&gt;
+&lt;/tr&gt;
+&lt;/thead&gt;
+&lt;tbody&gt;
+&lt;tr class=&#34;odd&#34;&gt;
+&lt;td align=&#34;center&#34;&gt;1&lt;/td&gt;
+&lt;td align=&#34;center&#34;&gt;413&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr class=&#34;even&#34;&gt;
+&lt;td align=&#34;center&#34;&gt;2&lt;/td&gt;
+&lt;td align=&#34;center&#34;&gt;42&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr class=&#34;odd&#34;&gt;
+&lt;td align=&#34;center&#34;&gt;3&lt;/td&gt;
+&lt;td align=&#34;center&#34;&gt;26&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr class=&#34;even&#34;&gt;
+&lt;td align=&#34;center&#34;&gt;4&lt;/td&gt;
+&lt;td align=&#34;center&#34;&gt;13&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr class=&#34;odd&#34;&gt;
+&lt;td align=&#34;center&#34;&gt;5&lt;/td&gt;
+&lt;td align=&#34;center&#34;&gt;11&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr class=&#34;even&#34;&gt;
+&lt;td align=&#34;center&#34;&gt;6&lt;/td&gt;
+&lt;td align=&#34;center&#34;&gt;9&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr class=&#34;odd&#34;&gt;
+&lt;td align=&#34;center&#34;&gt;12&lt;/td&gt;
+&lt;td align=&#34;center&#34;&gt;9&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr class=&#34;even&#34;&gt;
+&lt;td align=&#34;center&#34;&gt;10&lt;/td&gt;
+&lt;td align=&#34;center&#34;&gt;8&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr class=&#34;odd&#34;&gt;
+&lt;td align=&#34;center&#34;&gt;0&lt;/td&gt;
+&lt;td align=&#34;center&#34;&gt;7&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr class=&#34;even&#34;&gt;
+&lt;td align=&#34;center&#34;&gt;7&lt;/td&gt;
+&lt;td align=&#34;center&#34;&gt;7&lt;/td&gt;
+&lt;/tr&gt;
+&lt;/tbody&gt;
+&lt;/table&gt;
+&lt;p&gt;Most of the rejected submissions is done automatically by the “&lt;a href=&#34;https://github.com/bioc-issue-bot&#34;&gt;bioc-issue-bot&lt;/a&gt;”, with a brief message.
+But in general few messages are written before closing the submissions.&lt;/p&gt;
+&lt;table&gt;
+&lt;caption&gt;&lt;span id=&#34;tab:ending&#34;&gt;Table 4: &lt;/span&gt;Ending of rejected issues&lt;/caption&gt;
+&lt;thead&gt;
+&lt;tr class=&#34;header&#34;&gt;
+&lt;th align=&#34;center&#34;&gt;Ending&lt;/th&gt;
+&lt;th align=&#34;center&#34;&gt;Number of issues&lt;/th&gt;
+&lt;/tr&gt;
+&lt;/thead&gt;
+&lt;tbody&gt;
+&lt;tr class=&#34;odd&#34;&gt;
+&lt;td align=&#34;center&#34;&gt;.git&lt;/td&gt;
+&lt;td align=&#34;center&#34;&gt;20&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr class=&#34;even&#34;&gt;
+&lt;td align=&#34;center&#34;&gt;.R&lt;/td&gt;
+&lt;td align=&#34;center&#34;&gt;4&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr class=&#34;odd&#34;&gt;
+&lt;td align=&#34;center&#34;&gt;.data&lt;/td&gt;
+&lt;td align=&#34;center&#34;&gt;3&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr class=&#34;even&#34;&gt;
+&lt;td align=&#34;center&#34;&gt;.Gmax.EnsemblPlants.Gmv2&lt;/td&gt;
+&lt;td align=&#34;center&#34;&gt;3&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr class=&#34;odd&#34;&gt;
+&lt;td align=&#34;center&#34;&gt;.data.oma.All.Jan2020&lt;/td&gt;
+&lt;td align=&#34;center&#34;&gt;2&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr class=&#34;even&#34;&gt;
+&lt;td align=&#34;center&#34;&gt;.2&lt;/td&gt;
+&lt;td align=&#34;center&#34;&gt;1&lt;/td&gt;
+&lt;/tr&gt;
+&lt;/tbody&gt;
+&lt;/table&gt;
+&lt;p&gt;Sometimes the user provides a link to a compressed file, or it ends incorrectly with .git as when the url need to clone a repository.&lt;/p&gt;
+&lt;table&gt;
+&lt;caption&gt;&lt;span id=&#34;tab:labels&#34;&gt;Table 5: &lt;/span&gt;Labels of rejected packages&lt;/caption&gt;
+&lt;thead&gt;
+&lt;tr class=&#34;header&#34;&gt;
+&lt;th align=&#34;center&#34;&gt;Number of labels&lt;/th&gt;
+&lt;th align=&#34;center&#34;&gt;Number of issues&lt;/th&gt;
+&lt;/tr&gt;
+&lt;/thead&gt;
+&lt;tbody&gt;
+&lt;tr class=&#34;odd&#34;&gt;
+&lt;td align=&#34;center&#34;&gt;0&lt;/td&gt;
+&lt;td align=&#34;center&#34;&gt;455&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr class=&#34;even&#34;&gt;
+&lt;td align=&#34;center&#34;&gt;1&lt;/td&gt;
+&lt;td align=&#34;center&#34;&gt;81&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr class=&#34;odd&#34;&gt;
+&lt;td align=&#34;center&#34;&gt;2&lt;/td&gt;
+&lt;td align=&#34;center&#34;&gt;75&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr class=&#34;even&#34;&gt;
+&lt;td align=&#34;center&#34;&gt;3&lt;/td&gt;
+&lt;td align=&#34;center&#34;&gt;41&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr class=&#34;odd&#34;&gt;
+&lt;td align=&#34;center&#34;&gt;4&lt;/td&gt;
+&lt;td align=&#34;center&#34;&gt;8&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr class=&#34;even&#34;&gt;
+&lt;td align=&#34;center&#34;&gt;5&lt;/td&gt;
+&lt;td align=&#34;center&#34;&gt;2&lt;/td&gt;
+&lt;/tr&gt;
+&lt;/tbody&gt;
+&lt;/table&gt;
+&lt;p&gt;The bot automatically labels the issues to provide information about the build and check of the package and about the stage of the project.
+Usually this means they do not get assigned a reviewer or built on the Bioconductor server.&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;https://llrs.dev/post/2020/06/15/bioconductor-submissions/index_files/figure-html/upset-1.png&#34; width=&#34;120%&#34; /&gt;&lt;/p&gt;
+&lt;p&gt;Looking at which labels go together, if the review starts the next halting point is an error on the build process, probably the issue is not fixed and the submission not approved.&lt;/p&gt;
+&lt;/div&gt;
+&lt;div id=&#34;conclusion&#34; class=&#34;section level2&#34;&gt;
+&lt;h2&gt;Conclusion&lt;/h2&gt;
+&lt;p&gt;Most of the packages submitted to Bioconductor are accepted.
+Those that are not accepted are usually due to submission formatting issues detected automatically by the bioc-issue-bot.
+Reviewers provide a lot of feedback that if followed leads to acceptance of the package, when this feedback is ignored it leads to a rejection of the submission.
+Some packages are submitted right before a release and miss it, while others undergo a long review and miss several releases, but if you want to have your package included on the next release, aim to submit 40 days before the release date (usually on the end of April and October).&lt;/p&gt;
+&lt;div id=&#34;reproducibility&#34; class=&#34;section level3&#34;&gt;
+&lt;h3&gt;Reproducibility&lt;/h3&gt;
+&lt;details&gt;
+&lt;pre&gt;&lt;code&gt;## ─ Session info ───────────────────────────────────────────────────────────────────────────────────────────────────────
+##  setting  value                       
+##  version  R version 4.0.1 (2020-06-06)
+##  os       Ubuntu 20.04.1 LTS          
+##  system   x86_64, linux-gnu           
+##  ui       X11                         
+##  language (EN)                        
+##  collate  en_US.UTF-8                 
+##  ctype    en_US.UTF-8                 
+##  tz       Europe/Madrid               
+##  date     2021-01-08                  
+## 
+## ─ Packages ───────────────────────────────────────────────────────────────────────────────────────────────────────────
+##  package     * version date       lib source                           
+##  assertthat    0.2.1   2019-03-21 [1] CRAN (R 4.0.1)                   
+##  backports     1.2.1   2020-12-09 [1] CRAN (R 4.0.1)                   
+##  beeswarm      0.2.3   2016-04-25 [1] CRAN (R 4.0.1)                   
+##  BiocManager * 1.30.10 2019-11-16 [1] CRAN (R 4.0.1)                   
+##  blogdown      0.21.84 2021-01-07 [1] Github (rstudio/blogdown@c4fbb58)
+##  bookdown      0.21    2020-10-13 [1] CRAN (R 4.0.1)                   
+##  broom         0.7.3   2020-12-16 [1] CRAN (R 4.0.1)                   
+##  cellranger    1.1.0   2016-07-27 [1] CRAN (R 4.0.1)                   
+##  cli           2.2.0   2020-11-20 [1] CRAN (R 4.0.1)                   
+##  codetools     0.2-18  2020-11-04 [1] CRAN (R 4.0.1)                   
+##  colorspace    2.0-0   2020-11-11 [1] CRAN (R 4.0.1)                   
+##  crayon        1.3.4   2017-09-16 [1] CRAN (R 4.0.1)                   
+##  curl          4.3     2019-12-02 [1] CRAN (R 4.0.1)                   
+##  DBI           1.1.0   2019-12-15 [1] CRAN (R 4.0.1)                   
+##  dbplyr        2.0.0   2020-11-03 [1] CRAN (R 4.0.1)                   
+##  digest        0.6.27  2020-10-24 [1] CRAN (R 4.0.1)                   
+##  dplyr       * 1.0.2   2020-08-18 [1] CRAN (R 4.0.1)                   
+##  ellipsis      0.3.1   2020-05-15 [1] CRAN (R 4.0.1)                   
+##  evaluate      0.14    2019-05-28 [1] CRAN (R 4.0.1)                   
+##  fansi         0.4.1   2020-01-08 [1] CRAN (R 4.0.1)                   
+##  farver        2.0.3   2020-01-16 [1] CRAN (R 4.0.1)                   
+##  forcats     * 0.5.0   2020-03-01 [1] CRAN (R 4.0.1)                   
+##  fs            1.5.0   2020-07-31 [1] CRAN (R 4.0.1)                   
+##  generics      0.1.0   2020-10-31 [1] CRAN (R 4.0.1)                   
+##  ggbeeswarm    0.6.0   2017-08-07 [1] CRAN (R 4.0.1)                   
+##  ggplot2     * 3.3.2   2020-06-19 [1] CRAN (R 4.0.1)                   
+##  gh          * 1.2.0   2020-11-27 [1] CRAN (R 4.0.1)                   
+##  gitcreds      0.1.1   2020-12-04 [1] CRAN (R 4.0.1)                   
+##  glue          1.4.2   2020-08-27 [1] CRAN (R 4.0.1)                   
+##  gridExtra     2.3     2017-09-09 [1] CRAN (R 4.0.1)                   
+##  gtable        0.3.0   2019-03-25 [1] CRAN (R 4.0.1)                   
+##  haven         2.3.1   2020-06-01 [1] CRAN (R 4.0.1)                   
+##  highr         0.8     2019-03-20 [1] CRAN (R 4.0.1)                   
+##  hms           0.5.3   2020-01-08 [1] CRAN (R 4.0.1)                   
+##  htmltools     0.5.0   2020-06-16 [1] CRAN (R 4.0.1)                   
+##  httr          1.4.2   2020-07-20 [1] CRAN (R 4.0.1)                   
+##  jsonlite      1.7.2   2020-12-09 [1] CRAN (R 4.0.1)                   
+##  knitr         1.30    2020-09-22 [1] CRAN (R 4.0.1)                   
+##  labeling      0.4.2   2020-10-20 [1] CRAN (R 4.0.1)                   
+##  lifecycle     0.2.0   2020-03-06 [1] CRAN (R 4.0.1)                   
+##  lubridate   * 1.7.9.2 2020-11-13 [1] CRAN (R 4.0.1)                   
+##  magrittr      2.0.1   2020-11-17 [1] CRAN (R 4.0.1)                   
+##  modelr        0.1.8   2020-05-19 [1] CRAN (R 4.0.1)                   
+##  munsell       0.5.0   2018-06-12 [1] CRAN (R 4.0.1)                   
+##  pillar        1.4.7   2020-11-20 [1] CRAN (R 4.0.1)                   
+##  pkgconfig     2.0.3   2019-09-22 [1] CRAN (R 4.0.1)                   
+##  plyr          1.8.6   2020-03-03 [1] CRAN (R 4.0.1)                   
+##  purrr       * 0.3.4   2020-04-17 [1] CRAN (R 4.0.1)                   
+##  R6            2.5.0   2020-10-28 [1] CRAN (R 4.0.1)                   
+##  Rcpp          1.0.5   2020-07-06 [1] CRAN (R 4.0.1)                   
+##  readr       * 1.4.0   2020-10-05 [1] CRAN (R 4.0.1)                   
+##  readxl        1.3.1   2019-03-13 [1] CRAN (R 4.0.1)                   
+##  reprex        0.3.0   2019-05-16 [1] CRAN (R 4.0.1)                   
+##  rlang         0.4.10  2020-12-30 [1] CRAN (R 4.0.1)                   
+##  rmarkdown     2.6     2020-12-14 [1] CRAN (R 4.0.1)                   
+##  rstudioapi    0.13    2020-11-12 [1] CRAN (R 4.0.1)                   
+##  rvest         0.3.6   2020-07-25 [1] CRAN (R 4.0.1)                   
+##  scales        1.1.1   2020-05-11 [1] CRAN (R 4.0.1)                   
+##  sessioninfo   1.1.1   2018-11-05 [1] CRAN (R 4.0.1)                   
+##  stringi       1.5.3   2020-09-09 [1] CRAN (R 4.0.1)                   
+##  stringr     * 1.4.0   2019-02-10 [1] CRAN (R 4.0.1)                   
+##  tibble      * 3.0.4   2020-10-12 [1] CRAN (R 4.0.1)                   
+##  tidyr       * 1.1.2   2020-08-27 [1] CRAN (R 4.0.1)                   
+##  tidyselect    1.1.0   2020-05-11 [1] CRAN (R 4.0.1)                   
+##  tidyverse   * 1.3.0   2019-11-21 [1] CRAN (R 4.0.1)                   
+##  UpSetR      * 1.4.0   2019-05-22 [1] CRAN (R 4.0.1)                   
+##  utf8          1.1.4   2018-05-24 [1] CRAN (R 4.0.1)                   
+##  vctrs         0.3.6   2020-12-17 [1] CRAN (R 4.0.1)                   
+##  vipor         0.4.5   2017-03-22 [1] CRAN (R 4.0.1)                   
+##  withr         2.3.0   2020-09-22 [1] CRAN (R 4.0.1)                   
+##  xfun          0.20    2021-01-06 [1] CRAN (R 4.0.1)                   
+##  xml2          1.3.2   2020-04-23 [1] CRAN (R 4.0.1)                   
+##  yaml          2.2.1   2020-02-01 [1] CRAN (R 4.0.1)                   
+## 
+## [1] /home/lluis/bin/R/4.0.1/lib/R/library&lt;/code&gt;&lt;/pre&gt;
+&lt;/details&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+</description>
+    </item>
+    
+  </channel>
+</rss>

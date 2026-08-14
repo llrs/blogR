@@ -1,0 +1,119 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes" ?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>blogdown | B101nfo</title>
+    <link>https://llrs.dev/tags/blogdown/</link>
+      <atom:link href="https://llrs.dev/tags/blogdown/index.xml" rel="self" type="application/rss+xml" />
+    <description>blogdown</description>
+    <generator>Source Themes Academic (https://sourcethemes.com/academic/)</generator><language>en-us</language><copyright>If it is code you can copy and reuse (MIT) if it is text, please cite and reuse CC-BY 2026.</copyright><lastBuildDate>Thu, 30 Dec 2021 00:00:00 +0000</lastBuildDate>
+    <image>
+      <url>img/map[gravatar:%!s(bool=false) shape:circle]</url>
+      <title>blogdown</title>
+      <link>https://llrs.dev/tags/blogdown/</link>
+    </image>
+    
+    <item>
+      <title>Creating an RSS feed for r-bloggers for my blogdown</title>
+      <link>https://llrs.dev/post/2021/12/30/r-blogger-blogdown/</link>
+      <pubDate>Thu, 30 Dec 2021 00:00:00 +0000</pubDate>
+      <guid>https://llrs.dev/post/2021/12/30/r-blogger-blogdown/</guid>
+      <description>
+
+
+&lt;p&gt;I am following &lt;a href=&#34;https://yongfu.name/2018/12/13/hugo_rss.html&#34;&gt;Yongfu’s blog&lt;/a&gt;:
+I copy here the content in case it is moved:&lt;/p&gt;
+&lt;blockquote&gt;
+&lt;pre&gt;&lt;code&gt;Copy the default RSS template&lt;/code&gt;&lt;/pre&gt;
+&lt;/blockquote&gt;
+&lt;blockquote&gt;
+&lt;p&gt;Change &lt;description&gt;{{ .Summary | html }}&lt;/description&gt; to &lt;description&gt;{{ .Content | html }}&lt;/description&gt;&lt;/p&gt;
+&lt;/blockquote&gt;
+&lt;blockquote&gt;
+&lt;p&gt;Create subdirectories in layouts/ and save the RSS template files (name them rss.xml) in them (one for each subdirectory).&lt;/p&gt;
+&lt;/blockquote&gt;
+&lt;p&gt;I was first confused when I wanted to copy the rss.xml file mentioned and didn’t know where to go.
+I finally found the &lt;a href=&#34;https://gohugo.io/templates/rss/#the-embedded-rssxml&#34;&gt;section&lt;/a&gt; from which I could go to the file I was supposed to copy.&lt;/p&gt;
+&lt;p&gt;So far so good, so without further testing I assume this worked.
+Following &lt;a href=&#34;https://gohugo.io/templates/rss/&#34;&gt;the instructions&lt;/a&gt;, I moved the rss.xml file to &lt;code&gt;layouts/post/&lt;/code&gt; to only report posts of the blog, not new projects or other leafs from Hugo.&lt;/p&gt;
+&lt;p&gt;I also created a rss.xml on &lt;code&gt;layouts/categories/&lt;/code&gt;.
+As the templates provided by gohugo.io didn’t work I copied and pasted the &lt;a href=&#34;https://github.com/liao961120/Hugo-RSS/tree/master/layouts&#34;&gt;files from Yongfu’s Blog&lt;/a&gt;.&lt;/p&gt;
+&lt;p&gt;To check that it worked I went to &lt;a href=&#34;https://llrs.dev/categories/cran/index.xml&#34;&gt;&lt;code&gt;llrs.dev/categories/cran/index.xml&lt;/code&gt;&lt;/a&gt;.
+It did but not for all the posts. I kept getting an error even when I set a limit of 20 post on the config.toml file &lt;code&gt;rssLimit = 20&lt;/code&gt;.&lt;/p&gt;
+&lt;p&gt;I abandoned this for a while, other projects, pandemia…&lt;/p&gt;
+&lt;p&gt;When I came back I &lt;a href=&#34;https://gohugo.io/templates/rss/#the-embedded-rss-xml&#34; title=&#34;Hugo documentation about RSS&#34;&gt;updated the template&lt;/a&gt; on 30/12/2021 and the same error was still happening.
+After some digging I found that there is a &lt;a href=&#34;https://github.com/gohugoio/hugo/issues/1740&#34;&gt;bug on Hugo&lt;/a&gt; generating invalid XML code for the feeds.&lt;/p&gt;
+&lt;p&gt;I started looking for workarounds but adding a php function or a go function didn’t work well. I couldn’t correctly set up the php function and I don’t know how to write go.&lt;/p&gt;
+&lt;p&gt;Then I started thinking on limiting the issue, which let it to rssLimit. After several checks I didn’t manage to make it work.&lt;/p&gt;
+&lt;p&gt;But while reading &lt;a href=&#34;https://www.gavinwray.com/2018/05/10/hugo-rss-feed/&#34;&gt;a post&lt;/a&gt; I realized that rssLimit was no longer used (if it was ever on the first place).&lt;/p&gt;
+&lt;p&gt;So after adding:&lt;/p&gt;
+&lt;pre&gt;&lt;code&gt;[Services.RSS]
+  limit = 10&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;on my config.toml with the new template, the xml feeds are working again.
+There is only one problem. The &lt;a href=&#34;https://llrs.dev/tags/twitter/index.xml&#34;&gt;twitter tag feed&lt;/a&gt; doesn’t work, because &lt;a href=&#34;https://llrs.dev/post/2019/08/13/twitter-bot/&#34;&gt;the post that creates&lt;/a&gt; invalid content is there.&lt;/p&gt;
+&lt;p&gt;Hope that this save people some time if they try to do that. If you follow the linked posts &lt;a href=&#34;https://coolbutuseless.bitbucket.io/2018/02/07/blogdown-rss-feed-of-full-articles/&#34;&gt;like this one&lt;/a&gt; and take into account this change on how to limit RSS you might avoid the problem.&lt;/p&gt;
+&lt;div id=&#34;reproducibility&#34; class=&#34;section level3&#34;&gt;
+&lt;h3&gt;Reproducibility&lt;/h3&gt;
+&lt;details&gt;
+&lt;pre&gt;&lt;code&gt;## ─ Session info ───────────────────────────────────────────────────────────────────────────────────────────────────────
+##  setting  value
+##  version  R version 4.2.0 (2022-04-22)
+##  os       Ubuntu 20.04.4 LTS
+##  system   x86_64, linux-gnu
+##  ui       X11
+##  language (EN)
+##  collate  en_US.UTF-8
+##  ctype    en_US.UTF-8
+##  tz       Europe/Madrid
+##  date     2022-05-09
+##  pandoc   2.17.1.1 @ /usr/lib/rstudio/bin/quarto/bin/ (via rmarkdown)
+## 
+## ─ Packages ───────────────────────────────────────────────────────────────────────────────────────────────────────────
+##  package     * version date (UTC) lib source
+##  blogdown      1.9     2022-03-28 [1] CRAN (R 4.2.0)
+##  bookdown      0.26    2022-04-15 [1] CRAN (R 4.2.0)
+##  bslib         0.3.1   2021-10-06 [1] CRAN (R 4.2.0)
+##  cli           3.3.0   2022-04-25 [1] CRAN (R 4.2.0)
+##  digest        0.6.29  2021-12-01 [1] CRAN (R 4.2.0)
+##  evaluate      0.15    2022-02-18 [1] CRAN (R 4.2.0)
+##  fastmap       1.1.0   2021-01-25 [1] CRAN (R 4.2.0)
+##  htmltools     0.5.2   2021-08-25 [1] CRAN (R 4.2.0)
+##  jquerylib     0.1.4   2021-04-26 [1] CRAN (R 4.2.0)
+##  jsonlite      1.8.0   2022-02-22 [1] CRAN (R 4.2.0)
+##  knitr         1.39    2022-04-26 [1] CRAN (R 4.2.0)
+##  magrittr      2.0.3   2022-03-30 [1] CRAN (R 4.2.0)
+##  R6            2.5.1   2021-08-19 [1] CRAN (R 4.2.0)
+##  rlang         1.0.2   2022-03-04 [1] CRAN (R 4.2.0)
+##  rmarkdown     2.14    2022-04-25 [1] CRAN (R 4.2.0)
+##  rstudioapi    0.13    2020-11-12 [1] CRAN (R 4.2.0)
+##  sass          0.4.1   2022-03-23 [1] CRAN (R 4.2.0)
+##  sessioninfo   1.2.2   2021-12-06 [1] CRAN (R 4.2.0)
+##  stringi       1.7.6   2021-11-29 [1] CRAN (R 4.2.0)
+##  stringr       1.4.0   2019-02-10 [1] CRAN (R 4.2.0)
+##  xfun          0.30    2022-03-02 [1] CRAN (R 4.2.0)
+##  yaml          2.3.5   2022-02-21 [1] CRAN (R 4.2.0)
+## 
+##  [1] /home/lluis/bin/R/4.2.0/lib/R/library
+## 
+## ──────────────────────────────────────────────────────────────────────────────────────────────────────────────────────&lt;/code&gt;&lt;/pre&gt;
+&lt;/details&gt;
+&lt;/div&gt;
+</description>
+    </item>
+    
+    <item>
+      <title>Posting and titles</title>
+      <link>https://llrs.dev/post/2019/06/11/posting-titles/</link>
+      <pubDate>Tue, 11 Jun 2019 00:00:00 +0000</pubDate>
+      <guid>https://llrs.dev/post/2019/06/11/posting-titles/</guid>
+      <description>
+&lt;script src=&#34;https://llrs.dev/post/2019/06/11/posting-titles/index_files/header-attrs/header-attrs.js&#34;&gt;&lt;/script&gt;
+
+
+&lt;p&gt;If you want a post to appear on blogdown do not use titles of form &lt;code&gt;# My title&lt;/code&gt;.&lt;/p&gt;
+&lt;p&gt;But you can use second order titles with &lt;code&gt;## My title&lt;/code&gt; and it will be correctly parsed.&lt;/p&gt;
+&lt;p&gt;Short and fast!&lt;/p&gt;
+</description>
+    </item>
+    
+  </channel>
+</rss>

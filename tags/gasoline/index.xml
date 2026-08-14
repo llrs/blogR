@@ -1,0 +1,454 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes" ?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>gasoline | B101nfo</title>
+    <link>https://llrs.dev/tags/gasoline/</link>
+      <atom:link href="https://llrs.dev/tags/gasoline/index.xml" rel="self" type="application/rss+xml" />
+    <description>gasoline</description>
+    <generator>Source Themes Academic (https://sourcethemes.com/academic/)</generator><language>en-us</language><copyright>If it is code you can copy and reuse (MIT) if it is text, please cite and reuse CC-BY 2026.</copyright><lastBuildDate>Sun, 15 Sep 2019 00:00:00 +0000</lastBuildDate>
+    <image>
+      <url>img/map[gravatar:%!s(bool=false) shape:circle]</url>
+      <title>gasoline</title>
+      <link>https://llrs.dev/tags/gasoline/</link>
+    </image>
+    
+    <item>
+      <title>Consumption of gasoline by our car</title>
+      <link>https://llrs.dev/post/2019/09/15/oil/</link>
+      <pubDate>Sun, 15 Sep 2019 00:00:00 +0000</pubDate>
+      <guid>https://llrs.dev/post/2019/09/15/oil/</guid>
+      <description>
+&lt;script src=&#34;https://llrs.dev/post/2019/09/15/oil/index_files/header-attrs/header-attrs.js&#34;&gt;&lt;/script&gt;
+
+
+&lt;div id=&#34;introduction&#34; class=&#34;section level2&#34;&gt;
+&lt;h2&gt;Introduction&lt;/h2&gt;
+&lt;p&gt;For years my dad has been taking the notes of the gas stations and annotating
+the km done by the car until that moment and the km since last stop to refill.&lt;/p&gt;
+&lt;p&gt;Now, he suspects that the car is not as efficient as it was so he want to check the gasoline consumption.&lt;/p&gt;
+&lt;/div&gt;
+&lt;div id=&#34;the-data&#34; class=&#34;section level2&#34;&gt;
+&lt;h2&gt;The data&lt;/h2&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;knitr::opts_chunk$set(collapse = TRUE)&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;I had to manually annotate the data, but I uploaded here:&lt;/p&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;library(&amp;quot;here&amp;quot;)
+## here() starts at /home/lluis/Documents/Projects/blogR
+raw_data &amp;lt;- read.csv(here(&amp;quot;static&amp;quot;, &amp;quot;gasolina.csv&amp;quot;))&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;It is tidy but real data; some errors, missing values are present.
+I start with a visualization:&lt;/p&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;library(&amp;quot;ggplot2&amp;quot;)
+library(&amp;quot;dplyr&amp;quot;)
+## 
+## Attaching package: &amp;#39;dplyr&amp;#39;
+## The following objects are masked from &amp;#39;package:stats&amp;#39;:
+## 
+##     filter, lag
+## The following objects are masked from &amp;#39;package:base&amp;#39;:
+## 
+##     intersect, setdiff, setequal, union
+library(&amp;quot;lubridate&amp;quot;)
+## 
+## Attaching package: &amp;#39;lubridate&amp;#39;
+## The following objects are masked from &amp;#39;package:base&amp;#39;:
+## 
+##     date, intersect, setdiff, union
+clean_data &amp;lt;- raw_data %&amp;gt;% 
+  mutate(Date = dmy(Date)) %&amp;gt;% 
+  arrange(Date)
+
+ggplot(clean_data) +
+  geom_point(aes(Date, total_km, size = L)) +
+  theme_bw()
+## Warning: Removed 9 rows containing missing values (geom_point).&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;&lt;img src=&#34;https://llrs.dev/post/2019/09/15/oil/index_files/figure-html/clean-1.png&#34; width=&#34;672&#34; /&gt;&lt;/p&gt;
+&lt;p&gt;There are some values that are plain wrong, all of a sudden the car had less kilometers!
+Also we can see that there are some unit with more than 15000 Liters on the tank!
+We can check for other inconsistences.&lt;/p&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;summary(clean_data)
+##       Date               Last_km          total_km           L           
+##  Min.   :2015-03-20   Min.   : 180.0   Min.   : 3906   Min.   :   11.95  
+##  1st Qu.:2016-11-11   1st Qu.: 495.3   1st Qu.:24841   1st Qu.:   32.96  
+##  Median :2017-11-14   Median : 540.7   Median :39034   Median :   36.60  
+##  Mean   :2017-10-29   Mean   : 575.9   Mean   :38702   Mean   :  216.95  
+##  3rd Qu.:2018-09-25   3rd Qu.: 602.0   3rd Qu.:53009   3rd Qu.:   39.97  
+##  Max.   :2020-01-21   Max.   :4597.6   Max.   :66228   Max.   :19349.00  
+##                       NA&amp;#39;s   :12       NA&amp;#39;s   :9       NA&amp;#39;s   :1         
+##      Price      
+##  Min.   :14.00  
+##  1st Qu.:38.17  
+##  Median :42.10  
+##  Mean   :40.07  
+##  3rd Qu.:44.90  
+##  Max.   :54.01  
+## &lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;We can see on the summary that there is a data point at the the 2020.
+In reality is a bill that had no year, so it is corrected by lubridate to 2020.&lt;/p&gt;
+&lt;p&gt;On the positive side it seems like the tank is bigger than expected and it can have more than 40 liters.
+We need to check the manual, but this came as a suprise to my father.&lt;/p&gt;
+&lt;/div&gt;
+&lt;div id=&#34;data-cleaning&#34; class=&#34;section level2&#34;&gt;
+&lt;h2&gt;Data cleaning&lt;/h2&gt;
+&lt;p&gt;Checking the originally data (make bakups or store the original data!),
+I found that instead of 19349 Liters it has been 19.49 L and the other outliers are also my mistake typing.&lt;/p&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;clean_data$L[clean_data$L &amp;gt; 100] &amp;lt;- 19.49
+clean_data$Date[clean_data$Date &amp;gt; &amp;quot;2020/01/01&amp;quot;] &amp;lt;- &amp;quot;2018/01/21&amp;quot;
+clean_data$Last_km[clean_data$Last_km &amp;gt; 1000] &amp;lt;- 597.6
+clean_data$total_km[clean_data$total_km &amp;lt; 20000 &amp;amp; 
+                   year(clean_data$Date) &amp;lt; 2018 &amp;amp; 
+                   year(clean_data$Date) &amp;gt; 2016 &amp;amp;
+                   !is.na(clean_data$total_km)] &amp;lt;- 39065
+clean_data$total_km[clean_data$total_km &amp;lt; 7000 &amp;amp; 
+                   year(clean_data$Date) &amp;gt;= 2016 &amp;amp;
+                   !is.na(clean_data$total_km)] &amp;lt;- 16977
+# A duplicate with a wrong date
+clean_data &amp;lt;- clean_data[clean_data$Date != &amp;quot;2019/03/26&amp;quot;, ]
+clean_data$Date[clean_data$Date == &amp;quot;2019/06/26&amp;quot; &amp;amp; 
+                   clean_data$total_km &amp;lt; 60000] &amp;lt;- &amp;quot;2019/03/26&amp;quot;
+clean_data$total_km[clean_data$Date == &amp;quot;2016/06/26&amp;quot;] &amp;lt;- 18450
+clean_data$total_km[clean_data$Date == &amp;quot;2016/06/26&amp;quot;] &amp;lt;- 18450
+clean_data &amp;lt;- arrange(clean_data, Date)&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;After this manual curration we can check the plot again&lt;/p&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;ggplot(clean_data) +
+  geom_point(aes(Date, total_km, size = L)) +
+  theme_bw()  +
+  labs(y = &amp;quot;Km accumulated&amp;quot;)
+## Warning: Removed 8 rows containing missing values (geom_point).&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;&lt;img src=&#34;https://llrs.dev/post/2019/09/15/oil/index_files/figure-html/replot-1.png&#34; width=&#34;672&#34; /&gt;&lt;/p&gt;
+&lt;p&gt;Now the plot is much better.&lt;/p&gt;
+&lt;/div&gt;
+&lt;div id=&#34;insihgts&#34; class=&#34;section level2&#34;&gt;
+&lt;h2&gt;Insihgts&lt;/h2&gt;
+&lt;div id=&#34;efficiency&#34; class=&#34;section level3&#34;&gt;
+&lt;h3&gt;Efficiency&lt;/h3&gt;
+&lt;p&gt;Now that the data has been corrected to the best of my hability we can start comparing liters and km:&lt;/p&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;cleaner_data &amp;lt;- clean_data %&amp;gt;% 
+  mutate(
+    Last_km = round(Last_km),
+    total_l = cumsum(coalesce(L, 0)),
+    ratio = total_km/total_l
+  )&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;In the last block we set up the data to make the comparison.
+Now we want to model the data, we will use &lt;a href=&#34;&#34;&gt;broom&lt;/a&gt;:&lt;/p&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;library(&amp;quot;broom&amp;quot;)
+model &amp;lt;- lm(total_km ~ total_l, 
+            data = filter(cleaner_data, !is.na(total_km)))
+
+tidy(model)
+## # A tibble: 2 x 5
+##   term        estimate std.error statistic   p.value
+##   &amp;lt;chr&amp;gt;          &amp;lt;dbl&amp;gt;     &amp;lt;dbl&amp;gt;     &amp;lt;dbl&amp;gt;     &amp;lt;dbl&amp;gt;
+## 1 (Intercept)   6970.    65.6         106. 2.39e-101
+## 2 total_l         16.0    0.0291      550. 9.13e-170
+glance(model)
+## # A tibble: 1 x 12
+##   r.squared adj.r.squared sigma statistic   p.value    df logLik   AIC   BIC
+##       &amp;lt;dbl&amp;gt;         &amp;lt;dbl&amp;gt; &amp;lt;dbl&amp;gt;     &amp;lt;dbl&amp;gt;     &amp;lt;dbl&amp;gt; &amp;lt;dbl&amp;gt;  &amp;lt;dbl&amp;gt; &amp;lt;dbl&amp;gt; &amp;lt;dbl&amp;gt;
+## 1      1.00          1.00  293.   302741. 9.13e-170     1  -695. 1396. 1403.
+## # … with 3 more variables: deviance &amp;lt;dbl&amp;gt;, df.residual &amp;lt;int&amp;gt;, nobs &amp;lt;int&amp;gt;&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;This means that every 15.9965533 km the car spends 1L,
+and it seems quite consistent over the years, but we missed around 6970 L before we started collecting data:&lt;/p&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;cleaner_data %&amp;gt;% 
+  filter(!is.na(total_km)) %&amp;gt;% 
+  ggplot(aes(total_l, total_km)) +
+  geom_smooth(method = lm, col = &amp;quot;red&amp;quot;) +
+  geom_point() +
+  theme_bw() +
+  labs(x = &amp;quot;L accumulated&amp;quot;, y = &amp;quot;Km accumulated&amp;quot;)
+## `geom_smooth()` using formula &amp;#39;y ~ x&amp;#39;&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;&lt;img src=&#34;https://llrs.dev/post/2019/09/15/oil/index_files/figure-html/plot2-1.png&#34; width=&#34;672&#34; /&gt;&lt;/p&gt;
+&lt;p&gt;Note that with 0 L we cannot have traveled.
+So, to get the real consumption we need to set it to 0:&lt;/p&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;model0 &amp;lt;- lm(total_km ~ 0 +total_l, 
+             data = filter(cleaner_data, !is.na(total_km)))
+
+tidy(model0)
+## # A tibble: 1 x 5
+##   term    estimate std.error statistic   p.value
+##   &amp;lt;chr&amp;gt;      &amp;lt;dbl&amp;gt;     &amp;lt;dbl&amp;gt;     &amp;lt;dbl&amp;gt;     &amp;lt;dbl&amp;gt;
+## 1 total_l     18.8     0.142      132. 2.99e-111&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;Which results in a more efficient motor with close to 19km for each liter.&lt;/p&gt;
+&lt;p&gt;Now we can look if there are some years that it was worse.
+To do so we look at the residuals and the distribution of them:&lt;/p&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;augment(model) %&amp;gt;% 
+  cbind(filter(cleaner_data, !is.na(total_km))[ ,-c(3, 6)]) %&amp;gt;% 
+  ggplot() +
+  geom_point(aes(Date, .resid)) +
+  geom_smooth(aes(Date, .resid), method = &amp;quot;glm&amp;quot;) +
+  theme_minimal()
+## `geom_smooth()` using formula &amp;#39;y ~ x&amp;#39;&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;&lt;img src=&#34;https://llrs.dev/post/2019/09/15/oil/index_files/figure-html/residuals-1.png&#34; width=&#34;672&#34; /&gt;&lt;/p&gt;
+&lt;p&gt;As we can see there is not a pattern here.
+If the car were more efficient at the beginning we would see a trend that the residuals would increase.&lt;br /&gt;
+But let’s check it :&lt;/p&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;augment(model) %&amp;gt;% 
+  cbind(filter(cleaner_data, !is.na(total_km))[ ,-c(3, 6)]) %&amp;gt;% 
+  lm(.resid ~ Date, data = .) %&amp;gt;% 
+  glance()
+## # A tibble: 1 x 12
+##   r.squared adj.r.squared sigma statistic p.value    df logLik   AIC   BIC
+##       &amp;lt;dbl&amp;gt;         &amp;lt;dbl&amp;gt; &amp;lt;dbl&amp;gt;     &amp;lt;dbl&amp;gt;   &amp;lt;dbl&amp;gt; &amp;lt;dbl&amp;gt;  &amp;lt;dbl&amp;gt; &amp;lt;dbl&amp;gt; &amp;lt;dbl&amp;gt;
+## 1  0.000581      -0.00983  293.    0.0558   0.814     1  -695. 1396. 1403.
+## # … with 3 more variables: deviance &amp;lt;dbl&amp;gt;, df.residual &amp;lt;int&amp;gt;, nobs &amp;lt;int&amp;gt;&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;As we can see above we can’t say there is a linear tread to increased consumption with time.&lt;/p&gt;
+&lt;/div&gt;
+&lt;div id=&#34;refills&#34; class=&#34;section level3&#34;&gt;
+&lt;h3&gt;Refills&lt;/h3&gt;
+&lt;p&gt;Another interesting question is how many refills did we miss.
+We can first see how many km did it make with the last refill:&lt;/p&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;cleaner_data %&amp;gt;% 
+  ggplot() +
+  geom_histogram(aes(Last_km)) +
+  theme_bw()
+## `stat_bin()` using `bins = 30`. Pick better value with `binwidth`.
+## Warning: Removed 11 rows containing non-finite values (stat_bin).&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;&lt;img src=&#34;https://llrs.dev/post/2019/09/15/oil/index_files/figure-html/refills1-1.png&#34; width=&#34;672&#34; /&gt;&lt;/p&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;
+central_km &amp;lt;- cleaner_data %&amp;gt;% 
+  summarise(median = median(Last_km, na.rm = TRUE),
+            mean = round(mean(Last_km, na.rm = TRUE)))
+central_km
+##   median mean
+## 1    541  534
+# Then we can divide the total
+max(cleaner_data$total_km, na.rm = TRUE)/central_km[1, ]
+##     median     mean
+## 1 122.4177 124.0225&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;We can round this to 123 refills.
+So apparently we missed 17 refills.
+Or did I miss something here?&lt;/p&gt;
+&lt;p&gt;Let’s check how many refills are already missing from the data we have:&lt;/p&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;cleaner_data %&amp;gt;% 
+  mutate(
+    cum_km = cumsum(coalesce(Last_km, 0)),
+    km_at_last_refill = total_km - Last_km,
+    diff = total_km - km_at_last_refill[-1],
+    diff = if_else(is.na(diff), 0, diff),
+    refills_missed = round(abs(diff)/median(Last_km, na.rm = TRUE))
+  ) %&amp;gt;% 
+  summarise(total = sum(refills_missed))
+## Warning: Problem with `mutate()` input `diff`.
+## ℹ longer object length is not a multiple of shorter object length
+## ℹ Input `diff` is `total_km - km_at_last_refill[-1]`.
+## Warning in total_km - km_at_last_refill[-1]: longer object length is not a
+## multiple of shorter object length
+##   total
+## 1     8&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;To that amount we need to add the first 8171 km that we don’t have information of the refills.
+But those are around 14, plus the one we already have come close to those 17 we estimated.
+The difference is because there have been some smaller refills.&lt;/p&gt;
+&lt;/div&gt;
+&lt;div id=&#34;long-and-short-distances&#34; class=&#34;section level3&#34;&gt;
+&lt;h3&gt;Long and short distances&lt;/h3&gt;
+&lt;p&gt;If we look at it as a time series, we might notice some jumps.
+This might be due to a long trip.
+We can see if we can extract if there are some anomalies on the serie:&lt;/p&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;library(&amp;quot;anomalize&amp;quot;)
+## ══ Use anomalize to improve your Forecasts by 50%! ═════════════════════════════
+## Business Science offers a 1-hour course - Lab #18: Time Series Anomaly Detection!
+## &amp;lt;/&amp;gt; Learn more at: https://university.business-science.io/p/learning-labs-pro &amp;lt;/&amp;gt;
+cleaner_data %&amp;gt;% 
+  filter(!is.na(total_km)) %&amp;gt;% 
+  as_tibble() %&amp;gt;% 
+  time_decompose(total_km, method = &amp;quot;stl&amp;quot;) %&amp;gt;% 
+  anomalize(remainder, method = &amp;quot;iqr&amp;quot;) %&amp;gt;% 
+  time_recompose() %&amp;gt;%
+  plot_anomalies(time_recomposed = TRUE, ncol = 3, alpha_dots = 0.25) +
+  labs(title = &amp;quot;Refill Anomalies&amp;quot;, subtitle = &amp;quot;STL + IQR Methods&amp;quot;) 
+## Converting from tbl_df to tbl_time.
+## Auto-index message: index = Date
+## frequency = 20 months
+## trend = 20 months
+## Registered S3 method overwritten by &amp;#39;quantmod&amp;#39;:
+##   method            from
+##   as.zoo.data.frame zoo&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;&lt;img src=&#34;https://llrs.dev/post/2019/09/15/oil/index_files/figure-html/anomalize-1.png&#34; width=&#34;672&#34; /&gt;&lt;/p&gt;
+&lt;p&gt;We can further explore if there is any anomaly:&lt;/p&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;cleaner_data %&amp;gt;% 
+  filter(!is.na(total_km)) %&amp;gt;% 
+  time_frequency(period = &amp;quot;auto&amp;quot;)
+## frequency = 20 months
+## [1] 20
+cleaner_data %&amp;gt;% 
+  filter(!is.na(total_km)) %&amp;gt;% 
+  time_trend(period = &amp;quot;auto&amp;quot;)
+## trend = 20 months
+## [1] 20
+
+al &amp;lt;- cleaner_data %&amp;gt;% 
+  filter(!is.na(total_l)) %&amp;gt;% 
+  as_tibble() %&amp;gt;% 
+  time_decompose(total_l, method = &amp;quot;stl&amp;quot;, trend = &amp;quot;1 year&amp;quot;, frequency = &amp;quot;1 months&amp;quot;) %&amp;gt;% 
+  anomalize(remainder, method = &amp;quot;iqr&amp;quot;) %&amp;gt;% 
+  plot_anomaly_decomposition() +
+  labs(title = &amp;quot;total l&amp;quot;)
+## Converting from tbl_df to tbl_time.
+## Auto-index message: index = Date
+## frequency = 2 months
+## trend = 22 months
+ak &amp;lt;- cleaner_data %&amp;gt;% 
+  filter(!is.na(total_km)) %&amp;gt;% 
+  as_tibble() %&amp;gt;% 
+  time_decompose(total_km, method = &amp;quot;stl&amp;quot;, trend = &amp;quot;1 year&amp;quot;, frequency = &amp;quot;1 months&amp;quot;) %&amp;gt;% 
+  anomalize(remainder, method = &amp;quot;iqr&amp;quot;) %&amp;gt;% 
+  plot_anomaly_decomposition() +
+  labs(title = &amp;quot;total km&amp;quot;)
+## Converting from tbl_df to tbl_time.
+## Auto-index message: index = Date
+## frequency = 2 months
+## trend = 20 months
+
+ar &amp;lt;- cleaner_data %&amp;gt;%
+  filter(!is.na(ratio)) %&amp;gt;% 
+  as_tibble() %&amp;gt;% 
+  time_decompose(ratio, method = &amp;quot;stl&amp;quot;) %&amp;gt;% 
+  anomalize(remainder, method = &amp;quot;iqr&amp;quot;) %&amp;gt;% 
+  plot_anomaly_decomposition() +
+  labs(title = &amp;quot;total km/l&amp;quot;)
+## Converting from tbl_df to tbl_time.
+## Auto-index message: index = Date
+## frequency = 20 months
+## trend = 20 months
+library(&amp;quot;patchwork&amp;quot;)
+al + ak + plot_annotation(title = &amp;quot;Anomalies&amp;quot;)&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;&lt;img src=&#34;https://llrs.dev/post/2019/09/15/oil/index_files/figure-html/unnamed-chunk-2-1.png&#34; width=&#34;672&#34; /&gt;&lt;/p&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;div id=&#34;conclusions&#34; class=&#34;section level2&#34;&gt;
+&lt;h2&gt;Conclusions&lt;/h2&gt;
+&lt;p&gt;We can say that the car doesn’t need more gasoline for the same distance.&lt;/p&gt;
+&lt;p&gt;Usually there is a refill for every 550 km.&lt;/p&gt;
+&lt;p&gt;There aren’t notable anomalies, so the car makes the same trips usually.&lt;/p&gt;
+&lt;div id=&#34;references&#34; class=&#34;section level3&#34;&gt;
+&lt;h3&gt;References&lt;/h3&gt;
+&lt;/div&gt;
+&lt;div id=&#34;reproducibility&#34; class=&#34;section level3&#34;&gt;
+&lt;h3&gt;Reproducibility&lt;/h3&gt;
+&lt;details&gt;
+&lt;pre&gt;&lt;code&gt;## ─ Session info ───────────────────────────────────────────────────────────────────────────────────────────────────────
+##  setting  value                       
+##  version  R version 4.0.1 (2020-06-06)
+##  os       Ubuntu 20.04.1 LTS          
+##  system   x86_64, linux-gnu           
+##  ui       X11                         
+##  language (EN)                        
+##  collate  en_US.UTF-8                 
+##  ctype    en_US.UTF-8                 
+##  tz       Europe/Madrid               
+##  date     2021-01-08                  
+## 
+## ─ Packages ───────────────────────────────────────────────────────────────────────────────────────────────────────────
+##  package       * version    date       lib source                           
+##  anomalize     * 0.2.2      2020-10-20 [1] CRAN (R 4.0.1)                   
+##  assertthat      0.2.1      2019-03-21 [1] CRAN (R 4.0.1)                   
+##  backports       1.2.1      2020-12-09 [1] CRAN (R 4.0.1)                   
+##  blogdown        0.21.84    2021-01-07 [1] Github (rstudio/blogdown@c4fbb58)
+##  bookdown        0.21       2020-10-13 [1] CRAN (R 4.0.1)                   
+##  broom         * 0.7.3      2020-12-16 [1] CRAN (R 4.0.1)                   
+##  class           7.3-17     2020-04-26 [1] CRAN (R 4.0.1)                   
+##  cli             2.2.0      2020-11-20 [1] CRAN (R 4.0.1)                   
+##  codetools       0.2-18     2020-11-04 [1] CRAN (R 4.0.1)                   
+##  colorspace      2.0-0      2020-11-11 [1] CRAN (R 4.0.1)                   
+##  crayon          1.3.4      2017-09-16 [1] CRAN (R 4.0.1)                   
+##  curl            4.3        2019-12-02 [1] CRAN (R 4.0.1)                   
+##  dials           0.0.9      2020-09-16 [1] CRAN (R 4.0.1)                   
+##  DiceDesign      1.8-1      2019-07-31 [1] CRAN (R 4.0.1)                   
+##  digest          0.6.27     2020-10-24 [1] CRAN (R 4.0.1)                   
+##  dplyr         * 1.0.2      2020-08-18 [1] CRAN (R 4.0.1)                   
+##  ellipsis        0.3.1      2020-05-15 [1] CRAN (R 4.0.1)                   
+##  evaluate        0.14       2019-05-28 [1] CRAN (R 4.0.1)                   
+##  fansi           0.4.1      2020-01-08 [1] CRAN (R 4.0.1)                   
+##  farver          2.0.3      2020-01-16 [1] CRAN (R 4.0.1)                   
+##  foreach         1.5.1      2020-10-15 [1] CRAN (R 4.0.1)                   
+##  forecast        8.13       2020-09-12 [1] CRAN (R 4.0.1)                   
+##  fracdiff        1.5-1      2020-01-24 [1] CRAN (R 4.0.1)                   
+##  furrr           0.2.1      2020-10-21 [1] CRAN (R 4.0.1)                   
+##  future          1.21.0     2020-12-10 [1] CRAN (R 4.0.1)                   
+##  generics        0.1.0      2020-10-31 [1] CRAN (R 4.0.1)                   
+##  ggplot2       * 3.3.2      2020-06-19 [1] CRAN (R 4.0.1)                   
+##  globals         0.14.0     2020-11-22 [1] CRAN (R 4.0.1)                   
+##  glue            1.4.2      2020-08-27 [1] CRAN (R 4.0.1)                   
+##  gower           0.2.2      2020-06-23 [1] CRAN (R 4.0.1)                   
+##  GPfit           1.0-8      2019-02-08 [1] CRAN (R 4.0.1)                   
+##  gtable          0.3.0      2019-03-25 [1] CRAN (R 4.0.1)                   
+##  here          * 1.0.1      2020-12-13 [1] CRAN (R 4.0.1)                   
+##  hms             0.5.3      2020-01-08 [1] CRAN (R 4.0.1)                   
+##  htmltools       0.5.0      2020-06-16 [1] CRAN (R 4.0.1)                   
+##  httr            1.4.2      2020-07-20 [1] CRAN (R 4.0.1)                   
+##  ipred           0.9-9      2019-04-28 [1] CRAN (R 4.0.1)                   
+##  iterators       1.0.13     2020-10-15 [1] CRAN (R 4.0.1)                   
+##  jsonlite        1.7.2      2020-12-09 [1] CRAN (R 4.0.1)                   
+##  knitcitations * 1.0.10     2019-09-15 [1] CRAN (R 4.0.1)                   
+##  knitr           1.30       2020-09-22 [1] CRAN (R 4.0.1)                   
+##  labeling        0.4.2      2020-10-20 [1] CRAN (R 4.0.1)                   
+##  lattice         0.20-41    2020-04-02 [1] CRAN (R 4.0.1)                   
+##  lava            1.6.8.1    2020-11-04 [1] CRAN (R 4.0.1)                   
+##  lhs             1.1.1      2020-10-05 [1] CRAN (R 4.0.1)                   
+##  lifecycle       0.2.0      2020-03-06 [1] CRAN (R 4.0.1)                   
+##  listenv         0.8.0      2019-12-05 [1] CRAN (R 4.0.1)                   
+##  lmtest          0.9-38     2020-09-09 [1] CRAN (R 4.0.1)                   
+##  lubridate     * 1.7.9.2    2020-11-13 [1] CRAN (R 4.0.1)                   
+##  magrittr        2.0.1      2020-11-17 [1] CRAN (R 4.0.1)                   
+##  MASS            7.3-53     2020-09-09 [1] CRAN (R 4.0.1)                   
+##  Matrix          1.2-18     2019-11-27 [1] CRAN (R 4.0.1)                   
+##  mgcv            1.8-33     2020-08-27 [1] CRAN (R 4.0.1)                   
+##  munsell         0.5.0      2018-06-12 [1] CRAN (R 4.0.1)                   
+##  nlme            3.1-151    2020-12-10 [1] CRAN (R 4.0.1)                   
+##  nnet            7.3-14     2020-04-26 [1] CRAN (R 4.0.1)                   
+##  parallelly      1.22.0     2020-12-13 [1] CRAN (R 4.0.1)                   
+##  parsnip         0.1.4      2020-10-27 [1] CRAN (R 4.0.1)                   
+##  patchwork     * 1.1.1      2020-12-17 [1] CRAN (R 4.0.1)                   
+##  pillar          1.4.7      2020-11-20 [1] CRAN (R 4.0.1)                   
+##  pkgconfig       2.0.3      2019-09-22 [1] CRAN (R 4.0.1)                   
+##  plyr            1.8.6      2020-03-03 [1] CRAN (R 4.0.1)                   
+##  pROC            1.16.2     2020-03-19 [1] CRAN (R 4.0.1)                   
+##  prodlim         2019.11.13 2019-11-17 [1] CRAN (R 4.0.1)                   
+##  purrr           0.3.4      2020-04-17 [1] CRAN (R 4.0.1)                   
+##  quadprog        1.5-8      2019-11-20 [1] CRAN (R 4.0.1)                   
+##  quantmod        0.4.18     2020-12-09 [1] CRAN (R 4.0.1)                   
+##  R6              2.5.0      2020-10-28 [1] CRAN (R 4.0.1)                   
+##  Rcpp            1.0.5      2020-07-06 [1] CRAN (R 4.0.1)                   
+##  readr           1.4.0      2020-10-05 [1] CRAN (R 4.0.1)                   
+##  recipes         0.1.15     2020-11-11 [1] CRAN (R 4.0.1)                   
+##  RefManageR      1.3.0      2020-11-13 [1] CRAN (R 4.0.1)                   
+##  rlang           0.4.10     2020-12-30 [1] CRAN (R 4.0.1)                   
+##  rmarkdown       2.6        2020-12-14 [1] CRAN (R 4.0.1)                   
+##  rpart           4.1-15     2019-04-12 [1] CRAN (R 4.0.1)                   
+##  rprojroot       2.0.2      2020-11-15 [1] CRAN (R 4.0.1)                   
+##  rsample         0.0.8      2020-09-23 [1] CRAN (R 4.0.1)                   
+##  rstudioapi      0.13       2020-11-12 [1] CRAN (R 4.0.1)                   
+##  scales          1.1.1      2020-05-11 [1] CRAN (R 4.0.1)                   
+##  sessioninfo     1.1.1      2018-11-05 [1] CRAN (R 4.0.1)                   
+##  stringi         1.5.3      2020-09-09 [1] CRAN (R 4.0.1)                   
+##  stringr         1.4.0      2019-02-10 [1] CRAN (R 4.0.1)                   
+##  survival        3.2-7      2020-09-28 [1] CRAN (R 4.0.1)                   
+##  sweep           0.2.3      2020-07-10 [1] CRAN (R 4.0.1)                   
+##  tibble          3.0.4      2020-10-12 [1] CRAN (R 4.0.1)                   
+##  tibbletime      0.1.6      2020-07-21 [1] CRAN (R 4.0.1)                   
+##  tidyr           1.1.2      2020-08-27 [1] CRAN (R 4.0.1)                   
+##  tidyselect      1.1.0      2020-05-11 [1] CRAN (R 4.0.1)                   
+##  timeDate        3043.102   2018-02-21 [1] CRAN (R 4.0.1)                   
+##  timetk          2.6.0      2020-11-21 [1] CRAN (R 4.0.1)                   
+##  tseries         0.10-48    2020-12-04 [1] CRAN (R 4.0.1)                   
+##  TTR             0.24.2     2020-09-01 [1] CRAN (R 4.0.1)                   
+##  tune            0.1.2      2020-11-17 [1] CRAN (R 4.0.1)                   
+##  urca            1.3-0      2016-09-06 [1] CRAN (R 4.0.1)                   
+##  utf8            1.1.4      2018-05-24 [1] CRAN (R 4.0.1)                   
+##  vctrs           0.3.6      2020-12-17 [1] CRAN (R 4.0.1)                   
+##  withr           2.3.0      2020-09-22 [1] CRAN (R 4.0.1)                   
+##  workflows       0.2.1      2020-10-08 [1] CRAN (R 4.0.1)                   
+##  xfun            0.20       2021-01-06 [1] CRAN (R 4.0.1)                   
+##  xml2            1.3.2      2020-04-23 [1] CRAN (R 4.0.1)                   
+##  xts             0.12.1     2020-09-09 [1] CRAN (R 4.0.1)                   
+##  yaml            2.2.1      2020-02-01 [1] CRAN (R 4.0.1)                   
+##  yardstick       0.0.7      2020-07-13 [1] CRAN (R 4.0.1)                   
+##  zoo             1.8-8      2020-05-02 [1] CRAN (R 4.0.1)                   
+## 
+## [1] /home/lluis/bin/R/4.0.1/lib/R/library&lt;/code&gt;&lt;/pre&gt;
+&lt;details&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+</description>
+    </item>
+    
+  </channel>
+</rss>

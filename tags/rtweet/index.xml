@@ -1,0 +1,559 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes" ?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>rtweet | B101nfo</title>
+    <link>https://llrs.dev/tags/rtweet/</link>
+      <atom:link href="https://llrs.dev/tags/rtweet/index.xml" rel="self" type="application/rss+xml" />
+    <description>rtweet</description>
+    <generator>Source Themes Academic (https://sourcethemes.com/academic/)</generator><language>en-us</language><copyright>If it is code you can copy and reuse (MIT) if it is text, please cite and reuse CC-BY 2026.</copyright><lastBuildDate>Thu, 29 Feb 2024 19:00:00 +0200</lastBuildDate>
+    <image>
+      <url>img/map[gravatar:%!s(bool=false) shape:circle]</url>
+      <title>rtweet</title>
+      <link>https://llrs.dev/tags/rtweet/</link>
+    </image>
+    
+    <item>
+      <title>useR madrid: rtweet</title>
+      <link>https://llrs.dev/talk/user-madrid-rtweet/</link>
+      <pubDate>Thu, 29 Feb 2024 19:00:00 +0200</pubDate>
+      <guid>https://llrs.dev/talk/user-madrid-rtweet/</guid>
+      <description>
+
+
+&lt;p&gt;This presentation was in Spanish. I shared the history of my involvement with rtweet and what is happening with the package and Twitter API.&lt;/p&gt;
+</description>
+    </item>
+    
+    <item>
+      <title>New rtweet release: 2.0.0</title>
+      <link>https://llrs.dev/post/2024/02/16/new-rtweet-release-2-0-0/</link>
+      <pubDate>Fri, 16 Feb 2024 00:00:00 +0000</pubDate>
+      <guid>https://llrs.dev/post/2024/02/16/new-rtweet-release-2-0-0/</guid>
+      <description>
+
+
+&lt;p&gt;This is a brief announcement of rtweet version 2.0.0.
+This major version changes signals the move from the API v1.1 to the API v2.&lt;/p&gt;
+&lt;p&gt;There haven’t been many changes since 1.2.1 but this is to signal that the API v1.1 is deprecated.&lt;/p&gt;
+&lt;p&gt;The previous release was a bit of a rush to meet with the requirements of CRAN maintainers to fix an error and it wasn’t polished.
+Some users complained that it was difficult to find what worked.
+In this release I focused mostly to make life easier for users:&lt;/p&gt;
+&lt;p&gt;Now there is a document the deprecated functions from API v1.1 to API v2: see &lt;code&gt;help(&#34;rtweet-deprecated&#34;, &#34;rtweet&#34;)&lt;/code&gt;.
+I also made it easier for the rtweet to work with API v2: the release of httr2 1.0.0 version helped to avoid some workarounds with the authentication process.&lt;/p&gt;
+&lt;p&gt;I also focused on updating the vignettes to the most up to date recommendations.
+I am not sure the streaming vignettes is up to date (but keep reading why I left it as is).&lt;/p&gt;
+&lt;p&gt;Last, following CRAN policy: if users create rtweet data they can now delete it with &lt;code&gt;client_clean()&lt;/code&gt; and &lt;code&gt;auth_clean()&lt;/code&gt;.&lt;/p&gt;
+&lt;div id=&#34;future-releases&#34; class=&#34;section level1&#34;&gt;
+&lt;h1&gt;Future releases&lt;/h1&gt;
+&lt;p&gt;For the last year I &lt;a href=&#34;https://github.com/ropensci/rtweet/issues/763&#34;&gt;asked the community&lt;/a&gt; for a co-maintainer with interest in the package.
+Unfortunately, people that showed some interest at the end didn’t commit to it.&lt;/p&gt;
+&lt;p&gt;At the same time I &lt;a href=&#34;https://llrs.dev/post/2023/02/16/rtweet-future/&#34;&gt;also asked&lt;/a&gt; for &lt;a href=&#34;https://www.buymeacoffee.com/llrs&#34;&gt;donations&lt;/a&gt; to support an API access.
+It currently costs 100€ to access most endpoints which is needed to test and develop the package.
+However, this is more than half of what I spend in groceries last month.&lt;br /&gt;
+Other packages like &lt;a href=&#34;https://cran.r-project.org/package=academictwitteR&#34;&gt;academictwitteR&lt;/a&gt; are also stopping development/support.
+Although not archived from CRAN, it has a note in the README:&lt;/p&gt;
+&lt;blockquote&gt;
+&lt;p&gt;Note this repo is now ARCHVIED due to changes to the Twitter API. The paid API means open-source development of this package is no longer feasible.&lt;/p&gt;
+&lt;/blockquote&gt;
+&lt;p&gt;Similarly without financial help and community interest I won’t invest more time on it.&lt;br /&gt;
+This is the last version that I release.
+I have other interests and I would like to focus on other projects.
+My focus will be on updating and releasing some packages I have.
+I also want to focus more on my own company to help the R community (and beyond).
+I will write about the company shortly.&lt;/p&gt;
+&lt;p&gt;There have been some discussions on social media how to signal deprecation of packages.
+The only method available on CRAN that I know is to declare a package ORPHANATED.
+I have requested to CRAN to declared the package ORPHANATED.&lt;/p&gt;
+&lt;div id=&#34;reproducibility&#34; class=&#34;section level3&#34;&gt;
+&lt;h3&gt;Reproducibility&lt;/h3&gt;
+&lt;details&gt;
+&lt;pre&gt;&lt;code&gt;## ─ Session info ───────────────────────────────────────────────────────────────────────────────────────────────────────
+##  setting  value
+##  version  R version 4.3.1 (2023-06-16)
+##  os       Ubuntu 22.04.4 LTS
+##  system   x86_64, linux-gnu
+##  ui       X11
+##  language en
+##  collate  en_US.UTF-8
+##  ctype    en_US.UTF-8
+##  tz       Europe/Madrid
+##  date     2024-02-24
+##  pandoc   3.1.1 @ /usr/lib/rstudio/resources/app/bin/quarto/bin/tools/ (via rmarkdown)
+## 
+## ─ Packages ───────────────────────────────────────────────────────────────────────────────────────────────────────────
+##  package     * version date (UTC) lib source
+##  blogdown      1.18    2023-06-19 [1] CRAN (R 4.3.1)
+##  bookdown      0.37    2023-12-01 [1] CRAN (R 4.3.1)
+##  bslib         0.6.1   2023-11-28 [1] CRAN (R 4.3.1)
+##  cachem        1.0.8   2023-05-01 [1] CRAN (R 4.3.1)
+##  cli           3.6.2   2023-12-11 [1] CRAN (R 4.3.1)
+##  digest        0.6.34  2024-01-11 [1] CRAN (R 4.3.1)
+##  evaluate      0.23    2023-11-01 [1] CRAN (R 4.3.2)
+##  fastmap       1.1.1   2023-02-24 [1] CRAN (R 4.3.1)
+##  htmltools     0.5.7   2023-11-03 [1] CRAN (R 4.3.2)
+##  jquerylib     0.1.4   2021-04-26 [1] CRAN (R 4.3.1)
+##  jsonlite      1.8.8   2023-12-04 [1] CRAN (R 4.3.1)
+##  knitr         1.45    2023-10-30 [1] CRAN (R 4.3.2)
+##  lifecycle     1.0.4   2023-11-07 [1] CRAN (R 4.3.2)
+##  R6            2.5.1   2021-08-19 [1] CRAN (R 4.3.1)
+##  rlang         1.1.3   2024-01-10 [1] CRAN (R 4.3.1)
+##  rmarkdown     2.25    2023-09-18 [1] CRAN (R 4.3.1)
+##  rstudioapi    0.15.0  2023-07-07 [1] CRAN (R 4.3.1)
+##  sass          0.4.8   2023-12-06 [1] CRAN (R 4.3.1)
+##  sessioninfo   1.2.2   2021-12-06 [1] CRAN (R 4.3.1)
+##  xfun          0.42    2024-02-08 [1] CRAN (R 4.3.1)
+##  yaml          2.3.8   2023-12-11 [1] CRAN (R 4.3.1)
+## 
+##  [1] /home/lluis/bin/R/4.3.1
+##  [2] /opt/R/4.3.1/lib/R/library
+## 
+## ──────────────────────────────────────────────────────────────────────────────────────────────────────────────────────&lt;/code&gt;&lt;/pre&gt;
+&lt;/details&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+</description>
+    </item>
+    
+    <item>
+      <title>Releasing rtweet 1.2.0</title>
+      <link>https://llrs.dev/post/2023/03/20/rtweet-starts-using-api-v2/</link>
+      <pubDate>Mon, 20 Mar 2023 00:00:00 +0000</pubDate>
+      <guid>https://llrs.dev/post/2023/03/20/rtweet-starts-using-api-v2/</guid>
+      <description>
+
+
+&lt;p&gt;I’m very excited to announce that rtweet 1.2.0 is now available on GitHub! Install it by running:&lt;/p&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;devtools::install_github(&amp;quot;ropensci/rtweet&amp;quot;)&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;Then load it in a fresh session with:&lt;/p&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;library(rtweet)&lt;/code&gt;&lt;/pre&gt;
+&lt;div id=&#34;new-features&#34; class=&#34;section level1&#34;&gt;
+&lt;h1&gt;New features&lt;/h1&gt;
+&lt;p&gt;This version adds many new endpoints to retrieve data from twitter:&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;p&gt;From lists&lt;/p&gt;&lt;/li&gt;
+&lt;li&gt;&lt;p&gt;From tweets&lt;/p&gt;&lt;/li&gt;
+&lt;li&gt;&lt;p&gt;About users&lt;/p&gt;&lt;/li&gt;
+&lt;li&gt;&lt;p&gt;Also, about statistics of your own content.&lt;/p&gt;&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;You can read about them in the &lt;a href=&#34;https://docs.ropensci.org/rtweet/news/index.html&#34;&gt;NEWS&lt;/a&gt;.&lt;/p&gt;
+&lt;/div&gt;
+&lt;div id=&#34;authentication&#34; class=&#34;section level1&#34;&gt;
+&lt;h1&gt;Authentication&lt;/h1&gt;
+&lt;p&gt;Besides fixing a problem preventing new users to use &lt;code&gt;auth_setup_default()&lt;/code&gt;, in this release there is a new authentication mechanism.&lt;/p&gt;
+&lt;p&gt;Some endpoints require a new authentication method not previously used by rtweet.
+This authentication mechanism requires setting up a client.&lt;br /&gt;
+To support it, I have added some functions to create it, save it, and use it modelling the functions from &lt;code&gt;auth_*&lt;/code&gt;.
+There is now one client provided by rtweet if you don’t want to configure your own:&lt;/p&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;client_setup_default()&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;Additionally, I briefly expanded the authentication vignette (&lt;code&gt;vignette(&#34;auth&#34;, &#34;rtweet&#34;)&lt;/code&gt;) to include a section about how to obtain the required credentials.
+Once you get them is pretty straight forward:&lt;/p&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;auth_oauth2 &amp;lt;- rtweet_oauth2(app = &amp;quot;my_awesome_app&amp;quot;)&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;This mechanism is required by some functions which are of special interest: &lt;code&gt;user_self()&lt;/code&gt;, &lt;code&gt;tweet_bookmarked()&lt;/code&gt;, &lt;code&gt;user_blocked()&lt;/code&gt;, and &lt;code&gt;user_timeline()&lt;/code&gt;.&lt;/p&gt;
+&lt;p&gt;Note that due to upstream reasons, the authentication is only valid for 2 hours.
+You will be asked to approve the client again after the 2 hours (and save it again!).&lt;/p&gt;
+&lt;p&gt;We can set the authentication as we usually do:&lt;/p&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;auth_as(auth_oauth2)&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;And start retrieving our data in Twitter!&lt;/p&gt;
+&lt;/div&gt;
+&lt;div id=&#34;new-functions&#34; class=&#34;section level1&#34;&gt;
+&lt;h1&gt;New functions&lt;/h1&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;me &amp;lt;- user_self()
+bookmarked &amp;lt;- user_bookmarks(me$id, n = 120)&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;rtweet will make as many requests as needed and automatically paginate the results.
+However, if you try this you might realize that the queries are slow.
+These are the limits imposed by Twitter.&lt;/p&gt;
+&lt;p&gt;If you want to keep track of the progress of your query, you can use &lt;code&gt;verbose = TRUE&lt;/code&gt;:&lt;/p&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;blocked &amp;lt;- user_blocked(me$id, n = Inf, verbose = TRUE)
+timeline &amp;lt;- user_timeline(me$id, n = 800, verbose = TRUE)&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;It will also store the data of the requests in a temporary file, in case you lose the connection you can still recover it.&lt;/p&gt;
+&lt;p&gt;Some endpoints have a length limit on the accepted input:&lt;/p&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;bioconductor &amp;lt;- user_by_username(&amp;quot;Bioconductor&amp;quot;)
+bioconductor_followers &amp;lt;- user_followers(bioconductor$id, n = 200)
+us &amp;lt;- user_search(ids = bioconductor_followers$id)&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;Errors are, in principle, easier to understand in these new functions, thanks to the messages provided:&lt;/p&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;user_blocked(bioconductor$id, n = Inf, verbose = TRUE)&lt;/code&gt;&lt;/pre&gt;
+&lt;/div&gt;
+&lt;div id=&#34;other&#34; class=&#34;section level1&#34;&gt;
+&lt;h1&gt;Other&lt;/h1&gt;
+&lt;p&gt;These new endpoints provide access to many data which only the default information is converted to a nice table.
+If you request more data, via expansions and fields: replies, information about the user of a tweet, … you will have to wait next release.&lt;br /&gt;
+You can already get them but with &lt;code&gt;parse = FALSE&lt;/code&gt;.
+My intention was to provide more parsing support in this release, but I think it is better to make more releases more often.&lt;/p&gt;
+&lt;p&gt;The API also provides an endpoint to check if data stored is compliant with the Terms of Service.
+I started working on these endpoints after the streaming endpoints because they are important.&lt;/p&gt;
+&lt;/div&gt;
+&lt;div id=&#34;side-story&#34; class=&#34;section level1&#34;&gt;
+&lt;h1&gt;Side story&lt;/h1&gt;
+&lt;p&gt;With the deprecation of the streaming endpoints and the function &lt;code&gt;stream_tweets&lt;/code&gt; I implemented the first three functions using Twitter’s API v2.
+They use a bearer token as authentication mechanism.&lt;/p&gt;
+&lt;p&gt;Many endpoints of API v2 also use this authentication mechanism and made it easy to support them.&lt;/p&gt;
+&lt;p&gt;But there was a petition to retrieve the bookmarked tweets.
+That endpoint required OAuth2 mechanism and didn’t allow the use of the bearer token.
+It is relevant because bookmarks are not provided with the data dump you can request from Twitter.
+This endpoint is the only automatic way to retrieve them from Twitter if you used them!&lt;/p&gt;
+&lt;/div&gt;
+&lt;div id=&#34;final&#34; class=&#34;section level1&#34;&gt;
+&lt;h1&gt;Final&lt;/h1&gt;
+&lt;p&gt;This update is the last update of rtweet.
+The &lt;a href=&#34;https://twitter.com/TwitterDev/status/1641222782594990080&#34;&gt;new API plans&lt;/a&gt; make it impossible to continue developing and testing software like rtweet without substantial financial investment (at least USD$100/month).&lt;/p&gt;
+&lt;p&gt;More importantly, this will restrict who can use the package.
+I think those few users still using rtweet might also afford to pay for support or development of new features.
+If you are one of them you can &lt;a href=&#34;https://www.buymeacoffee.com/llrs&#34;&gt;sponsor my work&lt;/a&gt; in rtweet.&lt;/p&gt;
+&lt;p&gt;I will remove the package from CRAN one month after the new API enters into effect (~ 1st July).
+Farewell Twitter.&lt;/p&gt;
+&lt;/div&gt;
+</description>
+    </item>
+    
+    <item>
+      <title>rtweet future</title>
+      <link>https://llrs.dev/post/2023/02/16/rtweet-future/</link>
+      <pubDate>Thu, 16 Feb 2023 00:00:00 +0000</pubDate>
+      <guid>https://llrs.dev/post/2023/02/16/rtweet-future/</guid>
+      <description>
+
+
+&lt;div id=&#34;background-how-i-became-the-maintainer-of-rtweet&#34; class=&#34;section level2&#34;&gt;
+&lt;h2&gt;Background: how I became the maintainer of rtweet&lt;/h2&gt;
+&lt;p&gt;I didn’t want to maintain rtweet.
+It might sound strange coming from its maintainer, but I didn’t want the responsibility of writting software 12k people install it monthly.
+My offer was always to help with it so that the users could benefit from improvements and bug fixes on the package.
+I initially thought that having permissions to close issues, label them would help the community and the maintainer.&lt;/p&gt;
+&lt;p&gt;I was not totally altruistic.
+As &lt;a href=&#34;https://ropensci.org/blog/2022/10/17/maintain-or-co-maintain-an-ropensci-package/&#34;&gt;recently recommended by Maëlle and Steffi&lt;/a&gt;, I had some interest in the package.
+I had a bot posting some plots daily.
+I wanted to have alt text in the tweets.
+There was a pending PR for just that.
+I could fork and use my own version or help with the package.&lt;/p&gt;
+&lt;p&gt;I got in touch with rOpenSci about the package.
+After some time waiting hearing back from the author of the package (Many thanks &lt;a href=&#34;https://mikewk.com/!&#34;&gt;Michael W. Kearney&lt;/a&gt;, I was given edit permissions to the repository (under the helping eye of Scott Chamberlain).
+At the time, I got &lt;a href=&#34;https://github.com/ropensci/rtweet/issues/471&#34;&gt;permission from rOpenSci&lt;/a&gt; there were 167 issues and PR open.&lt;/p&gt;
+&lt;p&gt;As I started going through them and changing the source code, people showed up to help (Thanks!).
+New contributors helped with closing issues via new PR or simply advising about naming functions or &lt;a href=&#34;https://github.com/ropensci/rtweet/issues/445#issuecomment-790042423&#34;&gt;asking for its future&lt;/a&gt;.
+Another developer gained access to repository and contributed with their expertise (resulting in some &lt;a href=&#34;https://twitter.com/hadleywickham/status/1365661250269683713&#34;&gt;funny moments&lt;/a&gt;).
+Despite all (breaking) changes, we tried to make the package easier to maintain.
+After waiting some time, for further community feedback, I released a new version through CRAN.&lt;/p&gt;
+&lt;p&gt;Shortly after, for some reasons my bot got less views and engagement.
+It made me realize that it might be an opportunity to start a professional project around the content of what this bot did.
+In addition, although I learn a lot from the online communities I decided to connect more with the local community.
+I am currently involved with re-launching the &lt;a href=&#34;https://barcelonar.org&#34;&gt;Barcelona R user group&lt;/a&gt; and organizing the &lt;a href=&#34;http://r-es.org/2023/02/09/las-xiii-jornadas-congreso-r-hispano-2023-seran-en-barcelona/&#34;&gt;Spanish R conference&lt;/a&gt;.
+These activities take time an energy away from package maintenance (not just rtweet).
+However, &lt;strong&gt;my support for the users of rtweet remains&lt;/strong&gt;.&lt;/p&gt;
+&lt;div class=&#34;figure&#34;&gt;
+&lt;img src=&#34;images/allison_community_support.png&#34; alt=&#34;&#34; /&gt;
+&lt;p class=&#34;caption&#34;&gt;The community support I received was great. I hope to pass on it. CC-BY-4.0 &lt;a href=&#34;https://twitter.com/allison_horst&#34;&gt;Artwork by &lt;span class=&#34;citation&#34;&gt;@allison_horst&lt;/span&gt;.&lt;/a&gt;&lt;/p&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;div id=&#34;current-situation-supporting-the-v1-and-adding-support-to-the-v2-api&#34; class=&#34;section level2&#34;&gt;
+&lt;h2&gt;Current situation: supporting the v1 and adding support to the v2 API&lt;/h2&gt;
+&lt;p&gt;To maintain rtweet I needed to adapt and understand the Twitter’s API (v1) documentation.
+The documentation didn’t always match the functionality.
+rtweet follows the API tightly, any change might break the package.
+For instance, the addition of the edit field broke the parsing of the tweets.&lt;/p&gt;
+&lt;p&gt;At the same time one of the oldest issues in rtweet is moving to the new API v2.
+With the 1.0 release, I decided it was time to stop adding features relying in it.
+It was clear that Twitter was moving to deprecate and replace it with the newer API.
+There are many benefits of the new API to developer and users.
+But as I realized that I should still fix bugs related to them.&lt;/p&gt;
+&lt;p&gt;The 1.1 release have recently provided some bug fixes and support for the v2.
+There is also an outstanding issue preventting new users of connecting to Twitter (fixed in github).
+The streaming endpoint in v1 stopped working before the announced date.
+So the new release included support for the replacement endpoint in v2.&lt;/p&gt;
+&lt;p&gt;As you have guessed, between releases I had been thinking and working to support API v2.
+The foundations to support the new endpoints were already set and easily expanded to new endpoints.
+In the development version of the package (in the devel branch), it is possible to retrieve bookmarks, retrieve the archive if you have academic access, among other endpoints.&lt;/p&gt;
+&lt;/div&gt;
+&lt;div id=&#34;going-forward-supporting-rtweet-users-of-v2-api&#34; class=&#34;section level2&#34;&gt;
+&lt;h2&gt;Going forward: supporting rtweet users of v2 API&lt;/h2&gt;
+&lt;p&gt;Recently (~3 weeks), there have been &lt;a href=&#34;https://twitter.com/TwitterDev&#34;&gt;anouncements&lt;/a&gt; of future changes in who and how will be able to access the API.
+Simultaneously, there have been unannounced restrictions affecting other tools using the API.
+Recent changes and announcements are driven by need of money to sustain Twitter.
+To maintain rtweet with its current functionality it might need funds.&lt;/p&gt;
+&lt;p&gt;I will continue supporting rtweet and the freely accessible endpoints.
+But given that I will have less time and energy for rtweet, I am looking for a &lt;strong&gt;&lt;em&gt;co&lt;/em&gt;-maintainer&lt;/strong&gt; to help me:&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;Supporting new endpoints, using httr2, testing an API in CI, …&lt;/li&gt;
+&lt;li&gt;Review changes to avoid new bugs.&lt;/li&gt;
+&lt;li&gt;Help with issues and questions that the transition to API v2 and the current uncertainty bring.&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;Get in touch with me in &lt;a href=&#34;https://github.com/ropensci/rtweet/issues/763&#34;&gt;this issue&lt;/a&gt;.&lt;/p&gt;
+&lt;p&gt;From time to time, I receive bug reports and petitions from premium API users.
+Currently, premium users get access to more data, elevated request rates and other endpoints.
+Helping them is usually challenging, and developing support for these endpoints will be difficult.
+To continue supporting these users I’ve set up a &lt;a href=&#34;https://www.buymeacoffee.com/llrs&#34;&gt;☕ buymeacoffee&lt;/a&gt; and I, and my co-maintainer, will be open to consulting jobs about rtweet.
+With these jobs and funding we will be able to support them and implement new endpoints for all the users.&lt;/p&gt;
+&lt;p&gt;There is scarce information about the API changes and prices.
+Changes might come suddenly.
+We’ll do our best to keep up and inform all users.
+I hope this will be a good way to &lt;strong&gt;continue supporting the package an the community&lt;/strong&gt; of users.
+Let me know if you have other suggestions.&lt;/p&gt;
+&lt;div class=&#34;figure&#34;&gt;
+&lt;img src=&#34;images/decorated_r.png&#34; alt=&#34;&#34; /&gt;
+&lt;p class=&#34;caption&#34;&gt;Decorating/contributing to R. CC-BY-4.0 &lt;a href=&#34;https://twitter.com/allison_horst&#34;&gt;artwork by &lt;span class=&#34;citation&#34;&gt;@allison_horst&lt;/span&gt;.&lt;/a&gt;&lt;/p&gt;
+&lt;/div&gt;
+&lt;p&gt;&lt;em&gt;Thanks Maëlle for your support and reviewing the post.&lt;/em&gt;&lt;/p&gt;
+&lt;/div&gt;
+</description>
+    </item>
+    
+    <item>
+      <title>Upgrading rtweet to 1.0.2</title>
+      <link>https://llrs.dev/post/2022/07/04/rtweet-1-0-0/</link>
+      <pubDate>Mon, 04 Jul 2022 00:00:00 +0000</pubDate>
+      <guid>https://llrs.dev/post/2022/07/04/rtweet-1-0-0/</guid>
+      <description>
+
+
+&lt;p&gt;In this post I will provide some examples of what has changed between rtweet 0.7.0 and rtweet 1.0.2.
+I hope both the changes and this guide will help all users.
+I highlight the most important and interesting changes in this blog post, and for a full list of changes you can consult it on the &lt;a href=&#34;https://docs.ropensci.org/rtweet/news/index.html&#34;&gt;NEWS&lt;/a&gt;.&lt;/p&gt;
+&lt;div id=&#34;big-breaking-changes&#34; class=&#34;section level2&#34;&gt;
+&lt;h2&gt;&lt;strong&gt;Big breaking changes&lt;/strong&gt;&lt;/h2&gt;
+&lt;div id=&#34;more-consistent-output&#34; class=&#34;section level3&#34;&gt;
+&lt;h3&gt;More consistent output&lt;/h3&gt;
+&lt;p&gt;This is probably what will affect the most users.
+All functions that return data about tweets&lt;a href=&#34;#fn1&#34; class=&#34;footnote-ref&#34; id=&#34;fnref1&#34;&gt;&lt;sup&gt;1&lt;/sup&gt;&lt;/a&gt; now return the same columns.&lt;/p&gt;
+&lt;p&gt;For example if we search some tweets we’ll get the following columns:&lt;/p&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;&amp;gt; tweets &amp;lt;- search_tweets(&amp;quot;weather&amp;quot;)
+&amp;gt; colnames(tweets)
+ [1] &amp;quot;created_at&amp;quot;                    &amp;quot;id&amp;quot;                           
+ [3] &amp;quot;id_str&amp;quot;                        &amp;quot;full_text&amp;quot;                    
+ [5] &amp;quot;truncated&amp;quot;                     &amp;quot;display_text_range&amp;quot;           
+ [7] &amp;quot;entities&amp;quot;                      &amp;quot;metadata&amp;quot;                     
+ [9] &amp;quot;source&amp;quot;                        &amp;quot;in_reply_to_status_id&amp;quot;        
+[11] &amp;quot;in_reply_to_status_id_str&amp;quot;     &amp;quot;in_reply_to_user_id&amp;quot;          
+[13] &amp;quot;in_reply_to_user_id_str&amp;quot;       &amp;quot;in_reply_to_screen_name&amp;quot;      
+[15] &amp;quot;geo&amp;quot;                           &amp;quot;coordinates&amp;quot;                  
+[17] &amp;quot;place&amp;quot;                         &amp;quot;contributors&amp;quot;                 
+[19] &amp;quot;is_quote_status&amp;quot;               &amp;quot;retweet_count&amp;quot;                
+[21] &amp;quot;favorite_count&amp;quot;                &amp;quot;favorited&amp;quot;                    
+[23] &amp;quot;retweeted&amp;quot;                     &amp;quot;lang&amp;quot;                         
+[25] &amp;quot;quoted_status_id&amp;quot;              &amp;quot;quoted_status_id_str&amp;quot;         
+[27] &amp;quot;quoted_status&amp;quot;                 &amp;quot;possibly_sensitive&amp;quot;           
+[29] &amp;quot;retweeted_status&amp;quot;              &amp;quot;text&amp;quot;                         
+[31] &amp;quot;favorited_by&amp;quot;                  &amp;quot;scopes&amp;quot;                       
+[33] &amp;quot;display_text_width&amp;quot;            &amp;quot;quoted_status_permalink&amp;quot;      
+[35] &amp;quot;quote_count&amp;quot;                   &amp;quot;timestamp_ms&amp;quot;                 
+[37] &amp;quot;reply_count&amp;quot;                   &amp;quot;filter_level&amp;quot;                 
+[39] &amp;quot;query&amp;quot;                         &amp;quot;withheld_scope&amp;quot;               
+[41] &amp;quot;withheld_copyright&amp;quot;            &amp;quot;withheld_in_countries&amp;quot;        
+[43] &amp;quot;possibly_sensitive_appealable&amp;quot;&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;rtweet now minimizes the processing of tweets and only returns the same data as provided by the API while making it easier to handle by R.
+However, to preserve the nested nature of the data returned some fields are now nested inside other.
+For example, previously fields &lt;code&gt;&#34;bbpx_coords&#34;&lt;/code&gt;, &lt;code&gt;&#34;geo_coords&#34;&lt;/code&gt;, &lt;code&gt;&#34;coords_coords&#34;&lt;/code&gt; were returned as separate columns, but they are now nested inside &lt;code&gt;&#34;place&#34;&lt;/code&gt;, &lt;code&gt;&#34;coordinates&#34;&lt;/code&gt; or &lt;code&gt;&#34;geo&#34;&lt;/code&gt; depending where they are provided.
+Some columns previously calculated by rtweet are now not returned, like &lt;code&gt;&#34;rtweet_favorite_count&#34;&lt;/code&gt;.
+At the same time it provides with new columns about each tweet like the &lt;code&gt;&#34;withheld_*&#34;&lt;/code&gt; columns.&lt;/p&gt;
+&lt;p&gt;If you scanned through the columns you might have noticed that columns &lt;code&gt;&#34;user_id&#34;&lt;/code&gt; and &lt;code&gt;&#34;screen_name&#34;&lt;/code&gt; are no longer returned.
+This data is still returned by the API but it is now made available to the rtweet users via &lt;code&gt;users_data()&lt;/code&gt;:&lt;/p&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;&amp;gt; colnames(users_data(tweets))
+ [1] &amp;quot;id&amp;quot;                      &amp;quot;id_str&amp;quot;                 
+ [3] &amp;quot;name&amp;quot;                    &amp;quot;screen_name&amp;quot;            
+ [5] &amp;quot;location&amp;quot;                &amp;quot;description&amp;quot;            
+ [7] &amp;quot;url&amp;quot;                     &amp;quot;protected&amp;quot;              
+ [9] &amp;quot;followers_count&amp;quot;         &amp;quot;friends_count&amp;quot;          
+[11] &amp;quot;listed_count&amp;quot;            &amp;quot;created_at&amp;quot;             
+[13] &amp;quot;favourites_count&amp;quot;        &amp;quot;verified&amp;quot;               
+[15] &amp;quot;statuses_count&amp;quot;          &amp;quot;profile_image_url_https&amp;quot;
+[17] &amp;quot;profile_banner_url&amp;quot;      &amp;quot;default_profile&amp;quot;        
+[19] &amp;quot;default_profile_image&amp;quot;   &amp;quot;withheld_in_countries&amp;quot;  
+[21] &amp;quot;derived&amp;quot;                 &amp;quot;withheld_scope&amp;quot;         
+[23] &amp;quot;entities&amp;quot; &lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;This blog post should help you find the right data columns, but if you don’t find what you are looking for it might be nested inside a column.&lt;br /&gt;
+Try using &lt;code&gt;dplyr::glimpse()&lt;/code&gt; to explore the data and locate nested columns.
+For example the entities column (which is present in both tweets and users) have the following useful columns:&lt;/p&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;&amp;gt; names(tweets$entities[[1]])
+[1] &amp;quot;hashtags&amp;quot;      &amp;quot;symbols&amp;quot;       &amp;quot;user_mentions&amp;quot; &amp;quot;urls&amp;quot;         
+[5] &amp;quot;media&amp;quot; &lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;Similarly if you look up a user via &lt;code&gt;search_users()&lt;/code&gt; or &lt;code&gt;lookup_users()&lt;/code&gt; you’ll get consistent data:&lt;/p&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;&amp;gt; users &amp;lt;- lookup_users(c(&amp;quot;twitter&amp;quot;, &amp;quot;rladiesglobal&amp;quot;, &amp;quot;_R_Foundation&amp;quot;))
+&amp;gt; colnames(users)
+ [1] &amp;quot;id&amp;quot;                      &amp;quot;id_str&amp;quot;                 
+ [3] &amp;quot;name&amp;quot;                    &amp;quot;screen_name&amp;quot;            
+ [5] &amp;quot;location&amp;quot;                &amp;quot;description&amp;quot;            
+ [7] &amp;quot;url&amp;quot;                     &amp;quot;protected&amp;quot;              
+ [9] &amp;quot;followers_count&amp;quot;         &amp;quot;friends_count&amp;quot;          
+[11] &amp;quot;listed_count&amp;quot;            &amp;quot;created_at&amp;quot;             
+[13] &amp;quot;favourites_count&amp;quot;        &amp;quot;verified&amp;quot;               
+[15] &amp;quot;statuses_count&amp;quot;          &amp;quot;profile_image_url_https&amp;quot;
+[17] &amp;quot;profile_banner_url&amp;quot;      &amp;quot;default_profile&amp;quot;        
+[19] &amp;quot;default_profile_image&amp;quot;   &amp;quot;withheld_in_countries&amp;quot;  
+[21] &amp;quot;derived&amp;quot;                 &amp;quot;withheld_scope&amp;quot;         
+[23] &amp;quot;entities&amp;quot;               &lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;You can use &lt;code&gt;tweets_data()&lt;/code&gt; to retrieve information about their latest tweet:&lt;/p&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;&amp;gt; colnames(tweets_data(users))
+ [1] &amp;quot;created_at&amp;quot;                    &amp;quot;id&amp;quot;                           
+ [3] &amp;quot;id_str&amp;quot;                        &amp;quot;text&amp;quot;                         
+ [5] &amp;quot;truncated&amp;quot;                     &amp;quot;entities&amp;quot;                     
+ [7] &amp;quot;source&amp;quot;                        &amp;quot;in_reply_to_status_id&amp;quot;        
+ [9] &amp;quot;in_reply_to_status_id_str&amp;quot;     &amp;quot;in_reply_to_user_id&amp;quot;          
+[11] &amp;quot;in_reply_to_user_id_str&amp;quot;       &amp;quot;in_reply_to_screen_name&amp;quot;      
+[13] &amp;quot;geo&amp;quot;                           &amp;quot;coordinates&amp;quot;                  
+[15] &amp;quot;place&amp;quot;                         &amp;quot;contributors&amp;quot;                 
+[17] &amp;quot;is_quote_status&amp;quot;               &amp;quot;retweet_count&amp;quot;                
+[19] &amp;quot;favorite_count&amp;quot;                &amp;quot;favorited&amp;quot;                    
+[21] &amp;quot;retweeted&amp;quot;                     &amp;quot;lang&amp;quot;                         
+[23] &amp;quot;retweeted_status&amp;quot;              &amp;quot;possibly_sensitive&amp;quot;           
+[25] &amp;quot;quoted_status&amp;quot;                 &amp;quot;display_text_width&amp;quot;           
+[27] &amp;quot;user&amp;quot;                          &amp;quot;full_text&amp;quot;                    
+[29] &amp;quot;favorited_by&amp;quot;                  &amp;quot;scopes&amp;quot;                       
+[31] &amp;quot;display_text_range&amp;quot;            &amp;quot;quoted_status_id&amp;quot;             
+[33] &amp;quot;quoted_status_id_str&amp;quot;          &amp;quot;quoted_status_permalink&amp;quot;      
+[35] &amp;quot;quote_count&amp;quot;                   &amp;quot;timestamp_ms&amp;quot;                 
+[37] &amp;quot;reply_count&amp;quot;                   &amp;quot;filter_level&amp;quot;                 
+[39] &amp;quot;metadata&amp;quot;                      &amp;quot;query&amp;quot;                        
+[41] &amp;quot;withheld_scope&amp;quot;                &amp;quot;withheld_copyright&amp;quot;           
+[43] &amp;quot;withheld_in_countries&amp;quot;         &amp;quot;possibly_sensitive_appealable&amp;quot;&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;You can merge them via:&lt;/p&gt;
+&lt;pre&gt;&lt;code&gt;users_and_last_tweets &amp;lt;- cbind(users, id_str = tweets_data(users)[, &amp;quot;id_str&amp;quot;])&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;In the future (&lt;a href=&#34;#future&#34;&gt;see below&lt;/a&gt;), with helper functions managing the output of rtweet will become easier.&lt;/p&gt;
+&lt;p&gt;Finally, &lt;code&gt;get_followers()&lt;/code&gt; and &lt;code&gt;get_friends()&lt;/code&gt; now return the same columns:&lt;/p&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;&amp;gt; colnames(get_followers(&amp;quot;_R_Foundation&amp;quot;))
+[1] &amp;quot;from_id&amp;quot; &amp;quot;to_id&amp;quot;  
+&amp;gt; colnames(get_friends(&amp;quot;_R_Foundation&amp;quot;))
+[1] &amp;quot;from_id&amp;quot; &amp;quot;to_id&amp;quot;  &lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;This will make it easier to build networks of connections (although you might want to convert screen names to ids or vice versa).&lt;/p&gt;
+&lt;/div&gt;
+&lt;div id=&#34;more-consistent-interface&#34; class=&#34;section level3&#34;&gt;
+&lt;h3&gt;More consistent interface&lt;/h3&gt;
+&lt;p&gt;All paginated functions that don’t return tweets now use a consistent pagination interface (except the premium endpoints).
+They all store the “next cursor” in an &lt;code&gt;rtweet_cursor&lt;/code&gt; attribute, which will be automatically retrieved when you use the &lt;code&gt;cursor&lt;/code&gt; argument.
+This will make it easier to continue a query you started:&lt;/p&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;users &amp;lt;- get_followers(&amp;quot;_R_Foundation&amp;quot;)
+users
+     
+# use `cursor` to find the next &amp;quot;page&amp;quot; of results
+more_users &amp;lt;- get_followers(&amp;quot;_R_Foundation&amp;quot;, cursor = users)&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;They support &lt;code&gt;max_id&lt;/code&gt; and &lt;code&gt;since_id&lt;/code&gt; to find earlier and later tweets respectively:&lt;/p&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;# Retrieve all the tweets made since the previous request
+newer &amp;lt;- search_tweets(&amp;quot;weather&amp;quot;, since_id = tweets)
+# Retrieve tweets made before the previous request
+older &amp;lt;- search_tweets(&amp;quot;weather&amp;quot;, max_id = tweets)&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;If you want more tweets than it is allowed by the rate limits of the API, you can use &lt;code&gt;retryonratelimit&lt;/code&gt; to wait as long as needed:&lt;/p&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;long &amp;lt;- search_tweets(&amp;quot;weather&amp;quot;, n = 1000, retryonratelimit = TRUE)&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;This will keep busy your terminal until the 1000 tweets are retrieved.&lt;/p&gt;
+&lt;/div&gt;
+&lt;div id=&#34;saving-data&#34; class=&#34;section level3&#34;&gt;
+&lt;h3&gt;Saving data&lt;/h3&gt;
+&lt;p&gt;An unexpected consequence of returning more data (now matching that returned by the API) is that it is harder to save it in a tabular format.
+For instance one tweet might have one media, mention two users and have three hashtags.
+There isn’t a simple way to save it in a single row uniformly for all tweets or
+it could lead to confusion.&lt;/p&gt;
+&lt;p&gt;This resulted in deprecating &lt;code&gt;save_as_csv&lt;/code&gt;, &lt;code&gt;read_twitter_csv&lt;/code&gt; and related functions because they don’t work with the new data structure and it won’t be possible to load the complete data from a csv.
+They will be removed in later versions.&lt;/p&gt;
+&lt;p&gt;Many users will benefit from saving to RDS (e.g., &lt;code&gt;saveRDS()&lt;/code&gt; or &lt;code&gt;readr::write_rds()&lt;/code&gt;), and those wanting to export to tabular format can simplify the data to include only that of interest before saving with generic R functions (e.g., &lt;code&gt;write.csv()&lt;/code&gt; or &lt;code&gt;readr::write_csv()&lt;/code&gt;).&lt;/p&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;div id=&#34;other-breaking-changes&#34; class=&#34;section level2&#34;&gt;
+&lt;h2&gt;&lt;strong&gt;Other breaking changes&lt;/strong&gt;&lt;/h2&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;p&gt;Accessibility is important and for this reason if you tweet via &lt;code&gt;post_tweet()&lt;/code&gt; and add an image, gif or video you’ll need to provide the media alternative text.
+Without &lt;code&gt;media_alt_text&lt;/code&gt; it will not allow you to post.&lt;/p&gt;&lt;/li&gt;
+&lt;li&gt;&lt;p&gt;&lt;code&gt;tweet_shot()&lt;/code&gt; has been deprecated as it no longer works correctly.
+It might be possible to bring it back, but the code is complex and I do not understand enough to maintain it.
+If you’re interested in seeing this feature return, checkout the discussion about this &lt;a href=&#34;https://github.com/ropensci/rtweet/issues/458&#34;&gt;issue&lt;/a&gt; and let me know if you have any suggestions.&lt;/p&gt;&lt;/li&gt;
+&lt;li&gt;&lt;p&gt;rtweet also used to provide functions for data on &lt;code&gt;emojis&lt;/code&gt;, &lt;code&gt;langs&lt;/code&gt; and &lt;code&gt;stopwordslangs&lt;/code&gt;.
+These are useful resources for text mining in general - not only in tweets - however they need to be updated to be helpful and would be better placed in other packages, for instance emojis is now on the &lt;a href=&#34;https://cran.r-project.org/package=bdpar&#34;&gt;bdpar package&lt;/a&gt;.
+Therefore they are no longer available in rtweet.&lt;/p&gt;&lt;/li&gt;
+&lt;li&gt;&lt;p&gt;The functions like &lt;code&gt;suggested_*()&lt;/code&gt; have been removed as they have been broken since 2019.&lt;/p&gt;&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/div&gt;
+&lt;div id=&#34;easier-authentication&#34; class=&#34;section level2&#34;&gt;
+&lt;h2&gt;&lt;strong&gt;Easier authentication&lt;/strong&gt;&lt;/h2&gt;
+&lt;p&gt;An exciting part of this release has been a big rewrite of the authentication protocol.
+While it is compatible with previous rtweet authentication methods it has also some important new functions which make it easier to work with rtweet and the twitter API in different ways.&lt;/p&gt;
+&lt;div id=&#34;different-ways-to-authenticate&#34; class=&#34;section level3&#34;&gt;
+&lt;h3&gt;Different ways to authenticate&lt;/h3&gt;
+&lt;p&gt;If you just want to test the package, use the default authentication &lt;code&gt;auth_setup_default()&lt;/code&gt; that comes with rtweet.
+If you use it for one or two days you won’t notice any problem.&lt;/p&gt;
+&lt;p&gt;If you want to use the package for more than a couple of days, I recommend you set up your own token via &lt;code&gt;rtweet_user()&lt;/code&gt;.
+It will open a window to authenticate via the authenticated account in your default browser.
+This authentication won’t allow you to do everything but it will avoid running out of requests and being rate-limited.&lt;/p&gt;
+&lt;p&gt;If you plan to make heavy use of the package, I recommend registering yourself as developer and using one of the following two mechanisms, depending on your plans:&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;Collect data and analyze: &lt;code&gt;rtweet_app()&lt;/code&gt;.&lt;/li&gt;
+&lt;li&gt;Set up a bot: &lt;code&gt;rtweet_bot()&lt;/code&gt;&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;Find more information in the &lt;a href=&#34;https://docs.ropensci.org/rtweet/articles/auth.html&#34;&gt;Authentication with rtweet vignette&lt;/a&gt;.&lt;/p&gt;
+&lt;/div&gt;
+&lt;div id=&#34;storing-credentials&#34; class=&#34;section level3&#34;&gt;
+&lt;h3&gt;Storing credentials&lt;/h3&gt;
+&lt;p&gt;Previously rtweet saved each token created, but now non-default tokens are only saved if you ask. You can save them manually via &lt;code&gt;auth_save(token, &#34;my_app&#34;)&lt;/code&gt;.
+Bonus, if you name your token as default (&lt;code&gt;auth_save(token, &#34;default&#34;)&lt;/code&gt;) it will be used automatically upon loading the library.&lt;/p&gt;
+&lt;p&gt;Further, tokens are now saved in the location output by &lt;code&gt;tools::R_user_dir(&#34;rtweet&#34;, &#34;config&#34;)&lt;/code&gt;, rather than in your home directory.
+If you have previous tokens saved or problems identifying which token is which use &lt;code&gt;auth_sitrep()&lt;/code&gt;.
+This will provides clues to which tokens might be duplicated or misconfigured but it won’t check if they work.
+It will also automatically move your tokens to the new path.&lt;/p&gt;
+&lt;p&gt;To check which credentials you have stored use &lt;code&gt;auth_list()&lt;/code&gt; and load them via &lt;code&gt;auth_as(&#34;my_app&#34;)&lt;/code&gt;.
+All the rtweet functions will use the latest token loaded with &lt;code&gt;auth_as&lt;/code&gt; (unless you manually specify one when calling it).
+If you are not sure which token you are using you can use &lt;code&gt;auth_get()&lt;/code&gt; it will return the token in use, list them or ask you to authenticate.&lt;/p&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;div id=&#34;other-changes-of-note&#34; class=&#34;section level2&#34;&gt;
+&lt;h2&gt;&lt;strong&gt;Other changes of note&lt;/strong&gt;&lt;/h2&gt;
+&lt;p&gt;This is a list of other changes that aren’t too big or are not breaking changes but are worthy enough of a mention:&lt;/p&gt;
+&lt;div id=&#34;iteration-and-continuation-of-requests&#34; class=&#34;section level3&#34;&gt;
+&lt;h3&gt;Iteration and continuation of requests&lt;/h3&gt;
+&lt;p&gt;Using cursors, pagination or waiting until you can make more queries is now easier.
+For example you can continue previous requests via:&lt;/p&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;users &amp;lt;- get_followers(&amp;quot;_R_Foundation&amp;quot;)
+users
+
+# use `cursor` to find the next &amp;quot;page&amp;quot; of results
+more_users &amp;lt;- get_followers(&amp;quot;_R_Foundation&amp;quot;, cursor = users)&lt;/code&gt;&lt;/pre&gt;
+&lt;/div&gt;
+&lt;div id=&#34;additions&#34; class=&#34;section level3&#34;&gt;
+&lt;h3&gt;Additions&lt;/h3&gt;
+&lt;p&gt;There is now a function to find a thread of a user.
+You can start from any tweet and it will find all the tweets of the thread:
+&lt;code&gt;tweet_threading(&#34;1461776330584956929&#34;)&lt;/code&gt;.&lt;/p&gt;
+&lt;p&gt;There is a lot of interest in downloading and keeping track of interactions on Twitter.
+The amount of interest is big enough that Twitter is releasing a new API to provide more information of this nature.&lt;/p&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;div id=&#34;future&#34; class=&#34;section level2&#34;&gt;
+&lt;h2&gt;&lt;strong&gt;Future&lt;/strong&gt;&lt;/h2&gt;
+&lt;p&gt;Twitter API v2 is being released and soon it will replace API v1.
+rtweet up to now, including this release, uses API v1 so it will need to adapt to the new endpoints and new data returned.&lt;/p&gt;
+&lt;p&gt;First will be the streaming endpoints in November, so expect more (breaking?) changes around those dates if not earlier.&lt;/p&gt;
+&lt;p&gt;I would also like to make it easier for users, dependencies and the package itself to handle the outputs.
+To this regard I would like to provide some classes to handle the different type of objects it returns.&lt;/p&gt;
+&lt;p&gt;This will help avoid some of the current shortcomings.
+Specifically I would like to provide functions to make it easier to reply to previous tweets,
+extract nested data, and subset tweets and the accompanying user information.&lt;/p&gt;
+&lt;/div&gt;
+&lt;div id=&#34;conclusions&#34; class=&#34;section level2&#34;&gt;
+&lt;h2&gt;&lt;strong&gt;Conclusions&lt;/strong&gt;&lt;/h2&gt;
+&lt;p&gt;While I made many breaking changes I hope these changes will smooth future development and help both users and maintainers.&lt;/p&gt;
+&lt;p&gt;Feel free to ask on the &lt;a href=&#34;https://discuss.ropensci.org/tag/rtweet&#34;&gt;rOpenSci community&lt;/a&gt; if you have questions about the transition or find something amiss.
+Please let me know! It will help me prioritize which endpoints are more relevant to the community.
+(And yes, the academic archive endpoint is on the radar.)&lt;/p&gt;
+&lt;p&gt;It is also possible that I overlooked something and I thought the code is working when it isn’t.
+For example, after several months of changing the way the API is parsed, several users found it wasn’t handling some elements.
+Let me know of such or similar cases and I’ll try to fix it.&lt;/p&gt;
+&lt;p&gt;In case you find a bug, check the open issues and if it has not already been reported, open an &lt;a href=&#34;https://github.com/ropensci/rtweet/issues/&#34;&gt;issue on GitHub&lt;/a&gt;.
+Don’t forget to make a &lt;a href=&#34;https://cran.r-project.org/web/packages/reprex/readme/README.html&#34;&gt;reprex&lt;/a&gt; and if possible provide the id of the tweets you are having trouble with.
+Unfortunately it has happened that when I came to look at a bug I couldn’t reproduce it as I wasn’t able to find the tweet which caused the error.&lt;/p&gt;
+&lt;p&gt;This release includes contributions from Hadely Wicham, Bob Rudis, Alex Hayes, Simon Heß, Diego Hernán, Michael Chirico, Jonathan Sidi, Jon Harmon, Andrew Fraser and many other that reported bugs or provided feedback.
+Many thanks all for using it, your interest to keep it working and improving rtweet for all.&lt;/p&gt;
+&lt;p&gt;Finally, you can read the whole &lt;a href=&#34;https://docs.ropensci.org/rtweet/news/index.html&#34;&gt;NEWS online&lt;/a&gt; and the examples.&lt;/p&gt;
+&lt;p&gt;Happy tweeting!&lt;/p&gt;
+&lt;/div&gt;
+&lt;div id=&#34;acknowledgements&#34; class=&#34;section level2&#34;&gt;
+&lt;h2&gt;Acknowledgements&lt;/h2&gt;
+&lt;p&gt;This is a repost of the &lt;a href=&#34;https://ropensci.org/blog/2022/07/21/rtweet-1-0-0/&#34;&gt;entry for rOpenSci&lt;/a&gt;.
+The post was edited and improved by Yanina Bellini Saibene and Steffi LaZerte, the community manager and assistant. Many thanks&lt;/p&gt;
+&lt;/div&gt;
+&lt;div class=&#34;footnotes footnotes-end-of-document&#34;&gt;
+&lt;hr /&gt;
+&lt;ol&gt;
+&lt;li id=&#34;fn1&#34;&gt;&lt;p&gt;Specifically these: &lt;code&gt;get_favorites()&lt;/code&gt;, &lt;code&gt;get_favorites_user()&lt;/code&gt;, &lt;code&gt;get_mentions()&lt;/code&gt;,
+&lt;code&gt;get_my_timeline()&lt;/code&gt;, &lt;code&gt;get_retweets()&lt;/code&gt;, &lt;code&gt;get_timeline()&lt;/code&gt;, &lt;code&gt;get_timeline_user()&lt;/code&gt;,
+&lt;code&gt;lists_statuses()&lt;/code&gt;, &lt;code&gt;lookup_statuses()&lt;/code&gt;, &lt;code&gt;lookup_tweets()&lt;/code&gt;, &lt;code&gt;search_30day()&lt;/code&gt;,
+&lt;code&gt;search_fullarchive()&lt;/code&gt;, &lt;code&gt;search_tweets()&lt;/code&gt;, &lt;code&gt;tweet_shot()&lt;/code&gt; and &lt;code&gt;tweet_threading()&lt;/code&gt;.&lt;a href=&#34;#fnref1&#34; class=&#34;footnote-back&#34;&gt;↩︎&lt;/a&gt;&lt;/p&gt;&lt;/li&gt;
+&lt;/ol&gt;
+&lt;/div&gt;
+</description>
+    </item>
+    
+  </channel>
+</rss>

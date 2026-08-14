@@ -1,0 +1,221 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes" ?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>civio | B101nfo</title>
+    <link>https://llrs.dev/categories/civio/</link>
+      <atom:link href="https://llrs.dev/categories/civio/index.xml" rel="self" type="application/rss+xml" />
+    <description>civio</description>
+    <generator>Source Themes Academic (https://sourcethemes.com/academic/)</generator><language>en-us</language><copyright>If it is code you can copy and reuse (MIT) if it is text, please cite and reuse CC-BY 2026.</copyright><lastBuildDate>Thu, 07 Nov 2019 00:00:00 +0000</lastBuildDate>
+    <image>
+      <url>img/map[gravatar:%!s(bool=false) shape:circle]</url>
+      <title>civio</title>
+      <link>https://llrs.dev/categories/civio/</link>
+    </image>
+    
+    <item>
+      <title>PII fines</title>
+      <link>https://llrs.dev/post/2019/11/07/pii-fines/</link>
+      <pubDate>Thu, 07 Nov 2019 00:00:00 +0000</pubDate>
+      <guid>https://llrs.dev/post/2019/11/07/pii-fines/</guid>
+      <description>
+&lt;script src=&#34;https://llrs.dev/post/2019/11/07/pii-fines/index_files/header-attrs/header-attrs.js&#34;&gt;&lt;/script&gt;
+
+
+&lt;p&gt;From some time I’ve been following a company that uses data to explain some data.&lt;/p&gt;
+&lt;p&gt;I want to use some of the data they published from &lt;a href=&#34;https://datos.civio.es/dataset/multas-de-proteccion-de-datos/&#34;&gt;Civio&lt;/a&gt; to see if I learn more about personal identifiable information fines.&lt;/p&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;fines &amp;lt;- read.csv(&amp;quot;~/Downloads/multas-aepd.csv&amp;quot;, stringsAsFactors = FALSE)
+fines$date &amp;lt;- as.Date(fines$date)&lt;/code&gt;&lt;/pre&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;library(&amp;quot;ggplot2&amp;quot;)
+library(&amp;quot;scales&amp;quot;)
+library(&amp;quot;forcats&amp;quot;)
+
+ggplot(fines) +
+  geom_point(aes(date, amount, col = fct_relevel(sanction_type, c(&amp;quot;Leve&amp;quot;, &amp;quot;Grave&amp;quot;, &amp;quot;Muy grave&amp;quot;)))) +
+  scale_y_continuous(labels = dollar_format(suffix = &amp;quot;€&amp;quot;, prefix = &amp;quot;&amp;quot;)) +
+  # from https://stackoverflow.com/a/32265122/2886003
+  theme_bw() +
+  scale_color_manual(values = c(&amp;quot;Leve&amp;quot; = &amp;quot;orange&amp;quot;, &amp;quot;Grave&amp;quot; = &amp;quot;orangered&amp;quot;, &amp;quot;Muy grave&amp;quot; = &amp;quot;red&amp;quot;)) +
+  labs(x = &amp;quot;Year&amp;quot;, y = &amp;quot;Amount&amp;quot;, col = &amp;quot;Sanction type&amp;quot;)&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;&lt;img src=&#34;https://llrs.dev/post/2019/11/07/pii-fines/index_files/figure-html/unnamed-chunk-2-1.png&#34; width=&#34;672&#34; /&gt;&lt;/p&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;library(&amp;quot;lubridate&amp;quot;)
+## 
+## Attaching package: &amp;#39;lubridate&amp;#39;
+## The following objects are masked from &amp;#39;package:base&amp;#39;:
+## 
+##     date, intersect, setdiff, union
+library(&amp;quot;dplyr&amp;quot;)
+## 
+## Attaching package: &amp;#39;dplyr&amp;#39;
+## The following objects are masked from &amp;#39;package:stats&amp;#39;:
+## 
+##     filter, lag
+## The following objects are masked from &amp;#39;package:base&amp;#39;:
+## 
+##     intersect, setdiff, setequal, union
+fines %&amp;gt;% 
+  mutate(month = month(date),
+         year = year(date),
+         date2 = as.character(paste0(year(date), &amp;quot;-&amp;quot;, month(date), &amp;quot;-&amp;quot;, 1))) %&amp;gt;% 
+  group_by(date2) %&amp;gt;% 
+  count(sector) %&amp;gt;% 
+  mutate(date3 = ymd(date2)) %&amp;gt;%
+  ggplot() +
+  geom_col(aes(date3, n, fill = sector)) +
+  labs(x = element_blank(), y = &amp;quot;Fines&amp;quot;) +
+  scale_x_date(date_breaks = &amp;quot;1 month&amp;quot;, date_labels =  &amp;quot;%Y-%m&amp;quot;, expand = c(0, 0)) +
+  scale_y_continuous(expand = c(0, 0), breaks = seq(0, 120, by = 10)) +
+  theme_bw() +
+  theme(axis.text.x = element_text(angle = 45, hjust = 1))&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;&lt;img src=&#34;https://llrs.dev/post/2019/11/07/pii-fines/index_files/figure-html/unnamed-chunk-3-1.png&#34; width=&#34;672&#34; /&gt;&lt;/p&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;library(&amp;quot;dplyr&amp;quot;)
+ggplot(fines) +
+  geom_histogram(aes(amount, fill = fct_relevel(sanction_type, c(&amp;quot;Leve&amp;quot;, &amp;quot;Grave&amp;quot;, &amp;quot;Muy grave&amp;quot;)))) +
+  scale_fill_manual(values = c(&amp;quot;Leve&amp;quot; = &amp;quot;orange&amp;quot;, &amp;quot;Grave&amp;quot; = &amp;quot;orangered&amp;quot;, &amp;quot;Muy grave&amp;quot; = &amp;quot;red&amp;quot;)) +
+  scale_x_log10(labels = dollar_format(suffix = &amp;quot;€&amp;quot;, prefix = &amp;quot;&amp;quot;)) +
+  # from https://stackoverflow.com/a/32265122/2886003
+  labs(x = &amp;quot;Amount&amp;quot;, fill = &amp;quot;Sanction type&amp;quot;, y = &amp;quot;Fines&amp;quot;) +
+  theme_bw()  +
+  facet_wrap(~fct_relevel(sanction_type, c(&amp;quot;Leve&amp;quot;, &amp;quot;Grave&amp;quot;, &amp;quot;Muy grave&amp;quot;)), scales = &amp;quot;free&amp;quot;)
+## `stat_bin()` using `bins = 30`. Pick better value with `binwidth`.&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;&lt;img src=&#34;https://llrs.dev/post/2019/11/07/pii-fines/index_files/figure-html/unnamed-chunk-4-1.png&#34; width=&#34;672&#34; /&gt;&lt;/p&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;  
+ggplot(fines) +
+  geom_histogram(aes(amount, fill = sector)) +
+  scale_fill_viridis_d() +
+  scale_x_log10(labels = dollar_format(suffix = &amp;quot;€&amp;quot;, prefix = &amp;quot;&amp;quot;)) +
+  # from https://stackoverflow.com/a/32265122/2886003
+  labs(x = &amp;quot;Amount&amp;quot;, fill = &amp;quot;Sector&amp;quot;, y = &amp;quot;Fines&amp;quot;) +
+  theme_bw()  +
+  facet_wrap(~fct_relevel(sanction_type, c(&amp;quot;Leve&amp;quot;, &amp;quot;Grave&amp;quot;, &amp;quot;Muy grave&amp;quot;)), scales = &amp;quot;free&amp;quot;)
+## `stat_bin()` using `bins = 30`. Pick better value with `binwidth`.&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;&lt;img src=&#34;https://llrs.dev/post/2019/11/07/pii-fines/index_files/figure-html/unnamed-chunk-4-2.png&#34; width=&#34;672&#34; /&gt;&lt;/p&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;
+
+fines %&amp;gt;% 
+  filter(amount &amp;lt; 200000) %&amp;gt;% 
+  ggplot() +
+  geom_point(aes(date, amount, col = fct_relevel(sanction_type, c(&amp;quot;Leve&amp;quot;, &amp;quot;Grave&amp;quot;, &amp;quot;Muy grave&amp;quot;)))) +
+  scale_y_continuous(labels = dollar_format(suffix = &amp;quot;€&amp;quot;, prefix = &amp;quot;&amp;quot;)) +
+  # from https://stackoverflow.com/a/32265122/2886003
+  theme_bw() +
+  scale_color_manual(values = c(&amp;quot;Leve&amp;quot; = &amp;quot;orange&amp;quot;, &amp;quot;Grave&amp;quot; = &amp;quot;orangered&amp;quot;, &amp;quot;Muy grave&amp;quot; = &amp;quot;red&amp;quot;)) +
+  labs(x = &amp;quot;Year&amp;quot;, y = &amp;quot;Amount&amp;quot;, col = &amp;quot;Sanction type&amp;quot;)&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;&lt;img src=&#34;https://llrs.dev/post/2019/11/07/pii-fines/index_files/figure-html/unnamed-chunk-4-3.png&#34; width=&#34;672&#34; /&gt;&lt;/p&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;
+ggplot(fines) +
+  geom_point(aes(date, amount, col = fct_relevel(sanction_type, c(&amp;quot;Leve&amp;quot;, &amp;quot;Grave&amp;quot;, &amp;quot;Muy grave&amp;quot;)))) +
+  scale_y_continuous(labels = dollar_format(suffix = &amp;quot;€&amp;quot;, prefix = &amp;quot;&amp;quot;), 
+                     breaks = c(1000, 4000, 10000, 20000, 40000,
+                                50000, 500000, 1000000)) +
+  coord_trans(y = &amp;quot;log10&amp;quot;) +
+  # from https://stackoverflow.com/a/32265122/2886003
+  theme_bw() +
+  scale_color_manual(values = c(&amp;quot;Leve&amp;quot; = &amp;quot;orange&amp;quot;, &amp;quot;Grave&amp;quot; = &amp;quot;orangered&amp;quot;, &amp;quot;Muy grave&amp;quot; = &amp;quot;red&amp;quot;)) +
+  labs(x = &amp;quot;Year&amp;quot;, y = &amp;quot;Amount&amp;quot;, col = &amp;quot;Sanction type&amp;quot;)&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;&lt;img src=&#34;https://llrs.dev/post/2019/11/07/pii-fines/index_files/figure-html/unnamed-chunk-4-4.png&#34; width=&#34;672&#34; /&gt;&lt;/p&gt;
+&lt;p&gt;What sectors are more fined?&lt;/p&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;fines_sector &amp;lt;- fines %&amp;gt;% 
+  group_by(sector) %&amp;gt;% 
+  count(sort = TRUE) %&amp;gt;% 
+  ungroup() %&amp;gt;% 
+  mutate(sector = if_else(sector == &amp;quot;&amp;quot;, &amp;quot;Unknown/unclassified&amp;quot;, sector))
+fines_sector %&amp;gt;% 
+  ggplot() + 
+  geom_col(aes(fct_reorder(sector, -n), n, fill = fct_reorder(sector, -n))) +
+  guides(fill = FALSE) +
+  labs(x = &amp;quot;Sector&amp;quot;, y = &amp;quot;Fines&amp;quot;) + 
+  # coord_trans(y = &amp;quot;log10&amp;quot;) +
+  theme_bw() +
+  theme(axis.text.x = element_text(angle = 45, hjust = 1))&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;&lt;img src=&#34;https://llrs.dev/post/2019/11/07/pii-fines/index_files/figure-html/unnamed-chunk-5-1.png&#34; width=&#34;672&#34; /&gt;&lt;/p&gt;
+&lt;p&gt;We can see that there is a white space between 2017 and 2018&lt;/p&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;fines %&amp;gt;% 
+  count(name, sort = TRUE) %&amp;gt;% 
+  arrange(-n) %&amp;gt;% 
+  ggplot() + 
+  geom_col(aes(fct_reorder(name, -n), n)) +
+  labs(x = &amp;quot;Name&amp;quot;, y = &amp;quot;Fines&amp;quot;) + 
+  scale_y_continuous(expand = c(0, 5)) +
+  # coord_trans(y = &amp;quot;log10&amp;quot;) +
+  theme_bw() +
+  theme(axis.text.x = element_blank(), axis.line.x = element_blank(), 
+        axis.ticks.x = element_blank(),
+        panel.grid.major.x = element_blank())&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;&lt;img src=&#34;https://llrs.dev/post/2019/11/07/pii-fines/index_files/figure-html/unnamed-chunk-6-1.png&#34; width=&#34;672&#34; /&gt;&lt;/p&gt;
+&lt;div id=&#34;references&#34; class=&#34;section level3&#34;&gt;
+&lt;h3&gt;References&lt;/h3&gt;
+&lt;/div&gt;
+&lt;div id=&#34;reproducibility&#34; class=&#34;section level3&#34;&gt;
+&lt;h3&gt;Reproducibility&lt;/h3&gt;
+&lt;details&gt;
+&lt;pre&gt;&lt;code&gt;## ─ Session info ───────────────────────────────────────────────────────────────────────────────────────────────────────
+##  setting  value                       
+##  version  R version 4.0.1 (2020-06-06)
+##  os       Ubuntu 20.04.1 LTS          
+##  system   x86_64, linux-gnu           
+##  ui       X11                         
+##  language (EN)                        
+##  collate  en_US.UTF-8                 
+##  ctype    en_US.UTF-8                 
+##  tz       Europe/Madrid               
+##  date     2021-01-08                  
+## 
+## ─ Packages ───────────────────────────────────────────────────────────────────────────────────────────────────────────
+##  package       * version date       lib source                           
+##  assertthat      0.2.1   2019-03-21 [1] CRAN (R 4.0.1)                   
+##  blogdown        0.21.84 2021-01-07 [1] Github (rstudio/blogdown@c4fbb58)
+##  bookdown        0.21    2020-10-13 [1] CRAN (R 4.0.1)                   
+##  cli             2.2.0   2020-11-20 [1] CRAN (R 4.0.1)                   
+##  colorspace      2.0-0   2020-11-11 [1] CRAN (R 4.0.1)                   
+##  crayon          1.3.4   2017-09-16 [1] CRAN (R 4.0.1)                   
+##  digest          0.6.27  2020-10-24 [1] CRAN (R 4.0.1)                   
+##  dplyr         * 1.0.2   2020-08-18 [1] CRAN (R 4.0.1)                   
+##  ellipsis        0.3.1   2020-05-15 [1] CRAN (R 4.0.1)                   
+##  evaluate        0.14    2019-05-28 [1] CRAN (R 4.0.1)                   
+##  fansi           0.4.1   2020-01-08 [1] CRAN (R 4.0.1)                   
+##  farver          2.0.3   2020-01-16 [1] CRAN (R 4.0.1)                   
+##  forcats       * 0.5.0   2020-03-01 [1] CRAN (R 4.0.1)                   
+##  generics        0.1.0   2020-10-31 [1] CRAN (R 4.0.1)                   
+##  ggplot2       * 3.3.2   2020-06-19 [1] CRAN (R 4.0.1)                   
+##  glue            1.4.2   2020-08-27 [1] CRAN (R 4.0.1)                   
+##  gtable          0.3.0   2019-03-25 [1] CRAN (R 4.0.1)                   
+##  htmltools       0.5.0   2020-06-16 [1] CRAN (R 4.0.1)                   
+##  httr            1.4.2   2020-07-20 [1] CRAN (R 4.0.1)                   
+##  jsonlite        1.7.2   2020-12-09 [1] CRAN (R 4.0.1)                   
+##  knitcitations * 1.0.10  2019-09-15 [1] CRAN (R 4.0.1)                   
+##  knitr           1.30    2020-09-22 [1] CRAN (R 4.0.1)                   
+##  labeling        0.4.2   2020-10-20 [1] CRAN (R 4.0.1)                   
+##  lifecycle       0.2.0   2020-03-06 [1] CRAN (R 4.0.1)                   
+##  lubridate     * 1.7.9.2 2020-11-13 [1] CRAN (R 4.0.1)                   
+##  magrittr        2.0.1   2020-11-17 [1] CRAN (R 4.0.1)                   
+##  munsell         0.5.0   2018-06-12 [1] CRAN (R 4.0.1)                   
+##  pillar          1.4.7   2020-11-20 [1] CRAN (R 4.0.1)                   
+##  pkgconfig       2.0.3   2019-09-22 [1] CRAN (R 4.0.1)                   
+##  plyr            1.8.6   2020-03-03 [1] CRAN (R 4.0.1)                   
+##  purrr           0.3.4   2020-04-17 [1] CRAN (R 4.0.1)                   
+##  R6              2.5.0   2020-10-28 [1] CRAN (R 4.0.1)                   
+##  Rcpp            1.0.5   2020-07-06 [1] CRAN (R 4.0.1)                   
+##  RefManageR      1.3.0   2020-11-13 [1] CRAN (R 4.0.1)                   
+##  rlang           0.4.10  2020-12-30 [1] CRAN (R 4.0.1)                   
+##  rmarkdown       2.6     2020-12-14 [1] CRAN (R 4.0.1)                   
+##  scales        * 1.1.1   2020-05-11 [1] CRAN (R 4.0.1)                   
+##  sessioninfo     1.1.1   2018-11-05 [1] CRAN (R 4.0.1)                   
+##  stringi         1.5.3   2020-09-09 [1] CRAN (R 4.0.1)                   
+##  stringr         1.4.0   2019-02-10 [1] CRAN (R 4.0.1)                   
+##  tibble          3.0.4   2020-10-12 [1] CRAN (R 4.0.1)                   
+##  tidyselect      1.1.0   2020-05-11 [1] CRAN (R 4.0.1)                   
+##  vctrs           0.3.6   2020-12-17 [1] CRAN (R 4.0.1)                   
+##  viridisLite     0.3.0   2018-02-01 [1] CRAN (R 4.0.1)                   
+##  withr           2.3.0   2020-09-22 [1] CRAN (R 4.0.1)                   
+##  xfun            0.20    2021-01-06 [1] CRAN (R 4.0.1)                   
+##  xml2            1.3.2   2020-04-23 [1] CRAN (R 4.0.1)                   
+##  yaml            2.2.1   2020-02-01 [1] CRAN (R 4.0.1)                   
+## 
+## [1] /home/lluis/bin/R/4.0.1/lib/R/library&lt;/code&gt;&lt;/pre&gt;
+&lt;details&gt;
+&lt;/div&gt;
+</description>
+    </item>
+    
+  </channel>
+</rss>

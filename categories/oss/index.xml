@@ -1,0 +1,642 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes" ?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>OSS | B101nfo</title>
+    <link>https://llrs.dev/categories/oss/</link>
+      <atom:link href="https://llrs.dev/categories/oss/index.xml" rel="self" type="application/rss+xml" />
+    <description>OSS</description>
+    <generator>Source Themes Academic (https://sourcethemes.com/academic/)</generator><language>en-us</language><copyright>If it is code you can copy and reuse (MIT) if it is text, please cite and reuse CC-BY 2026.</copyright><lastBuildDate>Sun, 05 May 2024 00:00:00 +0000</lastBuildDate>
+    <image>
+      <url>img/map[gravatar:%!s(bool=false) shape:circle]</url>
+      <title>OSS</title>
+      <link>https://llrs.dev/categories/oss/</link>
+    </image>
+    
+    <item>
+      <title>Packaging R: getting in repositories</title>
+      <link>https://llrs.dev/post/2024/05/05/packaging-r-getting-in/</link>
+      <pubDate>Sun, 05 May 2024 00:00:00 +0000</pubDate>
+      <guid>https://llrs.dev/post/2024/05/05/packaging-r-getting-in/</guid>
+      <description>
+
+
+&lt;p&gt;After the previous post collecting information about repositories I want to collect here my thoughts on adding a package in a repository and how repositories are recognized.
+As in the previous post this is built on the assumption that one already has a package or more and wants to distribute it.&lt;/p&gt;
+&lt;p&gt;This is meant as a reflection of what is an R repository and not intended for R package developers.
+However, their feedback is appreciated to consider how an ideal repository would be.&lt;/p&gt;
+&lt;div id=&#34;package-submission&#34; class=&#34;section level2&#34;&gt;
+&lt;h2&gt;Package submission&lt;/h2&gt;
+&lt;p&gt;An R repository will have a way to incorporate a package.
+CRAN submission process starts with &lt;a href=&#34;https://cran.r-project.org/submit.html&#34;&gt;a form&lt;/a&gt;, while Bioconductor is done through a &lt;a href=&#34;https://github.com/Bioconductor/Contributions/issues/new&#34;&gt;Github issue&lt;/a&gt;.&lt;/p&gt;
+&lt;p&gt;The process will usually then start with an automated process.
+Until the automated process check hasn’t passed probably no one will look into the package submission.
+This reduce the hours a human must dedicate to manage submissions.
+If a man is kept in the loop one could appeal the automatic process contacting them, or if it is a random failing re-submitting the package again.&lt;/p&gt;
+&lt;div class=&#34;float&#34;&gt;
+&lt;img src=&#34;images/submissions.png&#34; alt=&#34;Package submission checks: first a check of the package, if it is not new a dependency check from the repository if all checks pass the package is added to the repository.&#34; /&gt;
+&lt;div class=&#34;figcaption&#34;&gt;&lt;strong&gt;Package submission checks&lt;/strong&gt;: first a check of the package, if it is not new a dependency check from the repository if all checks pass the package is added to the repository.&lt;/div&gt;
+&lt;/div&gt;
+&lt;p&gt;Generally a package must first pass a package quality check before it is considered for further integration test.
+This integration test is usually checking the new version of a package with packages that depend on it, also known as reverse dependencies.&lt;/p&gt;
+&lt;/div&gt;
+&lt;div id=&#34;package-maintenance&#34; class=&#34;section level2&#34;&gt;
+&lt;h2&gt;Package maintenance&lt;/h2&gt;
+&lt;p&gt;Once a package is included in a repository it usually needs to be maintained.&lt;/p&gt;
+&lt;p&gt;There are many moving pieces, chips architecture, OS, R, other packages.
+This all lead that authors need to maintain the packages in good shape if they want it to remain useful to users.
+Of course, if one doesn’t want to do that they do not need to create a repository to share their package.&lt;/p&gt;
+&lt;div class=&#34;float&#34;&gt;
+&lt;img src=&#34;images/checks.png&#34; alt=&#34;Graphic showing time and different R versions and checks. Repositories check the packages on them on multiple levels.&#34; /&gt;
+&lt;div class=&#34;figcaption&#34;&gt;&lt;strong&gt;Graphic showing time and different R versions and checks.&lt;/strong&gt; Repositories check the packages on them on multiple levels.&lt;/div&gt;
+&lt;/div&gt;
+&lt;p&gt;This leads that at any given time point there must be some tests for any given package under different conditions as shown in image 2.
+This leads to the possibility of having a package archived from the repository for failing the checks in place.&lt;/p&gt;
+&lt;p&gt;Repositories provide these checks as a service to the users.
+They guarantee that R packages in the repository work well together and pass the same set of packages (mostly).
+This is what leads to their reputation and usage among users (this is true beyond R, DEBIAN, Ubuntu, …).&lt;/p&gt;
+&lt;/div&gt;
+&lt;div id=&#34;closing-remarks&#34; class=&#34;section level2&#34;&gt;
+&lt;h2&gt;Closing remarks&lt;/h2&gt;
+&lt;p&gt;There are several official repositories how the package submission works when a package is submitted to one but it is related, via dependencies to other repositories is a matter of another post.&lt;/p&gt;
+&lt;p&gt;There are some discussion on what is an R repository.
+The importance of CRAN and Bioconductor has lead to some confusion.
+There are generally two meanings of what a cran-like repository is:&lt;/p&gt;
+&lt;ol style=&#34;list-style-type: decimal&#34;&gt;
+&lt;li&gt;&lt;p&gt;One where &lt;code&gt;install.packages()&lt;/code&gt; works (This is defined by how the files and binaries are organized and will be a theme for another time).&lt;/p&gt;&lt;/li&gt;
+&lt;li&gt;&lt;p&gt;One were all the checks described here are in place and &lt;code&gt;install.packages()&lt;/code&gt; works too.&lt;/p&gt;&lt;/li&gt;
+&lt;/ol&gt;
+&lt;p&gt;r-universe is using the first definition but could be used to generate repositories with checks that comply with the second definition.
+Other repositories that use that are the &lt;a href=&#34;https://packagemanager.posit.co/client/#/&#34;&gt;&lt;em&gt;Posit&lt;/em&gt; Public &lt;em&gt;Package Manager&lt;/em&gt;&lt;/a&gt;, or the &lt;a href=&#34;https://r4pi.org/&#34;&gt;R4Pi repository&lt;/a&gt; (which provides binaries for Raspberry Pi OS).&lt;/p&gt;
+&lt;p&gt;As the second definition is more strict I’ll focus on it as this post has explained.&lt;/p&gt;
+&lt;p&gt;PS: This post might be edited as it has been siting in my computer for several months.
+I prefer to post it and be improved with feedback, so let me know if you have any addition.&lt;/p&gt;
+&lt;/div&gt;
+</description>
+    </item>
+    
+    <item>
+      <title>Packaging R: repositories</title>
+      <link>https://llrs.dev/post/2023/12/09/packaging-r-repositories/</link>
+      <pubDate>Sat, 09 Dec 2023 00:00:00 +0000</pubDate>
+      <guid>https://llrs.dev/post/2023/12/09/packaging-r-repositories/</guid>
+      <description>
+
+
+&lt;p&gt;In this post I want to collect some thoughts about R repositories.
+In R we have multiple repositories that store packages for users.
+In this post I want to write about the purpose, functionality, benefits and drawbacks of R repositories and how packages are managed.
+The goal is to summarize what I’ve learnt these last years about them.
+I’ll also collect some information about them from various sources to make it easier for myself to find it later on.&lt;/p&gt;
+&lt;p&gt;I am writing this because I am worried about the future of CRAN and R.
+Due to multiple circumstances, the current position is not sustainable as is.
+I hope that this post, will help me to understand the past, present and create some concrete steps to do.&lt;/p&gt;
+&lt;div id=&#34;history&#34; class=&#34;section level1&#34;&gt;
+&lt;h1&gt;History&lt;/h1&gt;
+&lt;p&gt;I was not there, but the first repository started around April 1997.
+This repository is CRAN: the Comprehensive R Archive Network.
+The &lt;a href=&#34;https://stat.ethz.ch/pipermail/r-devel/1997-April/017026.html&#34;&gt;first mention&lt;/a&gt; I found is already about changes in it, but it was not until the end of the month when &lt;a href=&#34;https://stat.ethz.ch/pipermail/r-announce/1997/000001.html&#34;&gt;it was announced&lt;/a&gt;.&lt;/p&gt;
+&lt;p&gt;CRAN was created by a few volunteers, some of which are still mainting it 25 years later.
+The current team is listed on &lt;a href=&#34;https://cran.r-project.org/CRAN_team.htm&#34;&gt;their website&lt;/a&gt;.
+From the beginning it was “a collection of sites which carry identical material, consisting of the R&amp;amp;R R distribution(s), the contributed extensions, documentation for R, and binaries.”&lt;/p&gt;
+&lt;p&gt;Omegahat was another repository created &lt;a href=&#34;https://omegahat.net/&#34;&gt;shortly after CRAN&lt;/a&gt;:&lt;/p&gt;
+&lt;blockquote&gt;
+&lt;p&gt;The Omega project began in July, 1998, with discussions among designers responsible for three current statistical languages (S, R, and Lisp-Stat), with the idea of working together on new directions with special emphasis on web-based software, Java, the Java virtual machine, and distributed computing.&lt;/p&gt;
+&lt;/blockquote&gt;
+&lt;p&gt;Many developers of Omegahat were in the R Core or CRAN team.
+It was available as a repository from the R source code but was removed definitely in version R 4.1, in 2021&lt;a href=&#34;#fn1&#34; class=&#34;footnote-ref&#34; id=&#34;fnref1&#34;&gt;&lt;sup&gt;1&lt;/sup&gt;&lt;/a&gt;.&lt;/p&gt;
+&lt;p&gt;Bioconductor, was the next major repository that appeared.
+It was funded by Robert Gentleman and others in 2004 (it started the mailing list).
+A paper describing it &lt;a href=&#34;https://doi.org/10.1186/gb-2004-5-10-r80&#34;&gt;appeared in late 2004&lt;/a&gt;:&lt;/p&gt;
+&lt;blockquote&gt;
+&lt;p&gt;an initiative for the collaborative creation of extensible software for computational biology and bioinformatics.&lt;/p&gt;
+&lt;/blockquote&gt;
+&lt;p&gt;Through its history repositories have evolved with R and R with them.
+For example: R was released twice a year at the beginning, and Bioconductor did too.
+But when R moved to be released once per year (in 2013 with version 3.0) Bioconductor kept using two releases a year.
+This introduced some problems when installing packages from Bioconductor, when a single R release can be compatible with two Bioconductor releases&lt;a href=&#34;#fn2&#34; class=&#34;footnote-ref&#34; id=&#34;fnref2&#34;&gt;&lt;sup&gt;2&lt;/sup&gt;&lt;/a&gt;.&lt;/p&gt;
+&lt;p&gt;In other cases, checks have evolved.
+For instance &lt;a href=&#34;https://en.wikipedia.org/wiki/Oracle_Solaris&#34;&gt;Solaris&lt;/a&gt; was used to test packages in CRAN until 2021, if I recall correctly, because it allowed to test in a proprietary C or C++ compiler.
+This lead to discover bugs but also to more distress in R-package developers which had difficulties checking their packages in that environment.&lt;/p&gt;
+&lt;p&gt;Other checks evolve with R, becoming more strict with time: In the early versions of R the use of NAMESPACE was not regulated.
+But since R version 2.15, 2012 it was compulsory even for data-only packages&lt;a href=&#34;#fn3&#34; class=&#34;footnote-ref&#34; id=&#34;fnref3&#34;&gt;&lt;sup&gt;3&lt;/sup&gt;&lt;/a&gt;.
+This was synchronized with repositories checks.&lt;/p&gt;
+&lt;p&gt;Last, some goals/desires of CRAN are not fulfilled (or where abandoned).
+For example, from the start CRAN aimed to have packages authenticated (see the bottom of &lt;a href=&#34;https://stat.ethz.ch/pipermail/r-announce/1997/000001.html&#34;&gt;the announcement&lt;/a&gt;).
+This might be due to lack of time, resources or that the plans are in progress but require (volunteer) time.&lt;/p&gt;
+&lt;p&gt;With time, different repositories arose:&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;p&gt;MRAN, which was available since September 17th, 2014 to July 1st, 2022.&lt;/p&gt;&lt;/li&gt;
+&lt;li&gt;&lt;p&gt;The Rstudio Public Package Manager later renamed &lt;a href=&#34;https://packagemanager.posit.co/&#34;&gt;Posit Public Package Manager&lt;/a&gt; has &lt;a href=&#34;https://posit.co/blog/the-road-to-building-ten-million-binaries/&#34;&gt;binaries for several OS&lt;/a&gt; since 2019.&lt;/p&gt;&lt;/li&gt;
+&lt;li&gt;&lt;p&gt;There is the &lt;a href=&#34;https://pkgs.r4pi.org/&#34;&gt;R4pi repository&lt;/a&gt; with binaries for Raspberry Pi.&lt;/p&gt;&lt;/li&gt;
+&lt;li&gt;&lt;p&gt;I remember a proteomics repository available.&lt;/p&gt;&lt;/li&gt;
+&lt;li&gt;&lt;p&gt;rOpenSci started its own repository which later evolved into the &lt;a href=&#34;https://r-universe.org&#34;&gt;r-universe&lt;/a&gt;.
+The r-universe currently can provide binaries of packages that are hosted in a git repository.&lt;/p&gt;&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/div&gt;
+&lt;div id=&#34;literature&#34; class=&#34;section level1&#34;&gt;
+&lt;h1&gt;Literature&lt;/h1&gt;
+&lt;p&gt;The role and prominence of the repositories has lead to many articles being written about it.
+I wanted to link and collect some of them for easier retrieval.&lt;/p&gt;
+&lt;p&gt;I was wondering how CRAN is described by the volunteers that built it.
+From the announcing email:&lt;/p&gt;
+&lt;blockquote&gt;
+&lt;p&gt;CRAN is a collection of sites which carry identical material, consisting of the R&amp;amp;R R distribution(s), the contributed extensions, documentation for R, and binaries.&lt;/p&gt;
+&lt;/blockquote&gt;
+&lt;p&gt;From the &lt;a href=&#34;https://cran.r-project.org&#34;&gt;website&lt;/a&gt; (at 2023/12/09):&lt;/p&gt;
+&lt;blockquote&gt;
+&lt;p&gt;CRAN is a network of ftp and web servers around the world that store identical, up-to-date, versions of code and documentation for R.&lt;/p&gt;
+&lt;/blockquote&gt;
+&lt;p&gt;Initially there was R NEWS, with an article dedicated to CRAN and one to Omegahat too.
+These articles usually describe new package additions but sometimes they also provide information about changes:&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;p&gt;&lt;a href=&#34;https://journal.r-project.org/news/RN-2001-1-cran&#34;&gt;CRAN-2001-1&lt;/a&gt;: It list new packages, &lt;a href=&#34;https://journal.r-project.org/news/RN-2001-2-cran&#34;&gt;CRAN-2001-2&lt;/a&gt;, &lt;a href=&#34;https://journal.r-project.org/news/RN-2001-3-cran&#34;&gt;CRAN-2001-3&lt;/a&gt;, &lt;a href=&#34;https://journal.r-project.org/articles/RN-2001-008/&#34;&gt;Omegahat-2001-3&lt;/a&gt;&lt;/p&gt;&lt;/li&gt;
+&lt;li&gt;&lt;p&gt;&lt;a href=&#34;https://journal.r-project.org/news/RN-2002-1-cran&#34;&gt;CRAN-2002-1&lt;/a&gt;, &lt;a href=&#34;https://journal.r-project.org/news/RN-2002-2-cran/&#34;&gt;CRAN-2002-2&lt;/a&gt;, &lt;a href=&#34;https://journal.r-project.org/news/RN-2002-3-cran/&#34;&gt;CRAN-2002-3&lt;/a&gt;&lt;/p&gt;&lt;/li&gt;
+&lt;li&gt;&lt;p&gt;&lt;a href=&#34;https://journal.r-project.org/news/RN-2003-1-cran/&#34;&gt;CRAN-2003-1&lt;/a&gt;, &lt;a href=&#34;https://journal.r-project.org/news/RN-2003-2-cran/&#34;&gt;CRAN-2003-2&lt;/a&gt;, &lt;a href=&#34;https://journal.r-project.org/news/RN-2003-3-cran/&#34;&gt;CRAN-2003-3&lt;/a&gt;&lt;/p&gt;&lt;/li&gt;
+&lt;li&gt;&lt;p&gt;&lt;a href=&#34;https://journal.r-project.org/news/RN-2004-1-cran/&#34;&gt;CRAN-2004-1&lt;/a&gt;, &lt;a href=&#34;https://journal.r-project.org/news/RN-2004-2-cran/&#34;&gt;CRAN-2004-2&lt;/a&gt;&lt;/p&gt;&lt;/li&gt;
+&lt;li&gt;&lt;p&gt;&lt;a href=&#34;https://journal.r-project.org/news/RN-2005-1-cran/&#34;&gt;CRAN-2005-1&lt;/a&gt;, &lt;a href=&#34;https://journal.r-project.org/news/RN-2005-2-cran/&#34;&gt;CRAN-2005-2&lt;/a&gt;&lt;/p&gt;
+&lt;p&gt;Since 2006 there is also an article about Bioconductor.&lt;/p&gt;&lt;/li&gt;
+&lt;li&gt;&lt;p&gt;&lt;a href=&#34;https://journal.r-project.org/news/RN-2006-2-cran/&#34;&gt;CRAN-2006-2&lt;/a&gt;, &lt;a href=&#34;https://journal.r-project.org/news/RN-2006-2-bioc&#34;&gt;Bioc-2006-2&lt;/a&gt;&lt;/p&gt;&lt;/li&gt;
+&lt;li&gt;&lt;p&gt;&lt;a href=&#34;https://journal.r-project.org/news/RN-2007-1-cran/&#34;&gt;CRAN-2007-1&lt;/a&gt;, &lt;a href=&#34;https://journal.r-project.org/news/RN-2007-2-cran/&#34;&gt;CRAN-2007-2&lt;/a&gt;, &lt;a href=&#34;https://journal.r-project.org/news/RN-2007-2-bioc&#34;&gt;Bioc-2007-2&lt;/a&gt;, &lt;a href=&#34;https://journal.r-project.org/news/RN-2007-3-cran/&#34;&gt;CRAN-2007-3&lt;/a&gt;&lt;/p&gt;&lt;/li&gt;
+&lt;li&gt;&lt;p&gt;&lt;a href=&#34;https://journal.r-project.org/news/RN-2008-1-cran/&#34;&gt;CRAN-2008-1&lt;/a&gt;, &lt;a href=&#34;https://journal.r-project.org/news/RN-2008-1-bioc&#34;&gt;Bioc-2008-1&lt;/a&gt; &lt;a href=&#34;https://journal.r-project.org/news/RN-2008-2-cran/&#34;&gt;CRAN-2008-2&lt;/a&gt;, &lt;a href=&#34;https://journal.r-project.org/news/RN-2008-2-bioc&#34;&gt;Bioc-2008-2&lt;/a&gt;&lt;/p&gt;&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;Later it became the &lt;a href=&#34;https://journal.r-project.org/&#34;&gt;R Journal&lt;/a&gt;:&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;p&gt;&lt;a href=&#34;https://journal.r-project.org/issues/2009-1/RJ-2009-1.pdf&#34;&gt;CRAN-2009-1&lt;/a&gt;, &lt;a href=&#34;https://journal.r-project.org/issues/2009-2/RJ-2009-2.pdf&#34;&gt;CRAN-2009-2&lt;/a&gt;&lt;/p&gt;&lt;/li&gt;
+&lt;li&gt;&lt;p&gt;&lt;a href=&#34;https://journal.r-project.org/issues/2010-1/RJ-2010-1.pdf&#34;&gt;CRAN-2010-1&lt;/a&gt;, &lt;a href=&#34;https://journal.r-project.org/issues/2010-2/RJ-2010-2.pdf&#34;&gt;CRAN-2010-2&lt;/a&gt;&lt;/p&gt;&lt;/li&gt;
+&lt;li&gt;&lt;p&gt;&lt;a href=&#34;https://journal.r-project.org/issues/2011-1/RJ-2011-1.pdf&#34;&gt;CRAN-2011-1&lt;/a&gt;, &lt;a href=&#34;https://journal.r-project.org/issues/2011-2/RJ-2011-2.pdf&#34;&gt;CRAN and Bioconductor 2011-2&lt;/a&gt;.
+In the bioconductor section it mentions conference, and important directions for the Bioconductor core.&lt;/p&gt;&lt;/li&gt;
+&lt;li&gt;&lt;p&gt;&lt;a href=&#34;https://journal.r-project.org/issues/2012-1/RJ-2012-1.pdf&#34;&gt;CRAN-2012-1&lt;/a&gt;, &lt;a href=&#34;https://journal.r-project.org/issues/2012-2/RJ-2012-2.pdf&#34;&gt;CRAN and Bioconductor 2012-2&lt;/a&gt;: Mentions &lt;code&gt;biocLite()&lt;/code&gt; to install packages.&lt;/p&gt;&lt;/li&gt;
+&lt;li&gt;&lt;p&gt;&lt;a href=&#34;https://journal.r-project.org/news/RJ-2013-1-cran&#34;&gt;CRAN-2013-1&lt;/a&gt; &lt;a href=&#34;https://journal.r-project.org/news/RJ-2013-1-bioconductor/&#34;&gt;Bioc-2013-1&lt;/a&gt;: mentions better integration of parallel evaluation.&lt;br /&gt;
+&lt;a href=&#34;https://journal.r-project.org/news/RJ-2013-2-cran/&#34;&gt;CRAN-2013-2&lt;/a&gt;, &lt;a href=&#34;https://journal.r-project.org/news/RJ-2013-2-bioconductor/&#34;&gt;Bioc-2013-2&lt;/a&gt;: Mentions again AnnotationHub&lt;/p&gt;&lt;/li&gt;
+&lt;li&gt;&lt;p&gt;&lt;a href=&#34;https://journal.r-project.org/news/RJ-2014-1-cran/&#34;&gt;CRAN-2014-1&lt;/a&gt;, &lt;a href=&#34;https://journal.r-project.org/news/RJ-2014-1-bioconductor/&#34;&gt;Bioc-2014-1&lt;/a&gt;: Mentions the git-svn bridge to synchronize git and svn repository.&lt;br /&gt;
+&lt;a href=&#34;https://journal.r-project.org/news/RJ-2014-2-cran/&#34;&gt;CRAN-2014-2&lt;/a&gt;, &lt;a href=&#34;https://journal.r-project.org/news/RJ-2014-2-bioconductor/&#34;&gt;Bioc-2014-2&lt;/a&gt;: Bioconductor 3.0 release, besides some packages Amazon Machine Image are offered as well as docker images.
+Packages are required to pass BiocCheck, checks in a different package specific for Bioconductor.&lt;/p&gt;&lt;/li&gt;
+&lt;li&gt;&lt;p&gt;&lt;a href=&#34;https://journal.r-project.org/news/RJ-2015-1-cran/&#34;&gt;CRAN-2015-1&lt;/a&gt;, &lt;a href=&#34;https://journal.r-project.org/news/RJ-2015-1-bioconductor/&#34;&gt;Bioc-2015-1&lt;/a&gt;: Same mentions as the previous and encouragement to guidelines an package submission.&lt;br /&gt;
+&lt;a href=&#34;https://journal.r-project.org/news/RJ-2015-2-cran/&#34;&gt;CRAN-2015-2&lt;/a&gt;, &lt;a href=&#34;https://journal.r-project.org/news/RJ-2015-2-bioconductor/&#34;&gt;Bioc-2015-2&lt;/a&gt;&lt;/p&gt;&lt;/li&gt;
+&lt;li&gt;&lt;p&gt;&lt;a href=&#34;https://journal.r-project.org/news/RJ-2016-1-cran/&#34;&gt;CRAN-2016-1&lt;/a&gt;: on this article there is a plot of the number of CRAN packages and time, and doesn’t list all packages listed.
+It explicitly mentions that the CRAN team asked for help processing package submissions and some people stepped up.
+&lt;a href=&#34;https://journal.r-project.org/news/RJ-2016-1-bioconductor/&#34;&gt;Bioc-2016-1&lt;/a&gt;&lt;/p&gt;
+&lt;p&gt;&lt;a href=&#34;https://journal.r-project.org/news/RJ-2016-2-cran/&#34;&gt;CRAN-2016-2&lt;/a&gt;, &lt;a href=&#34;https://journal.r-project.org/news/RJ-2016-2-bioc/&#34;&gt;Bioc-2016-2&lt;/a&gt;&lt;/p&gt;&lt;/li&gt;
+&lt;li&gt;&lt;p&gt;&lt;a href=&#34;https://journal.r-project.org/news/RJ-2017-1-cran/&#34;&gt;CRAN-2017-1&lt;/a&gt;: mentions changes in CRAN checks, adding new memory access and static code analysis checks.
+It mentions that the submission has moved to a more automated one.
+It also mentions changes in the CRAN Repository Policy.
+&lt;a href=&#34;https://journal.r-project.org/news/RJ-2017-1-bioc/&#34;&gt;Bioc-2017-1&lt;/a&gt;&lt;/p&gt;&lt;/li&gt;
+&lt;li&gt;&lt;p&gt;&lt;a href=&#34;https://journal.r-project.org/news/RJ-2018-1-cran/&#34;&gt;CRAN-2018-1&lt;/a&gt;: checks in alternative BLAS/LAPACK implementations, the submission pipeline is defined.
+First time the amount of action taken by CRAN reviewers is listed in two categories automatic and manual.
+Changes in repository policy are listed.
+Changes in location of package repository archive , &lt;a href=&#34;https://journal.r-project.org/news/RJ-2018-1-bioc/&#34;&gt;Bioc-2018-1&lt;/a&gt;&lt;br /&gt;
+&lt;a href=&#34;https://journal.r-project.org/news/RJ-2018-2-cran/&#34;&gt;CRAN-2018-2&lt;/a&gt;: Changes in policy; packages should not give a check warning nor error.
+&lt;a href=&#34;https://journal.r-project.org/news/RJ-2018-2-bioc/&#34;&gt;Bioc-2018-2&lt;/a&gt;: Moved to BiocManager to install packages.&lt;/p&gt;&lt;/li&gt;
+&lt;li&gt;&lt;p&gt;&lt;a href=&#34;https://journal.r-project.org/news/RJ-2019-1-cran/&#34;&gt;CRAN-2019-1&lt;/a&gt;: More mentions to CRAN mirror security.&lt;/p&gt;
+&lt;p&gt;&lt;a href=&#34;https://journal.r-project.org/news/RJ-2019-2-cran/&#34;&gt;CRAN-2019-2&lt;/a&gt;: Updates in checklist for CRAN submissions, &lt;a href=&#34;https://journal.r-project.org/news/RJ-2019-2-bioc/&#34;&gt;Bioc-2019-2&lt;/a&gt;&lt;/p&gt;&lt;/li&gt;
+&lt;li&gt;&lt;p&gt;&lt;a href=&#34;https://journal.r-project.org/news/RJ-2020-1-cran/&#34;&gt;CRAN-2020-1&lt;/a&gt;: Many changes in CRAN policies.
+&lt;a href=&#34;https://journal.r-project.org/news/RJ-2020-2-cran/&#34;&gt;CRAN-2020-2&lt;/a&gt;: Many changes to CRAN policies.
+&lt;a href=&#34;https://journal.r-project.org/news/RJ-2020-2-bioc/&#34;&gt;Bioc-2020-2&lt;/a&gt;: Announces the Technical and Community advisory boards (as well as the project-wide Code of Conduct).&lt;/p&gt;&lt;/li&gt;
+&lt;li&gt;&lt;p&gt;&lt;a href=&#34;https://journal.r-project.org/news/RJ-2021-1-cran/&#34;&gt;CRAN-2021-1&lt;/a&gt;, &lt;a href=&#34;https://journal.r-project.org/news/RJ-2021-1-bioc/&#34;&gt;Bioc-2021-1&lt;/a&gt;: Mentions conferences that will be virtual.&lt;br /&gt;
+&lt;a href=&#34;https://journal.r-project.org/news/RJ-2021-2-cran/&#34;&gt;CRAN-2021-2&lt;/a&gt;: Shows an &lt;a href=&#34;https://cran.r-project.org/incoming/&#34;&gt;incomig&lt;/a&gt; path [See &lt;a href=&#34;https://r-hub.github.io/cransays/articles/dashboard.html&#34;&gt;this friendly viewer&lt;/a&gt;, &lt;a href=&#34;https://journal.r-project.org/news/RJ-2021-2-bioc/&#34;&gt;Bioc-2021-2&lt;/a&gt;: Mentions AnVIL and two online workshops to develop workflows.&lt;/p&gt;&lt;/li&gt;
+&lt;li&gt;&lt;p&gt;&lt;a href=&#34;https://journal.r-project.org/news/RJ-2022-1-cran/&#34;&gt;CRAN-2022-1&lt;/a&gt;: List a change in CRAN policy and the CRAN Task View Initiative.&lt;br /&gt;
+&lt;a href=&#34;https://journal.r-project.org/news/RJ-2022-2-cran/&#34;&gt;CRAN-2022-2&lt;/a&gt;: List some more repository policies.
+&lt;a href=&#34;https://journal.r-project.org/news/RJ-2022-2-bioconductor/&#34;&gt;Bioc-2022-2&lt;/a&gt;: Lists infrastructure updates (and its funding), changes in the core team and new initiatives.&lt;br /&gt;
+&lt;a href=&#34;https://journal.r-project.org/news/RJ-2022-3-cran/&#34;&gt;CRAN-2022-3&lt;/a&gt;, &lt;a href=&#34;https://journal.r-project.org/news/RJ-2022-3-bioconductor/&#34;&gt;Bioc-2022-3&lt;/a&gt;&lt;br /&gt;
+&lt;a href=&#34;https://journal.r-project.org/news/RJ-2022-4-cran/&#34;&gt;CRAN-2022-4&lt;/a&gt;, &lt;a href=&#34;https://journal.r-project.org/news/RJ-2022-4-bioconductor/&#34;&gt;Bioc-2022-4&lt;/a&gt;: default branch renaming, partnership with Outreachy and blog are featured.
+Several working groups provide updates&lt;/p&gt;&lt;/li&gt;
+&lt;li&gt;&lt;p&gt;&lt;a href=&#34;https://journal.r-project.org/news/RJ-2023-1-cran/&#34;&gt;CRAN-2023-1&lt;/a&gt;&lt;/p&gt;&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;In addition, several articles and blog posts have appeared.
+From those I found it is worth mentioning the following:&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;p&gt;&lt;a href=&#34;https://doi.org/10.17713/ajs.v41i1.188&#34;&gt;Are There Too Many R Packages?&lt;/a&gt; and &lt;a href=&#34;https://www.r-bloggers.com/2014/04/does-r-have-too-many-packages/&#34;&gt;derived posts&lt;/a&gt;&lt;/p&gt;&lt;/li&gt;
+&lt;li&gt;&lt;p&gt;&lt;a href=&#34;https://www.jumpingrivers.com/blog/security-r-hacking-bioconductor/&#34;&gt;Hacking Bioconductor&lt;/a&gt;&lt;/p&gt;&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;And my own posts:&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;p&gt;&lt;a href=&#34;https://llrs.dev/post/2021/12/07/reasons-cran-archivals/&#34;&gt;Reasons CRAN packages are archived&lt;/a&gt;&lt;/p&gt;&lt;/li&gt;
+&lt;li&gt;&lt;p&gt;&lt;a href=&#34;https://llrs.dev/post/2022/07/23/cran-files-1/&#34;&gt;CRAN files part 1&lt;/a&gt;&lt;/p&gt;&lt;/li&gt;
+&lt;li&gt;&lt;p&gt;&lt;a href=&#34;https://llrs.dev/post/2022/07/28/cran-files-2/&#34;&gt;CRAN files part 2&lt;/a&gt;&lt;/p&gt;&lt;/li&gt;
+&lt;li&gt;&lt;p&gt;&lt;a href=&#34;https://llrs.dev/post/2023/05/03/cran-maintained-packages/&#34;&gt;CRAN maintained packages&lt;/a&gt;&lt;/p&gt;&lt;/li&gt;
+&lt;li&gt;&lt;p&gt;&lt;a href=&#34;https://llrs.dev/post/2021/01/31/cran-review/&#34;&gt;CRAN review&lt;/a&gt; (and the &lt;a href=&#34;https://llrs.dev/talk/user-2021/&#34;&gt;talk at useRs 2021&lt;/a&gt;)&lt;/p&gt;&lt;/li&gt;
+&lt;li&gt;&lt;p&gt;&lt;a href=&#34;https://llrs.dev/post/2020/07/31/bioconductor-submissions-reviews/&#34;&gt;Bioconductor review&lt;/a&gt;&lt;/p&gt;&lt;/li&gt;
+&lt;li&gt;&lt;p&gt;&lt;a href=&#34;https://llrs.dev/post/2020/09/02/ropensci-submissions/&#34;&gt;rOpenSci&lt;/a&gt; reviews&lt;/p&gt;&lt;/li&gt;
+&lt;li&gt;&lt;p&gt;&lt;a href=&#34;https://llrs.dev/2020/07/bioconductor-submissions-reviews/&#34;&gt;Bioconductor reviews&lt;/a&gt;&lt;/p&gt;&lt;/li&gt;
+&lt;li&gt;&lt;p&gt;The article &lt;a href=&#34;https://journal.r-project.org/articles/RJ-2009-014/&#34;&gt;“Aspects of the Social Organization and Trajectory of the R Project”&lt;/a&gt;, from the R Journal 2009, also has a section about CRAN, noting that it “is challenged by its own success”.&lt;/p&gt;&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/div&gt;
+&lt;div id=&#34;characteristics&#34; class=&#34;section level1&#34;&gt;
+&lt;h1&gt;Characteristics&lt;/h1&gt;
+&lt;p&gt;The predominance of CRAN and its role as primary and default R repository has lead to some special treatment of the repository.&lt;/p&gt;
+&lt;p&gt;CRAN checks are in the R source code itself.
+While other repositories have their own checks in different tools.
+In addition, the CRAN environmental variables used are documented in the &lt;a href=&#34;https://cran.r-project.org/doc/manuals/r-release/R-ints.html&#34;&gt;R-internals&lt;/a&gt; (they are more or less accessible in the &lt;a href=&#34;https://svn.r-project.org/R-dev-web/trunk/CRAN/&#34;&gt;svn repository&lt;/a&gt; too).&lt;/p&gt;
+&lt;p&gt;Others who know more have stated the benefits of CRAN too: This text is copied from Henrik Bengstsson in &lt;a href=&#34;https://community-bioc.slack.com/archives/CLF37V6C8/p1698869264884649?thread_ts=1698804037.467439&amp;amp;cid=CLF37V6C8&#34; title=&#34;Link to the thread&#34;&gt;Bioconductor Slack&lt;/a&gt;:&lt;/p&gt;
+&lt;blockquote&gt;
+&lt;p&gt;FOREVER ARCHIVE:&lt;/p&gt;
+&lt;p&gt;The first one is that it publishes packages and versions of them until the end of time.
+When a package has been published on CRAN, it takes a lot for it to be removed from there.
+I don’t know if it ever happened, but I can imagine a package can be fully removed if it was illegally published in the first place (e.g. copyright, illegal content, ...) or malicious.&lt;/p&gt;
+&lt;p&gt;INSTALLATION SERVICE:&lt;/p&gt;
+&lt;p&gt;Then CRAN also provides a R package repository service for installing packages on CRAN using built-in R functions.
+The set of packages in the package repo is a subset of all packages on CRAN.
+The CRAN package repo makes a promise that all packages listed in PACKAGES can be installed.
+If they cannot make that promise, they’ll archive the package (=remove it from PACKAGES).
+I should also say, install.packages(url) can be used to install from the set of packages that are archived.
+Technically, old package versions are always archived.&lt;/p&gt;
+&lt;p&gt;CHECK SERVICE:&lt;/p&gt;
+&lt;p&gt;The content of the R package repository is guided by the CRAN package checks that run on R-oldrel, R-release, and R-devel across multiple platforms.
+The minimal requirement is that no package should remain in the package repository if the checks detects ERRORs (and those errors are not due to recently introduced bugs in R-devel).
+WARNINGs can also cause a package to be archived, but that process often takes longer.
+AFAIK, NOTEs are not a cause for a package being archived (but I could be wrong).
+The CRAN incoming checks, which you have to pass when you submit a new package, or an updated version, will make sure that the published package pass with all OKs.
+(It’s possible to argue for NOTEs being false positives, or for them not to be fixed, but that requires a manual approval by the CRAN Team).&lt;/p&gt;
+&lt;/blockquote&gt;
+&lt;p&gt;I think there are many more resources discussing R repositories.
+If you know more I’ll be happy to update this post.&lt;/p&gt;
+&lt;p&gt;I think before I drag too much on the steps I’ll post this and collect some more articles I might have missed.&lt;/p&gt;
+&lt;p&gt;Last, Uwe Liegges presented about &lt;a href=&#34;https://www.youtube.com/watch?v=-vX-CDiiZKI&#34;&gt;CRAN in useR!2017&lt;/a&gt;, thanks Tim Taylor for &lt;a href=&#34;https://fosstodon.org/@_TimTaylor/111612010185631808&#34;&gt;sharing it&lt;/a&gt;. In this video there is an explanation of why the solaris OS was used.&lt;/p&gt;
+&lt;p&gt;It has come to my attention that there is an article, by G. Brooke Anderson and Dirk Eddelbuette, about the R package repositories structure (among other things): &lt;a href=&#34;https://journal.r-project.org/archive/2017/RJ-2017-026/RJ-2017-026.pdf&#34;&gt;Hosting Data Packages via drat: A Case Study with Hurricane Exposure Data&lt;/a&gt;&lt;/p&gt;
+&lt;div id=&#34;reproducibility&#34; class=&#34;section level3&#34;&gt;
+&lt;h3&gt;Reproducibility&lt;/h3&gt;
+&lt;details&gt;
+&lt;pre&gt;&lt;code&gt;## ─ Session info ───────────────────────────────────────────────────────────────────────────────────────────────────────
+##  setting  value
+##  version  R version 4.3.1 (2023-06-16)
+##  os       Ubuntu 22.04.3 LTS
+##  system   x86_64, linux-gnu
+##  ui       X11
+##  language (EN)
+##  collate  en_US.UTF-8
+##  ctype    en_US.UTF-8
+##  tz       Europe/Madrid
+##  date     2024-01-15
+##  pandoc   3.1.1 @ /usr/lib/rstudio/resources/app/bin/quarto/bin/tools/ (via rmarkdown)
+## 
+## ─ Packages ───────────────────────────────────────────────────────────────────────────────────────────────────────────
+##  package     * version date (UTC) lib source
+##  blogdown      1.18    2023-06-19 [1] CRAN (R 4.3.1)
+##  bookdown      0.37    2023-12-01 [1] CRAN (R 4.3.1)
+##  bslib         0.6.1   2023-11-28 [1] CRAN (R 4.3.1)
+##  cachem        1.0.8   2023-05-01 [1] CRAN (R 4.3.1)
+##  cli           3.6.2   2023-12-11 [1] CRAN (R 4.3.1)
+##  digest        0.6.33  2023-07-07 [1] CRAN (R 4.3.1)
+##  evaluate      0.23    2023-11-01 [1] CRAN (R 4.3.2)
+##  fastmap       1.1.1   2023-02-24 [1] CRAN (R 4.3.1)
+##  htmltools     0.5.7   2023-11-03 [1] CRAN (R 4.3.2)
+##  jquerylib     0.1.4   2021-04-26 [1] CRAN (R 4.3.1)
+##  jsonlite      1.8.8   2023-12-04 [1] CRAN (R 4.3.1)
+##  knitr         1.45    2023-10-30 [1] CRAN (R 4.3.2)
+##  lifecycle     1.0.4   2023-11-07 [1] CRAN (R 4.3.2)
+##  R6            2.5.1   2021-08-19 [1] CRAN (R 4.3.1)
+##  rlang         1.1.3   2024-01-10 [1] CRAN (R 4.3.1)
+##  rmarkdown     2.25    2023-09-18 [1] CRAN (R 4.3.1)
+##  rstudioapi    0.15.0  2023-07-07 [1] CRAN (R 4.3.1)
+##  sass          0.4.8   2023-12-06 [1] CRAN (R 4.3.1)
+##  sessioninfo   1.2.2   2021-12-06 [1] CRAN (R 4.3.1)
+##  xfun          0.41    2023-11-01 [1] CRAN (R 4.3.2)
+##  yaml          2.3.8   2023-12-11 [1] CRAN (R 4.3.1)
+## 
+##  [1] /home/lluis/bin/R/4.3.1
+##  [2] /opt/R/4.3.1/lib/R/library
+## 
+## ──────────────────────────────────────────────────────────────────────────────────────────────────────────────────────&lt;/code&gt;&lt;/pre&gt;
+&lt;/details&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;div class=&#34;footnotes footnotes-end-of-document&#34;&gt;
+&lt;hr /&gt;
+&lt;ol&gt;
+&lt;li id=&#34;fn1&#34;&gt;&lt;p&gt;In version 3.1.2 &lt;a href=&#34;https://cran.r-project.org/doc/manuals/NEWS.3&#34;&gt;Omegahat didn’t provide&lt;/a&gt; Windows binaries and in 4.1 from the default repositories (See 4.1 in &lt;a href=&#34;https://cran.r-project.org/doc/manuals/r-release/NEWS.html&#34;&gt;NEWS(.4)&lt;/a&gt;).&lt;a href=&#34;#fnref1&#34; class=&#34;footnote-back&#34;&gt;↩︎&lt;/a&gt;&lt;/p&gt;&lt;/li&gt;
+&lt;li id=&#34;fn2&#34;&gt;&lt;p&gt;This lead to the need of having a special function to install packages from Bioconductor.
+Initially a function &lt;code&gt;biocLite&lt;/code&gt; and later with the &lt;a href=&#34;https://cran.r-project.org/package=BiocManager&#34;&gt;BiocManager package&lt;/a&gt;.&lt;a href=&#34;#fnref2&#34; class=&#34;footnote-back&#34;&gt;↩︎&lt;/a&gt;&lt;/p&gt;&lt;/li&gt;
+&lt;li id=&#34;fn3&#34;&gt;&lt;p&gt;&lt;a href=&#34;https://cran.r-project.org/doc/manuals/NEWS.2&#34;&gt;NEWS in 2.15 section&lt;/a&gt;&lt;a href=&#34;#fnref3&#34; class=&#34;footnote-back&#34;&gt;↩︎&lt;/a&gt;&lt;/p&gt;&lt;/li&gt;
+&lt;/ol&gt;
+&lt;/div&gt;
+</description>
+    </item>
+    
+    <item>
+      <title>rtweet future</title>
+      <link>https://llrs.dev/post/2023/02/16/rtweet-future/</link>
+      <pubDate>Thu, 16 Feb 2023 00:00:00 +0000</pubDate>
+      <guid>https://llrs.dev/post/2023/02/16/rtweet-future/</guid>
+      <description>
+
+
+&lt;div id=&#34;background-how-i-became-the-maintainer-of-rtweet&#34; class=&#34;section level2&#34;&gt;
+&lt;h2&gt;Background: how I became the maintainer of rtweet&lt;/h2&gt;
+&lt;p&gt;I didn’t want to maintain rtweet.
+It might sound strange coming from its maintainer, but I didn’t want the responsibility of writting software 12k people install it monthly.
+My offer was always to help with it so that the users could benefit from improvements and bug fixes on the package.
+I initially thought that having permissions to close issues, label them would help the community and the maintainer.&lt;/p&gt;
+&lt;p&gt;I was not totally altruistic.
+As &lt;a href=&#34;https://ropensci.org/blog/2022/10/17/maintain-or-co-maintain-an-ropensci-package/&#34;&gt;recently recommended by Maëlle and Steffi&lt;/a&gt;, I had some interest in the package.
+I had a bot posting some plots daily.
+I wanted to have alt text in the tweets.
+There was a pending PR for just that.
+I could fork and use my own version or help with the package.&lt;/p&gt;
+&lt;p&gt;I got in touch with rOpenSci about the package.
+After some time waiting hearing back from the author of the package (Many thanks &lt;a href=&#34;https://mikewk.com/!&#34;&gt;Michael W. Kearney&lt;/a&gt;, I was given edit permissions to the repository (under the helping eye of Scott Chamberlain).
+At the time, I got &lt;a href=&#34;https://github.com/ropensci/rtweet/issues/471&#34;&gt;permission from rOpenSci&lt;/a&gt; there were 167 issues and PR open.&lt;/p&gt;
+&lt;p&gt;As I started going through them and changing the source code, people showed up to help (Thanks!).
+New contributors helped with closing issues via new PR or simply advising about naming functions or &lt;a href=&#34;https://github.com/ropensci/rtweet/issues/445#issuecomment-790042423&#34;&gt;asking for its future&lt;/a&gt;.
+Another developer gained access to repository and contributed with their expertise (resulting in some &lt;a href=&#34;https://twitter.com/hadleywickham/status/1365661250269683713&#34;&gt;funny moments&lt;/a&gt;).
+Despite all (breaking) changes, we tried to make the package easier to maintain.
+After waiting some time, for further community feedback, I released a new version through CRAN.&lt;/p&gt;
+&lt;p&gt;Shortly after, for some reasons my bot got less views and engagement.
+It made me realize that it might be an opportunity to start a professional project around the content of what this bot did.
+In addition, although I learn a lot from the online communities I decided to connect more with the local community.
+I am currently involved with re-launching the &lt;a href=&#34;https://barcelonar.org&#34;&gt;Barcelona R user group&lt;/a&gt; and organizing the &lt;a href=&#34;http://r-es.org/2023/02/09/las-xiii-jornadas-congreso-r-hispano-2023-seran-en-barcelona/&#34;&gt;Spanish R conference&lt;/a&gt;.
+These activities take time an energy away from package maintenance (not just rtweet).
+However, &lt;strong&gt;my support for the users of rtweet remains&lt;/strong&gt;.&lt;/p&gt;
+&lt;div class=&#34;figure&#34;&gt;
+&lt;img src=&#34;images/allison_community_support.png&#34; alt=&#34;&#34; /&gt;
+&lt;p class=&#34;caption&#34;&gt;The community support I received was great. I hope to pass on it. CC-BY-4.0 &lt;a href=&#34;https://twitter.com/allison_horst&#34;&gt;Artwork by &lt;span class=&#34;citation&#34;&gt;@allison_horst&lt;/span&gt;.&lt;/a&gt;&lt;/p&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;div id=&#34;current-situation-supporting-the-v1-and-adding-support-to-the-v2-api&#34; class=&#34;section level2&#34;&gt;
+&lt;h2&gt;Current situation: supporting the v1 and adding support to the v2 API&lt;/h2&gt;
+&lt;p&gt;To maintain rtweet I needed to adapt and understand the Twitter’s API (v1) documentation.
+The documentation didn’t always match the functionality.
+rtweet follows the API tightly, any change might break the package.
+For instance, the addition of the edit field broke the parsing of the tweets.&lt;/p&gt;
+&lt;p&gt;At the same time one of the oldest issues in rtweet is moving to the new API v2.
+With the 1.0 release, I decided it was time to stop adding features relying in it.
+It was clear that Twitter was moving to deprecate and replace it with the newer API.
+There are many benefits of the new API to developer and users.
+But as I realized that I should still fix bugs related to them.&lt;/p&gt;
+&lt;p&gt;The 1.1 release have recently provided some bug fixes and support for the v2.
+There is also an outstanding issue preventting new users of connecting to Twitter (fixed in github).
+The streaming endpoint in v1 stopped working before the announced date.
+So the new release included support for the replacement endpoint in v2.&lt;/p&gt;
+&lt;p&gt;As you have guessed, between releases I had been thinking and working to support API v2.
+The foundations to support the new endpoints were already set and easily expanded to new endpoints.
+In the development version of the package (in the devel branch), it is possible to retrieve bookmarks, retrieve the archive if you have academic access, among other endpoints.&lt;/p&gt;
+&lt;/div&gt;
+&lt;div id=&#34;going-forward-supporting-rtweet-users-of-v2-api&#34; class=&#34;section level2&#34;&gt;
+&lt;h2&gt;Going forward: supporting rtweet users of v2 API&lt;/h2&gt;
+&lt;p&gt;Recently (~3 weeks), there have been &lt;a href=&#34;https://twitter.com/TwitterDev&#34;&gt;anouncements&lt;/a&gt; of future changes in who and how will be able to access the API.
+Simultaneously, there have been unannounced restrictions affecting other tools using the API.
+Recent changes and announcements are driven by need of money to sustain Twitter.
+To maintain rtweet with its current functionality it might need funds.&lt;/p&gt;
+&lt;p&gt;I will continue supporting rtweet and the freely accessible endpoints.
+But given that I will have less time and energy for rtweet, I am looking for a &lt;strong&gt;&lt;em&gt;co&lt;/em&gt;-maintainer&lt;/strong&gt; to help me:&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;Supporting new endpoints, using httr2, testing an API in CI, …&lt;/li&gt;
+&lt;li&gt;Review changes to avoid new bugs.&lt;/li&gt;
+&lt;li&gt;Help with issues and questions that the transition to API v2 and the current uncertainty bring.&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;Get in touch with me in &lt;a href=&#34;https://github.com/ropensci/rtweet/issues/763&#34;&gt;this issue&lt;/a&gt;.&lt;/p&gt;
+&lt;p&gt;From time to time, I receive bug reports and petitions from premium API users.
+Currently, premium users get access to more data, elevated request rates and other endpoints.
+Helping them is usually challenging, and developing support for these endpoints will be difficult.
+To continue supporting these users I’ve set up a &lt;a href=&#34;https://www.buymeacoffee.com/llrs&#34;&gt;☕ buymeacoffee&lt;/a&gt; and I, and my co-maintainer, will be open to consulting jobs about rtweet.
+With these jobs and funding we will be able to support them and implement new endpoints for all the users.&lt;/p&gt;
+&lt;p&gt;There is scarce information about the API changes and prices.
+Changes might come suddenly.
+We’ll do our best to keep up and inform all users.
+I hope this will be a good way to &lt;strong&gt;continue supporting the package an the community&lt;/strong&gt; of users.
+Let me know if you have other suggestions.&lt;/p&gt;
+&lt;div class=&#34;figure&#34;&gt;
+&lt;img src=&#34;images/decorated_r.png&#34; alt=&#34;&#34; /&gt;
+&lt;p class=&#34;caption&#34;&gt;Decorating/contributing to R. CC-BY-4.0 &lt;a href=&#34;https://twitter.com/allison_horst&#34;&gt;artwork by &lt;span class=&#34;citation&#34;&gt;@allison_horst&lt;/span&gt;.&lt;/a&gt;&lt;/p&gt;
+&lt;/div&gt;
+&lt;p&gt;&lt;em&gt;Thanks Maëlle for your support and reviewing the post.&lt;/em&gt;&lt;/p&gt;
+&lt;/div&gt;
+</description>
+    </item>
+    
+    <item>
+      <title>Leadership in open source projects</title>
+      <link>https://llrs.dev/post/2022/05/27/leadership-open-source/</link>
+      <pubDate>Fri, 27 May 2022 00:00:00 +0000</pubDate>
+      <guid>https://llrs.dev/post/2022/05/27/leadership-open-source/</guid>
+      <description>
+
+
+&lt;p&gt;This is the second part of the previous post about &lt;a href=&#34;https://llrs.dev/post/2022/03/16/concepts-around-open-source-free-software/&#34;&gt;concepts around open source/free software&lt;/a&gt;.&lt;/p&gt;
+&lt;p&gt;Since last book, I also read &lt;a href=&#34;https://un.curl.dev&#34;&gt;Uncurled&lt;/a&gt; which recommended &lt;a href=&#34;https://www.amazon.com/Working-Public-Making-Maintenance-Software/dp/0578675862&#34;&gt;“The Making and maintenance of open source software”&lt;/a&gt; (I will short it to MMOSS) and “&lt;a href=&#34;https://producingoss.com/&#34;&gt;Producing Open Source Software&lt;/a&gt;” (POSS), which provide first hand experiences about how those maintainers handled different projects.&lt;/p&gt;
+&lt;p&gt;This post is about projects, growth and management of the project (I don’t want to make them about R but I will also use my experience within R to reflect on these ideas).&lt;/p&gt;
+&lt;div id=&#34;projects&#34; class=&#34;section level2&#34;&gt;
+&lt;h2&gt;Projects&lt;/h2&gt;
+&lt;p&gt;It is common to say refer to open source as projects.
+While it is true that open source/free software is a project with limited resources it doesn’t have a fixed end date.
+I don’t think they fit the criteria of the &lt;a href=&#34;https://en.wikipedia.org/wiki/Project_Management_Body_of_Knowledge&#34; title=&#34;Project Management Body of Knowledge&#34;&gt;PMBOK&lt;/a&gt;.&lt;/p&gt;
+&lt;p&gt;Software “projects” run from the usefulness for the maintainer and the feedback received.
+If a maintainer does no longer use a piece of software and doesn’t receive any feedback they might choose to not update the public version.
+The software is still up there but the valuable resource (maintenance) is no longer there.&lt;/p&gt;
+&lt;p&gt;This explains why it is so common to look up for activity on a “project”.
+If a developer/maintainer hasn’t committed or reacted in a long time the “project” is no longer active.
+The code might still be used, it might have more users, but it is no longer a project.&lt;/p&gt;
+&lt;p&gt;Another characteristics of projects is that there is a leadership.
+It might be a team or an individual like a benevolent dictator for life as explained by POSS.
+This leadership most important role is communication.
+It is not enough to have commit access or a foundation but to communicate and steward the community towards a direction or following some guidelines.&lt;/p&gt;
+&lt;p&gt;This communication is usually done by NEWS and changelog, in bug reports feedback on mailing list (and by the lack of communication too).&lt;/p&gt;
+&lt;p&gt;These leaders are those who can steward with contributor growth, support, ease of participation and technical improvements.
+Particularly POSS mentions the distinction between commit access and maintainer; also considering maintainers those that organize conferences, set up infrastructure and participate even if not committing code.&lt;/p&gt;
+&lt;p&gt;All the activities of the maintainers (and others) help with the project status and growth.&lt;/p&gt;
+&lt;/div&gt;
+&lt;div id=&#34;growth&#34; class=&#34;section level2&#34;&gt;
+&lt;h2&gt;Growth?&lt;/h2&gt;
+&lt;p&gt;There seems to be in the MMOSS book a tendency to only mention growth, which is very hard to measure.
+Just fo give an example focusing on users: Is LAPACK user base growing or not?
+I would say it is, because R uses it and more people is using R.
+But there isn’t, to my knowledge, a growth on users claiming to be experts on LAPACK, although there are several LAPACK optimizations.&lt;/p&gt;
+&lt;p&gt;MMOSS mentions that the (long term) contributors tend to lurk and just chime in when they can propose something of value or given the room.
+This is echoed by POSS, which even says that one of the roles of maintainers is to encourage other contributors to become maintainers.&lt;/p&gt;
+&lt;p&gt;Casual contributors post when they have an issue/bug while using it but they are not interested on the long term health of the software.
+Presumably on the classification on table 1 of the &lt;a href=&#34;https://llrs.dev/post/2022/03/16/concepts-around-open-source-free-software/&#34;&gt;previous post&lt;/a&gt; refers to both.
+However, as acknowledge by the author it is hard to measure users and contributors.&lt;/p&gt;
+&lt;p&gt;The books always focus on the very positive outcome growth, not stagnation or reduction of users/contributors.
+I think it is important to acknowledge this happens too and find the causes to avoid them.&lt;/p&gt;
+&lt;p&gt;On python the support of python 2.7 had to be extended multiple times due to slow uptake of python 3.x.
+It might have similar effects than the upgrade from perl4 to perl5, which (besides many other reasons) left perl outside the curriculum of the universities, so without many new users.&lt;/p&gt;
+&lt;p&gt;Probably the best indicator is the relationship between users, contributors and maintainers.
+If these are three different groups of people, there are more users than contributors and less maintainers while the dynamics are good and the software is in good healthy status.&lt;/p&gt;
+&lt;/div&gt;
+&lt;div id=&#34;end&#34; class=&#34;section level2&#34;&gt;
+&lt;h2&gt;End&lt;/h2&gt;
+&lt;p&gt;I haven’t touch much the status of code but this is also important it can be status as in quality of code and status of the software and community.
+The first is easier to measure and compare while the second one is much harder, more subjective and thus less general.&lt;/p&gt;
+&lt;p&gt;Whatever the status of a software is don’t forget to be nice to users, contributors and help them become more familiar with the code in a friendly manner.&lt;/p&gt;
+&lt;/div&gt;
+</description>
+    </item>
+    
+    <item>
+      <title>Concepts around open source/free software</title>
+      <link>https://llrs.dev/post/2022/03/16/concepts-around-open-source-free-software/</link>
+      <pubDate>Wed, 16 Mar 2022 00:00:00 +0000</pubDate>
+      <guid>https://llrs.dev/post/2022/03/16/concepts-around-open-source-free-software/</guid>
+      <description>
+&lt;script src=&#34;https://llrs.dev/post/2022/03/16/concepts-around-open-source-free-software/index.en_files/header-attrs/header-attrs.js&#34;&gt;&lt;/script&gt;
+
+
+&lt;p&gt;This post is to lay out some concepts I picked up after reading &lt;a href=&#34;https://www.amazon.com/Working-Public-Making-Maintenance-Software/dp/0578675862&#34;&gt;“The Making and maintenance of open source software”&lt;/a&gt;.
+Having these concepts in mind might help me on my contributions to R and OSS in general.
+I write these thought to come back to in future posts.&lt;/p&gt;
+&lt;p&gt;The book classify projects by two axis, contribution growth and user growth:&lt;/p&gt;
+&lt;table&gt;
+&lt;thead&gt;
+&lt;tr class=&#34;header&#34;&gt;
+&lt;th&gt;&lt;/th&gt;
+&lt;th&gt;High user growth&lt;/th&gt;
+&lt;th&gt;low user growth&lt;/th&gt;
+&lt;/tr&gt;
+&lt;/thead&gt;
+&lt;tbody&gt;
+&lt;tr class=&#34;odd&#34;&gt;
+&lt;td&gt;&lt;strong&gt;High contributor growth&lt;/strong&gt;&lt;/td&gt;
+&lt;td&gt;Federations&lt;/td&gt;
+&lt;td&gt;Clubs&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr class=&#34;even&#34;&gt;
+&lt;td&gt;&lt;strong&gt;Low contributor growth&lt;/strong&gt;&lt;/td&gt;
+&lt;td&gt;Stadiums&lt;/td&gt;
+&lt;td&gt;Toys&lt;/td&gt;
+&lt;/tr&gt;
+&lt;/tbody&gt;
+&lt;/table&gt;
+&lt;p&gt;And classify projects according to the following characteristics :&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;p&gt;Technical&lt;/p&gt;&lt;/li&gt;
+&lt;li&gt;&lt;p&gt;Support&lt;/p&gt;&lt;/li&gt;
+&lt;li&gt;&lt;p&gt;Ease of participation&lt;/p&gt;&lt;/li&gt;
+&lt;li&gt;&lt;p&gt;User adoption&lt;/p&gt;&lt;/li&gt;
+&lt;li&gt;&lt;p&gt;Contributor growth&lt;/p&gt;&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;Code seems like a common good which require the following characteristics:&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;p&gt;Intrinsic motivation&lt;/p&gt;&lt;/li&gt;
+&lt;li&gt;&lt;p&gt;Modular&lt;/p&gt;&lt;/li&gt;
+&lt;li&gt;&lt;p&gt;Granular&lt;/p&gt;&lt;/li&gt;
+&lt;li&gt;&lt;p&gt;Low cost of coordination&lt;/p&gt;&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;On the author’s opinion only maintainers are interested in the success of the whole community and need to make trade off between different interest of the community around the project.&lt;/p&gt;
+&lt;p&gt;Motivation is very important and I classify based on the source of motivation and the sign of it:&lt;/p&gt;
+&lt;table&gt;
+&lt;thead&gt;
+&lt;tr class=&#34;header&#34;&gt;
+&lt;th&gt;&lt;/th&gt;
+&lt;th&gt;Positive&lt;/th&gt;
+&lt;th&gt;Negative&lt;/th&gt;
+&lt;/tr&gt;
+&lt;/thead&gt;
+&lt;tbody&gt;
+&lt;tr class=&#34;odd&#34;&gt;
+&lt;td&gt;&lt;strong&gt;Intrinsic&lt;/strong&gt;&lt;/td&gt;
+&lt;td&gt;Learn skills&lt;/td&gt;
+&lt;td&gt;Burn out&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr class=&#34;even&#34;&gt;
+&lt;td&gt;&lt;strong&gt;Extrinsic&lt;/strong&gt;&lt;/td&gt;
+&lt;td&gt;Social benefits&lt;/td&gt;
+&lt;td&gt;Friction, or lack of feedback&lt;/td&gt;
+&lt;/tr&gt;
+&lt;/tbody&gt;
+&lt;/table&gt;
+&lt;p&gt;Following the book, contributors can be grouped in two:&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;p&gt;Invested: Lurk before making a contribution, learn the quirks of the community&lt;/p&gt;&lt;/li&gt;
+&lt;li&gt;&lt;p&gt;Casual: Adding value to themselves and other&lt;/p&gt;&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;Contributors might spend many time learning about the community before making their first contribution (or show themselves).
+That’s why only knowing if this is the first contribution of someone doesn’t mean they will continue contributing on the project.&lt;/p&gt;
+&lt;p&gt;Users, can be classified in two groups: passive, they use the software and nothing else, or active.
+Active users might do one of the following:&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;p&gt;Educate others: write a blog post, or material&lt;/p&gt;&lt;/li&gt;
+&lt;li&gt;&lt;p&gt;Spread the word: Announce they use the software&lt;/p&gt;&lt;/li&gt;
+&lt;li&gt;&lt;p&gt;Support: Solve other’s users questions&lt;/p&gt;&lt;/li&gt;
+&lt;li&gt;&lt;p&gt;Fill bug reports&lt;/p&gt;&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;The health of the project depends on the popularity dependencies and active and future maintenance of the software.&lt;/p&gt;
+&lt;p&gt;However, the book says that one contributor is not the same as the other.
+For instance removing a maintainer causes more harm than a casual contributor.&lt;/p&gt;
+&lt;p&gt;The source of this is that software is like a puppy.
+The value of the code is how live it is, static code has null value.
+but once it is being used it is very valuable.&lt;/p&gt;
+&lt;p&gt;For this reason the maintenance costs once there are users is very high.
+However, in general there are few ways to know how many users does a piece of software have.&lt;/p&gt;
+&lt;p&gt;This produces marginal costs to maintainer, which are driven by how are these goods:&lt;/p&gt;
+&lt;table&gt;
+&lt;thead&gt;
+&lt;tr class=&#34;header&#34;&gt;
+&lt;th&gt;&lt;/th&gt;
+&lt;th&gt;Excludable&lt;/th&gt;
+&lt;th&gt;Non-Excludable&lt;/th&gt;
+&lt;/tr&gt;
+&lt;/thead&gt;
+&lt;tbody&gt;
+&lt;tr class=&#34;odd&#34;&gt;
+&lt;td&gt;&lt;strong&gt;Rivalrous&lt;/strong&gt;&lt;/td&gt;
+&lt;td&gt;Private goods&lt;/td&gt;
+&lt;td&gt;Commons good&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr class=&#34;even&#34;&gt;
+&lt;td&gt;&lt;strong&gt;Non-Rivalrous&lt;/strong&gt;&lt;/td&gt;
+&lt;td&gt;Club goods&lt;/td&gt;
+&lt;td&gt;Public goods&lt;/td&gt;
+&lt;/tr&gt;
+&lt;/tbody&gt;
+&lt;/table&gt;
+&lt;p&gt;Costs are mainly attention from the maintainers from the users and contributors.
+Users are like a cars in a highway initially there is no problem, but at high levels of traffic adding new lanes don’t solve traffic jam.&lt;/p&gt;
+&lt;p&gt;However, the cost increase with more request, the bandwidth to download software and hosting&lt;/p&gt;
+&lt;p&gt;More users leads to more requests, which lead to a competition for maintainers to do less proactive work and do more reactive work.&lt;/p&gt;
+&lt;p&gt;This leads to start on very simple organiztion and evolve to more disorganized complexity and then to a organized complexity to just cope with the costs of the project.
+On this organization complexity relationships with maintainers become important.&lt;/p&gt;
+&lt;p&gt;&lt;code&gt;Value = usage+dependencies-maintenance+substitutability+switching cost+enabling&lt;/code&gt; while &lt;code&gt;Cost = development +maintenance+attention&lt;/code&gt;.&lt;/p&gt;
+&lt;p&gt;The common (and scarce) good is the attention of both maintainers and developers.
+Which requires judgement call on which kind of requests dedicate their time: extractive or non-extractive requests.&lt;/p&gt;
+&lt;p&gt;The benefit for maintainers once the reputation/recognition is enough is almost non existent.&lt;/p&gt;
+&lt;p&gt;The book cites several communities Python, ruby, Linux, javascript, java, but I don’t think they used R community as a source. So what are the implication of these concepts to the R community? How do we help maintainers to keep up with their work or let in new maintainers?&lt;/p&gt;
+&lt;div id=&#34;reproducibility&#34; class=&#34;section level3&#34;&gt;
+&lt;h3&gt;Reproducibility&lt;/h3&gt;
+&lt;details&gt;
+&lt;pre&gt;&lt;code&gt;## ─ Session info ───────────────────────────────────────────────────────────────────────────────────────────────────────
+##  setting  value
+##  version  R version 4.1.2 (2021-11-01)
+##  os       Ubuntu 20.04.4 LTS
+##  system   x86_64, linux-gnu
+##  ui       X11
+##  language (EN)
+##  collate  en_US.UTF-8
+##  ctype    en_US.UTF-8
+##  tz       Europe/Madrid
+##  date     2022-03-16
+##  pandoc   2.17.1.1 @ /usr/lib/rstudio/bin/quarto/bin/ (via rmarkdown)
+## 
+## ─ Packages ───────────────────────────────────────────────────────────────────────────────────────────────────────────
+##  package     * version date (UTC) lib source
+##  blogdown      1.8.1   2022-02-19 [1] Github (rstudio/blogdown@9af7733)
+##  bookdown      0.24    2021-09-02 [1] CRAN (R 4.1.2)
+##  bslib         0.3.1   2021-10-06 [1] CRAN (R 4.1.2)
+##  cli           3.2.0   2022-02-14 [1] CRAN (R 4.1.2)
+##  digest        0.6.29  2021-12-01 [1] CRAN (R 4.1.2)
+##  evaluate      0.15    2022-02-18 [1] CRAN (R 4.1.2)
+##  fastmap       1.1.0   2021-01-25 [1] CRAN (R 4.1.2)
+##  htmltools     0.5.2   2021-08-25 [1] CRAN (R 4.1.2)
+##  jquerylib     0.1.4   2021-04-26 [1] CRAN (R 4.1.2)
+##  jsonlite      1.8.0   2022-02-22 [1] CRAN (R 4.1.2)
+##  knitr         1.37    2021-12-16 [1] CRAN (R 4.1.2)
+##  magrittr      2.0.2   2022-01-26 [1] CRAN (R 4.1.2)
+##  R6            2.5.1   2021-08-19 [1] CRAN (R 4.1.2)
+##  rlang         1.0.2   2022-03-04 [1] CRAN (R 4.1.2)
+##  rmarkdown     2.13    2022-03-10 [1] CRAN (R 4.1.2)
+##  rstudioapi    0.13    2020-11-12 [1] CRAN (R 4.1.2)
+##  sass          0.4.0   2021-05-12 [1] CRAN (R 4.1.2)
+##  sessioninfo   1.2.2   2021-12-06 [1] CRAN (R 4.1.2)
+##  stringi       1.7.6   2021-11-29 [1] CRAN (R 4.1.2)
+##  stringr       1.4.0   2019-02-10 [1] CRAN (R 4.1.2)
+##  xfun          0.30    2022-03-02 [1] CRAN (R 4.1.2)
+##  yaml          2.3.5   2022-02-21 [1] CRAN (R 4.1.2)
+## 
+##  [1] /home/lluis/bin/R/4.1.2/lib/R/library
+## 
+## ──────────────────────────────────────────────────────────────────────────────────────────────────────────────────────&lt;/code&gt;&lt;/pre&gt;
+&lt;/details&gt;
+&lt;/div&gt;
+</description>
+    </item>
+    
+  </channel>
+</rss>

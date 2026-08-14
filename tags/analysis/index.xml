@@ -1,0 +1,1548 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes" ?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>analysis | B101nfo</title>
+    <link>https://llrs.dev/tags/analysis/</link>
+      <atom:link href="https://llrs.dev/tags/analysis/index.xml" rel="self" type="application/rss+xml" />
+    <description>analysis</description>
+    <generator>Source Themes Academic (https://sourcethemes.com/academic/)</generator><language>en-us</language><copyright>If it is code you can copy and reuse (MIT) if it is text, please cite and reuse CC-BY 2026.</copyright><lastBuildDate>Tue, 16 Nov 2021 00:00:00 +0000</lastBuildDate>
+    <image>
+      <url>img/map[gravatar:%!s(bool=false) shape:circle]</url>
+      <title>analysis</title>
+      <link>https://llrs.dev/tags/analysis/</link>
+    </image>
+    
+    <item>
+      <title>Bugs in R</title>
+      <link>https://llrs.dev/post/2021/11/16/bugs-in-r/</link>
+      <pubDate>Tue, 16 Nov 2021 00:00:00 +0000</pubDate>
+      <guid>https://llrs.dev/post/2021/11/16/bugs-in-r/</guid>
+      <description>
+&lt;script src=&#34;https://llrs.dev/post/2021/11/16/bugs-in-r/index.en_files/header-attrs/header-attrs.js&#34;&gt;&lt;/script&gt;
+&lt;script src=&#34;https://llrs.dev/post/2021/11/16/bugs-in-r/index.en_files/kePrint/kePrint.js&#34;&gt;&lt;/script&gt;
+&lt;link href=&#34;https://llrs.dev/post/2021/11/16/bugs-in-r/index.en_files/lightable/lightable.css&#34; rel=&#34;stylesheet&#34; /&gt;
+
+
+&lt;p&gt;This post has a relatively long introduction, you can skip and go ahead to the &lt;a href=&#34;#The-analysis&#34;&gt;analysis&lt;/a&gt;.&lt;/p&gt;
+&lt;p&gt;I knew about the r-devel (abbreviated Rd) mailing list that is where some discussions about the language happen and I had read that post of the &lt;a href=&#34;https://developer.r-project.org/Blog/public/2019/10/09/r-can-use-your-help-reviewing-bug-reports/index.html&#34;&gt;R core requesting help reviewing bug reports&lt;/a&gt; and I had &lt;a href=&#34;https://www.r-project.org/bugs.html&#34;&gt;requested an account&lt;/a&gt; the same day it came out to be able to post on &lt;a href=&#34;https://bugs.r-project.org/&#34;&gt;Bugzilla: https://bugs.r-project.org/&lt;/a&gt;.
+But I hadn’t reported any bug or anything, what had I to bring?&lt;/p&gt;
+&lt;p&gt;After RStudio 2021 I saw announced the &lt;a href=&#34;https://r-devel.slack.com&#34; class=&#34;uri&#34;&gt;https://r-devel.slack.com&lt;/a&gt; (you can join via &lt;a href=&#34;https://forwards.github.io/rcontribution/&#34;&gt;this website&lt;/a&gt;) and when I joined I checked some bugs and I found something odd.
+This lead to the creation of my first R bug: &lt;a href=&#34;https://bugs.r-project.org/show_bug.cgi?id=18055&#34;&gt;18055&lt;/a&gt;.&lt;/p&gt;
+&lt;p&gt;Then I thinking about the analysis about &lt;a href=&#34;https://llrs.dev/tags/reviews/&#34;&gt;package reviews&lt;/a&gt; I realized it was analyzing issues.
+Then it came to me that I could actually also analyse the issues of R, aka bugs reports.&lt;/p&gt;
+&lt;div id=&#34;collecting-the-data&#34; class=&#34;section level1&#34;&gt;
+&lt;h1&gt;Collecting the data&lt;/h1&gt;
+&lt;p&gt;First was step was collecting the data needed.
+Similar with the rOpenSci and Bioconductor analysis I knew I might need to create a package or a script just to retrieve the data.&lt;/p&gt;
+&lt;p&gt;I found somehow that it reports some data as xml and I though I could use that.
+But exploring the documentation I found it had an API that could be used to retrieve data.
+It required authentication to interact with the API.
+Instead of putting me off it made it a reasonable challenge and progression.
+If previously I used the &lt;a href=&#34;https://cran.r-project.org/package=gh&#34;&gt;gh package&lt;/a&gt; to authenticate and retrieve the raw data this time I had to learn how to authenticate to an API.
+I already developed a package that uses a poorly explained API to &lt;a href=&#34;https://ropenspain.github.io/BOE/,&#34; title=&#34;Collect the national gazette&#34;&gt;retrieve documents&lt;/a&gt; and adding a new step to authenticate requests was a small enough step.&lt;/p&gt;
+&lt;p&gt;I also found a package, &lt;a href=&#34;https://github.com/mvkorpel/bugtractr/&#34;&gt;bugtractr&lt;/a&gt;, that did this already but I had some problems using it and didn’t use authenticated requests to get the data.
+This meant it couldn’t retrieve all data I wanted.
+So I went on developing my own package to interact with Bugzilla’s API.&lt;/p&gt;
+&lt;p&gt;As I was learning to interact with API and I wanted to make it useful for the R community I looked at how to make that.
+Lukyly for me at the time I was doing this, I found the book &lt;a href=&#34;https://books.ropensci.org/http-testing/index.html&#34;&gt;HTTP testing in R&lt;/a&gt;, which was still under heavy writing but almost complete, and started reading and using its helpful advice to learn.
+One of the &lt;a href=&#34;https://books.ropensci.org/http-testing/graceful.html#choose-the-http-resource-wisely&#34;&gt;first recommendations&lt;/a&gt; was to contact with the API providers, so I email the R core about my intentions.&lt;/p&gt;
+&lt;p&gt;They raised some concerns: - Impact on the load of the machine.
+- if the API is robust enough.
+- However, semi-automating report submissions needs more thought.&lt;/p&gt;
+&lt;p&gt;Yes, at that time I had realized that the API allows to submit bug reports on the database (comments and attachments too), so I thought it could be an easy way to help people submit more bugs: submitting bugs from R itself.&lt;/p&gt;
+&lt;p&gt;After some exchanges about why, and how I was trying to retrieve data from Bugzilla I was deferred Simon Urbanek.&lt;/p&gt;
+&lt;p&gt;By that time I already posted about this on R-devel and got some interest from R contributing working group to which I presented the idea on March 12 (One month after the first commit on the package).&lt;/p&gt;
+&lt;p&gt;It was suggested on that meeting to present a Google Summer of Code&lt;a href=&#34;#fn1&#34; class=&#34;footnote-ref&#34; id=&#34;fnref1&#34;&gt;&lt;sup&gt;1&lt;/sup&gt;&lt;/a&gt; project which closed the project submission period shortly after.
+Soon two students contacted me and Heather Turner, who agreed to co-mentor the project, to write a proposal to work on my project.&lt;/p&gt;
+&lt;p&gt;By that time Simon kindly provided a database dump (without the user list) due to concerns on privacy and load on the server (which I found it can return different results on the same query), and provided the id of R core members.&lt;/p&gt;
+&lt;/div&gt;
+&lt;div id=&#34;the-analysis&#34; class=&#34;section level1&#34;&gt;
+&lt;h1&gt;The analysis&lt;/h1&gt;
+&lt;p&gt;This is a mix of analysis for three several purposes:&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;To understand what is going on with bug reports.&lt;/li&gt;
+&lt;li&gt;To understand how to make better bug reports to help bug submissions via bugRzilla.&lt;/li&gt;
+&lt;li&gt;To help the R contributor working group and R forwards to identify contributors.&lt;/li&gt;
+&lt;li&gt;To help the R core team identifying possible areas of improvements.&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;It is based on the &lt;a href=&#34;https://llrs.github.io/bugzilla_viz/bugRzilla_review.html&#34;&gt;analysis by Piyush Kumar&lt;/a&gt; and &lt;a href=&#34;https://llrs.github.io/bugzilla_viz/&#34;&gt;myself&lt;/a&gt;.
+If you want code and explore the database follow these links and you’ll be able to download it.&lt;/p&gt;
+&lt;p&gt;A first exploration is to see the bug ids and the creation time of the bug id:&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;https://llrs.dev/post/2021/11/16/bugs-in-r/index.en_files/figure-html/database-1.png&#34; width=&#34;768&#34; /&gt;&lt;/p&gt;
+&lt;p&gt;The first suprising thing are these three points that appear outside the line the other bugs form.&lt;/p&gt;
+&lt;p&gt;One of these outliers is &lt;a href=&#34;https://bugs.r-project.org/show_bug.cgi?id=1&#34;&gt;a test&lt;/a&gt; when the bug reports moved from Jitterbug to Bugzilla as &lt;a href=&#34;https://stat.ethz.ch/pipermail/r-devel/2010-March/056954.html&#34;&gt;mentioned on the mailing list&lt;/a&gt;.&lt;/p&gt;
+&lt;p&gt;I don’t know the reason of the move, probably due to SPAM or interface improvements.
+If we look at those missing ids we can estimate the SPAM, note that some might be vulnerabilities on R (but I doubt that there are this much):&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;https://llrs.dev/post/2021/11/16/bugs-in-r/index.en_files/figure-html/spam-1.png&#34; width=&#34;768&#34; /&gt;&lt;/p&gt;
+&lt;p&gt;The first observable thing is the high number of ids missing on Jitterbug.
+I heard that this was an abuse of the site, which seems particularly bad arround two dates.&lt;/p&gt;
+&lt;p&gt;Later on when the system moved to Bugzilla there are much less missing ids, until one day there are around 120 missing ids and the date later to have an account it was required to send a message to the R core about it.
+Probably spamers abused the Bugzilla’s API. Is understandable that the R core team is concerned on receiving spam messages from those past experiences.&lt;/p&gt;
+&lt;p&gt;As the information from Jitterbug is both old and not as reach as those bugs on Bugzilla I will limit from now on to analyze those bugs reported on Bugzilla.
+In addition the number of bugs reported on Bugzilla is similar to the ones on Jitterbug:&lt;/p&gt;
+&lt;table class=&#34;table&#34; style=&#34;margin-left: auto; margin-right: auto;&#34;&gt;
+&lt;thead&gt;
+&lt;tr&gt;
+&lt;th style=&#34;text-align:left;&#34;&gt;
+Reported on
+&lt;/th&gt;
+&lt;th style=&#34;text-align:right;&#34;&gt;
+Reports
+&lt;/th&gt;
+&lt;/tr&gt;
+&lt;/thead&gt;
+&lt;tbody&gt;
+&lt;tr&gt;
+&lt;td style=&#34;text-align:left;&#34;&gt;
+Jitterbug
+&lt;/td&gt;
+&lt;td style=&#34;text-align:right;&#34;&gt;
+3594
+&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td style=&#34;text-align:left;&#34;&gt;
+Bugzilla
+&lt;/td&gt;
+&lt;td style=&#34;text-align:right;&#34;&gt;
+3448
+&lt;/td&gt;
+&lt;/tr&gt;
+&lt;/tbody&gt;
+&lt;/table&gt;
+&lt;p&gt;There are some old bugs opened on Jitterbug modified on Bugzilla (428) and still not closed.&lt;/p&gt;
+&lt;div id=&#34;openning-bugs-reports&#34; class=&#34;section level2&#34;&gt;
+&lt;h2&gt;Openning bugs reports&lt;/h2&gt;
+&lt;p&gt;If we focus only on bugs reported on Bugzilla we find the following number of bugs:&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;https://llrs.dev/post/2021/11/16/bugs-in-r/index.en_files/figure-html/reportin2-1.png&#34; width=&#34;768&#34; /&gt;&lt;/p&gt;
+&lt;p&gt;Most bugs are closed followed by unconfirmed:&lt;/p&gt;
+&lt;table class=&#34;table&#34; style=&#34;margin-left: auto; margin-right: auto;&#34;&gt;
+&lt;thead&gt;
+&lt;tr&gt;
+&lt;th style=&#34;text-align:left;&#34;&gt;
+Status
+&lt;/th&gt;
+&lt;th style=&#34;text-align:right;&#34;&gt;
+Bug reports
+&lt;/th&gt;
+&lt;/tr&gt;
+&lt;/thead&gt;
+&lt;tbody&gt;
+&lt;tr&gt;
+&lt;td style=&#34;text-align:left;&#34;&gt;
+CLOSED
+&lt;/td&gt;
+&lt;td style=&#34;text-align:right;&#34;&gt;
+2792
+&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td style=&#34;text-align:left;&#34;&gt;
+UNCONFIRMED
+&lt;/td&gt;
+&lt;td style=&#34;text-align:right;&#34;&gt;
+324
+&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td style=&#34;text-align:left;&#34;&gt;
+NEW
+&lt;/td&gt;
+&lt;td style=&#34;text-align:right;&#34;&gt;
+125
+&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td style=&#34;text-align:left;&#34;&gt;
+ASSIGNED
+&lt;/td&gt;
+&lt;td style=&#34;text-align:right;&#34;&gt;
+39
+&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td style=&#34;text-align:left;&#34;&gt;
+CONFIRMED
+&lt;/td&gt;
+&lt;td style=&#34;text-align:right;&#34;&gt;
+13
+&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td style=&#34;text-align:left;&#34;&gt;
+REOPENED
+&lt;/td&gt;
+&lt;td style=&#34;text-align:right;&#34;&gt;
+11
+&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td style=&#34;text-align:left;&#34;&gt;
+RESOLVED
+&lt;/td&gt;
+&lt;td style=&#34;text-align:right;&#34;&gt;
+9
+&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td style=&#34;text-align:left;&#34;&gt;
+VERIFIED
+&lt;/td&gt;
+&lt;td style=&#34;text-align:right;&#34;&gt;
+3
+&lt;/td&gt;
+&lt;/tr&gt;
+&lt;/tbody&gt;
+&lt;/table&gt;
+&lt;p&gt;Do bugs reported have an attachment with a patch?&lt;/p&gt;
+&lt;img src=&#34;https://llrs.dev/post/2021/11/16/bugs-in-r/index.en_files/figure-html/attachments-1.png&#34; width=&#34;768&#34; /&gt;
+&lt;table class=&#34;table&#34; style=&#34;margin-left: auto; margin-right: auto;&#34;&gt;
+&lt;thead&gt;
+&lt;tr&gt;
+&lt;th style=&#34;text-align:center;&#34;&gt;
+Attachment on opening
+&lt;/th&gt;
+&lt;th style=&#34;text-align:center;&#34;&gt;
+Patch
+&lt;/th&gt;
+&lt;th style=&#34;text-align:center;&#34;&gt;
+Bugs
+&lt;/th&gt;
+&lt;th style=&#34;text-align:center;&#34;&gt;
+%
+&lt;/th&gt;
+&lt;/tr&gt;
+&lt;/thead&gt;
+&lt;tbody&gt;
+&lt;tr&gt;
+&lt;td style=&#34;text-align:center;&#34;&gt;
+No
+&lt;/td&gt;
+&lt;td style=&#34;text-align:center;&#34;&gt;
+No
+&lt;/td&gt;
+&lt;td style=&#34;text-align:center;&#34;&gt;
+380
+&lt;/td&gt;
+&lt;td style=&#34;text-align:center;&#34;&gt;
+43.18
+&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td style=&#34;text-align:center;&#34;&gt;
+No
+&lt;/td&gt;
+&lt;td style=&#34;text-align:center;&#34;&gt;
+Yes
+&lt;/td&gt;
+&lt;td style=&#34;text-align:center;&#34;&gt;
+500
+&lt;/td&gt;
+&lt;td style=&#34;text-align:center;&#34;&gt;
+56.82
+&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td style=&#34;text-align:center;&#34;&gt;
+Yes
+&lt;/td&gt;
+&lt;td style=&#34;text-align:center;&#34;&gt;
+No
+&lt;/td&gt;
+&lt;td style=&#34;text-align:center;&#34;&gt;
+438
+&lt;/td&gt;
+&lt;td style=&#34;text-align:center;&#34;&gt;
+61.60
+&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td style=&#34;text-align:center;&#34;&gt;
+Yes
+&lt;/td&gt;
+&lt;td style=&#34;text-align:center;&#34;&gt;
+Yes
+&lt;/td&gt;
+&lt;td style=&#34;text-align:center;&#34;&gt;
+273
+&lt;/td&gt;
+&lt;td style=&#34;text-align:center;&#34;&gt;
+38.40
+&lt;/td&gt;
+&lt;/tr&gt;
+&lt;/tbody&gt;
+&lt;/table&gt;
+&lt;p&gt;Many bug reports have attachments on opening, mostly they contain code to reproduce the problem.
+If bugs do not contain attachments and they receive an attachment it will usually be a patch (but it might not).&lt;/p&gt;
+&lt;/div&gt;
+&lt;div id=&#34;what-happens-after-submitting-a-bug-report&#34; class=&#34;section level2&#34;&gt;
+&lt;h2&gt;What happens after submitting a bug report?&lt;/h2&gt;
+&lt;p&gt;One of the most common thing to happen is that someone might comment on the bug either to ask for clarification or to discuss the bug report and possible solutions:&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;https://llrs.dev/post/2021/11/16/bugs-in-r/index.en_files/figure-html/activity-1.png&#34; width=&#34;768&#34; /&gt;&lt;/p&gt;
+&lt;p&gt;Most common action is receiving a comment, whose author is added on the CC field.&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;https://llrs.dev/post/2021/11/16/bugs-in-r/index.en_files/figure-html/r-core-1.png&#34; width=&#34;768&#34; /&gt;&lt;/p&gt;
+&lt;p&gt;The R core is very active answering on the bug reports, only it seems that those that are trivial do not receive a reply as often as the other categories.&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;https://llrs.dev/post/2021/11/16/bugs-in-r/index.en_files/figure-html/comment-core-1.png&#34; width=&#34;768&#34; /&gt;&lt;/p&gt;
+&lt;p&gt;If we look by component and OS there are some combinations that received few comments, mostly those that are wishes for R.&lt;/p&gt;
+&lt;p&gt;If we split them between peitions to improve R and actual bug reports we can see a different pattern:&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;https://llrs.dev/post/2021/11/16/bugs-in-r/index.en_files/figure-html/comments-enhancements-1.png&#34; width=&#34;768&#34; /&gt;&lt;/p&gt;
+&lt;p&gt;Enhancements usually receive less comments from the R core.
+Wishlists receive more comments from the R core among the enhancements.&lt;/p&gt;
+&lt;p&gt;What about the comments made by the original poster?
+Do they comment when they receive some feedback from other users?&lt;/p&gt;
+&lt;table class=&#34;table&#34; style=&#34;margin-left: auto; margin-right: auto;&#34;&gt;
+&lt;thead&gt;
+&lt;tr&gt;
+&lt;th style=&#34;text-align:left;&#34;&gt;
+Responsive
+&lt;/th&gt;
+&lt;th style=&#34;text-align:right;&#34;&gt;
+Bugs reports
+&lt;/th&gt;
+&lt;/tr&gt;
+&lt;/thead&gt;
+&lt;tbody&gt;
+&lt;tr&gt;
+&lt;td style=&#34;text-align:left;&#34;&gt;
+no
+&lt;/td&gt;
+&lt;td style=&#34;text-align:right;&#34;&gt;
+409
+&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td style=&#34;text-align:left;&#34;&gt;
+yes
+&lt;/td&gt;
+&lt;td style=&#34;text-align:right;&#34;&gt;
+122
+&lt;/td&gt;
+&lt;/tr&gt;
+&lt;/tbody&gt;
+&lt;/table&gt;
+&lt;p&gt;Most of them do not reply back when they receive a comment.
+There might be several causes, one of them is if their bug report is closed or assigned to an R core member.&lt;/p&gt;
+&lt;table class=&#34;table&#34; style=&#34;margin-left: auto; margin-right: auto;&#34;&gt;
+&lt;thead&gt;
+&lt;tr&gt;
+&lt;th style=&#34;text-align:left;&#34;&gt;
+handled
+&lt;/th&gt;
+&lt;th style=&#34;text-align:right;&#34;&gt;
+bugs
+&lt;/th&gt;
+&lt;/tr&gt;
+&lt;/thead&gt;
+&lt;tbody&gt;
+&lt;tr&gt;
+&lt;td style=&#34;text-align:left;&#34;&gt;
+no
+&lt;/td&gt;
+&lt;td style=&#34;text-align:right;&#34;&gt;
+177
+&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td style=&#34;text-align:left;&#34;&gt;
+yes
+&lt;/td&gt;
+&lt;td style=&#34;text-align:right;&#34;&gt;
+232
+&lt;/td&gt;
+&lt;/tr&gt;
+&lt;/tbody&gt;
+&lt;/table&gt;
+&lt;p&gt;Which shows that the majority of those who do not respond is because either the bug report is closed (fixed or not) or a R core member is assigned (usually to himself).&lt;/p&gt;
+&lt;/div&gt;
+&lt;div id=&#34;who-is-active&#34; class=&#34;section level2&#34;&gt;
+&lt;h2&gt;Who is active ?&lt;/h2&gt;
+&lt;p&gt;So far we have explored the activity of users who report a bug and the R core members that receive this.
+But there are some users that beyond this they also participate and collaborate with the R core.
+To make it more recent we will look at those users active on the bugs opened on the last three years.&lt;/p&gt;
+&lt;table&gt;
+&lt;thead&gt;
+&lt;tr&gt;
+&lt;th style=&#34;text-align:right;&#34;&gt;
+ID
+&lt;/th&gt;
+&lt;th style=&#34;text-align:left;&#34;&gt;
+Name
+&lt;/th&gt;
+&lt;th style=&#34;text-align:right;&#34;&gt;
+All comments
+&lt;/th&gt;
+&lt;th style=&#34;text-align:right;&#34;&gt;
+All attachments
+&lt;/th&gt;
+&lt;th style=&#34;text-align:right;&#34;&gt;
+Comments
+&lt;/th&gt;
+&lt;th style=&#34;text-align:right;&#34;&gt;
+Attachments
+&lt;/th&gt;
+&lt;th style=&#34;text-align:right;&#34;&gt;
+Bugs opened
+&lt;/th&gt;
+&lt;th style=&#34;text-align:right;&#34;&gt;
+Bugs interacted
+&lt;/th&gt;
+&lt;th style=&#34;text-align:right;&#34;&gt;
+Actions
+&lt;/th&gt;
+&lt;/tr&gt;
+&lt;/thead&gt;
+&lt;tbody&gt;
+&lt;tr&gt;
+&lt;td style=&#34;text-align:right;&#34;&gt;
+3299
+&lt;/td&gt;
+&lt;td style=&#34;text-align:left;&#34;&gt;
+Elin Waring
+&lt;/td&gt;
+&lt;td style=&#34;text-align:right;&#34;&gt;
+100
+&lt;/td&gt;
+&lt;td style=&#34;text-align:right;&#34;&gt;
+2
+&lt;/td&gt;
+&lt;td style=&#34;text-align:right;&#34;&gt;
+99
+&lt;/td&gt;
+&lt;td style=&#34;text-align:right;&#34;&gt;
+1
+&lt;/td&gt;
+&lt;td style=&#34;text-align:right;&#34;&gt;
+1
+&lt;/td&gt;
+&lt;td style=&#34;text-align:right;&#34;&gt;
+66
+&lt;/td&gt;
+&lt;td style=&#34;text-align:right;&#34;&gt;
+101
+&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td style=&#34;text-align:right;&#34;&gt;
+963
+&lt;/td&gt;
+&lt;td style=&#34;text-align:left;&#34;&gt;
+Suharto Anggono
+&lt;/td&gt;
+&lt;td style=&#34;text-align:right;&#34;&gt;
+115
+&lt;/td&gt;
+&lt;td style=&#34;text-align:right;&#34;&gt;
+39
+&lt;/td&gt;
+&lt;td style=&#34;text-align:right;&#34;&gt;
+55
+&lt;/td&gt;
+&lt;td style=&#34;text-align:right;&#34;&gt;
+7
+&lt;/td&gt;
+&lt;td style=&#34;text-align:right;&#34;&gt;
+21
+&lt;/td&gt;
+&lt;td style=&#34;text-align:right;&#34;&gt;
+42
+&lt;/td&gt;
+&lt;td style=&#34;text-align:right;&#34;&gt;
+83
+&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td style=&#34;text-align:right;&#34;&gt;
+274
+&lt;/td&gt;
+&lt;td style=&#34;text-align:left;&#34;&gt;
+Sebastian Meyer
+&lt;/td&gt;
+&lt;td style=&#34;text-align:right;&#34;&gt;
+80
+&lt;/td&gt;
+&lt;td style=&#34;text-align:right;&#34;&gt;
+24
+&lt;/td&gt;
+&lt;td style=&#34;text-align:right;&#34;&gt;
+49
+&lt;/td&gt;
+&lt;td style=&#34;text-align:right;&#34;&gt;
+11
+&lt;/td&gt;
+&lt;td style=&#34;text-align:right;&#34;&gt;
+18
+&lt;/td&gt;
+&lt;td style=&#34;text-align:right;&#34;&gt;
+58
+&lt;/td&gt;
+&lt;td style=&#34;text-align:right;&#34;&gt;
+78
+&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td style=&#34;text-align:right;&#34;&gt;
+430
+&lt;/td&gt;
+&lt;td style=&#34;text-align:left;&#34;&gt;
+Benjamin Tyner
+&lt;/td&gt;
+&lt;td style=&#34;text-align:right;&#34;&gt;
+59
+&lt;/td&gt;
+&lt;td style=&#34;text-align:right;&#34;&gt;
+4
+&lt;/td&gt;
+&lt;td style=&#34;text-align:right;&#34;&gt;
+52
+&lt;/td&gt;
+&lt;td style=&#34;text-align:right;&#34;&gt;
+4
+&lt;/td&gt;
+&lt;td style=&#34;text-align:right;&#34;&gt;
+5
+&lt;/td&gt;
+&lt;td style=&#34;text-align:right;&#34;&gt;
+32
+&lt;/td&gt;
+&lt;td style=&#34;text-align:right;&#34;&gt;
+61
+&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td style=&#34;text-align:right;&#34;&gt;
+3256
+&lt;/td&gt;
+&lt;td style=&#34;text-align:left;&#34;&gt;
+Michael Chirico
+&lt;/td&gt;
+&lt;td style=&#34;text-align:right;&#34;&gt;
+110
+&lt;/td&gt;
+&lt;td style=&#34;text-align:right;&#34;&gt;
+51
+&lt;/td&gt;
+&lt;td style=&#34;text-align:right;&#34;&gt;
+2
+&lt;/td&gt;
+&lt;td style=&#34;text-align:right;&#34;&gt;
+1
+&lt;/td&gt;
+&lt;td style=&#34;text-align:right;&#34;&gt;
+52
+&lt;/td&gt;
+&lt;td style=&#34;text-align:right;&#34;&gt;
+54
+&lt;/td&gt;
+&lt;td style=&#34;text-align:right;&#34;&gt;
+55
+&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td style=&#34;text-align:right;&#34;&gt;
+1044
+&lt;/td&gt;
+&lt;td style=&#34;text-align:left;&#34;&gt;
+Kevin Ushey
+&lt;/td&gt;
+&lt;td style=&#34;text-align:right;&#34;&gt;
+65
+&lt;/td&gt;
+&lt;td style=&#34;text-align:right;&#34;&gt;
+10
+&lt;/td&gt;
+&lt;td style=&#34;text-align:right;&#34;&gt;
+4
+&lt;/td&gt;
+&lt;td style=&#34;text-align:right;&#34;&gt;
+0
+&lt;/td&gt;
+&lt;td style=&#34;text-align:right;&#34;&gt;
+35
+&lt;/td&gt;
+&lt;td style=&#34;text-align:right;&#34;&gt;
+39
+&lt;/td&gt;
+&lt;td style=&#34;text-align:right;&#34;&gt;
+39
+&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td style=&#34;text-align:right;&#34;&gt;
+1036
+&lt;/td&gt;
+&lt;td style=&#34;text-align:left;&#34;&gt;
+Henrik Bengtsson
+&lt;/td&gt;
+&lt;td style=&#34;text-align:right;&#34;&gt;
+56
+&lt;/td&gt;
+&lt;td style=&#34;text-align:right;&#34;&gt;
+14
+&lt;/td&gt;
+&lt;td style=&#34;text-align:right;&#34;&gt;
+9
+&lt;/td&gt;
+&lt;td style=&#34;text-align:right;&#34;&gt;
+1
+&lt;/td&gt;
+&lt;td style=&#34;text-align:right;&#34;&gt;
+26
+&lt;/td&gt;
+&lt;td style=&#34;text-align:right;&#34;&gt;
+31
+&lt;/td&gt;
+&lt;td style=&#34;text-align:right;&#34;&gt;
+36
+&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td style=&#34;text-align:right;&#34;&gt;
+2307
+&lt;/td&gt;
+&lt;td style=&#34;text-align:left;&#34;&gt;
+Lionel Henry
+&lt;/td&gt;
+&lt;td style=&#34;text-align:right;&#34;&gt;
+41
+&lt;/td&gt;
+&lt;td style=&#34;text-align:right;&#34;&gt;
+25
+&lt;/td&gt;
+&lt;td style=&#34;text-align:right;&#34;&gt;
+6
+&lt;/td&gt;
+&lt;td style=&#34;text-align:right;&#34;&gt;
+2
+&lt;/td&gt;
+&lt;td style=&#34;text-align:right;&#34;&gt;
+20
+&lt;/td&gt;
+&lt;td style=&#34;text-align:right;&#34;&gt;
+22
+&lt;/td&gt;
+&lt;td style=&#34;text-align:right;&#34;&gt;
+28
+&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td style=&#34;text-align:right;&#34;&gt;
+1056
+&lt;/td&gt;
+&lt;td style=&#34;text-align:left;&#34;&gt;
+Bill Dunlap
+&lt;/td&gt;
+&lt;td style=&#34;text-align:right;&#34;&gt;
+28
+&lt;/td&gt;
+&lt;td style=&#34;text-align:right;&#34;&gt;
+0
+&lt;/td&gt;
+&lt;td style=&#34;text-align:right;&#34;&gt;
+1
+&lt;/td&gt;
+&lt;td style=&#34;text-align:right;&#34;&gt;
+0
+&lt;/td&gt;
+&lt;td style=&#34;text-align:right;&#34;&gt;
+21
+&lt;/td&gt;
+&lt;td style=&#34;text-align:right;&#34;&gt;
+22
+&lt;/td&gt;
+&lt;td style=&#34;text-align:right;&#34;&gt;
+22
+&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td style=&#34;text-align:right;&#34;&gt;
+2801
+&lt;/td&gt;
+&lt;td style=&#34;text-align:left;&#34;&gt;
+Bob Rudis
+&lt;/td&gt;
+&lt;td style=&#34;text-align:right;&#34;&gt;
+19
+&lt;/td&gt;
+&lt;td style=&#34;text-align:right;&#34;&gt;
+4
+&lt;/td&gt;
+&lt;td style=&#34;text-align:right;&#34;&gt;
+16
+&lt;/td&gt;
+&lt;td style=&#34;text-align:right;&#34;&gt;
+2
+&lt;/td&gt;
+&lt;td style=&#34;text-align:right;&#34;&gt;
+2
+&lt;/td&gt;
+&lt;td style=&#34;text-align:right;&#34;&gt;
+12
+&lt;/td&gt;
+&lt;td style=&#34;text-align:right;&#34;&gt;
+20
+&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td style=&#34;text-align:right;&#34;&gt;
+1299
+&lt;/td&gt;
+&lt;td style=&#34;text-align:left;&#34;&gt;
+Gabriel Becker
+&lt;/td&gt;
+&lt;td style=&#34;text-align:right;&#34;&gt;
+52
+&lt;/td&gt;
+&lt;td style=&#34;text-align:right;&#34;&gt;
+28
+&lt;/td&gt;
+&lt;td style=&#34;text-align:right;&#34;&gt;
+0
+&lt;/td&gt;
+&lt;td style=&#34;text-align:right;&#34;&gt;
+0
+&lt;/td&gt;
+&lt;td style=&#34;text-align:right;&#34;&gt;
+18
+&lt;/td&gt;
+&lt;td style=&#34;text-align:right;&#34;&gt;
+18
+&lt;/td&gt;
+&lt;td style=&#34;text-align:right;&#34;&gt;
+18
+&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td style=&#34;text-align:right;&#34;&gt;
+11
+&lt;/td&gt;
+&lt;td style=&#34;text-align:left;&#34;&gt;
+Ben Bolker
+&lt;/td&gt;
+&lt;td style=&#34;text-align:right;&#34;&gt;
+14
+&lt;/td&gt;
+&lt;td style=&#34;text-align:right;&#34;&gt;
+0
+&lt;/td&gt;
+&lt;td style=&#34;text-align:right;&#34;&gt;
+11
+&lt;/td&gt;
+&lt;td style=&#34;text-align:right;&#34;&gt;
+0
+&lt;/td&gt;
+&lt;td style=&#34;text-align:right;&#34;&gt;
+3
+&lt;/td&gt;
+&lt;td style=&#34;text-align:right;&#34;&gt;
+9
+&lt;/td&gt;
+&lt;td style=&#34;text-align:right;&#34;&gt;
+14
+&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td style=&#34;text-align:right;&#34;&gt;
+114
+&lt;/td&gt;
+&lt;td style=&#34;text-align:left;&#34;&gt;
+Gabor Csardi
+&lt;/td&gt;
+&lt;td style=&#34;text-align:right;&#34;&gt;
+26
+&lt;/td&gt;
+&lt;td style=&#34;text-align:right;&#34;&gt;
+8
+&lt;/td&gt;
+&lt;td style=&#34;text-align:right;&#34;&gt;
+4
+&lt;/td&gt;
+&lt;td style=&#34;text-align:right;&#34;&gt;
+0
+&lt;/td&gt;
+&lt;td style=&#34;text-align:right;&#34;&gt;
+10
+&lt;/td&gt;
+&lt;td style=&#34;text-align:right;&#34;&gt;
+11
+&lt;/td&gt;
+&lt;td style=&#34;text-align:right;&#34;&gt;
+14
+&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td style=&#34;text-align:right;&#34;&gt;
+610
+&lt;/td&gt;
+&lt;td style=&#34;text-align:left;&#34;&gt;
+Jeroen Ooms
+&lt;/td&gt;
+&lt;td style=&#34;text-align:right;&#34;&gt;
+15
+&lt;/td&gt;
+&lt;td style=&#34;text-align:right;&#34;&gt;
+4
+&lt;/td&gt;
+&lt;td style=&#34;text-align:right;&#34;&gt;
+6
+&lt;/td&gt;
+&lt;td style=&#34;text-align:right;&#34;&gt;
+1
+&lt;/td&gt;
+&lt;td style=&#34;text-align:right;&#34;&gt;
+7
+&lt;/td&gt;
+&lt;td style=&#34;text-align:right;&#34;&gt;
+11
+&lt;/td&gt;
+&lt;td style=&#34;text-align:right;&#34;&gt;
+14
+&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td style=&#34;text-align:right;&#34;&gt;
+1602
+&lt;/td&gt;
+&lt;td style=&#34;text-align:left;&#34;&gt;
+brodie.gaslam@
+&lt;/td&gt;
+&lt;td style=&#34;text-align:right;&#34;&gt;
+53
+&lt;/td&gt;
+&lt;td style=&#34;text-align:right;&#34;&gt;
+16
+&lt;/td&gt;
+&lt;td style=&#34;text-align:right;&#34;&gt;
+0
+&lt;/td&gt;
+&lt;td style=&#34;text-align:right;&#34;&gt;
+0
+&lt;/td&gt;
+&lt;td style=&#34;text-align:right;&#34;&gt;
+13
+&lt;/td&gt;
+&lt;td style=&#34;text-align:right;&#34;&gt;
+13
+&lt;/td&gt;
+&lt;td style=&#34;text-align:right;&#34;&gt;
+13
+&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td style=&#34;text-align:right;&#34;&gt;
+6
+&lt;/td&gt;
+&lt;td style=&#34;text-align:left;&#34;&gt;
+Duncan Murdoch
+&lt;/td&gt;
+&lt;td style=&#34;text-align:right;&#34;&gt;
+22
+&lt;/td&gt;
+&lt;td style=&#34;text-align:right;&#34;&gt;
+7
+&lt;/td&gt;
+&lt;td style=&#34;text-align:right;&#34;&gt;
+0
+&lt;/td&gt;
+&lt;td style=&#34;text-align:right;&#34;&gt;
+0
+&lt;/td&gt;
+&lt;td style=&#34;text-align:right;&#34;&gt;
+12
+&lt;/td&gt;
+&lt;td style=&#34;text-align:right;&#34;&gt;
+12
+&lt;/td&gt;
+&lt;td style=&#34;text-align:right;&#34;&gt;
+12
+&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td style=&#34;text-align:right;&#34;&gt;
+921
+&lt;/td&gt;
+&lt;td style=&#34;text-align:left;&#34;&gt;
+Dirk Eddelbuettel
+&lt;/td&gt;
+&lt;td style=&#34;text-align:right;&#34;&gt;
+17
+&lt;/td&gt;
+&lt;td style=&#34;text-align:right;&#34;&gt;
+4
+&lt;/td&gt;
+&lt;td style=&#34;text-align:right;&#34;&gt;
+4
+&lt;/td&gt;
+&lt;td style=&#34;text-align:right;&#34;&gt;
+0
+&lt;/td&gt;
+&lt;td style=&#34;text-align:right;&#34;&gt;
+7
+&lt;/td&gt;
+&lt;td style=&#34;text-align:right;&#34;&gt;
+11
+&lt;/td&gt;
+&lt;td style=&#34;text-align:right;&#34;&gt;
+11
+&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td style=&#34;text-align:right;&#34;&gt;
+1715
+&lt;/td&gt;
+&lt;td style=&#34;text-align:left;&#34;&gt;
+Herv� Pag�s
+&lt;/td&gt;
+&lt;td style=&#34;text-align:right;&#34;&gt;
+24
+&lt;/td&gt;
+&lt;td style=&#34;text-align:right;&#34;&gt;
+1
+&lt;/td&gt;
+&lt;td style=&#34;text-align:right;&#34;&gt;
+5
+&lt;/td&gt;
+&lt;td style=&#34;text-align:right;&#34;&gt;
+1
+&lt;/td&gt;
+&lt;td style=&#34;text-align:right;&#34;&gt;
+5
+&lt;/td&gt;
+&lt;td style=&#34;text-align:right;&#34;&gt;
+7
+&lt;/td&gt;
+&lt;td style=&#34;text-align:right;&#34;&gt;
+11
+&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td style=&#34;text-align:right;&#34;&gt;
+2885
+&lt;/td&gt;
+&lt;td style=&#34;text-align:left;&#34;&gt;
+Jan Gorecki
+&lt;/td&gt;
+&lt;td style=&#34;text-align:right;&#34;&gt;
+14
+&lt;/td&gt;
+&lt;td style=&#34;text-align:right;&#34;&gt;
+1
+&lt;/td&gt;
+&lt;td style=&#34;text-align:right;&#34;&gt;
+1
+&lt;/td&gt;
+&lt;td style=&#34;text-align:right;&#34;&gt;
+0
+&lt;/td&gt;
+&lt;td style=&#34;text-align:right;&#34;&gt;
+9
+&lt;/td&gt;
+&lt;td style=&#34;text-align:right;&#34;&gt;
+10
+&lt;/td&gt;
+&lt;td style=&#34;text-align:right;&#34;&gt;
+10
+&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td style=&#34;text-align:right;&#34;&gt;
+3051
+&lt;/td&gt;
+&lt;td style=&#34;text-align:left;&#34;&gt;
+Xianying Tan
+&lt;/td&gt;
+&lt;td style=&#34;text-align:right;&#34;&gt;
+20
+&lt;/td&gt;
+&lt;td style=&#34;text-align:right;&#34;&gt;
+0
+&lt;/td&gt;
+&lt;td style=&#34;text-align:right;&#34;&gt;
+4
+&lt;/td&gt;
+&lt;td style=&#34;text-align:right;&#34;&gt;
+0
+&lt;/td&gt;
+&lt;td style=&#34;text-align:right;&#34;&gt;
+6
+&lt;/td&gt;
+&lt;td style=&#34;text-align:right;&#34;&gt;
+7
+&lt;/td&gt;
+&lt;td style=&#34;text-align:right;&#34;&gt;
+10
+&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td style=&#34;text-align:right;&#34;&gt;
+3228
+&lt;/td&gt;
+&lt;td style=&#34;text-align:left;&#34;&gt;
+Emil Bode
+&lt;/td&gt;
+&lt;td style=&#34;text-align:right;&#34;&gt;
+16
+&lt;/td&gt;
+&lt;td style=&#34;text-align:right;&#34;&gt;
+4
+&lt;/td&gt;
+&lt;td style=&#34;text-align:right;&#34;&gt;
+0
+&lt;/td&gt;
+&lt;td style=&#34;text-align:right;&#34;&gt;
+0
+&lt;/td&gt;
+&lt;td style=&#34;text-align:right;&#34;&gt;
+10
+&lt;/td&gt;
+&lt;td style=&#34;text-align:right;&#34;&gt;
+10
+&lt;/td&gt;
+&lt;td style=&#34;text-align:right;&#34;&gt;
+10
+&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td style=&#34;text-align:right;&#34;&gt;
+3344
+&lt;/td&gt;
+&lt;td style=&#34;text-align:left;&#34;&gt;
+Joe Cheng
+&lt;/td&gt;
+&lt;td style=&#34;text-align:right;&#34;&gt;
+7
+&lt;/td&gt;
+&lt;td style=&#34;text-align:right;&#34;&gt;
+3
+&lt;/td&gt;
+&lt;td style=&#34;text-align:right;&#34;&gt;
+7
+&lt;/td&gt;
+&lt;td style=&#34;text-align:right;&#34;&gt;
+3
+&lt;/td&gt;
+&lt;td style=&#34;text-align:right;&#34;&gt;
+0
+&lt;/td&gt;
+&lt;td style=&#34;text-align:right;&#34;&gt;
+1
+&lt;/td&gt;
+&lt;td style=&#34;text-align:right;&#34;&gt;
+10
+&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td style=&#34;text-align:right;&#34;&gt;
+2264
+&lt;/td&gt;
+&lt;td style=&#34;text-align:left;&#34;&gt;
+Neal Fultz
+&lt;/td&gt;
+&lt;td style=&#34;text-align:right;&#34;&gt;
+20
+&lt;/td&gt;
+&lt;td style=&#34;text-align:right;&#34;&gt;
+5
+&lt;/td&gt;
+&lt;td style=&#34;text-align:right;&#34;&gt;
+0
+&lt;/td&gt;
+&lt;td style=&#34;text-align:right;&#34;&gt;
+0
+&lt;/td&gt;
+&lt;td style=&#34;text-align:right;&#34;&gt;
+9
+&lt;/td&gt;
+&lt;td style=&#34;text-align:right;&#34;&gt;
+9
+&lt;/td&gt;
+&lt;td style=&#34;text-align:right;&#34;&gt;
+9
+&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td style=&#34;text-align:right;&#34;&gt;
+317
+&lt;/td&gt;
+&lt;td style=&#34;text-align:left;&#34;&gt;
+Mikko Korpela
+&lt;/td&gt;
+&lt;td style=&#34;text-align:right;&#34;&gt;
+9
+&lt;/td&gt;
+&lt;td style=&#34;text-align:right;&#34;&gt;
+0
+&lt;/td&gt;
+&lt;td style=&#34;text-align:right;&#34;&gt;
+5
+&lt;/td&gt;
+&lt;td style=&#34;text-align:right;&#34;&gt;
+0
+&lt;/td&gt;
+&lt;td style=&#34;text-align:right;&#34;&gt;
+3
+&lt;/td&gt;
+&lt;td style=&#34;text-align:right;&#34;&gt;
+6
+&lt;/td&gt;
+&lt;td style=&#34;text-align:right;&#34;&gt;
+8
+&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td style=&#34;text-align:right;&#34;&gt;
+847
+&lt;/td&gt;
+&lt;td style=&#34;text-align:left;&#34;&gt;
+Pavel N. Krivitsky
+&lt;/td&gt;
+&lt;td style=&#34;text-align:right;&#34;&gt;
+15
+&lt;/td&gt;
+&lt;td style=&#34;text-align:right;&#34;&gt;
+2
+&lt;/td&gt;
+&lt;td style=&#34;text-align:right;&#34;&gt;
+0
+&lt;/td&gt;
+&lt;td style=&#34;text-align:right;&#34;&gt;
+0
+&lt;/td&gt;
+&lt;td style=&#34;text-align:right;&#34;&gt;
+8
+&lt;/td&gt;
+&lt;td style=&#34;text-align:right;&#34;&gt;
+8
+&lt;/td&gt;
+&lt;td style=&#34;text-align:right;&#34;&gt;
+8
+&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td style=&#34;text-align:right;&#34;&gt;
+1251
+&lt;/td&gt;
+&lt;td style=&#34;text-align:left;&#34;&gt;
+Arni Magnusson
+&lt;/td&gt;
+&lt;td style=&#34;text-align:right;&#34;&gt;
+13
+&lt;/td&gt;
+&lt;td style=&#34;text-align:right;&#34;&gt;
+8
+&lt;/td&gt;
+&lt;td style=&#34;text-align:right;&#34;&gt;
+0
+&lt;/td&gt;
+&lt;td style=&#34;text-align:right;&#34;&gt;
+0
+&lt;/td&gt;
+&lt;td style=&#34;text-align:right;&#34;&gt;
+8
+&lt;/td&gt;
+&lt;td style=&#34;text-align:right;&#34;&gt;
+8
+&lt;/td&gt;
+&lt;td style=&#34;text-align:right;&#34;&gt;
+8
+&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td style=&#34;text-align:right;&#34;&gt;
+1849
+&lt;/td&gt;
+&lt;td style=&#34;text-align:left;&#34;&gt;
+Andre Mikulec
+&lt;/td&gt;
+&lt;td style=&#34;text-align:right;&#34;&gt;
+21
+&lt;/td&gt;
+&lt;td style=&#34;text-align:right;&#34;&gt;
+4
+&lt;/td&gt;
+&lt;td style=&#34;text-align:right;&#34;&gt;
+1
+&lt;/td&gt;
+&lt;td style=&#34;text-align:right;&#34;&gt;
+0
+&lt;/td&gt;
+&lt;td style=&#34;text-align:right;&#34;&gt;
+7
+&lt;/td&gt;
+&lt;td style=&#34;text-align:right;&#34;&gt;
+8
+&lt;/td&gt;
+&lt;td style=&#34;text-align:right;&#34;&gt;
+8
+&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td style=&#34;text-align:right;&#34;&gt;
+3330
+&lt;/td&gt;
+&lt;td style=&#34;text-align:left;&#34;&gt;
+André Gillibert
+&lt;/td&gt;
+&lt;td style=&#34;text-align:right;&#34;&gt;
+20
+&lt;/td&gt;
+&lt;td style=&#34;text-align:right;&#34;&gt;
+10
+&lt;/td&gt;
+&lt;td style=&#34;text-align:right;&#34;&gt;
+0
+&lt;/td&gt;
+&lt;td style=&#34;text-align:right;&#34;&gt;
+0
+&lt;/td&gt;
+&lt;td style=&#34;text-align:right;&#34;&gt;
+8
+&lt;/td&gt;
+&lt;td style=&#34;text-align:right;&#34;&gt;
+8
+&lt;/td&gt;
+&lt;td style=&#34;text-align:right;&#34;&gt;
+8
+&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td style=&#34;text-align:right;&#34;&gt;
+3376
+&lt;/td&gt;
+&lt;td style=&#34;text-align:left;&#34;&gt;
+Hangfan Zhang
+&lt;/td&gt;
+&lt;td style=&#34;text-align:right;&#34;&gt;
+14
+&lt;/td&gt;
+&lt;td style=&#34;text-align:right;&#34;&gt;
+3
+&lt;/td&gt;
+&lt;td style=&#34;text-align:right;&#34;&gt;
+0
+&lt;/td&gt;
+&lt;td style=&#34;text-align:right;&#34;&gt;
+0
+&lt;/td&gt;
+&lt;td style=&#34;text-align:right;&#34;&gt;
+8
+&lt;/td&gt;
+&lt;td style=&#34;text-align:right;&#34;&gt;
+8
+&lt;/td&gt;
+&lt;td style=&#34;text-align:right;&#34;&gt;
+8
+&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td style=&#34;text-align:right;&#34;&gt;
+2040
+&lt;/td&gt;
+&lt;td style=&#34;text-align:left;&#34;&gt;
+Bill Denney
+&lt;/td&gt;
+&lt;td style=&#34;text-align:right;&#34;&gt;
+16
+&lt;/td&gt;
+&lt;td style=&#34;text-align:right;&#34;&gt;
+1
+&lt;/td&gt;
+&lt;td style=&#34;text-align:right;&#34;&gt;
+0
+&lt;/td&gt;
+&lt;td style=&#34;text-align:right;&#34;&gt;
+0
+&lt;/td&gt;
+&lt;td style=&#34;text-align:right;&#34;&gt;
+7
+&lt;/td&gt;
+&lt;td style=&#34;text-align:right;&#34;&gt;
+7
+&lt;/td&gt;
+&lt;td style=&#34;text-align:right;&#34;&gt;
+7
+&lt;/td&gt;
+&lt;/tr&gt;
+&lt;/tbody&gt;
+&lt;/table&gt;
+&lt;p&gt;(You can find a sortable anf filterable version of this table &lt;a href=&#34;https://llrs.github.io/bugzilla_viz/#R_contributors&#34;&gt;here&lt;/a&gt;).
+One of the top contributors was recently added as R core member.
+Other&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;https://llrs.dev/post/2021/11/16/bugs-in-r/index.en_files/figure-html/users-1.png&#34; width=&#34;768&#34; /&gt;&lt;/p&gt;
+&lt;p&gt;Some contributors focus on providing patches, other’s open many bugs, other’s comment on the bugs to confirm bugs or provide context to the bugs.&lt;/p&gt;
+&lt;/div&gt;
+&lt;div id=&#34;future-of-the-report-system&#34; class=&#34;section level2&#34;&gt;
+&lt;h2&gt;Future of the report system ?&lt;/h2&gt;
+&lt;p&gt;Last what is the progression of bugs&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;https://llrs.dev/post/2021/11/16/bugs-in-r/index.en_files/figure-html/speed-1.png&#34; width=&#34;768&#34; /&gt;&lt;/p&gt;
+&lt;p&gt;If we look only at bug reports and not enhancements every 1.52 day there is one bug report and one enhancement petitions per 4.44 days.&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;https://llrs.dev/post/2021/11/16/bugs-in-r/index.en_files/figure-html/speed-comments-1.png&#34; width=&#34;768&#34; /&gt;&lt;/p&gt;
+&lt;p&gt;If we look only at bug reports and not enhancements there are 1.48 comments every day from R users, one comment on enhancement per 1.9 days.&lt;/p&gt;
+&lt;p&gt;Both of them has remained fairly constant over the years, at times a bit faster and sometimes slower.&lt;/p&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;div id=&#34;final-comments&#34; class=&#34;section level1&#34;&gt;
+&lt;h1&gt;Final comments&lt;/h1&gt;
+&lt;p&gt;This is probably the post that took longer so far.
+I started on February to work on this blog post but until now I haven’t actually written the blog post I wanted.&lt;/p&gt;
+&lt;p&gt;Many thanks to Simon Urbanek for providing the database dump, without it would have been slower and harder if not impossible to do this analysis.
+Thanks to Heather Turner for encouraging me to do more on this project and providing valuable feedback about what kind of analysis could be useful and co-mentoring Pyush Kumar who I also like to thank the first analysis on the data and his contributions during GSoC.
+Many thanks to Gabe Becker and Michael Quirico for their feedback on the R contributors working group.&lt;/p&gt;
+&lt;p&gt;Now that the analysis is done, I want to finish the bugRzilla package (which I already started to use for small tasks on this analysis).
+I’m still working on it testing how is the best way to submit properly formatted bug reports with a developer instance set up by Simon.
+Then I’ll ask the R core if the way it submits bug reports works well for them.&lt;/p&gt;
+&lt;p&gt;&lt;strong&gt;TL:DR:&lt;/strong&gt; There are many bug reported and handled by the R core and many users contribute on solving the bug reports.
+The peace of new bug reports and comments is constant as well as enhancements on the language itself.&lt;/p&gt;
+&lt;/div&gt;
+&lt;div id=&#34;reproducibility&#34; class=&#34;section level1&#34;&gt;
+&lt;h1&gt;Reproducibility&lt;/h1&gt;
+&lt;details&gt;
+&lt;summary&gt;
+&lt;p&gt;Session Info&lt;/p&gt;
+&lt;/summary&gt;
+&lt;pre&gt;&lt;code&gt;## ─ Session info  ──────────────────────────────────────────────────────────────────────────────────────────────────────
+##  hash: nail polish: medium skin tone, woman artist: dark skin tone, pager
+## 
+##  setting  value
+##  version  R version 4.1.2 (2021-11-01)
+##  os       Ubuntu 20.04.3 LTS
+##  system   x86_64, linux-gnu
+##  ui       X11
+##  language (EN)
+##  collate  en_US.UTF-8
+##  ctype    en_US.UTF-8
+##  tz       Europe/Madrid
+##  date     2021-11-16
+##  pandoc   2.14.0.3 @ /usr/lib/rstudio/bin/pandoc/ (via rmarkdown)
+## 
+## ─ Packages ───────────────────────────────────────────────────────────────────────────────────────────────────────────
+##  package     * version   date (UTC) lib source
+##  assertthat    0.2.1     2019-03-21 [1] CRAN (R 4.1.2)
+##  backports     1.3.0     2021-10-27 [1] CRAN (R 4.1.2)
+##  bit           4.0.4     2020-08-04 [1] CRAN (R 4.1.2)
+##  bit64         4.0.5     2020-08-30 [1] CRAN (R 4.1.2)
+##  blob          1.2.2     2021-07-23 [1] CRAN (R 4.1.2)
+##  blogdown      1.6       2021-11-09 [1] CRAN (R 4.1.2)
+##  bookdown      0.24      2021-09-02 [1] CRAN (R 4.1.2)
+##  broom         0.7.10    2021-10-31 [1] CRAN (R 4.1.2)
+##  bslib         0.3.1     2021-10-06 [1] CRAN (R 4.1.2)
+##  bugRzilla   * 0.0.90001 2021-11-13 [1] Github (llrs/bugRzilla@24bc5de)
+##  cachem        1.0.6     2021-08-19 [1] CRAN (R 4.1.2)
+##  cli           3.1.0     2021-10-27 [1] CRAN (R 4.1.2)
+##  colorspace    2.0-2     2021-06-24 [1] CRAN (R 4.1.2)
+##  crayon        1.4.2     2021-10-29 [1] CRAN (R 4.1.2)
+##  curl          4.3.2     2021-06-23 [1] CRAN (R 4.1.2)
+##  DBI         * 1.1.1     2021-01-15 [1] CRAN (R 4.1.2)
+##  dbplyr      * 2.1.1     2021-04-06 [1] CRAN (R 4.1.2)
+##  digest        0.6.28    2021-09-23 [1] CRAN (R 4.1.2)
+##  dplyr       * 1.0.7     2021-06-18 [1] CRAN (R 4.1.2)
+##  ellipsis      0.3.2     2021-04-29 [1] CRAN (R 4.1.2)
+##  evaluate      0.14      2019-05-28 [1] CRAN (R 4.1.2)
+##  fansi         0.5.0     2021-05-25 [1] CRAN (R 4.1.2)
+##  farver        2.1.0     2021-02-28 [1] CRAN (R 4.1.2)
+##  fastmap       1.1.0     2021-01-25 [1] CRAN (R 4.1.2)
+##  forcats     * 0.5.1     2021-01-27 [1] CRAN (R 4.1.2)
+##  generics      0.1.1     2021-10-25 [1] CRAN (R 4.1.2)
+##  ggpattern   * 0.2.2     2021-11-11 [1] Github (coolbutuseless/ggpattern@7214181)
+##  ggplot2     * 3.3.5     2021-06-25 [1] CRAN (R 4.1.2)
+##  ggrepel     * 0.9.1     2021-01-15 [1] CRAN (R 4.1.2)
+##  glue          1.5.0     2021-11-07 [1] CRAN (R 4.1.2)
+##  gtable        0.3.0     2019-03-25 [1] CRAN (R 4.1.2)
+##  highr         0.9       2021-04-16 [1] CRAN (R 4.1.2)
+##  htmltools     0.5.2     2021-08-25 [1] CRAN (R 4.1.2)
+##  httr          1.4.2     2020-07-20 [1] CRAN (R 4.1.2)
+##  jquerylib     0.1.4     2021-04-26 [1] CRAN (R 4.1.2)
+##  jsonlite      1.7.2     2020-12-09 [1] CRAN (R 4.1.2)
+##  kableExtra    1.3.4     2021-02-20 [1] CRAN (R 4.1.2)
+##  knitr         1.36      2021-09-29 [1] CRAN (R 4.1.2)
+##  labeling      0.4.2     2020-10-20 [1] CRAN (R 4.1.2)
+##  lattice       0.20-45   2021-09-22 [1] CRAN (R 4.1.2)
+##  lifecycle     1.0.1     2021-09-24 [1] CRAN (R 4.1.2)
+##  lubridate   * 1.8.0     2021-10-07 [1] CRAN (R 4.1.2)
+##  magrittr      2.0.1     2020-11-17 [1] CRAN (R 4.1.2)
+##  Matrix        1.3-4     2021-06-01 [1] CRAN (R 4.1.2)
+##  memoise       2.0.0     2021-01-26 [1] CRAN (R 4.1.2)
+##  mgcv          1.8-38    2021-10-06 [1] CRAN (R 4.1.2)
+##  munsell       0.5.0     2018-06-12 [1] CRAN (R 4.1.2)
+##  nlme          3.1-153   2021-09-07 [1] CRAN (R 4.1.2)
+##  patchwork   * 1.1.1     2020-12-17 [1] CRAN (R 4.1.2)
+##  pillar        1.6.4     2021-10-18 [1] CRAN (R 4.1.2)
+##  pkgconfig     2.0.3     2019-09-22 [1] CRAN (R 4.1.2)
+##  purrr         0.3.4     2020-04-17 [1] CRAN (R 4.1.2)
+##  R6            2.5.1     2021-08-19 [1] CRAN (R 4.1.2)
+##  Rcpp          1.0.7     2021-07-07 [1] CRAN (R 4.1.2)
+##  rlang         0.4.12    2021-10-18 [1] CRAN (R 4.1.2)
+##  rmarkdown     2.11      2021-09-14 [1] CRAN (R 4.1.2)
+##  RMySQL      * 0.10.22   2021-06-22 [1] CRAN (R 4.1.2)
+##  RSQLite     * 2.2.8     2021-08-21 [1] CRAN (R 4.1.2)
+##  rstudioapi    0.13      2020-11-12 [1] CRAN (R 4.1.2)
+##  rvest         1.0.2     2021-10-16 [1] CRAN (R 4.1.2)
+##  sass          0.4.0     2021-05-12 [1] CRAN (R 4.1.2)
+##  scales        1.1.1     2020-05-11 [1] CRAN (R 4.1.2)
+##  sessioninfo   1.2.1     2021-11-02 [1] CRAN (R 4.1.2)
+##  stringi       1.7.5     2021-10-04 [1] CRAN (R 4.1.2)
+##  stringr       1.4.0     2019-02-10 [1] CRAN (R 4.1.2)
+##  svglite       2.0.0     2021-02-20 [1] CRAN (R 4.1.2)
+##  systemfonts   1.0.3     2021-10-13 [1] CRAN (R 4.1.2)
+##  tibble        3.1.6     2021-11-07 [1] CRAN (R 4.1.2)
+##  tidyr         1.1.4     2021-09-27 [1] CRAN (R 4.1.2)
+##  tidyselect    1.1.1     2021-04-30 [1] CRAN (R 4.1.2)
+##  utf8          1.2.2     2021-07-24 [1] CRAN (R 4.1.2)
+##  vctrs         0.3.8     2021-04-29 [1] CRAN (R 4.1.2)
+##  viridisLite   0.4.0     2021-04-13 [1] CRAN (R 4.1.2)
+##  webshot       0.5.2     2019-11-22 [1] CRAN (R 4.1.2)
+##  withr         2.4.2     2021-04-18 [1] CRAN (R 4.1.2)
+##  xfun          0.28      2021-11-04 [1] CRAN (R 4.1.2)
+##  xml2          1.3.2     2020-04-23 [1] CRAN (R 4.1.2)
+##  yaml          2.2.1     2020-02-01 [1] CRAN (R 4.1.2)
+## 
+##  [1] /home/lluis/bin/R/4.1.2/lib/R/library
+## 
+## ──────────────────────────────────────────────────────────────────────────────────────────────────────────────────────&lt;/code&gt;&lt;/pre&gt;
+&lt;/details&gt;
+&lt;/div&gt;
+&lt;div class=&#34;footnotes&#34;&gt;
+&lt;hr /&gt;
+&lt;ol&gt;
+&lt;li id=&#34;fn1&#34;&gt;&lt;p&gt;A program from Google where they sponsor students and organizations to work on open source projects.
+I didn’t knew R participated, but here is the &lt;a href=&#34;https://github.com/rstats-gsoc&#34;&gt;organization on Github&lt;/a&gt;.&lt;a href=&#34;#fnref1&#34; class=&#34;footnote-back&#34;&gt;↩︎&lt;/a&gt;&lt;/p&gt;&lt;/li&gt;
+&lt;/ol&gt;
+&lt;/div&gt;
+</description>
+    </item>
+    
+    <item>
+      <title>Covid-19</title>
+      <link>https://llrs.dev/post/2020/03/15/covid-19/</link>
+      <pubDate>Sun, 15 Mar 2020 00:00:00 +0000</pubDate>
+      <guid>https://llrs.dev/post/2020/03/15/covid-19/</guid>
+      <description>
+&lt;script src=&#34;https://llrs.dev/post/2020/03/15/covid-19/index_files/header-attrs/header-attrs.js&#34;&gt;&lt;/script&gt;
+
+
+&lt;div id=&#34;introduction&#34; class=&#34;section level2&#34;&gt;
+&lt;h2&gt;Introduction&lt;/h2&gt;
+&lt;p&gt;I have seen several analysis and simulations of the spread.
+In this entry I want to use the number of beds in hospitals, the disease duration, and the infection rate to find when will the healthcare system collapse in Spain.
+I’ll try to link to the resoures of the assuptions I take, or where I find the numeric values I use.&lt;/p&gt;
+&lt;/div&gt;
+&lt;div id=&#34;important-numbers&#34; class=&#34;section level2&#34;&gt;
+&lt;h2&gt;Important numbers&lt;/h2&gt;
+&lt;p&gt;The &lt;strong&gt;reproductive number&lt;/strong&gt; is the number of people that get the virus from a person with the virus.
+This is highly variable and is influenced by government decisons (lock down, travel bans, …) and social behavior (See slide 11 from &lt;a href=&#34;https://drive.google.com/file/d/14tGJF9tdv4osPhY1-fswLcSlWZJ9zx45/view&#34;&gt;this deck&lt;/a&gt;). Many dataset are linked in this thread &lt;a href=&#34;https://comunidad.civio.es/t/datos-en-abierto-y-reutilizables-sobre-evolucion-casos-covid-19/399&#34;&gt;of Civio&lt;/a&gt;.&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;Before any major measure in Spain was ~2.6 &lt;a href=&#34;https://twitter.com/oriolmitja/status/1238008116257730560&#34;&gt;Source&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;After major measures ? (too soon to say, we’ll need to wait a week)&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;In order to know how many time are people ill and how much time they might need to spend at the hospital we need to know the &lt;strong&gt;disease duration&lt;/strong&gt;:&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;~20 days until death (healthy &amp;lt;60 years woman) &lt;a href=&#34;https://twitter.com/mraffatellu/status/1239175358185746436&#34;&gt;Source&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;37 days and still testing positive of SARS-CoV-2 &lt;a href=&#34;https://twitter.com/Birdyword/status/1239071257510854657&#34;&gt;Source&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;Person released without symptoms and after a month tested again positive &lt;a href=&#34;https://twitter.com/RVAwonk/status/1238797268871983105&#34;&gt;Source&lt;/a&gt;&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;The saturation of the hospitals can be measured by the capacity they have. Ventilators, oxygen, doctors those numbers affect at the peace the doctors can attend patients, generally the number of &lt;strong&gt;beds&lt;/strong&gt; is used:&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;315/100000 habitants &lt;a href=&#34;https://twitter.com/dr_xeo/status/1239135981380435969&#34;&gt;Source&lt;/a&gt;&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;The Covid &lt;strong&gt;severity&lt;/strong&gt;, from a widely circulated and verifyed &lt;a href=&#34;https://medium.com/@tomaspueyo/coronavirus-act-today-or-people-will-die-f4d3d9cd99ca&#34;&gt;source&lt;/a&gt;:&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;20% of infected need hospitalization (mild cases)&lt;/li&gt;
+&lt;li&gt;5% of infected are critically ill (severe cases)&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;Also we can check the difference in symptoms on the population at South Corea and Italy, via &lt;a href=&#34;https://twitter.com/markwby/status/1238867143363567616&#34;&gt;this tweet&lt;/a&gt; that lead to &lt;a href=&#34;https://medium.com/@andreasbackhausab/coronavirus-why-its-so-deadly-in-italy-c4200a15a7bf&#34;&gt;this article&lt;/a&gt;.
+Also the &lt;a href=&#34;https://twitter.com/passantino/status/1240513400343388160&#34;&gt;case of Iceland&lt;/a&gt;&lt;/p&gt;
+&lt;p&gt;Some of them will not recover despite any treatments by the doctors, this is the &lt;strong&gt;letality rate&lt;/strong&gt;.
+I’ve taken the numbers from a &lt;a href=&#34;https://www.isglobal.org/event/-/asset_publisher/nVsLg5I1q6UT/content/coronavirus-myths-and-truths&#34;&gt;webminar&lt;/a&gt; of the lead epidemiologist of Hospital Clínic which was done the 5th of March.&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;Globally of 2-2.5% on China 0.7% outside&lt;/li&gt;
+&lt;li&gt;By age
+&lt;ul&gt;
+&lt;li&gt;Below 40 years old 0.2%&lt;/li&gt;
+&lt;li&gt;50-60 years old 1.3%&lt;/li&gt;
+&lt;li&gt;60-70 years old 3.6%&lt;/li&gt;
+&lt;li&gt;70-80 years old 8%&lt;/li&gt;
+&lt;li&gt;Above 80 years old 14.8%&lt;/li&gt;
+&lt;/ul&gt;&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;Also compare with the information &lt;a href=&#34;https://twitter.com/hancocktom/status/1239706670546268161&#34;&gt;here&lt;/a&gt;, which takes it from &lt;a href=&#34;https://www.imperial.ac.uk/media/imperial-college/medicine/sph/ide/gida-fellowships/Imperial-College-COVID19-NPI-modelling-16-03-2020.pdf&#34;&gt;this document&lt;/a&gt; used for GB decision mak
+ing.&lt;/p&gt;
+&lt;p&gt;Time from infection to disease, &lt;strong&gt;incubation time&lt;/strong&gt;:&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;5-7 days &lt;a href=&#34;https://www.isglobal.org/event/-/asset_publisher/nVsLg5I1q6UT/content/coronavirus-myths-and-truths&#34;&gt;Source: webminar&lt;/a&gt;&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;High risk groups are people that are more exposed to get the virus or have other &lt;strong&gt;comorbodities&lt;/strong&gt; such as previous respiratory diseases or other major disease afecting the immune system (like cancer, HIV…) :&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;Comorbidities ?, we’ll use &lt;a href=&#34;https://github.com/rOpenSpain/MorbiditySpainR&#34;&gt;MorbiditySpainR&lt;/a&gt; to find it out.&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;As seen on the death rate, the age at the moment of the infection is important.
+Generally Italy and Spain has a &lt;strong&gt;population age&lt;/strong&gt; older than China:&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;? We’ll use the data on INE &lt;a href=&#34;https://github.com/oddworldng/INEbaseR&#34;&gt;thanks to INEbaseR&lt;/a&gt;&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/div&gt;
+&lt;div id=&#34;modelling&#34; class=&#34;section level2&#34;&gt;
+&lt;h2&gt;Modelling&lt;/h2&gt;
+&lt;p&gt;One example of such analysis is this tweet:&lt;/p&gt;
+&lt;blockquote class=&#34;twitter-tweet&#34;&gt;
+&lt;p lang=&#34;es&#34; dir=&#34;ltr&#34;&gt;
+Acabamos de evaluar la predicción del efecto de las políticas de restricción de movilidad. Equipo &lt;a href=&#34;https://twitter.com/jtmatamalas?ref_src=twsrc%5Etfw&#34;&gt;&lt;span class=&#34;citation&#34;&gt;@jtmatamalas&lt;/span&gt;&lt;/a&gt; &lt;a href=&#34;https://twitter.com/SergioGomezJ?ref_src=twsrc%5Etfw&#34;&gt;&lt;span class=&#34;citation&#34;&gt;@SergioGomezJ&lt;/span&gt;&lt;/a&gt; &lt;a href=&#34;https://twitter.com/stinomat?ref_src=twsrc%5Etfw&#34;&gt;&lt;span class=&#34;citation&#34;&gt;@stinomat&lt;/span&gt;&lt;/a&gt; &lt;a href=&#34;https://twitter.com/urv?ref_src=twsrc%5Etfw&#34;&gt;&lt;span class=&#34;citation&#34;&gt;@urv&lt;/span&gt;&lt;/a&gt; y &lt;a href=&#34;https://twitter.com/gomezgardenes?ref_src=twsrc%5Etfw&#34;&gt;&lt;span class=&#34;citation&#34;&gt;@gomezgardenes&lt;/span&gt;&lt;/a&gt; &lt;a href=&#34;https://twitter.com/claragranell?ref_src=twsrc%5Etfw&#34;&gt;&lt;span class=&#34;citation&#34;&gt;@claragranell&lt;/span&gt;&lt;/a&gt; &lt;a href=&#34;https://twitter.com/sorianopanos?ref_src=twsrc%5Etfw&#34;&gt;&lt;span class=&#34;citation&#34;&gt;@sorianopanos&lt;/span&gt;&lt;/a&gt; &lt;a href=&#34;https://twitter.com/wlcota?ref_src=twsrc%5Etfw&#34;&gt;&lt;span class=&#34;citation&#34;&gt;@wlcota&lt;/span&gt;&lt;/a&gt; &lt;a href=&#34;https://twitter.com/unizar?ref_src=twsrc%5Etfw&#34;&gt;&lt;span class=&#34;citation&#34;&gt;@unizar&lt;/span&gt;&lt;/a&gt;. Restricción de movilidad total, excepto servicios esenciales, necesaria YA. &lt;a href=&#34;https://t.co/YaWqXHw7Qv&#34;&gt;pic.twitter.com/YaWqXHw7Qv&lt;/a&gt;
+&lt;/p&gt;
+— Alex Arenas (&lt;span class=&#34;citation&#34;&gt;@_AlexArenas&lt;/span&gt;) &lt;a href=&#34;https://twitter.com/_AlexArenas/status/1239691646482161664?ref_src=twsrc%5Etfw&#34;&gt;March 16, 2020&lt;/a&gt;
+&lt;/blockquote&gt;
+&lt;script async src=&#34;https://platform.twitter.com/widgets.js&#34; charset=&#34;utf-8&#34;&gt;&lt;/script&gt;
+&lt;p&gt;We could use models based on &lt;a href=&#34;http://networksciencebook.com/chapter/10#epidemic&#34;&gt;chapter 10&lt;/a&gt; of the book Network Science of Albert-Lázló Barábasi, and from &lt;a href=&#34;https://drive.google.com/file/d/14tGJF9tdv4osPhY1-fswLcSlWZJ9zx45/view&#34;&gt;slide 28&lt;/a&gt;.&lt;/p&gt;
+&lt;p&gt;But follwing this advice I won’t:&lt;/p&gt;
+&lt;blockquote class=&#34;twitter-tweet&#34;&gt;
+&lt;p lang=&#34;en&#34; dir=&#34;ltr&#34;&gt;
+To my colleagues, who are highly accomplished geniuses in a variety of fields: now is not the time to start an independent public health or infectious disease modeling practice if you have no expertise in these areas.&lt;br&gt;&lt;br&gt;Please get an expert to check your work. Don&#39;t just post.
+&lt;/p&gt;
+— Michael Hoffman (&lt;span class=&#34;citation&#34;&gt;@michaelhoffman&lt;/span&gt;) &lt;a href=&#34;https://twitter.com/michaelhoffman/status/1240338198376714241?ref_src=twsrc%5Etfw&#34;&gt;March 18, 2020&lt;/a&gt;
+&lt;/blockquote&gt;
+&lt;script async src=&#34;https://platform.twitter.com/widgets.js&#34; charset=&#34;utf-8&#34;&gt;&lt;/script&gt;
+&lt;p&gt;However, here I leave a &lt;a href=&#34;https://twitter.com/datadista/status/1240668992655810560&#34;&gt;link&lt;/a&gt; to the UCI bed currently on use from DATADISTA.&lt;/p&gt;
+&lt;div id=&#34;reproducibility&#34; class=&#34;section level3&#34;&gt;
+&lt;h3&gt;Reproducibility&lt;/h3&gt;
+&lt;details&gt;
+&lt;pre&gt;&lt;code&gt;## ─ Session info ───────────────────────────────────────────────────────────────────────────────────────────────────────
+##  setting  value                       
+##  version  R version 4.0.1 (2020-06-06)
+##  os       Ubuntu 20.04.1 LTS          
+##  system   x86_64, linux-gnu           
+##  ui       X11                         
+##  language (EN)                        
+##  collate  en_US.UTF-8                 
+##  ctype    en_US.UTF-8                 
+##  tz       Europe/Madrid               
+##  date     2021-01-08                  
+## 
+## ─ Packages ───────────────────────────────────────────────────────────────────────────────────────────────────────────
+##  package     * version date       lib source                           
+##  assertthat    0.2.1   2019-03-21 [1] CRAN (R 4.0.1)                   
+##  blogdown      0.21.84 2021-01-07 [1] Github (rstudio/blogdown@c4fbb58)
+##  bookdown      0.21    2020-10-13 [1] CRAN (R 4.0.1)                   
+##  cli           2.2.0   2020-11-20 [1] CRAN (R 4.0.1)                   
+##  crayon        1.3.4   2017-09-16 [1] CRAN (R 4.0.1)                   
+##  digest        0.6.27  2020-10-24 [1] CRAN (R 4.0.1)                   
+##  evaluate      0.14    2019-05-28 [1] CRAN (R 4.0.1)                   
+##  fansi         0.4.1   2020-01-08 [1] CRAN (R 4.0.1)                   
+##  glue          1.4.2   2020-08-27 [1] CRAN (R 4.0.1)                   
+##  htmltools     0.5.0   2020-06-16 [1] CRAN (R 4.0.1)                   
+##  knitr         1.30    2020-09-22 [1] CRAN (R 4.0.1)                   
+##  magrittr      2.0.1   2020-11-17 [1] CRAN (R 4.0.1)                   
+##  rlang         0.4.10  2020-12-30 [1] CRAN (R 4.0.1)                   
+##  rmarkdown     2.6     2020-12-14 [1] CRAN (R 4.0.1)                   
+##  sessioninfo   1.1.1   2018-11-05 [1] CRAN (R 4.0.1)                   
+##  stringi       1.5.3   2020-09-09 [1] CRAN (R 4.0.1)                   
+##  stringr       1.4.0   2019-02-10 [1] CRAN (R 4.0.1)                   
+##  withr         2.3.0   2020-09-22 [1] CRAN (R 4.0.1)                   
+##  xfun          0.20    2021-01-06 [1] CRAN (R 4.0.1)                   
+##  yaml          2.2.1   2020-02-01 [1] CRAN (R 4.0.1)                   
+## 
+## [1] /home/lluis/bin/R/4.0.1/lib/R/library&lt;/code&gt;&lt;/pre&gt;
+&lt;/details&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+</description>
+    </item>
+    
+  </channel>
+</rss>

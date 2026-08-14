@@ -1,0 +1,251 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes" ?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>concepts | B101nfo</title>
+    <link>https://llrs.dev/tags/concepts/</link>
+      <atom:link href="https://llrs.dev/tags/concepts/index.xml" rel="self" type="application/rss+xml" />
+    <description>concepts</description>
+    <generator>Source Themes Academic (https://sourcethemes.com/academic/)</generator><language>en-us</language><copyright>If it is code you can copy and reuse (MIT) if it is text, please cite and reuse CC-BY 2026.</copyright><lastBuildDate>Fri, 27 May 2022 00:00:00 +0000</lastBuildDate>
+    <image>
+      <url>img/map[gravatar:%!s(bool=false) shape:circle]</url>
+      <title>concepts</title>
+      <link>https://llrs.dev/tags/concepts/</link>
+    </image>
+    
+    <item>
+      <title>Leadership in open source projects</title>
+      <link>https://llrs.dev/post/2022/05/27/leadership-open-source/</link>
+      <pubDate>Fri, 27 May 2022 00:00:00 +0000</pubDate>
+      <guid>https://llrs.dev/post/2022/05/27/leadership-open-source/</guid>
+      <description>
+
+
+&lt;p&gt;This is the second part of the previous post about &lt;a href=&#34;https://llrs.dev/post/2022/03/16/concepts-around-open-source-free-software/&#34;&gt;concepts around open source/free software&lt;/a&gt;.&lt;/p&gt;
+&lt;p&gt;Since last book, I also read &lt;a href=&#34;https://un.curl.dev&#34;&gt;Uncurled&lt;/a&gt; which recommended &lt;a href=&#34;https://www.amazon.com/Working-Public-Making-Maintenance-Software/dp/0578675862&#34;&gt;“The Making and maintenance of open source software”&lt;/a&gt; (I will short it to MMOSS) and “&lt;a href=&#34;https://producingoss.com/&#34;&gt;Producing Open Source Software&lt;/a&gt;” (POSS), which provide first hand experiences about how those maintainers handled different projects.&lt;/p&gt;
+&lt;p&gt;This post is about projects, growth and management of the project (I don’t want to make them about R but I will also use my experience within R to reflect on these ideas).&lt;/p&gt;
+&lt;div id=&#34;projects&#34; class=&#34;section level2&#34;&gt;
+&lt;h2&gt;Projects&lt;/h2&gt;
+&lt;p&gt;It is common to say refer to open source as projects.
+While it is true that open source/free software is a project with limited resources it doesn’t have a fixed end date.
+I don’t think they fit the criteria of the &lt;a href=&#34;https://en.wikipedia.org/wiki/Project_Management_Body_of_Knowledge&#34; title=&#34;Project Management Body of Knowledge&#34;&gt;PMBOK&lt;/a&gt;.&lt;/p&gt;
+&lt;p&gt;Software “projects” run from the usefulness for the maintainer and the feedback received.
+If a maintainer does no longer use a piece of software and doesn’t receive any feedback they might choose to not update the public version.
+The software is still up there but the valuable resource (maintenance) is no longer there.&lt;/p&gt;
+&lt;p&gt;This explains why it is so common to look up for activity on a “project”.
+If a developer/maintainer hasn’t committed or reacted in a long time the “project” is no longer active.
+The code might still be used, it might have more users, but it is no longer a project.&lt;/p&gt;
+&lt;p&gt;Another characteristics of projects is that there is a leadership.
+It might be a team or an individual like a benevolent dictator for life as explained by POSS.
+This leadership most important role is communication.
+It is not enough to have commit access or a foundation but to communicate and steward the community towards a direction or following some guidelines.&lt;/p&gt;
+&lt;p&gt;This communication is usually done by NEWS and changelog, in bug reports feedback on mailing list (and by the lack of communication too).&lt;/p&gt;
+&lt;p&gt;These leaders are those who can steward with contributor growth, support, ease of participation and technical improvements.
+Particularly POSS mentions the distinction between commit access and maintainer; also considering maintainers those that organize conferences, set up infrastructure and participate even if not committing code.&lt;/p&gt;
+&lt;p&gt;All the activities of the maintainers (and others) help with the project status and growth.&lt;/p&gt;
+&lt;/div&gt;
+&lt;div id=&#34;growth&#34; class=&#34;section level2&#34;&gt;
+&lt;h2&gt;Growth?&lt;/h2&gt;
+&lt;p&gt;There seems to be in the MMOSS book a tendency to only mention growth, which is very hard to measure.
+Just fo give an example focusing on users: Is LAPACK user base growing or not?
+I would say it is, because R uses it and more people is using R.
+But there isn’t, to my knowledge, a growth on users claiming to be experts on LAPACK, although there are several LAPACK optimizations.&lt;/p&gt;
+&lt;p&gt;MMOSS mentions that the (long term) contributors tend to lurk and just chime in when they can propose something of value or given the room.
+This is echoed by POSS, which even says that one of the roles of maintainers is to encourage other contributors to become maintainers.&lt;/p&gt;
+&lt;p&gt;Casual contributors post when they have an issue/bug while using it but they are not interested on the long term health of the software.
+Presumably on the classification on table 1 of the &lt;a href=&#34;https://llrs.dev/post/2022/03/16/concepts-around-open-source-free-software/&#34;&gt;previous post&lt;/a&gt; refers to both.
+However, as acknowledge by the author it is hard to measure users and contributors.&lt;/p&gt;
+&lt;p&gt;The books always focus on the very positive outcome growth, not stagnation or reduction of users/contributors.
+I think it is important to acknowledge this happens too and find the causes to avoid them.&lt;/p&gt;
+&lt;p&gt;On python the support of python 2.7 had to be extended multiple times due to slow uptake of python 3.x.
+It might have similar effects than the upgrade from perl4 to perl5, which (besides many other reasons) left perl outside the curriculum of the universities, so without many new users.&lt;/p&gt;
+&lt;p&gt;Probably the best indicator is the relationship between users, contributors and maintainers.
+If these are three different groups of people, there are more users than contributors and less maintainers while the dynamics are good and the software is in good healthy status.&lt;/p&gt;
+&lt;/div&gt;
+&lt;div id=&#34;end&#34; class=&#34;section level2&#34;&gt;
+&lt;h2&gt;End&lt;/h2&gt;
+&lt;p&gt;I haven’t touch much the status of code but this is also important it can be status as in quality of code and status of the software and community.
+The first is easier to measure and compare while the second one is much harder, more subjective and thus less general.&lt;/p&gt;
+&lt;p&gt;Whatever the status of a software is don’t forget to be nice to users, contributors and help them become more familiar with the code in a friendly manner.&lt;/p&gt;
+&lt;/div&gt;
+</description>
+    </item>
+    
+    <item>
+      <title>Concepts around open source/free software</title>
+      <link>https://llrs.dev/post/2022/03/16/concepts-around-open-source-free-software/</link>
+      <pubDate>Wed, 16 Mar 2022 00:00:00 +0000</pubDate>
+      <guid>https://llrs.dev/post/2022/03/16/concepts-around-open-source-free-software/</guid>
+      <description>
+&lt;script src=&#34;https://llrs.dev/post/2022/03/16/concepts-around-open-source-free-software/index.en_files/header-attrs/header-attrs.js&#34;&gt;&lt;/script&gt;
+
+
+&lt;p&gt;This post is to lay out some concepts I picked up after reading &lt;a href=&#34;https://www.amazon.com/Working-Public-Making-Maintenance-Software/dp/0578675862&#34;&gt;“The Making and maintenance of open source software”&lt;/a&gt;.
+Having these concepts in mind might help me on my contributions to R and OSS in general.
+I write these thought to come back to in future posts.&lt;/p&gt;
+&lt;p&gt;The book classify projects by two axis, contribution growth and user growth:&lt;/p&gt;
+&lt;table&gt;
+&lt;thead&gt;
+&lt;tr class=&#34;header&#34;&gt;
+&lt;th&gt;&lt;/th&gt;
+&lt;th&gt;High user growth&lt;/th&gt;
+&lt;th&gt;low user growth&lt;/th&gt;
+&lt;/tr&gt;
+&lt;/thead&gt;
+&lt;tbody&gt;
+&lt;tr class=&#34;odd&#34;&gt;
+&lt;td&gt;&lt;strong&gt;High contributor growth&lt;/strong&gt;&lt;/td&gt;
+&lt;td&gt;Federations&lt;/td&gt;
+&lt;td&gt;Clubs&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr class=&#34;even&#34;&gt;
+&lt;td&gt;&lt;strong&gt;Low contributor growth&lt;/strong&gt;&lt;/td&gt;
+&lt;td&gt;Stadiums&lt;/td&gt;
+&lt;td&gt;Toys&lt;/td&gt;
+&lt;/tr&gt;
+&lt;/tbody&gt;
+&lt;/table&gt;
+&lt;p&gt;And classify projects according to the following characteristics :&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;p&gt;Technical&lt;/p&gt;&lt;/li&gt;
+&lt;li&gt;&lt;p&gt;Support&lt;/p&gt;&lt;/li&gt;
+&lt;li&gt;&lt;p&gt;Ease of participation&lt;/p&gt;&lt;/li&gt;
+&lt;li&gt;&lt;p&gt;User adoption&lt;/p&gt;&lt;/li&gt;
+&lt;li&gt;&lt;p&gt;Contributor growth&lt;/p&gt;&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;Code seems like a common good which require the following characteristics:&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;p&gt;Intrinsic motivation&lt;/p&gt;&lt;/li&gt;
+&lt;li&gt;&lt;p&gt;Modular&lt;/p&gt;&lt;/li&gt;
+&lt;li&gt;&lt;p&gt;Granular&lt;/p&gt;&lt;/li&gt;
+&lt;li&gt;&lt;p&gt;Low cost of coordination&lt;/p&gt;&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;On the author’s opinion only maintainers are interested in the success of the whole community and need to make trade off between different interest of the community around the project.&lt;/p&gt;
+&lt;p&gt;Motivation is very important and I classify based on the source of motivation and the sign of it:&lt;/p&gt;
+&lt;table&gt;
+&lt;thead&gt;
+&lt;tr class=&#34;header&#34;&gt;
+&lt;th&gt;&lt;/th&gt;
+&lt;th&gt;Positive&lt;/th&gt;
+&lt;th&gt;Negative&lt;/th&gt;
+&lt;/tr&gt;
+&lt;/thead&gt;
+&lt;tbody&gt;
+&lt;tr class=&#34;odd&#34;&gt;
+&lt;td&gt;&lt;strong&gt;Intrinsic&lt;/strong&gt;&lt;/td&gt;
+&lt;td&gt;Learn skills&lt;/td&gt;
+&lt;td&gt;Burn out&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr class=&#34;even&#34;&gt;
+&lt;td&gt;&lt;strong&gt;Extrinsic&lt;/strong&gt;&lt;/td&gt;
+&lt;td&gt;Social benefits&lt;/td&gt;
+&lt;td&gt;Friction, or lack of feedback&lt;/td&gt;
+&lt;/tr&gt;
+&lt;/tbody&gt;
+&lt;/table&gt;
+&lt;p&gt;Following the book, contributors can be grouped in two:&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;p&gt;Invested: Lurk before making a contribution, learn the quirks of the community&lt;/p&gt;&lt;/li&gt;
+&lt;li&gt;&lt;p&gt;Casual: Adding value to themselves and other&lt;/p&gt;&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;Contributors might spend many time learning about the community before making their first contribution (or show themselves).
+That’s why only knowing if this is the first contribution of someone doesn’t mean they will continue contributing on the project.&lt;/p&gt;
+&lt;p&gt;Users, can be classified in two groups: passive, they use the software and nothing else, or active.
+Active users might do one of the following:&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;p&gt;Educate others: write a blog post, or material&lt;/p&gt;&lt;/li&gt;
+&lt;li&gt;&lt;p&gt;Spread the word: Announce they use the software&lt;/p&gt;&lt;/li&gt;
+&lt;li&gt;&lt;p&gt;Support: Solve other’s users questions&lt;/p&gt;&lt;/li&gt;
+&lt;li&gt;&lt;p&gt;Fill bug reports&lt;/p&gt;&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;The health of the project depends on the popularity dependencies and active and future maintenance of the software.&lt;/p&gt;
+&lt;p&gt;However, the book says that one contributor is not the same as the other.
+For instance removing a maintainer causes more harm than a casual contributor.&lt;/p&gt;
+&lt;p&gt;The source of this is that software is like a puppy.
+The value of the code is how live it is, static code has null value.
+but once it is being used it is very valuable.&lt;/p&gt;
+&lt;p&gt;For this reason the maintenance costs once there are users is very high.
+However, in general there are few ways to know how many users does a piece of software have.&lt;/p&gt;
+&lt;p&gt;This produces marginal costs to maintainer, which are driven by how are these goods:&lt;/p&gt;
+&lt;table&gt;
+&lt;thead&gt;
+&lt;tr class=&#34;header&#34;&gt;
+&lt;th&gt;&lt;/th&gt;
+&lt;th&gt;Excludable&lt;/th&gt;
+&lt;th&gt;Non-Excludable&lt;/th&gt;
+&lt;/tr&gt;
+&lt;/thead&gt;
+&lt;tbody&gt;
+&lt;tr class=&#34;odd&#34;&gt;
+&lt;td&gt;&lt;strong&gt;Rivalrous&lt;/strong&gt;&lt;/td&gt;
+&lt;td&gt;Private goods&lt;/td&gt;
+&lt;td&gt;Commons good&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr class=&#34;even&#34;&gt;
+&lt;td&gt;&lt;strong&gt;Non-Rivalrous&lt;/strong&gt;&lt;/td&gt;
+&lt;td&gt;Club goods&lt;/td&gt;
+&lt;td&gt;Public goods&lt;/td&gt;
+&lt;/tr&gt;
+&lt;/tbody&gt;
+&lt;/table&gt;
+&lt;p&gt;Costs are mainly attention from the maintainers from the users and contributors.
+Users are like a cars in a highway initially there is no problem, but at high levels of traffic adding new lanes don’t solve traffic jam.&lt;/p&gt;
+&lt;p&gt;However, the cost increase with more request, the bandwidth to download software and hosting&lt;/p&gt;
+&lt;p&gt;More users leads to more requests, which lead to a competition for maintainers to do less proactive work and do more reactive work.&lt;/p&gt;
+&lt;p&gt;This leads to start on very simple organiztion and evolve to more disorganized complexity and then to a organized complexity to just cope with the costs of the project.
+On this organization complexity relationships with maintainers become important.&lt;/p&gt;
+&lt;p&gt;&lt;code&gt;Value = usage+dependencies-maintenance+substitutability+switching cost+enabling&lt;/code&gt; while &lt;code&gt;Cost = development +maintenance+attention&lt;/code&gt;.&lt;/p&gt;
+&lt;p&gt;The common (and scarce) good is the attention of both maintainers and developers.
+Which requires judgement call on which kind of requests dedicate their time: extractive or non-extractive requests.&lt;/p&gt;
+&lt;p&gt;The benefit for maintainers once the reputation/recognition is enough is almost non existent.&lt;/p&gt;
+&lt;p&gt;The book cites several communities Python, ruby, Linux, javascript, java, but I don’t think they used R community as a source. So what are the implication of these concepts to the R community? How do we help maintainers to keep up with their work or let in new maintainers?&lt;/p&gt;
+&lt;div id=&#34;reproducibility&#34; class=&#34;section level3&#34;&gt;
+&lt;h3&gt;Reproducibility&lt;/h3&gt;
+&lt;details&gt;
+&lt;pre&gt;&lt;code&gt;## ─ Session info ───────────────────────────────────────────────────────────────────────────────────────────────────────
+##  setting  value
+##  version  R version 4.1.2 (2021-11-01)
+##  os       Ubuntu 20.04.4 LTS
+##  system   x86_64, linux-gnu
+##  ui       X11
+##  language (EN)
+##  collate  en_US.UTF-8
+##  ctype    en_US.UTF-8
+##  tz       Europe/Madrid
+##  date     2022-03-16
+##  pandoc   2.17.1.1 @ /usr/lib/rstudio/bin/quarto/bin/ (via rmarkdown)
+## 
+## ─ Packages ───────────────────────────────────────────────────────────────────────────────────────────────────────────
+##  package     * version date (UTC) lib source
+##  blogdown      1.8.1   2022-02-19 [1] Github (rstudio/blogdown@9af7733)
+##  bookdown      0.24    2021-09-02 [1] CRAN (R 4.1.2)
+##  bslib         0.3.1   2021-10-06 [1] CRAN (R 4.1.2)
+##  cli           3.2.0   2022-02-14 [1] CRAN (R 4.1.2)
+##  digest        0.6.29  2021-12-01 [1] CRAN (R 4.1.2)
+##  evaluate      0.15    2022-02-18 [1] CRAN (R 4.1.2)
+##  fastmap       1.1.0   2021-01-25 [1] CRAN (R 4.1.2)
+##  htmltools     0.5.2   2021-08-25 [1] CRAN (R 4.1.2)
+##  jquerylib     0.1.4   2021-04-26 [1] CRAN (R 4.1.2)
+##  jsonlite      1.8.0   2022-02-22 [1] CRAN (R 4.1.2)
+##  knitr         1.37    2021-12-16 [1] CRAN (R 4.1.2)
+##  magrittr      2.0.2   2022-01-26 [1] CRAN (R 4.1.2)
+##  R6            2.5.1   2021-08-19 [1] CRAN (R 4.1.2)
+##  rlang         1.0.2   2022-03-04 [1] CRAN (R 4.1.2)
+##  rmarkdown     2.13    2022-03-10 [1] CRAN (R 4.1.2)
+##  rstudioapi    0.13    2020-11-12 [1] CRAN (R 4.1.2)
+##  sass          0.4.0   2021-05-12 [1] CRAN (R 4.1.2)
+##  sessioninfo   1.2.2   2021-12-06 [1] CRAN (R 4.1.2)
+##  stringi       1.7.6   2021-11-29 [1] CRAN (R 4.1.2)
+##  stringr       1.4.0   2019-02-10 [1] CRAN (R 4.1.2)
+##  xfun          0.30    2022-03-02 [1] CRAN (R 4.1.2)
+##  yaml          2.3.5   2022-02-21 [1] CRAN (R 4.1.2)
+## 
+##  [1] /home/lluis/bin/R/4.1.2/lib/R/library
+## 
+## ──────────────────────────────────────────────────────────────────────────────────────────────────────────────────────&lt;/code&gt;&lt;/pre&gt;
+&lt;/details&gt;
+&lt;/div&gt;
+</description>
+    </item>
+    
+  </channel>
+</rss>

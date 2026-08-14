@@ -1,0 +1,98 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes" ?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>FOSS | B101nfo</title>
+    <link>https://llrs.dev/tags/foss/</link>
+      <atom:link href="https://llrs.dev/tags/foss/index.xml" rel="self" type="application/rss+xml" />
+    <description>FOSS</description>
+    <generator>Source Themes Academic (https://sourcethemes.com/academic/)</generator><language>en-us</language><copyright>If it is code you can copy and reuse (MIT) if it is text, please cite and reuse CC-BY 2026.</copyright><lastBuildDate>Tue, 02 Apr 2024 00:00:00 +0000</lastBuildDate>
+    <image>
+      <url>img/map[gravatar:%!s(bool=false) shape:circle]</url>
+      <title>FOSS</title>
+      <link>https://llrs.dev/tags/foss/</link>
+    </image>
+    
+    <item>
+      <title>Future FOSS contributions</title>
+      <link>https://llrs.dev/post/2024/04/02/foss-contributions/</link>
+      <pubDate>Tue, 02 Apr 2024 00:00:00 +0000</pubDate>
+      <guid>https://llrs.dev/post/2024/04/02/foss-contributions/</guid>
+      <description>
+
+
+&lt;p&gt;I write this post after several weeks/months of consideration of why I am feeling a burden when I contribute to the FOSS community, mostly the R community.
+I want to make public some rules I set for myself for future references and in case it helps others.&lt;/p&gt;
+&lt;div id=&#34;how-i-end-up-here&#34; class=&#34;section level1&#34;&gt;
+&lt;h1&gt;How I end up here&lt;/h1&gt;
+&lt;p&gt;I use R for my work and I realized I could use it for my interests.
+With the creativity of a computer language that I know well, I could answer question I had and help others in the process.&lt;/p&gt;
+&lt;p&gt;As the questions I answered were more general or more community centered I got involved in more meetings and working groups.
+Some decisions/commitments were carefully considered, and known to be temporal, others were/are more open ended with an unclear end.&lt;/p&gt;
+&lt;div class=&#34;float&#34;&gt;
+&lt;img src=&#34;images/rataplan.JPG&#34; style=&#34;width:30.0%;height:30.0%&#34; alt=&#34;An image of Rataplan the dog of Lucky Luck.&#34; /&gt;
+&lt;div class=&#34;figcaption&#34;&gt;An image of Rataplan the dog of Lucky Luck.&lt;/div&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;div id=&#34;current-situation&#34; class=&#34;section level1&#34;&gt;
+&lt;h1&gt;Current situation&lt;/h1&gt;
+&lt;ol style=&#34;list-style-type: decimal&#34;&gt;
+&lt;li&gt;I often participate to the &lt;a href=&#34;https://contributor.r-project.org/working-group&#34; title=&#34;RCWG webpage&#34;&gt;R Contributors working group (RCWG)&lt;/a&gt;, not only meetings but other activities and task.&lt;/li&gt;
+&lt;li&gt;I am member of the &lt;a href=&#34;https://bioconductor.org&#34;&gt;Bioconductor&lt;/a&gt;, helping in the forum from time to time&lt;a href=&#34;#fn1&#34; class=&#34;footnote-ref&#34; id=&#34;fnref1&#34;&gt;&lt;sup&gt;1&lt;/sup&gt;&lt;/a&gt;.&lt;/li&gt;
+&lt;li&gt;I am member of the Bioconductor code of conduct committee.&lt;/li&gt;
+&lt;li&gt;I am member of the &lt;a href=&#34;https://ropensci.org&#34;&gt;rOpenSci community&lt;/a&gt;, helping in the slack and in the forum if the questions are related to the packages I have in their organization.&lt;/li&gt;
+&lt;li&gt;I am member of the &lt;a href=&#34;https://github.com/RConsortium/r-repositories-wg&#34; title=&#34;RRepoWG github repository&#34;&gt;R repository working group (RRepoWG) from the R Foundation&lt;/a&gt;.&lt;/li&gt;
+&lt;li&gt;I impulsed the Bioconductor Classes and Methods Working Group (although there isn’t much activity for the last year and a half).&lt;/li&gt;
+&lt;li&gt;I co-organized the local R conference of my country for 2023.&lt;/li&gt;
+&lt;li&gt;I co-organized the local R user group of my city last year (2-3 events) and I’ve been trying to restart it this year 2024 and contributed to others RUGs.&lt;/li&gt;
+&lt;li&gt;I maintain 3-4 packages on CRAN and Bioconductor&lt;a href=&#34;#fn2&#34; class=&#34;footnote-ref&#34; id=&#34;fnref2&#34;&gt;&lt;sup&gt;2&lt;/sup&gt;&lt;/a&gt;.&lt;/li&gt;
+&lt;/ol&gt;
+&lt;p&gt;I am sure there are several people doing more but after reflection I came to the conclusion that this is not sustainable/worth it for me.&lt;/p&gt;
+&lt;/div&gt;
+&lt;div id=&#34;reasons-to-keep-giving&#34; class=&#34;section level1&#34;&gt;
+&lt;h1&gt;Reasons to keep giving&lt;/h1&gt;
+&lt;p&gt;From now on when I contribute something there are 3 reasons I will keep in mind:&lt;/p&gt;
+&lt;ol style=&#34;list-style-type: decimal&#34;&gt;
+&lt;li&gt;&lt;p&gt;It is part of my &lt;strong&gt;work&lt;/strong&gt; or related to it.&lt;/p&gt;
+&lt;p&gt;When I go to these working groups I do not represent my employer or any comunity.
+I am not paid for anything of the previous list and I need to recover the hours when I have meetings during working hours.&lt;/p&gt;
+&lt;p&gt;Here I also include contributions to something that might make help my career.
+This includes gig jobs or consulting that I am open to do.&lt;/p&gt;&lt;/li&gt;
+&lt;li&gt;&lt;p&gt;It is &lt;strong&gt;fun&lt;/strong&gt;ny/rewarding.&lt;/p&gt;
+&lt;p&gt;These contributions might interest me because I find funny, for example plotting a simple tree with ggplot2.&lt;/p&gt;
+&lt;p&gt;Or because it is rewarding helping someone to solve their problems, such as helping a family member to claim her wage for their overtime.&lt;/p&gt;&lt;/li&gt;
+&lt;li&gt;&lt;p&gt;I &lt;strong&gt;learn&lt;/strong&gt; something.&lt;/p&gt;
+&lt;p&gt;I don’t like to learn new things for the sake of learning.
+But I enjoy learning something that could be useful: a technology, a solution, a community or new data I never analyzed.
+This might be for my personal interest or work related: recently having learn how to parse html/xml helped me at work doing a task in 5 minutes a simple task my boss would have need half an hour or more but I learned it for a hobby project.&lt;/p&gt;&lt;/li&gt;
+&lt;/ol&gt;
+&lt;p&gt;If I see a project/proposal doesn’t fit any of these three I will stop contributing/maintaining.
+I’ll try to avoid commitments that I think that should be done that I could step up or do it but do not fit in these three rules.
+This includes contributing to books, mentoring, being the glue between different communities or simply sending a PR.&lt;/p&gt;
+&lt;p&gt;As my time is more stretched with commitments away from the keyword.
+I feel torn apart between contributing more effectively or stopping.
+Each hour I spend in a meeting that could/was an email is 2 hours or more that I lose, not only the opportunity cost but also the motivation&lt;a href=&#34;#fn3&#34; class=&#34;footnote-ref&#34; id=&#34;fnref3&#34;&gt;&lt;sup&gt;3&lt;/sup&gt;&lt;/a&gt; and the time I spent preparing the meeting.&lt;/p&gt;
+&lt;/div&gt;
+&lt;div id=&#34;future-contributions&#34; class=&#34;section level1&#34;&gt;
+&lt;h1&gt;Future contributions&lt;/h1&gt;
+&lt;p&gt;Aside from that and some previous commitments I will finish serving the community.
+I will no longer prioritize what is good for the community over what is good for me.
+If they overlap it will be great if it doesn’t, I’m sorry.&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;images/ikigai.png&#34; style=&#34;width:30.0%;height:30.0%&#34; alt=&#34;ikigai scheme from Wikipedia&#34; /&gt;.&lt;/p&gt;
+&lt;p&gt;As you now know you can appeal to either of the three motivations now: Ask me something I might find funny/rewarding, ask me to learn something I could use or simply provide a payment or a way forward for my career.&lt;/p&gt;
+&lt;p&gt;I am open to consulting or developing something, you can contact me useing the &lt;a href=&#34;lluis.revilla@gmail.com&#34; class=&#34;mailito&#34;&gt;email on the blog&lt;/a&gt;.&lt;/p&gt;
+&lt;/div&gt;
+&lt;div class=&#34;footnotes footnotes-end-of-document&#34;&gt;
+&lt;hr /&gt;
+&lt;ol&gt;
+&lt;li id=&#34;fn1&#34;&gt;&lt;p&gt;I also receive answers and help too when I occasionally ask too.
+I also benefit of many questions from online forums (although now it is rare those I search are about R).&lt;a href=&#34;#fnref1&#34; class=&#34;footnote-back&#34;&gt;↩︎&lt;/a&gt;&lt;/p&gt;&lt;/li&gt;
+&lt;li id=&#34;fn2&#34;&gt;&lt;p&gt;There are many more only in github or some other communities.&lt;a href=&#34;#fnref2&#34; class=&#34;footnote-back&#34;&gt;↩︎&lt;/a&gt;&lt;/p&gt;&lt;/li&gt;
+&lt;li id=&#34;fn3&#34;&gt;&lt;p&gt;Which frankly lately is very low.
+I won’t get into details.&lt;a href=&#34;#fnref3&#34; class=&#34;footnote-back&#34;&gt;↩︎&lt;/a&gt;&lt;/p&gt;&lt;/li&gt;
+&lt;/ol&gt;
+&lt;/div&gt;
+</description>
+    </item>
+    
+  </channel>
+</rss>

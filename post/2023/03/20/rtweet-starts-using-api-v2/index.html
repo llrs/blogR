@@ -1,0 +1,1112 @@
+<!DOCTYPE html>
+<html lang="en-us">
+
+<head>
+
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="generator" content="Source Themes Academic 4.8.0">
+
+  
+
+  
+  
+  
+  
+  
+    
+    
+    
+  
+  
+
+  <meta name="author" content="Lluís Revilla Sancho">
+
+  
+  
+  
+    
+  
+  <meta name="description" content="News about rtweet 1.2.0 and its future.">
+
+  
+  <link rel="alternate" hreflang="en-us" href="https://llrs.dev/post/2023/03/20/rtweet-starts-using-api-v2/">
+
+  
+
+
+  
+  
+  
+  <meta name="theme-color" content="#2962ff">
+  
+
+  
+  
+
+  
+  
+  
+  
+    
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/academicons/1.8.6/css/academicons.min.css" integrity="sha256-uFVgMKfistnJAfoCUQigIl+JfUaP47GrRKjf6CTPVmw=" crossorigin="anonymous">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.12.0-1/css/all.min.css" integrity="sha256-4w9DunooKSr3MFXHXWyFER38WmPdm361bQS/2KUWZbU=" crossorigin="anonymous">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/fancybox/3.5.7/jquery.fancybox.min.css" integrity="sha256-Vzbj7sDDS/woiFS3uNKo8eIuni59rjyNGtXfstRzStA=" crossorigin="anonymous">
+
+    
+    
+    
+      
+    
+    
+      
+      
+        
+          <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.18.1/styles/github.min.css" crossorigin="anonymous" title="hl-light">
+          <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.18.1/styles/dracula.min.css" crossorigin="anonymous" title="hl-dark" disabled>
+        
+      
+    
+
+    
+
+    
+
+    
+    
+      
+
+      
+      
+
+      
+    
+      
+
+      
+      
+
+      
+    
+      
+
+      
+      
+
+      
+    
+      
+
+      
+      
+
+      
+    
+      
+
+      
+      
+
+      
+    
+      
+
+      
+      
+
+      
+    
+      
+
+      
+      
+
+      
+    
+      
+
+      
+      
+
+      
+    
+      
+
+      
+      
+
+      
+    
+      
+
+      
+      
+
+      
+    
+      
+
+      
+      
+
+      
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/lazysizes/5.1.2/lazysizes.min.js" integrity="sha256-Md1qLToewPeKjfAHU1zyPwOutccPAm5tahnaw7Osw0A=" crossorigin="anonymous" async></script>
+      
+    
+      
+
+      
+      
+
+      
+    
+      
+
+      
+      
+
+      
+    
+      
+
+      
+      
+        
+      
+
+      
+    
+      
+
+      
+      
+
+      
+    
+
+  
+
+  
+  
+  
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Montserrat:400,700%7CRoboto:400,400italic,700%7CRoboto+Mono&display=swap">
+  
+
+  
+  
+  
+  
+  <link rel="stylesheet" href="/css/academic.css">
+
+  
+
+
+
+
+  
+
+
+  
+
+  <link rel="manifest" href="/index.webmanifest">
+  <link rel="icon" type="image/png" href="/images/icon_hud03320d081f55857e6179906aee3769c_2658_32x32_fill_lanczos_center_3.png">
+  <link rel="apple-touch-icon" type="image/png" href="/images/icon_hud03320d081f55857e6179906aee3769c_2658_192x192_fill_lanczos_center_3.png">
+
+  <link rel="canonical" href="https://llrs.dev/post/2023/03/20/rtweet-starts-using-api-v2/">
+
+  
+  
+  
+  
+  
+    
+    
+  
+  
+  <meta property="twitter:card" content="summary">
+  
+  <meta property="og:site_name" content="B101nfo">
+  <meta property="og:url" content="https://llrs.dev/post/2023/03/20/rtweet-starts-using-api-v2/">
+  <meta property="og:title" content="Releasing rtweet 1.2.0 | B101nfo">
+  <meta property="og:description" content="News about rtweet 1.2.0 and its future."><meta property="og:image" content="img/map[gravatar:%!s(bool=false) shape:circle]">
+  <meta property="twitter:image" content="img/map[gravatar:%!s(bool=false) shape:circle]"><meta property="og:locale" content="en-us">
+  
+    
+      <meta property="article:published_time" content="2023-03-20T00:00:00&#43;00:00">
+    
+    <meta property="article:modified_time" content="2023-03-20T00:00:00&#43;00:00">
+  
+
+  
+
+
+    
+
+
+
+
+
+
+  
+
+
+
+
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "BlogPosting",
+  "mainEntityOfPage": {
+    "@type": "WebPage",
+    "@id": "https://llrs.dev/post/2023/03/20/rtweet-starts-using-api-v2/"
+  },
+  "headline": "Releasing rtweet 1.2.0",
+  
+  "datePublished": "2023-03-20T00:00:00Z",
+  "dateModified": "2023-03-20T00:00:00Z",
+  
+  "author": {
+    "@type": "Person",
+    "name": "Lluís Revilla Sancho"
+  },
+  
+  "publisher": {
+    "@type": "Organization",
+    "name": "B101nfo",
+    "logo": {
+      "@type": "ImageObject",
+      "url": "https://llrs.dev/images/icon_hud03320d081f55857e6179906aee3769c_2658_192x192_fill_lanczos_center_3.png"
+    }
+  },
+  "description": "News about rtweet 1.2.0 and its future."
+}
+</script>
+
+  
+
+  
+
+
+  
+
+
+  
+
+
+
+
+
+  <title>Releasing rtweet 1.2.0 | B101nfo</title>
+
+</head>
+
+<body id="top" data-spy="scroll" data-offset="70" data-target="#TableOfContents" >
+
+  <aside class="search-results" id="search">
+  <div class="container">
+    <section class="search-header">
+
+      <div class="row no-gutters justify-content-between mb-3">
+        <div class="col-6">
+          <h1>Search</h1>
+        </div>
+        <div class="col-6 col-search-close">
+          <a class="js-search" href="#"><i class="fas fa-times-circle text-muted" aria-hidden="true"></i></a>
+        </div>
+      </div>
+
+      <div id="search-box">
+        
+        <input name="q" id="search-query" placeholder="Search..." autocapitalize="off"
+        autocomplete="off" autocorrect="off" spellcheck="false" type="search">
+        
+      </div>
+
+    </section>
+    <section class="section-search-results">
+
+      <div id="search-hits">
+        
+      </div>
+
+    </section>
+  </div>
+</aside>
+
+
+  
+
+
+
+
+
+
+
+<nav class="navbar navbar-expand-lg navbar-light compensate-for-scrollbar" id="navbar-main">
+  <div class="container">
+
+    
+    <div class="d-none d-lg-inline-flex">
+      <a class="navbar-brand" href="/">B101nfo</a>
+    </div>
+    
+
+    
+    <button type="button" class="navbar-toggler" data-toggle="collapse"
+            data-target="#navbar-content" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
+    <span><i class="fas fa-bars"></i></span>
+    </button>
+    
+
+    
+    <div class="navbar-brand-mobile-wrapper d-inline-flex d-lg-none">
+      <a class="navbar-brand" href="/">B101nfo</a>
+    </div>
+    
+
+    
+    
+    <div class="navbar-collapse main-menu-item collapse justify-content-start" id="navbar-content">
+
+      
+      <ul class="navbar-nav d-md-inline-flex">
+        
+
+        
+
+        
+        
+        
+          
+        
+
+        
+        
+        
+        
+        
+        
+          
+          
+          
+            
+          
+          
+        
+
+        <li class="nav-item">
+          <a class="nav-link " href="/#about"><span>Home</span></a>
+        </li>
+
+        
+        
+
+        
+
+        
+        
+        
+
+        
+        
+        
+        
+        
+        
+
+        <li class="nav-item">
+          <a class="nav-link  active" href="/post"><span>Blog</span></a>
+        </li>
+
+        
+        
+
+        
+
+        
+        
+        
+
+        
+        
+        
+        
+        
+        
+
+        <li class="nav-item">
+          <a class="nav-link " href="/talk"><span>Talks</span></a>
+        </li>
+
+        
+        
+
+      
+
+        
+      </ul>
+    </div>
+
+    <ul class="nav-icons navbar-nav flex-row ml-auto d-flex pl-md-2">
+      
+      <li class="nav-item">
+        <a class="nav-link js-search" href="#"><i class="fas fa-search" aria-hidden="true"></i></a>
+      </li>
+      
+
+      
+      <li class="nav-item">
+        <a class="nav-link js-dark-toggle" href="#"><i class="fas fa-moon" aria-hidden="true"></i></a>
+      </li>
+      
+
+      
+
+    </ul>
+
+  </div>
+</nav>
+
+
+  <article class="article">
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+  
+  
+  
+<div class="article-container pt-3">
+  <h1>Releasing rtweet 1.2.0</h1>
+
+  
+
+  
+    
+
+
+<div class="article-metadata">
+
+  
+  
+  
+  
+  <div>
+    
+
+  
+  <span><a href="/authors/admin/">Lluís Revilla Sancho</a></span>
+  </div>
+  
+  
+
+  
+  <span class="article-date">
+    
+    
+      
+    
+    Mar 20, 2023
+  </span>
+  
+
+  
+
+  
+  <span class="middot-divider"></span>
+  <span class="article-reading-time">
+    4 min read
+  </span>
+  
+
+  
+  
+  
+
+  
+  
+  <span class="middot-divider"></span>
+  <span class="article-categories">
+    <i class="fas fa-folder mr-1"></i><a href="/categories/r/">r</a></span>
+  
+
+</div>
+
+    
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+</div>
+
+
+
+  <div class="article-container">
+
+    <div class="article-style">
+      
+
+
+<p>I’m very excited to announce that rtweet 1.2.0 is now available on GitHub! Install it by running:</p>
+<pre class="r"><code>devtools::install_github(&quot;ropensci/rtweet&quot;)</code></pre>
+<p>Then load it in a fresh session with:</p>
+<pre class="r"><code>library(rtweet)</code></pre>
+<div id="new-features" class="section level1">
+<h1>New features</h1>
+<p>This version adds many new endpoints to retrieve data from twitter:</p>
+<ul>
+<li><p>From lists</p></li>
+<li><p>From tweets</p></li>
+<li><p>About users</p></li>
+<li><p>Also, about statistics of your own content.</p></li>
+</ul>
+<p>You can read about them in the <a href="https://docs.ropensci.org/rtweet/news/index.html">NEWS</a>.</p>
+</div>
+<div id="authentication" class="section level1">
+<h1>Authentication</h1>
+<p>Besides fixing a problem preventing new users to use <code>auth_setup_default()</code>, in this release there is a new authentication mechanism.</p>
+<p>Some endpoints require a new authentication method not previously used by rtweet.
+This authentication mechanism requires setting up a client.<br />
+To support it, I have added some functions to create it, save it, and use it modelling the functions from <code>auth_*</code>.
+There is now one client provided by rtweet if you don’t want to configure your own:</p>
+<pre class="r"><code>client_setup_default()</code></pre>
+<p>Additionally, I briefly expanded the authentication vignette (<code>vignette("auth", "rtweet")</code>) to include a section about how to obtain the required credentials.
+Once you get them is pretty straight forward:</p>
+<pre class="r"><code>auth_oauth2 &lt;- rtweet_oauth2(app = &quot;my_awesome_app&quot;)</code></pre>
+<p>This mechanism is required by some functions which are of special interest: <code>user_self()</code>, <code>tweet_bookmarked()</code>, <code>user_blocked()</code>, and <code>user_timeline()</code>.</p>
+<p>Note that due to upstream reasons, the authentication is only valid for 2 hours.
+You will be asked to approve the client again after the 2 hours (and save it again!).</p>
+<p>We can set the authentication as we usually do:</p>
+<pre class="r"><code>auth_as(auth_oauth2)</code></pre>
+<p>And start retrieving our data in Twitter!</p>
+</div>
+<div id="new-functions" class="section level1">
+<h1>New functions</h1>
+<pre class="r"><code>me &lt;- user_self()
+bookmarked &lt;- user_bookmarks(me$id, n = 120)</code></pre>
+<p>rtweet will make as many requests as needed and automatically paginate the results.
+However, if you try this you might realize that the queries are slow.
+These are the limits imposed by Twitter.</p>
+<p>If you want to keep track of the progress of your query, you can use <code>verbose = TRUE</code>:</p>
+<pre class="r"><code>blocked &lt;- user_blocked(me$id, n = Inf, verbose = TRUE)
+timeline &lt;- user_timeline(me$id, n = 800, verbose = TRUE)</code></pre>
+<p>It will also store the data of the requests in a temporary file, in case you lose the connection you can still recover it.</p>
+<p>Some endpoints have a length limit on the accepted input:</p>
+<pre class="r"><code>bioconductor &lt;- user_by_username(&quot;Bioconductor&quot;)
+bioconductor_followers &lt;- user_followers(bioconductor$id, n = 200)
+us &lt;- user_search(ids = bioconductor_followers$id)</code></pre>
+<p>Errors are, in principle, easier to understand in these new functions, thanks to the messages provided:</p>
+<pre class="r"><code>user_blocked(bioconductor$id, n = Inf, verbose = TRUE)</code></pre>
+</div>
+<div id="other" class="section level1">
+<h1>Other</h1>
+<p>These new endpoints provide access to many data which only the default information is converted to a nice table.
+If you request more data, via expansions and fields: replies, information about the user of a tweet, … you will have to wait next release.<br />
+You can already get them but with <code>parse = FALSE</code>.
+My intention was to provide more parsing support in this release, but I think it is better to make more releases more often.</p>
+<p>The API also provides an endpoint to check if data stored is compliant with the Terms of Service.
+I started working on these endpoints after the streaming endpoints because they are important.</p>
+</div>
+<div id="side-story" class="section level1">
+<h1>Side story</h1>
+<p>With the deprecation of the streaming endpoints and the function <code>stream_tweets</code> I implemented the first three functions using Twitter’s API v2.
+They use a bearer token as authentication mechanism.</p>
+<p>Many endpoints of API v2 also use this authentication mechanism and made it easy to support them.</p>
+<p>But there was a petition to retrieve the bookmarked tweets.
+That endpoint required OAuth2 mechanism and didn’t allow the use of the bearer token.
+It is relevant because bookmarks are not provided with the data dump you can request from Twitter.
+This endpoint is the only automatic way to retrieve them from Twitter if you used them!</p>
+</div>
+<div id="final" class="section level1">
+<h1>Final</h1>
+<p>This update is the last update of rtweet.
+The <a href="https://twitter.com/TwitterDev/status/1641222782594990080">new API plans</a> make it impossible to continue developing and testing software like rtweet without substantial financial investment (at least USD$100/month).</p>
+<p>More importantly, this will restrict who can use the package.
+I think those few users still using rtweet might also afford to pay for support or development of new features.
+If you are one of them you can <a href="https://www.buymeacoffee.com/llrs">sponsor my work</a> in rtweet.</p>
+<p>I will remove the package from CRAN one month after the new API enters into effect (~ 1st July).
+Farewell Twitter.</p>
+</div>
+
+    </div>
+
+    
+
+
+
+
+
+  
+  
+
+<p class="edit-page">
+  <a href="https://github.com/llrs/blogR/edit/master/content/post/2023-03-20-rtweet-starts-using-api-v2/index.en.html">
+    <i class="fas fa-pen pr-2"></i>Edit this page
+  </a>
+</p>
+
+
+
+
+
+<div class="article-tags">
+  
+  <a class="badge badge-light" href="/tags/rtweet/">rtweet</a>
+  
+</div>
+
+
+
+<div class="share-box" aria-hidden="true">
+  <ul class="share">
+    
+      
+      
+      
+        
+      
+      
+      
+      <li>
+        <a href="https://twitter.com/intent/tweet?url=https://llrs.dev/post/2023/03/20/rtweet-starts-using-api-v2/&amp;text=Releasing%20rtweet%201.2.0" target="_blank" rel="noopener" class="share-btn-twitter">
+          <i class="fab fa-twitter"></i>
+        </a>
+      </li>
+    
+      
+      
+      
+        
+      
+      
+      
+      <li>
+        <a href="https://www.facebook.com/sharer.php?u=https://llrs.dev/post/2023/03/20/rtweet-starts-using-api-v2/&amp;t=Releasing%20rtweet%201.2.0" target="_blank" rel="noopener" class="share-btn-facebook">
+          <i class="fab fa-facebook"></i>
+        </a>
+      </li>
+    
+      
+      
+      
+        
+      
+      
+      
+      <li>
+        <a href="mailto:?subject=Releasing%20rtweet%201.2.0&amp;body=https://llrs.dev/post/2023/03/20/rtweet-starts-using-api-v2/" target="_blank" rel="noopener" class="share-btn-email">
+          <i class="fas fa-envelope"></i>
+        </a>
+      </li>
+    
+      
+      
+      
+        
+      
+      
+      
+      <li>
+        <a href="https://www.linkedin.com/shareArticle?url=https://llrs.dev/post/2023/03/20/rtweet-starts-using-api-v2/&amp;title=Releasing%20rtweet%201.2.0" target="_blank" rel="noopener" class="share-btn-linkedin">
+          <i class="fab fa-linkedin-in"></i>
+        </a>
+      </li>
+    
+      
+      
+      
+        
+      
+      
+      
+      <li>
+        <a href="https://web.whatsapp.com/send?text=Releasing%20rtweet%201.2.0%20https://llrs.dev/post/2023/03/20/rtweet-starts-using-api-v2/" target="_blank" rel="noopener" class="share-btn-whatsapp">
+          <i class="fab fa-whatsapp"></i>
+        </a>
+      </li>
+    
+  </ul>
+</div>
+
+
+
+
+
+
+
+
+
+
+
+
+  
+    
+    
+
+
+
+
+
+  
+  
+  
+    
+  
+  
+  
+  <div class="media author-card content-widget-hr">
+    
+      
+      <img class="avatar mr-3 avatar-circle" src="/authors/admin/avatar_hu41a1d1cb0c2270d3fd463263214d3794_229497_270x270_fill_lanczos_center_3.png" alt="Avatar">
+    
+
+    <div class="media-body">
+      <h5 class="card-title"><a href="https://llrs.dev/">Lluís Revilla Sancho</a></h5>
+      <h6 class="card-subtitle">Data scientist</h6>
+      <p class="card-text">Data scientist with interests in software quality, mostly R.</p>
+      <ul class="network-icon" aria-hidden="true">
+  
+    
+    
+    
+      
+    
+    
+    
+    
+    
+    <li>
+      <a href="mailto:lluis.revilla&#43;blog@gmail.com" >
+        <i class="fas fa-envelope"></i>
+      </a>
+    </li>
+  
+    
+    
+    
+      
+    
+    
+    
+    
+    
+      
+    
+    <li>
+      <a href="https://linkedin.com/in/lluisrevilla/" target="_blank" rel="noopener">
+        <i class="fab fa-linkedin-in"></i>
+      </a>
+    </li>
+  
+    
+    
+    
+      
+    
+    
+    
+    
+    
+      
+    
+    <li>
+      <a href="https://fosstodon.org/@Lluis_Revilla" target="_blank" rel="noopener">
+        <i class="fab fa-mastodon"></i>
+      </a>
+    </li>
+  
+    
+    
+    
+      
+    
+    
+    
+    
+    
+      
+    
+    <li>
+      <a href="https://github.com/llrs" target="_blank" rel="noopener">
+        <i class="fab fa-github"></i>
+      </a>
+    </li>
+  
+    
+    
+    
+    
+    
+    
+    
+      
+    
+    <li>
+      <a href="https://scholar.google.es/citations?user=Hin4p3MAAAAJ&amp;hl" target="_blank" rel="noopener">
+        <i class="ai ai-google-scholar"></i>
+      </a>
+    </li>
+  
+    
+    
+    
+    
+    
+    
+    
+      
+    
+    <li>
+      <a href="https://orcid.org/0000-0001-9747-2570" target="_blank" rel="noopener">
+        <i class="ai ai-orcid"></i>
+      </a>
+    </li>
+  
+    
+    
+    
+      
+    
+    
+    
+    
+    
+      
+    
+    <li>
+      <a href="https://www.buymeacoffee.com/llrs" target="_blank" rel="noopener">
+        <i class="fas fa-pizza-slice"></i>
+      </a>
+    </li>
+  
+</ul>
+
+    </div>
+  </div>
+
+
+  
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <div class="article-widget content-widget-hr">
+    <h3>Related</h3>
+    <ul>
+      
+      <li><a href="/post/2023/02/16/rtweet-future/">rtweet future</a></li>
+      
+      <li><a href="/post/2022/07/04/rtweet-1-0-0/">Upgrading rtweet to 1.0.2</a></li>
+      
+    </ul>
+  </div>
+  
+
+
+
+  </div>
+</article>
+
+      
+
+    
+    
+    
+      <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.4.1/jquery.min.js" integrity="sha256-CSXorXvZcTkaix6Yvo6HppcZGetbYMGWSFlBw8HfCJo=" crossorigin="anonymous"></script>
+      <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery.imagesloaded/4.1.4/imagesloaded.pkgd.min.js" integrity="sha256-lqvxZrPLtfffUl2G/e7szqSvPBILGbwmsGE1MKlOi0Q=" crossorigin="anonymous"></script>
+      <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery.isotope/3.0.6/isotope.pkgd.min.js" integrity="sha256-CBrpuqrMhXwcLLUd5tvQ4euBHCdh7wGlDfNz8vbu/iI=" crossorigin="anonymous"></script>
+      <script src="https://cdnjs.cloudflare.com/ajax/libs/fancybox/3.5.7/jquery.fancybox.min.js" integrity="sha256-yt2kYMy0w8AbtF89WXb2P1rfjcP/HTHLT7097U8Y5b8=" crossorigin="anonymous"></script>
+
+      
+
+      
+        
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.18.1/highlight.min.js" integrity="sha256-eOgo0OtLL4cdq7RdwRUiGKLX9XsIJ7nGhWEKbohmVAQ=" crossorigin="anonymous"></script>
+        
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.18.1/languages/r.min.js"></script>
+        
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.18.1/languages/phython.min.js"></script>
+        
+      
+
+    
+
+    
+    
+
+    
+    
+    <script>const code_highlighting = true;</script>
+    
+
+    
+    
+    <script>const isSiteThemeDark = false;</script>
+    
+
+    
+    
+    
+    
+    
+    
+    <script>
+      const search_config = {"indexURI":"/index.json","minLength":1,"threshold":0.3};
+      const i18n = {"no_results":"No results found","placeholder":"Search...","results":"results found"};
+      const content_type = {
+        'post': "Posts",
+        'project': "Projects",
+        'publication' : "Publications",
+        'talk' : "Talks"
+        };
+    </script>
+    
+
+    
+    
+
+    
+    
+    <script id="search-hit-fuse-template" type="text/x-template">
+      <div class="search-hit" id="summary-{{key}}">
+      <div class="search-hit-content">
+        <div class="search-hit-name">
+          <a href="{{relpermalink}}">{{title}}</a>
+          <div class="article-metadata search-hit-type">{{type}}</div>
+          <p class="search-hit-description">{{snippet}}</p>
+        </div>
+      </div>
+      </div>
+    </script>
+    
+
+    
+    
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/fuse.js/3.2.1/fuse.min.js" integrity="sha256-VzgmKYmhsGNNN4Ph1kMW+BjoYJM2jV5i4IlFoeZA9XI=" crossorigin="anonymous"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/mark.js/8.11.1/jquery.mark.min.js" integrity="sha256-4HLtjeVgH0eIB3aZ9mLYF6E8oU5chNdjU6p6rrXpl9U=" crossorigin="anonymous"></script>
+    
+
+    
+    
+
+    
+    
+
+    
+    
+    
+    
+    
+    
+    
+    
+    
+      
+    
+    
+    
+    
+    <script src="/js/academic.min.6f1005d1a84220e2f466ff3d8e712f31.js"></script>
+
+    
+
+
+
+
+
+
+  
+  
+  <div class="container">
+    <footer class="site-footer">
+  
+  <p class="powered-by">
+    
+      <a href="/privacy/">Privacy Policy</a>
+    
+    
+  </p>
+  
+
+  <p class="powered-by">
+    If it is code you can copy and reuse (MIT) if it is text, please cite and reuse CC-BY 2026. &middot; 
+
+    Powered by the
+    <a href="https://sourcethemes.com/academic/" target="_blank" rel="noopener">Academic theme</a> for
+    <a href="https://gohugo.io" target="_blank" rel="noopener">Hugo</a>.
+
+    
+    <span class="float-right" aria-hidden="true">
+      <a href="#" class="back-to-top">
+        <span class="button_icon">
+          <i class="fas fa-chevron-up fa-2x"></i>
+        </span>
+      </a>
+    </span>
+    
+  </p>
+</footer>
+
+  </div>
+  
+
+  
+<div id="modal" class="modal fade" role="dialog">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title">Cite</h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+        <pre><code class="tex hljs"></code></pre>
+      </div>
+      <div class="modal-footer">
+        <a class="btn btn-outline-primary my-1 js-copy-cite" href="#" target="_blank">
+          <i class="fas fa-copy"></i> Copy
+        </a>
+        <a class="btn btn-outline-primary my-1 js-download-cite" href="#" target="_blank">
+          <i class="fas fa-download"></i> Download
+        </a>
+        <div id="modal-error"></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+</body>
+</html>

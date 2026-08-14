@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes" ?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>NHS-R | B101nfo</title>
+    <link>https://llrs.dev/tags/nhs-r/</link>
+      <atom:link href="https://llrs.dev/tags/nhs-r/index.xml" rel="self" type="application/rss+xml" />
+    <description>NHS-R</description>
+    <generator>Source Themes Academic (https://sourcethemes.com/academic/)</generator><language>en-us</language><copyright>If it is code you can copy and reuse (MIT) if it is text, please cite and reuse CC-BY 2026.</copyright><lastBuildDate>Thu, 11 Nov 2021 00:00:00 +0000</lastBuildDate>
+    <image>
+      <url>img/map[gravatar:%!s(bool=false) shape:circle]</url>
+      <title>NHS-R</title>
+      <link>https://llrs.dev/tags/nhs-r/</link>
+    </image>
+    
+    <item>
+      <title>Improving (analysis) process: developing packages</title>
+      <link>https://llrs.dev/talk/nhsr-2021-developing-packages/</link>
+      <pubDate>Thu, 11 Nov 2021 00:00:00 +0000</pubDate>
+      <guid>https://llrs.dev/talk/nhsr-2021-developing-packages/</guid>
+      <description>
+&lt;script src=&#34;https://llrs.dev/talk/nhsr-2021-developing-packages/index.en_files/header-attrs/header-attrs.js&#34;&gt;&lt;/script&gt;
+
+
+&lt;p&gt;I was invited to give this talk shortly after &lt;a href=&#34;https://llrs.dev/talk/user-2021/&#34;&gt;my talk at useR!2021&lt;/a&gt;.
+I was very nervous because I would like to have such a community on Spain and work together with them.&lt;/p&gt;
+&lt;p&gt;I presented a about how R can be used on the public medical sector to enhance and improve analysis and their reproducibility.&lt;/p&gt;
+</description>
+    </item>
+    
+  </channel>
+</rss>

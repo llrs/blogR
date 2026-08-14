@@ -1,0 +1,618 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes" ?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>news | B101nfo</title>
+    <link>https://llrs.dev/categories/news/</link>
+      <atom:link href="https://llrs.dev/categories/news/index.xml" rel="self" type="application/rss+xml" />
+    <description>news</description>
+    <generator>Source Themes Academic (https://sourcethemes.com/academic/)</generator><language>en-us</language><copyright>If it is code you can copy and reuse (MIT) if it is text, please cite and reuse CC-BY 2026.</copyright><lastBuildDate>Sun, 09 Apr 2023 00:00:00 +0000</lastBuildDate>
+    <image>
+      <url>img/map[gravatar:%!s(bool=false) shape:circle]</url>
+      <title>news</title>
+      <link>https://llrs.dev/categories/news/</link>
+    </image>
+    
+    <item>
+      <title>experDesign: follow up</title>
+      <link>https://llrs.dev/post/2023/04/09/experdesign-follow-up/</link>
+      <pubDate>Sun, 09 Apr 2023 00:00:00 +0000</pubDate>
+      <guid>https://llrs.dev/post/2023/04/09/experdesign-follow-up/</guid>
+      <description>
+
+
+&lt;p&gt;I am happy to announce a new release of experDesign.
+Install it from CRAN with:&lt;/p&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;install.packages(&amp;quot;experDesign&amp;quot;)
+library(&amp;quot;experDesign&amp;quot;)&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;This new release has focused in more tricky aspects when designing an experiment:&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;Checking the samples of your experiment.&lt;/li&gt;
+&lt;li&gt;How to continue stratifying your conditions after some initial batch.&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;These functions should be used before carrying out anything once you have your samples collected.
+You can use these functions and make an informed decision of what might happen with your experiment.&lt;/p&gt;
+&lt;div id=&#34;checking-your-samples&#34; class=&#34;section level1&#34;&gt;
+&lt;h1&gt;Checking your samples&lt;/h1&gt;
+&lt;p&gt;The new function &lt;code&gt;check_data()&lt;/code&gt; will warn you if it finds some known issues with your data.&lt;/p&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;library(&amp;quot;experDesign&amp;quot;)
+library(&amp;quot;MASS&amp;quot;)&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;If we take the survey dataset from the MASS package we can see that it has some issues:&lt;/p&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;data(survey, package = &amp;quot;MASS&amp;quot;)
+check_data(survey)
+## Warning: Two categorical variables don&amp;#39;t have all combinations.
+## Warning: Some values are missing.
+## Warning: There is a combination of categories with no replicates; i.e. just one
+## sample.
+## [1] FALSE&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;While if we fabricate our own dataset we might realize we have a problem&lt;/p&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;rdata &amp;lt;- expand.grid(sex = c(&amp;quot;M&amp;quot;, &amp;quot;F&amp;quot;), class = c(&amp;quot;lower&amp;quot;, &amp;quot;median&amp;quot;, &amp;quot;high&amp;quot;))
+stopifnot(&amp;quot;Same samples/rows as combinations of classes&amp;quot; = nrow(rdata) == 2*3)
+check_data(rdata)
+## Warning: There is a combination of categories with no replicates; i.e. just one
+## sample.
+## [1] FALSE
+# We create some new samples with the same conditions
+rdata2 &amp;lt;- rbind(rdata, rdata)
+check_data(rdata2)
+## [1] TRUE&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;One might decide to go ahead with what is available or use only some of those samples or wait to collect more samples for the experiment&lt;/p&gt;
+&lt;/div&gt;
+&lt;div id=&#34;follow-up&#34; class=&#34;section level1&#34;&gt;
+&lt;h1&gt;Follow up&lt;/h1&gt;
+&lt;p&gt;Imagine you have 100 samples that you distribute in 4 batches of 25 samples each.
+Later, you collect 80 more samples to analyze.
+You want these new samples to be analyzed together with those previous 100 samples.
+Will it be possible? How should you distribute your new samples in groups of 25?&lt;/p&gt;
+&lt;p&gt;Using the same dataset from &lt;code&gt;MASS&lt;/code&gt; imagine if we first collected 118 observations and later 119 more:&lt;/p&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;survey1 &amp;lt;- survey[1:118, ]
+survey2 &amp;lt;- survey[119:nrow(survey), ]
+# Using low number of iterations to speed the process 
+# you should even use higher number than the default
+fu &amp;lt;- follow_up(survey1, survey2, size_subset = 50, iterations = 10)
+## Warning: There are some problems with the data.
+## Warning: There are some problems with the new samples and the batches.
+## Warning: There are some problems with the new data.
+## Warning: There are some problems with the old data.&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;Following the previous new function it reports if there are problems with the observations.
+One can check each collection with &lt;code&gt;check_data&lt;/code&gt; to know more about the problems found.&lt;/p&gt;
+&lt;p&gt;If you have already performed the experiment on your observations you can also check the distribution:&lt;/p&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;# Create the first batch
+variables &amp;lt;- c(&amp;quot;Sex&amp;quot;, &amp;quot;Smoke&amp;quot;, &amp;quot;Age&amp;quot;)
+survey1 &amp;lt;- survey1[, variables]
+index1 &amp;lt;- design(survey1, size_subset = 50, iterations = 10)
+## Warning: There might be some problems with the data use check_data().
+r_survey &amp;lt;- inspect(index1, survey1)
+# Create the second batch with &amp;quot;new&amp;quot; students
+survey2 &amp;lt;- survey2[, variables]
+survey2$batch &amp;lt;- NA
+# Prepare the follow up
+all_classroom &amp;lt;- rbind(r_survey, survey2)
+fu2 &amp;lt;- follow_up2(all_classroom, size_subset = 50, iterations = 10)
+## Warning: There are some problems with the data.
+## Warning: There are some problems with the new samples and the batches.
+## Warning: There are some problems with the new data.
+## Warning: There are some problems with the old data.
+tail(fu2)
+## [1] &amp;quot;NewSubset2&amp;quot; &amp;quot;NewSubset2&amp;quot; &amp;quot;NewSubset2&amp;quot; &amp;quot;NewSubset2&amp;quot; &amp;quot;NewSubset2&amp;quot;
+## [6] &amp;quot;NewSubset3&amp;quot;&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;Using this function will help to decide which new observations go to which new batches.&lt;/p&gt;
+&lt;/div&gt;
+&lt;div id=&#34;closing-remarks&#34; class=&#34;section level1&#34;&gt;
+&lt;h1&gt;Closing remarks&lt;/h1&gt;
+&lt;p&gt;The famous quote from Fisher goes:&lt;/p&gt;
+&lt;blockquote&gt;
+&lt;p&gt;“To consult the statistician after an experiment is finished is often merely to ask him to conduct a &lt;em&gt;post mortem&lt;/em&gt; examination. He can perhaps say what the experiment died of.”&lt;/p&gt;
+&lt;/blockquote&gt;
+&lt;p&gt;This emphasizes the importance of involving a statistician early on in the experimental design process.&lt;br /&gt;
+Unfortunately, in some cases, it may be too late to involve a statistician in the experimental design process or the reality of unforeseen circumstances messed the design of your carefully planned experiment.&lt;/p&gt;
+&lt;p&gt;My aim with this package is to provide practical tools for statisticians, bioinformaticians, and anyone who works with data.
+These tools are designed to be easy to use and can be used to analyze data in a variety of contexts.
+Let me know if it is helpful in your case.&lt;/p&gt;
+&lt;div id=&#34;reproducibility&#34; class=&#34;section level3&#34;&gt;
+&lt;h3&gt;Reproducibility&lt;/h3&gt;
+&lt;details&gt;
+&lt;pre&gt;&lt;code&gt;## ─ Session info ───────────────────────────────────────────────────────────────────────────────────────────────────────
+##  setting  value
+##  version  R version 4.2.2 (2022-10-31)
+##  os       Ubuntu 22.04.2 LTS
+##  system   x86_64, linux-gnu
+##  ui       X11
+##  language en_US
+##  collate  en_US.UTF-8
+##  ctype    en_US.UTF-8
+##  tz       Europe/Madrid
+##  date     2023-04-09
+##  pandoc   2.19.2 @ /usr/lib/rstudio/resources/app/bin/quarto/bin/tools/ (via rmarkdown)
+## 
+## ─ Packages ───────────────────────────────────────────────────────────────────────────────────────────────────────────
+##  package     * version  date (UTC) lib source
+##  blogdown      1.16     2022-12-13 [1] CRAN (R 4.2.2)
+##  bookdown      0.33     2023-03-06 [1] CRAN (R 4.2.2)
+##  bslib         0.4.2    2022-12-16 [1] CRAN (R 4.2.2)
+##  cachem        1.0.7    2023-02-24 [1] CRAN (R 4.2.2)
+##  cli           3.6.1    2023-03-23 [1] CRAN (R 4.2.2)
+##  digest        0.6.31   2022-12-11 [1] CRAN (R 4.2.2)
+##  evaluate      0.20     2023-01-17 [1] CRAN (R 4.2.2)
+##  experDesign * 0.2.0    2023-04-05 [1] CRAN (R 4.2.2)
+##  fastmap       1.1.1    2023-02-24 [1] CRAN (R 4.2.2)
+##  htmltools     0.5.4    2022-12-07 [1] CRAN (R 4.2.2)
+##  jquerylib     0.1.4    2021-04-26 [1] CRAN (R 4.2.2)
+##  jsonlite      1.8.4    2022-12-06 [1] CRAN (R 4.2.2)
+##  knitr         1.42     2023-01-25 [1] CRAN (R 4.2.2)
+##  MASS        * 7.3-58.1 2022-08-03 [2] CRAN (R 4.2.2)
+##  R6            2.5.1    2021-08-19 [1] CRAN (R 4.2.2)
+##  rlang         1.1.0    2023-03-14 [1] CRAN (R 4.2.2)
+##  rmarkdown     2.20     2023-01-19 [1] CRAN (R 4.2.2)
+##  rstudioapi    0.14     2022-08-22 [1] CRAN (R 4.2.2)
+##  sass          0.4.5    2023-01-24 [1] CRAN (R 4.2.2)
+##  sessioninfo   1.2.2    2021-12-06 [1] CRAN (R 4.2.2)
+##  xfun          0.37     2023-01-31 [1] CRAN (R 4.2.2)
+##  yaml          2.3.7    2023-01-23 [1] CRAN (R 4.2.2)
+## 
+##  [1] /home/lluis/bin/R/4.2.2
+##  [2] /opt/R/4.2.2/lib/R/library
+## 
+## ──────────────────────────────────────────────────────────────────────────────────────────────────────────────────────&lt;/code&gt;&lt;/pre&gt;
+&lt;/details&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+</description>
+    </item>
+    
+    <item>
+      <title>Writing a thesis with bookdown</title>
+      <link>https://llrs.dev/post/2022/05/09/writing-thesis-bookdown/</link>
+      <pubDate>Mon, 09 May 2022 00:00:00 +0000</pubDate>
+      <guid>https://llrs.dev/post/2022/05/09/writing-thesis-bookdown/</guid>
+      <description>
+
+
+&lt;p&gt;On this post I am documenting the experiences I had writing my &lt;a href=&#34;https://thesis.llrs.dev&#34;&gt;PhD thesis&lt;/a&gt; with bookdown.
+I made the thesis in web and pdf format (and epub) to make more available the thesis.
+Most of the experiences and advise I’ll share here are based on my experiences to improve the pdf format.
+It is the most important format as ultimately is what I’m going to use for printing.&lt;/p&gt;
+&lt;p&gt;First of all you should know there is a package &lt;a href=&#34;https://github.com/ismayc/thesisdown&#34;&gt;thesisdown&lt;/a&gt; with a few templates for some universities.
+If yours is there, or if you want to learn how are they you can have a look at the files.&lt;br /&gt;
+On my case I didn’t have any template and the university guidelines are not long, (have two compulsory pages at the beginning and have 5 sections).
+That’s why I tweaked the default format inspired by the recent thesis defended on my group.&lt;/p&gt;
+&lt;p&gt;Well, without further delay let’s dive in things I learned:&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;p&gt;&lt;a href=&#34;#captions&#34;&gt;Captions&lt;/a&gt;&lt;/p&gt;&lt;/li&gt;
+&lt;li&gt;&lt;p&gt;&lt;a href=&#34;#chapter-thumb&#34;&gt;Chapter thumb&lt;/a&gt;&lt;/p&gt;&lt;/li&gt;
+&lt;li&gt;&lt;p&gt;&lt;a href=&#34;#placing-options&#34;&gt;Placing options&lt;/a&gt;&lt;/p&gt;&lt;/li&gt;
+&lt;li&gt;&lt;p&gt;&lt;a href=&#34;#index&#34;&gt;Indexes&lt;/a&gt;&lt;/p&gt;&lt;/li&gt;
+&lt;li&gt;&lt;p&gt;&lt;a href=&#34;#toft&#34;&gt;Table of figures and tables&lt;/a&gt;&lt;/p&gt;&lt;/li&gt;
+&lt;li&gt;&lt;p&gt;&lt;a href=&#34;#acronyms&#34;&gt;Acronyms&lt;/a&gt;&lt;/p&gt;&lt;/li&gt;
+&lt;li&gt;&lt;p&gt;&lt;a href=&#34;#placing-floats&#34;&gt;Placing floats&lt;/a&gt;&lt;/p&gt;&lt;/li&gt;
+&lt;li&gt;&lt;p&gt;&lt;a href=&#34;#github-actions&#34;&gt;Github actions&lt;/a&gt;&lt;/p&gt;&lt;/li&gt;
+&lt;li&gt;&lt;p&gt;&lt;a href=&#34;#empty-pages&#34;&gt;Empty pages&lt;/a&gt;&lt;/p&gt;&lt;/li&gt;
+&lt;li&gt;&lt;p&gt;&lt;a href=&#34;#title-pages&#34;&gt;Title pages&lt;/a&gt;&lt;/p&gt;&lt;/li&gt;
+&lt;li&gt;&lt;p&gt;&lt;a href=&#34;#page-numbers&#34;&gt;Page numbers&lt;/a&gt;&lt;/p&gt;&lt;/li&gt;
+&lt;li&gt;&lt;p&gt;&lt;a href=&#34;#include-pdfs&#34;&gt;Include pdfs&lt;/a&gt;&lt;/p&gt;&lt;/li&gt;
+&lt;li&gt;&lt;p&gt;&lt;a href=&#34;#running-titles&#34;&gt;Running titles&lt;/a&gt;&lt;/p&gt;&lt;/li&gt;
+&lt;li&gt;&lt;p&gt;&lt;a href=&#34;#merging-pdfs&#34;&gt;Merging pdfs&lt;/a&gt;&lt;/p&gt;&lt;/li&gt;
+&lt;li&gt;&lt;p&gt;&lt;a href=&#34;#reducing-pdf-size&#34;&gt;Reducing pdf size&lt;/a&gt;&lt;/p&gt;&lt;/li&gt;
+&lt;/ul&gt;
+&lt;div id=&#34;important&#34; class=&#34;section level2&#34;&gt;
+&lt;h2&gt;Important&lt;/h2&gt;
+&lt;div id=&#34;captions&#34; class=&#34;section level3&#34;&gt;
+&lt;h3&gt;Captions&lt;/h3&gt;
+&lt;p&gt;&lt;code&gt;knitr::kable&lt;/code&gt; places the captions on tables at the top (by design, see &lt;a href=&#34;https://github.com/yihui/knitr/issues/1189&#34;&gt;issue #1189&lt;/a&gt;), while knitr places the captions on the bottom of figures.
+So if you want to have all the captions below the element you’ll need to use a different package for it (&lt;code&gt;booktable&lt;/code&gt;, or others).&lt;/p&gt;
+&lt;p&gt;If you want to have short captions for an easy readable table of figures and table of tables you’ll need to use &lt;code&gt;kable(short.caption = &#34;TOC&#34;, caption = &#34;Long caption below the table&#34;).&lt;/code&gt;&lt;/p&gt;
+&lt;p&gt;In addition, on &lt;code&gt;kable&lt;/code&gt; if you use something like Häsler you’ll need to convert this “ä” to “\u00E4”.&lt;/p&gt;
+&lt;p&gt;I also wanted to highlight and differentiate the captions.
+I ended up using the &lt;code&gt;caption&lt;/code&gt; package:&lt;/p&gt;
+&lt;pre class=&#34;latex&#34;&gt;&lt;code&gt;\usepackage{caption}
+% Set in bold the numbering of tables and chapters
+\captionsetup{labelfont=bf,width=\textwidth}&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;The &lt;code&gt;\textwidh&lt;/code&gt; is to make more with the captions otherwise they just spans the size of the table or figure.&lt;/p&gt;
+&lt;/div&gt;
+&lt;div id=&#34;repeating-text&#34; class=&#34;section level3&#34;&gt;
+&lt;h3&gt;Repeating text&lt;/h3&gt;
+&lt;p&gt;If you find yourself repeating some text to explain some figures, legends or tables you can use &lt;a href=&#34;https://bookdown.org/yihui/bookdown/markdown-extensions-by-bookdown.html#text-references&#34;&gt;text references&lt;/a&gt;.&lt;/p&gt;
+&lt;pre&gt;&lt;code&gt;(ref:foo) Define a text reference **here**. &lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;Then you can use &lt;code&gt;(ref:foo)&lt;/code&gt; to repeat the same text.&lt;/p&gt;
+&lt;p&gt;Although formatting cannot be applied afterwards (i.e. &lt;code&gt;**(ref:foo)**&lt;/code&gt;) it is handy to just write once and avoid repetition (And also if to keep backwards compatibility you can’t use the new special comment &lt;code&gt;#|&lt;/code&gt; to specify chunk options).&lt;/p&gt;
+&lt;/div&gt;
+&lt;div id=&#34;placing-options&#34; class=&#34;section level3&#34;&gt;
+&lt;h3&gt;Placing options&lt;/h3&gt;
+&lt;p&gt;Many latex instructions go to the &lt;code&gt;index.Rmd&lt;/code&gt; file.&lt;/p&gt;
+&lt;p&gt;The once I included are:&lt;/p&gt;
+&lt;pre&gt;&lt;code&gt;split_by: chapter
+link-citations: true 
+always_allow_html: true
+colorlinks: yes
+# https://bookdown.org/yihui/rmarkdown-cookbook/latex-variables.html
+# links-as-notes: true # Only activate for actual printing
+fontfamily: libertine
+fontsize: 12pt
+papersize: a4 # The printed size of the thesis
+acronyms:
+  loa_title: &amp;quot;&amp;quot;
+  insert_loa: false
+  sorting: usage
+  include_unused: false
+  fromfile: ./style/acronyms.yml
+geometry:
+ - top=25.4mm
+ - bottom=25.4mm
+ - left=25.4mm
+ - right=25.4mm
+ - bindingoffset=6.4mm
+ - asymmetric
+classoption: 
+  - twoside
+  - openright
+lot: yes
+lof: yes&lt;/code&gt;&lt;/pre&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;p&gt;&lt;code&gt;split_by&lt;/code&gt; in the html format how to move to the next section.&lt;/p&gt;&lt;/li&gt;
+&lt;li&gt;&lt;p&gt;&lt;code&gt;link-citations&lt;/code&gt; Add a link to the citation?&lt;/p&gt;&lt;/li&gt;
+&lt;li&gt;&lt;p&gt;&lt;code&gt;colorlinks&lt;/code&gt; If links should have a color&lt;/p&gt;&lt;/li&gt;
+&lt;li&gt;&lt;p&gt;&lt;code&gt;links-as-notes&lt;/code&gt; Instead of having hyperlinks have them included as notes.
+It is useful for printing where the reader doesn’t have the option to click a link but might be interested in knowing more.&lt;/p&gt;&lt;/li&gt;
+&lt;li&gt;&lt;p&gt;&lt;code&gt;fontfamily&lt;/code&gt; and &lt;code&gt;fontsize&lt;/code&gt; decide which font and size will be used.&lt;/p&gt;&lt;/li&gt;
+&lt;li&gt;&lt;p&gt;&lt;code&gt;papersize&lt;/code&gt; this chooses the available space and greatly affects the position of figures and tables, which can float on the text according to LaTeX algorithm.&lt;/p&gt;&lt;/li&gt;
+&lt;li&gt;&lt;p&gt;&lt;code&gt;acronyms&lt;/code&gt; Configuration of the &lt;a href=&#34;#acronyms&#34;&gt;acronyms&lt;/a&gt;&lt;/p&gt;&lt;/li&gt;
+&lt;li&gt;&lt;p&gt;&lt;code&gt;geometry&lt;/code&gt; Defines the margins, consider that on books the central zone will not be readable.
+The &lt;code&gt;bindingoffset&lt;/code&gt; adds some space to make it easier reading.&lt;/p&gt;&lt;/li&gt;
+&lt;li&gt;&lt;p&gt;&lt;code&gt;classoption&lt;/code&gt; Options for the book format&lt;/p&gt;&lt;/li&gt;
+&lt;li&gt;&lt;p&gt;&lt;code&gt;lot&lt;/code&gt; and &lt;code&gt;lof&lt;/code&gt; indicate if list of tables (lot) and list of figures (lof) should be included on the pdf output.&lt;/p&gt;&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;The &lt;code&gt;book_filename&lt;/code&gt; if present on index.Rmd is overwritten by what is on &lt;code&gt;_bookdown.yml&lt;/code&gt; but be careful also on what goes to &lt;code&gt;_bookdown.yml&lt;/code&gt; and on the specific format on &lt;code&gt;_output.yml&lt;/code&gt; .&lt;/p&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;div id=&#34;nice-little-tricks&#34; class=&#34;section level2&#34;&gt;
+&lt;h2&gt;Nice little tricks&lt;/h2&gt;
+&lt;div id=&#34;dedication&#34; class=&#34;section level3&#34;&gt;
+&lt;h3&gt;Dedication&lt;/h3&gt;
+&lt;p&gt;Looking at the source code of the &lt;a href=&#34;https://github.com/rstudio/bookdown/blob/main/inst/examples/latex/before_body.tex&#34;&gt;bookdown book&lt;/a&gt; I found that the correct way was to use before_body option.&lt;/p&gt;
+&lt;/div&gt;
+&lt;div id=&#34;chapter-thumb&#34; class=&#34;section level3&#34;&gt;
+&lt;h3&gt;Chapter thumb&lt;/h3&gt;
+&lt;p&gt;One thing I liked from other thesis is the ability to have on the printed edition a little mark on the side of the page to find a section.&lt;/p&gt;
+&lt;p&gt;My first search showed that it &lt;a href=&#34;https://tex.stackexchange.com/questions/113323/how-can-one-put-a-marker-to-every-page-in-a-chapter&#34;&gt;was possible&lt;/a&gt;, but I didn’t want to load the &lt;code&gt;tikz&lt;/code&gt; package.
+I ended up using &lt;a href=&#34;https://tex.stackexchange.com/questions/262950/modify-chapter-thumb-for-appendix&#34;&gt;this solution&lt;/a&gt; after adding and modifying the colors, changing the size and position.&lt;/p&gt;
+&lt;pre class=&#34;latex&#34;&gt;&lt;code&gt;\usepackage[scale=1,angle=0,opacity=1,contents={}]{background}
+\usetikzlibrary{calc}
+\usepackage{ifthen}
+\usepackage{lipsum}
+% auxiliary counter
+\newcounter{chapshift}
+% the list of colors to be used (add more if needed)
+\newcommand\BoxColor{%
+  \ifcase\thechapshift blue!30\or red!30\or olive!30\or magenta!30\or teal!30\or lime!30\or orange!30\or violet!30\or brown!30\else yellow!30\fi}
+% the main command; the mandatory argument sets the color of the vertical box
+\newcommand\ChapFrame{%
+  \def\TitleText{\leftmark}%
+  \AddEverypageHook{%
+    \ifthenelse{\isodd{\value{page}}}
+      {\backgroundsetup{
+        contents={%
+          \begin{tikzpicture}[overlay,remember picture]
+          \node[fill=\BoxColor,inner sep=0pt,rectangle,text width=1cm,
+            text height=3cm,align=center,anchor=north east]
+          at ($ (current page.north east) + (-0cm,- 3*\thechapshift cm) $)
+          % {\rotatebox{90}{\parbox{4cm}{%
+          %   \centering\textcolor{black}{\scshape\thechapshift}}}};
+          {};
+          \end{tikzpicture}
+        }%
+      }
+    }
+    {\backgroundsetup{
+      contents={%
+        \begin{tikzpicture}[overlay,remember picture]
+        \node[fill=\BoxColor,inner sep=0pt,rectangle,text width=1cm,
+          text height=3cm,align=center,anchor=north west]
+        at ($ (current page.north west) + (-0cm,-3*\thechapshift cm) $)
+        % {\rotatebox{90}{\parbox{4cm}{%
+        %   \centering\textcolor{black}{\scshape\thechapshift}}}};
+        {};
+        \end{tikzpicture}
+      }
+    }
+  }
+\BgMaterial}%
+\stepcounter{chapshift}
+}&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;This code basically means that I need to add &lt;code&gt;\ChapFrame&lt;/code&gt; when I want the chapter thumb (I didn’t know the name before searching this).
+Once started it changes colors according to &lt;code&gt;\chapshift&lt;/code&gt; which is automatically incremented by &lt;code&gt;\ChapFrame&lt;/code&gt;.
+I also set to change position according to &lt;code&gt;\thechapshift&lt;/code&gt; so that they make a stair.&lt;/p&gt;
+&lt;p&gt;The code basically changes the position of the mark if the page is even or odd, so that it is always on the outer side of the booklet.
+The size is &lt;code&gt;width=1cm, height=3cm&lt;/code&gt; with text inside it.
+If you want text I recommend either short titles or the chapter number &lt;code&gt;\chapter&lt;/code&gt; to ensure it is readable.&lt;/p&gt;
+&lt;p&gt;A tiny trick I learned was to reset the counter with &lt;code&gt;\afterpage{\setcounter{chapshift}{0}}&lt;/code&gt; after the bibliography so that the appendix would use the same mark from the beginning.
+If you want different colors for the appendix you could just create a new counter and a new &lt;code&gt;\BoxColor&lt;/code&gt;&lt;/p&gt;
+&lt;/div&gt;
+&lt;div id=&#34;index&#34; class=&#34;section level3&#34;&gt;
+&lt;h3&gt;Index with index on it&lt;/h3&gt;
+&lt;p&gt;I wanted to have the table of contents to show were it began, simply because with all the added page on the front and white pages it might be hard to find it.
+It is also handy when using the outline of the pdf version to go back the the index to then move to another section.&lt;/p&gt;
+&lt;p&gt;Simply loading the &lt;code&gt;\tocbibind&lt;/code&gt; packages was enough:&lt;/p&gt;
+&lt;pre class=&#34;latex&#34;&gt;&lt;code&gt;\usepackage{tocbibind}&lt;/code&gt;&lt;/pre&gt;
+&lt;div class=&#34;figure&#34;&gt;
+&lt;img src=&#34;images/screenshot_index.png&#34; alt=&#34;&#34; /&gt;
+&lt;p class=&#34;caption&#34;&gt;Screenshot of the outline and the real index.
+The outline has the same content as the real index.&lt;/p&gt;
+&lt;/div&gt;
+&lt;p&gt;Note: I found a “bug” were the appendix link goes to the bibliography (the previous chapter) instead of the correctly displayed page.&lt;/p&gt;
+&lt;/div&gt;
+&lt;div id=&#34;toft&#34; class=&#34;section level3&#34;&gt;
+&lt;h3&gt;Table of figures and tables&lt;/h3&gt;
+&lt;p&gt;It was not required but I wanted a table of tables and a table of figures, to make it easier go to results of the thesis.
+To add them I used the &lt;code&gt;tocbibind&lt;/code&gt; package that automatically adds it (and the options on &lt;code&gt;index.Rmd&lt;/code&gt; wasn’t sure from the &lt;a href=&#34;https://tex.stackexchange.com/a/48512/178206&#34;&gt;answer&lt;/a&gt; I found online).&lt;/p&gt;
+&lt;pre class=&#34;latex&#34;&gt;&lt;code&gt;\usepackage{tocbibind}&lt;/code&gt;&lt;/pre&gt;
+&lt;div class=&#34;figure&#34;&gt;
+&lt;img src=&#34;images/lof.png&#34; alt=&#34;&#34; /&gt;
+&lt;p class=&#34;caption&#34;&gt;Screenshot of the first lines of the list of figures, with a short caption for each figure&lt;/p&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;div id=&#34;acronyms&#34; class=&#34;section level3&#34;&gt;
+&lt;h3&gt;Acronyms&lt;/h3&gt;
+&lt;p&gt;I repeat many acronyms on the thesis and I wanted to have a brief table with them.
+I used the &lt;a href=&#34;https://github.com/rchaput/acronymsdown&#34;&gt;package acronymsdown&lt;/a&gt; which is simple, easy and works well for web and pdf.&lt;br /&gt;
+My only wish is that it had a way to go back to were the reader was.&lt;/p&gt;
+&lt;p&gt;To place the acronyms were I wanted I had to remove the automatic title and use the following:&lt;/p&gt;
+&lt;pre&gt;&lt;code&gt;# Glossary {-}
+
+\printacronyms&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;I add them to the beginning after the summaries of the thesis and the preface, right before the body of the thesis.&lt;/p&gt;
+&lt;/div&gt;
+&lt;div id=&#34;placing-floats&#34; class=&#34;section level3&#34;&gt;
+&lt;h3&gt;Placing floats&lt;/h3&gt;
+&lt;p&gt;I included many figures and tables which makes it hard to have all of them near where they are added on the text.
+While it can be forced, I didn’t want that but neither I wanted them too far away.&lt;/p&gt;
+&lt;p&gt;To avoid them going after the subsection I added this command before the title of the next subsection:&lt;/p&gt;
+&lt;pre&gt;&lt;code&gt;\FloatBarrier&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;Probably it could be done automatically renewing the subsection title format, but as I only had to do this 5 times is manageable.&lt;/p&gt;
+&lt;p&gt;Following an &lt;a href=&#34;https://stackoverflow.com/a/33801326/2886003&#34;&gt;answer&lt;/a&gt;, the figure floating algorithm was set with these preferences:&lt;/p&gt;
+&lt;pre class=&#34;latex&#34;&gt;&lt;code&gt;\usepackage{float}
+\usepackage{colortbl}
+\let\origfigure\figure
+\let\endorigfigure\endfigure
+\renewenvironment{figure}[1][2] {
+    \expandafter\origfigure\expandafter[!htbp]
+} {
+    \endorigfigure
+}&lt;/code&gt;&lt;/pre&gt;
+&lt;div class=&#34;figure&#34;&gt;
+&lt;img src=&#34;images/figure_table_thumb.png&#34; alt=&#34;&#34; /&gt;
+&lt;p class=&#34;caption&#34;&gt;A figure and a table on the same page, the label is in bold and the text in italics, on the right side (the page is odd) the blue chapter thumb&lt;/p&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;div id=&#34;github-actions&#34; class=&#34;section level3&#34;&gt;
+&lt;h3&gt;Github actions&lt;/h3&gt;
+&lt;p&gt;To render I initially used my &lt;a href=&#34;htts://github.com/r-lib/actions&#34;&gt;r-lib/actions&lt;/a&gt; but without using any package structure.
+However, once I set a DESCRIPTION file with all the package dependencies it was much faster, as I could use the &lt;a href=&#34;https://github.com/r-lib/actions/tree/v2/setup-r-dependencies&#34;&gt;setup-r-dependencies&lt;/a&gt; action.&lt;/p&gt;
+&lt;p&gt;Probably there is also a faster way directly installing binaries with the help of &lt;code&gt;bspm&lt;/code&gt; or the system package manager, but this was convenient enough.&lt;/p&gt;
+&lt;p&gt;Also the action to install &lt;a href=&#34;https://github.com/r-lib/actions/tree/v2/setup-tinytex&#34;&gt;tinytex&lt;/a&gt; made my job for the pdf to render much faster (from 15 minutes to 5 minutes).&lt;/p&gt;
+&lt;div class=&#34;figure&#34;&gt;
+&lt;img src=&#34;images/gha.png&#34; alt=&#34;&#34; /&gt;
+&lt;p class=&#34;caption&#34;&gt;Screenshot of the github actions (on push) were bookdown-web takes ~3 minutes, bookdown-epub ~2 minutes and bookdown-pdf ~5 minutes.&lt;/p&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;div id=&#34;empty-pages&#34; class=&#34;section level3&#34;&gt;
+&lt;h3&gt;Empty pages&lt;/h3&gt;
+&lt;p&gt;The chapters are on the right side of the book so they must end or have a blank page before.
+To have a completely blank page I &lt;a href=&#34;https://tex.stackexchange.com/a/1684/178206&#34;&gt;found&lt;/a&gt; a simple solution, simply load a latex package &lt;code&gt;emptypage&lt;/code&gt;.&lt;/p&gt;
+&lt;pre class=&#34;latex&#34;&gt;&lt;code&gt;\usepackage{emptypage}&lt;/code&gt;&lt;/pre&gt;
+&lt;/div&gt;
+&lt;div id=&#34;title-pages&#34; class=&#34;section level3&#34;&gt;
+&lt;h3&gt;Title pages&lt;/h3&gt;
+&lt;p&gt;Where to place titles, format it with &lt;code&gt;titlesec&lt;/code&gt;:&lt;/p&gt;
+&lt;pre class=&#34;latex&#34;&gt;&lt;code&gt;\usepackage{titlesec}
+\titleformat{\chapter}[display]{\fontsize{32pt}{48pt}\bfseries\sffamily\filcenter}{
+    \fontsize{72pt}{72pt} \thechapter \ChapFrame
+} % Content on the chapter title page
+{20pt}{\lsstyle}[\thispagestyle{empty} \cleardoublepage]% https://tex.stackexchange.com/a/347162/178206
+\titleformat{name=\chapter, numberless}{\normalfont\huge\bfseries\filcenter}{}{20pt}{\Huge}
+\titlespacing*{\chapter}{0pt}{100pt}{40pt}&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;The first line load the package.
+Then we set the format of the chapters option display and the format of text and what appears on that page.
+&lt;code&gt;\thechapter&lt;/code&gt; is the title of the chapter (while &lt;code&gt;\chatper&lt;/code&gt; is the number).
+&lt;code&gt;\chapFrame&lt;/code&gt; is the new command defined to set &lt;a href=&#34;#chapter-thumb&#34;&gt;chapter thumb&lt;/a&gt;.&lt;/p&gt;
+&lt;p&gt;The other benefit this had was that the title page had no page number.&lt;/p&gt;
+&lt;div class=&#34;figure&#34;&gt;
+&lt;img src=&#34;images/chapter.png&#34; alt=&#34;&#34; /&gt;
+&lt;p class=&#34;caption&#34;&gt;A screenshot of the introduction title page.
+There is a number 1 and Introduction a couple of lines below.
+On the right side a red box 3 cm below the top.&lt;/p&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;div id=&#34;page-numbers&#34; class=&#34;section level3&#34;&gt;
+&lt;h3&gt;Page numbers&lt;/h3&gt;
+&lt;p&gt;I decided to use different style for page numbers&lt;/p&gt;
+&lt;pre class=&#34;latex&#34;&gt;&lt;code&gt;\usepackage[automark,headsepline]{scrlayer-scrpage}% sets page style scrheadings automatically
+\clearpairofpagestyles
+\ihead{\leftmark}
+\ohead*{\pagemark}
+\setkomafont{pagenumber}{}% default is \normalfont\normalcolor&lt;/code&gt;&lt;/pre&gt;
+&lt;/div&gt;
+&lt;div id=&#34;include-pdfs&#34; class=&#34;section level3&#34;&gt;
+&lt;h3&gt;Include pdfs&lt;/h3&gt;
+&lt;p&gt;As part of the appendix I added my publications on their pdf format.
+To do so I used the following code modified from the &lt;a href=&#34;https://stackoverflow.com/questions/2739159/inserting-a-pdf-file-in-latex&#34;&gt;original answer&lt;/a&gt;:&lt;/p&gt;
+&lt;pre class=&#34;latex&#34;&gt;&lt;code&gt;\usepackage{pdfpages} 
+\includepdf[pages=-, pagecommand={}, templatesize={\textwidth}{\textheight  - 25pt}, trim=0 0 0 20pt,]{pdf/paper.pdf}&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;I had to tweak the size were it was placed to keep the page numbers and running titles.
+The last curly brackets indicate the location of the pdf to include.&lt;/p&gt;
+&lt;p&gt;The benefit of this is that these pages now are also numbered with the thesis style and the title.&lt;/p&gt;
+&lt;div class=&#34;figure&#34;&gt;
+&lt;img src=&#34;images/pdf_included.png&#34; alt=&#34;&#34; /&gt;
+&lt;p class=&#34;caption&#34;&gt;Screenshot of the pdf included showing the page number of the thesis and the content of the article “Multi-omic modelling of inflammatory bowel disease with regularized canonical correlation analysis”&lt;/p&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;div id=&#34;running-titles&#34; class=&#34;section level3&#34;&gt;
+&lt;h3&gt;Running titles&lt;/h3&gt;
+&lt;p&gt;If you have a long title such as you are probably interested on having a shorter version for it on the thesis pages.&lt;/p&gt;
+&lt;pre&gt;&lt;code&gt;## experDesign: stratifying samples into batches with minimal bias
+
+\sectionmark{experDesign: paper}&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;I don’t think it actually made a big difference but it might we important for chapters.&lt;/p&gt;
+&lt;/div&gt;
+&lt;div id=&#34;merging-pdfs&#34; class=&#34;section level3&#34;&gt;
+&lt;h3&gt;Merging pdfs&lt;/h3&gt;
+&lt;p&gt;As I said I needed some pages at the beginning of the thesis.
+But I wanted to keep the outline of the pdf, and I found an &lt;a href=&#34;https://stackoverflow.com/a/19358402/2886003&#34;&gt;solution online&lt;/a&gt; explaining how to do it.&lt;/p&gt;
+&lt;p&gt;To add multiple pdf I did this:&lt;/p&gt;
+&lt;pre&gt;&lt;code&gt;gs -q -SDEVICE=pdfwrite -DPDFSETTINGS=/prepress -o merged.pdf page1.pdf page2.pdf thesis.pdf&lt;/code&gt;&lt;/pre&gt;
+&lt;/div&gt;
+&lt;div id=&#34;reducing-pdf-size&#34; class=&#34;section level3&#34;&gt;
+&lt;h3&gt;Reducing pdf size&lt;/h3&gt;
+&lt;p&gt;At the end the pdf was bigger than what I could send over email.&lt;/p&gt;
+&lt;p&gt;I found &lt;a href=&#34;https://askubuntu.com/a/256449/270501&#34;&gt;this answer&lt;/a&gt; that helped me to reduce the size and send it.&lt;/p&gt;
+&lt;pre&gt;&lt;code&gt;gs -sDEVICE=pdfwrite -dCompatibilityLevel=1.4 -dPDFSETTINGS=/ebook -dNOPAUSE -dQUIET -dBATCH -sOutputFile=output.pdf input.pdf&lt;/code&gt;&lt;/pre&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;div id=&#34;conclusion&#34; class=&#34;section level2&#34;&gt;
+&lt;h2&gt;Conclusion&lt;/h2&gt;
+&lt;p&gt;The process of writing the thesis is usually one of the last steps on a PhD.
+I recommend to write something and avoid having a blank page.
+But once written you must take care of the presentation and style, this is a complete different skill than writing or research, so it can be specially exhausting.&lt;/p&gt;
+&lt;p&gt;Bookdown through the preamble and body options is great for setting your style.
+But if you are short of time, are tired you might benefit from working and using some of these already created solutions and just modify what you need (as I did).&lt;/p&gt;
+&lt;p&gt;To finish, so that you can see the final format it is &lt;a href=&#34;https://thesis.llrs.dev/&#34;&gt;here&lt;/a&gt;.
+There you can download it in pdf too to see most of these commands in action.&lt;/p&gt;
+&lt;p&gt;If you are writing your thesis, enjoy, keep calm and reuse other solutions!&lt;/p&gt;
+&lt;/div&gt;
+</description>
+    </item>
+    
+    <item>
+      <title>Covid-19</title>
+      <link>https://llrs.dev/post/2020/03/15/covid-19/</link>
+      <pubDate>Sun, 15 Mar 2020 00:00:00 +0000</pubDate>
+      <guid>https://llrs.dev/post/2020/03/15/covid-19/</guid>
+      <description>
+&lt;script src=&#34;https://llrs.dev/post/2020/03/15/covid-19/index_files/header-attrs/header-attrs.js&#34;&gt;&lt;/script&gt;
+
+
+&lt;div id=&#34;introduction&#34; class=&#34;section level2&#34;&gt;
+&lt;h2&gt;Introduction&lt;/h2&gt;
+&lt;p&gt;I have seen several analysis and simulations of the spread.
+In this entry I want to use the number of beds in hospitals, the disease duration, and the infection rate to find when will the healthcare system collapse in Spain.
+I’ll try to link to the resoures of the assuptions I take, or where I find the numeric values I use.&lt;/p&gt;
+&lt;/div&gt;
+&lt;div id=&#34;important-numbers&#34; class=&#34;section level2&#34;&gt;
+&lt;h2&gt;Important numbers&lt;/h2&gt;
+&lt;p&gt;The &lt;strong&gt;reproductive number&lt;/strong&gt; is the number of people that get the virus from a person with the virus.
+This is highly variable and is influenced by government decisons (lock down, travel bans, …) and social behavior (See slide 11 from &lt;a href=&#34;https://drive.google.com/file/d/14tGJF9tdv4osPhY1-fswLcSlWZJ9zx45/view&#34;&gt;this deck&lt;/a&gt;). Many dataset are linked in this thread &lt;a href=&#34;https://comunidad.civio.es/t/datos-en-abierto-y-reutilizables-sobre-evolucion-casos-covid-19/399&#34;&gt;of Civio&lt;/a&gt;.&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;Before any major measure in Spain was ~2.6 &lt;a href=&#34;https://twitter.com/oriolmitja/status/1238008116257730560&#34;&gt;Source&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;After major measures ? (too soon to say, we’ll need to wait a week)&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;In order to know how many time are people ill and how much time they might need to spend at the hospital we need to know the &lt;strong&gt;disease duration&lt;/strong&gt;:&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;~20 days until death (healthy &amp;lt;60 years woman) &lt;a href=&#34;https://twitter.com/mraffatellu/status/1239175358185746436&#34;&gt;Source&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;37 days and still testing positive of SARS-CoV-2 &lt;a href=&#34;https://twitter.com/Birdyword/status/1239071257510854657&#34;&gt;Source&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;Person released without symptoms and after a month tested again positive &lt;a href=&#34;https://twitter.com/RVAwonk/status/1238797268871983105&#34;&gt;Source&lt;/a&gt;&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;The saturation of the hospitals can be measured by the capacity they have. Ventilators, oxygen, doctors those numbers affect at the peace the doctors can attend patients, generally the number of &lt;strong&gt;beds&lt;/strong&gt; is used:&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;315/100000 habitants &lt;a href=&#34;https://twitter.com/dr_xeo/status/1239135981380435969&#34;&gt;Source&lt;/a&gt;&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;The Covid &lt;strong&gt;severity&lt;/strong&gt;, from a widely circulated and verifyed &lt;a href=&#34;https://medium.com/@tomaspueyo/coronavirus-act-today-or-people-will-die-f4d3d9cd99ca&#34;&gt;source&lt;/a&gt;:&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;20% of infected need hospitalization (mild cases)&lt;/li&gt;
+&lt;li&gt;5% of infected are critically ill (severe cases)&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;Also we can check the difference in symptoms on the population at South Corea and Italy, via &lt;a href=&#34;https://twitter.com/markwby/status/1238867143363567616&#34;&gt;this tweet&lt;/a&gt; that lead to &lt;a href=&#34;https://medium.com/@andreasbackhausab/coronavirus-why-its-so-deadly-in-italy-c4200a15a7bf&#34;&gt;this article&lt;/a&gt;.
+Also the &lt;a href=&#34;https://twitter.com/passantino/status/1240513400343388160&#34;&gt;case of Iceland&lt;/a&gt;&lt;/p&gt;
+&lt;p&gt;Some of them will not recover despite any treatments by the doctors, this is the &lt;strong&gt;letality rate&lt;/strong&gt;.
+I’ve taken the numbers from a &lt;a href=&#34;https://www.isglobal.org/event/-/asset_publisher/nVsLg5I1q6UT/content/coronavirus-myths-and-truths&#34;&gt;webminar&lt;/a&gt; of the lead epidemiologist of Hospital Clínic which was done the 5th of March.&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;Globally of 2-2.5% on China 0.7% outside&lt;/li&gt;
+&lt;li&gt;By age
+&lt;ul&gt;
+&lt;li&gt;Below 40 years old 0.2%&lt;/li&gt;
+&lt;li&gt;50-60 years old 1.3%&lt;/li&gt;
+&lt;li&gt;60-70 years old 3.6%&lt;/li&gt;
+&lt;li&gt;70-80 years old 8%&lt;/li&gt;
+&lt;li&gt;Above 80 years old 14.8%&lt;/li&gt;
+&lt;/ul&gt;&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;Also compare with the information &lt;a href=&#34;https://twitter.com/hancocktom/status/1239706670546268161&#34;&gt;here&lt;/a&gt;, which takes it from &lt;a href=&#34;https://www.imperial.ac.uk/media/imperial-college/medicine/sph/ide/gida-fellowships/Imperial-College-COVID19-NPI-modelling-16-03-2020.pdf&#34;&gt;this document&lt;/a&gt; used for GB decision mak
+ing.&lt;/p&gt;
+&lt;p&gt;Time from infection to disease, &lt;strong&gt;incubation time&lt;/strong&gt;:&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;5-7 days &lt;a href=&#34;https://www.isglobal.org/event/-/asset_publisher/nVsLg5I1q6UT/content/coronavirus-myths-and-truths&#34;&gt;Source: webminar&lt;/a&gt;&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;High risk groups are people that are more exposed to get the virus or have other &lt;strong&gt;comorbodities&lt;/strong&gt; such as previous respiratory diseases or other major disease afecting the immune system (like cancer, HIV…) :&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;Comorbidities ?, we’ll use &lt;a href=&#34;https://github.com/rOpenSpain/MorbiditySpainR&#34;&gt;MorbiditySpainR&lt;/a&gt; to find it out.&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;As seen on the death rate, the age at the moment of the infection is important.
+Generally Italy and Spain has a &lt;strong&gt;population age&lt;/strong&gt; older than China:&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;? We’ll use the data on INE &lt;a href=&#34;https://github.com/oddworldng/INEbaseR&#34;&gt;thanks to INEbaseR&lt;/a&gt;&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/div&gt;
+&lt;div id=&#34;modelling&#34; class=&#34;section level2&#34;&gt;
+&lt;h2&gt;Modelling&lt;/h2&gt;
+&lt;p&gt;One example of such analysis is this tweet:&lt;/p&gt;
+&lt;blockquote class=&#34;twitter-tweet&#34;&gt;
+&lt;p lang=&#34;es&#34; dir=&#34;ltr&#34;&gt;
+Acabamos de evaluar la predicción del efecto de las políticas de restricción de movilidad. Equipo &lt;a href=&#34;https://twitter.com/jtmatamalas?ref_src=twsrc%5Etfw&#34;&gt;&lt;span class=&#34;citation&#34;&gt;@jtmatamalas&lt;/span&gt;&lt;/a&gt; &lt;a href=&#34;https://twitter.com/SergioGomezJ?ref_src=twsrc%5Etfw&#34;&gt;&lt;span class=&#34;citation&#34;&gt;@SergioGomezJ&lt;/span&gt;&lt;/a&gt; &lt;a href=&#34;https://twitter.com/stinomat?ref_src=twsrc%5Etfw&#34;&gt;&lt;span class=&#34;citation&#34;&gt;@stinomat&lt;/span&gt;&lt;/a&gt; &lt;a href=&#34;https://twitter.com/urv?ref_src=twsrc%5Etfw&#34;&gt;&lt;span class=&#34;citation&#34;&gt;@urv&lt;/span&gt;&lt;/a&gt; y &lt;a href=&#34;https://twitter.com/gomezgardenes?ref_src=twsrc%5Etfw&#34;&gt;&lt;span class=&#34;citation&#34;&gt;@gomezgardenes&lt;/span&gt;&lt;/a&gt; &lt;a href=&#34;https://twitter.com/claragranell?ref_src=twsrc%5Etfw&#34;&gt;&lt;span class=&#34;citation&#34;&gt;@claragranell&lt;/span&gt;&lt;/a&gt; &lt;a href=&#34;https://twitter.com/sorianopanos?ref_src=twsrc%5Etfw&#34;&gt;&lt;span class=&#34;citation&#34;&gt;@sorianopanos&lt;/span&gt;&lt;/a&gt; &lt;a href=&#34;https://twitter.com/wlcota?ref_src=twsrc%5Etfw&#34;&gt;&lt;span class=&#34;citation&#34;&gt;@wlcota&lt;/span&gt;&lt;/a&gt; &lt;a href=&#34;https://twitter.com/unizar?ref_src=twsrc%5Etfw&#34;&gt;&lt;span class=&#34;citation&#34;&gt;@unizar&lt;/span&gt;&lt;/a&gt;. Restricción de movilidad total, excepto servicios esenciales, necesaria YA. &lt;a href=&#34;https://t.co/YaWqXHw7Qv&#34;&gt;pic.twitter.com/YaWqXHw7Qv&lt;/a&gt;
+&lt;/p&gt;
+— Alex Arenas (&lt;span class=&#34;citation&#34;&gt;@_AlexArenas&lt;/span&gt;) &lt;a href=&#34;https://twitter.com/_AlexArenas/status/1239691646482161664?ref_src=twsrc%5Etfw&#34;&gt;March 16, 2020&lt;/a&gt;
+&lt;/blockquote&gt;
+&lt;script async src=&#34;https://platform.twitter.com/widgets.js&#34; charset=&#34;utf-8&#34;&gt;&lt;/script&gt;
+&lt;p&gt;We could use models based on &lt;a href=&#34;http://networksciencebook.com/chapter/10#epidemic&#34;&gt;chapter 10&lt;/a&gt; of the book Network Science of Albert-Lázló Barábasi, and from &lt;a href=&#34;https://drive.google.com/file/d/14tGJF9tdv4osPhY1-fswLcSlWZJ9zx45/view&#34;&gt;slide 28&lt;/a&gt;.&lt;/p&gt;
+&lt;p&gt;But follwing this advice I won’t:&lt;/p&gt;
+&lt;blockquote class=&#34;twitter-tweet&#34;&gt;
+&lt;p lang=&#34;en&#34; dir=&#34;ltr&#34;&gt;
+To my colleagues, who are highly accomplished geniuses in a variety of fields: now is not the time to start an independent public health or infectious disease modeling practice if you have no expertise in these areas.&lt;br&gt;&lt;br&gt;Please get an expert to check your work. Don&#39;t just post.
+&lt;/p&gt;
+— Michael Hoffman (&lt;span class=&#34;citation&#34;&gt;@michaelhoffman&lt;/span&gt;) &lt;a href=&#34;https://twitter.com/michaelhoffman/status/1240338198376714241?ref_src=twsrc%5Etfw&#34;&gt;March 18, 2020&lt;/a&gt;
+&lt;/blockquote&gt;
+&lt;script async src=&#34;https://platform.twitter.com/widgets.js&#34; charset=&#34;utf-8&#34;&gt;&lt;/script&gt;
+&lt;p&gt;However, here I leave a &lt;a href=&#34;https://twitter.com/datadista/status/1240668992655810560&#34;&gt;link&lt;/a&gt; to the UCI bed currently on use from DATADISTA.&lt;/p&gt;
+&lt;div id=&#34;reproducibility&#34; class=&#34;section level3&#34;&gt;
+&lt;h3&gt;Reproducibility&lt;/h3&gt;
+&lt;details&gt;
+&lt;pre&gt;&lt;code&gt;## ─ Session info ───────────────────────────────────────────────────────────────────────────────────────────────────────
+##  setting  value                       
+##  version  R version 4.0.1 (2020-06-06)
+##  os       Ubuntu 20.04.1 LTS          
+##  system   x86_64, linux-gnu           
+##  ui       X11                         
+##  language (EN)                        
+##  collate  en_US.UTF-8                 
+##  ctype    en_US.UTF-8                 
+##  tz       Europe/Madrid               
+##  date     2021-01-08                  
+## 
+## ─ Packages ───────────────────────────────────────────────────────────────────────────────────────────────────────────
+##  package     * version date       lib source                           
+##  assertthat    0.2.1   2019-03-21 [1] CRAN (R 4.0.1)                   
+##  blogdown      0.21.84 2021-01-07 [1] Github (rstudio/blogdown@c4fbb58)
+##  bookdown      0.21    2020-10-13 [1] CRAN (R 4.0.1)                   
+##  cli           2.2.0   2020-11-20 [1] CRAN (R 4.0.1)                   
+##  crayon        1.3.4   2017-09-16 [1] CRAN (R 4.0.1)                   
+##  digest        0.6.27  2020-10-24 [1] CRAN (R 4.0.1)                   
+##  evaluate      0.14    2019-05-28 [1] CRAN (R 4.0.1)                   
+##  fansi         0.4.1   2020-01-08 [1] CRAN (R 4.0.1)                   
+##  glue          1.4.2   2020-08-27 [1] CRAN (R 4.0.1)                   
+##  htmltools     0.5.0   2020-06-16 [1] CRAN (R 4.0.1)                   
+##  knitr         1.30    2020-09-22 [1] CRAN (R 4.0.1)                   
+##  magrittr      2.0.1   2020-11-17 [1] CRAN (R 4.0.1)                   
+##  rlang         0.4.10  2020-12-30 [1] CRAN (R 4.0.1)                   
+##  rmarkdown     2.6     2020-12-14 [1] CRAN (R 4.0.1)                   
+##  sessioninfo   1.1.1   2018-11-05 [1] CRAN (R 4.0.1)                   
+##  stringi       1.5.3   2020-09-09 [1] CRAN (R 4.0.1)                   
+##  stringr       1.4.0   2019-02-10 [1] CRAN (R 4.0.1)                   
+##  withr         2.3.0   2020-09-22 [1] CRAN (R 4.0.1)                   
+##  xfun          0.20    2021-01-06 [1] CRAN (R 4.0.1)                   
+##  yaml          2.2.1   2020-02-01 [1] CRAN (R 4.0.1)                   
+## 
+## [1] /home/lluis/bin/R/4.0.1/lib/R/library&lt;/code&gt;&lt;/pre&gt;
+&lt;/details&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+</description>
+    </item>
+    
+  </channel>
+</rss>

@@ -1,0 +1,1666 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes" ?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>reviews | B101nfo</title>
+    <link>https://llrs.dev/tags/reviews/</link>
+      <atom:link href="https://llrs.dev/tags/reviews/index.xml" rel="self" type="application/rss+xml" />
+    <description>reviews</description>
+    <generator>Source Themes Academic (https://sourcethemes.com/academic/)</generator><language>en-us</language><copyright>If it is code you can copy and reuse (MIT) if it is text, please cite and reuse CC-BY 2026.</copyright><lastBuildDate>Sun, 31 Jan 2021 00:00:00 +0000</lastBuildDate>
+    <image>
+      <url>img/map[gravatar:%!s(bool=false) shape:circle]</url>
+      <title>reviews</title>
+      <link>https://llrs.dev/tags/reviews/</link>
+    </image>
+    
+    <item>
+      <title>CRAN review</title>
+      <link>https://llrs.dev/post/2021/01/31/cran-review/</link>
+      <pubDate>Sun, 31 Jan 2021 00:00:00 +0000</pubDate>
+      <guid>https://llrs.dev/post/2021/01/31/cran-review/</guid>
+      <description>
+&lt;script src=&#34;https://llrs.dev/post/2021/01/31/cran-review/index_files/header-attrs/header-attrs.js&#34;&gt;&lt;/script&gt;
+
+
+&lt;p&gt;I’ve been doing some &lt;a href=&#34;https://llrs.dev/tags/reviews/&#34;&gt;analysis on the review submissions&lt;/a&gt; of several projects of R.
+However, till recently I couldn’t analyze the CRAN submission.
+There was &lt;a href=&#34;https://github.com/lockedata/cransays&#34;&gt;cransays&lt;/a&gt;’ package to check package submissions which on the online documentation provided a &lt;a href=&#34;https://lockedata.github.io/cransays/articles/dashboard.html&#34;&gt;dashboard&lt;/a&gt; which updated each hour.
+Since 2020/09/12 the status of the queues and folders of submissions are saved on a branch.
+Using this information and basing in &lt;a href=&#34;https://github.com/tjtnew/newbies&#34;&gt;script provided by Tim Taylor&lt;/a&gt; I’ll check how are the submissions on CRAN handled.&lt;/p&gt;
+&lt;p&gt;I’ll look at the &lt;a href=&#34;#cran-load&#34;&gt;CRAN queue&lt;/a&gt;, I’ll explore some &lt;a href=&#34;#time-patterns&#34;&gt;time patterns&lt;/a&gt; and also check the meaning of those &lt;a href=&#34;#subfolder&#34;&gt;subfolder&lt;/a&gt;.
+Later I’ll go to a more &lt;a href=&#34;#information-for-submitters&#34;&gt;practical information&lt;/a&gt; for people submitting a package.
+Lastly, we’ll see how hard is the job of the CRAN team by looking at the reliability of the &lt;a href=&#34;#GHAR&#34;&gt;Github action used&lt;/a&gt;.&lt;/p&gt;
+&lt;p&gt;Before all this we need preliminary work to download the data and clean it:&lt;/p&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;# Downloading the cransays repository branch history
+download.file(&amp;quot;https://github.com/lockedata/cransays/archive/history.zip&amp;quot;, 
+              destfile = &amp;quot;static/cransays-history.zip&amp;quot;)
+path_zip &amp;lt;- here::here(&amp;quot;static&amp;quot;, &amp;quot;cransays-history.zip&amp;quot;) 
+# We unzip the files to read them
+dat &amp;lt;- unzip(path_zip, exdir = &amp;quot;static&amp;quot;)
+csv &amp;lt;- dat[grepl(&amp;quot;*.csv$&amp;quot;, x = dat)]
+f &amp;lt;- lapply(csv, read.csv)
+m &amp;lt;- function(x, y) {
+  merge(x, y, sort = FALSE, all = TRUE)
+}
+updates &amp;lt;- Reduce(m, f) # Merge all files (Because the file format changed)
+write.csv(updates, file = &amp;quot;static/cran_till_now.csv&amp;quot;,  row.names = FALSE)
+# Clean up
+unlink(&amp;quot;static/cransays-history/&amp;quot;, recursive = TRUE)
+unlink(&amp;quot;static/cransays-history.zip&amp;quot;, recursive = TRUE)&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;Once we have the data we can load it, and we load the libraries used for the analysis:&lt;/p&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;library(&amp;quot;tidyverse&amp;quot;)
+library(&amp;quot;lubridate&amp;quot;)
+library(&amp;quot;hms&amp;quot;)
+path_file &amp;lt;- here::here(&amp;quot;static&amp;quot;, &amp;quot;cran_till_now.csv&amp;quot;)
+cran_submissions &amp;lt;- read.csv(path_file)
+theme_set(theme_minimal()) # For plotting
+col_names &amp;lt;- c(&amp;quot;package&amp;quot;, &amp;quot;version&amp;quot;, &amp;quot;snapshot_time&amp;quot;, &amp;quot;folder&amp;quot;, &amp;quot;subfolder&amp;quot;)
+cran_submissions &amp;lt;- cran_submissions[, col_names]&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;The period we are going to analyze is from the beginning of the records till 2021-01-30.
+It includes some well earned holiday time for the CRAN team, during which submissions were not possible.&lt;/p&gt;
+&lt;p&gt;I’ve read some comments on the inconsistencies of where the holidays of the CRAN teams are reported and I couldn’t find it for previous years.&lt;/p&gt;
+&lt;p&gt;For the 4 months we are analyzing which only has one holiday period I used a &lt;a href=&#34;https://twitter.com/krlmlr/status/1346005787668336640&#34;&gt;screenshot&lt;/a&gt; found on twitter.&lt;/p&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;holidays &amp;lt;- data.frame(
+  start = as.POSIXct(&amp;quot;18/12/2020&amp;quot;, format = &amp;quot;%d/%m/%Y&amp;quot;, tz = &amp;quot;UTC&amp;quot;), 
+  end = as.POSIXct(&amp;quot;04/01/2021&amp;quot;, format = &amp;quot;%d/%m/%Y&amp;quot;, tz = &amp;quot;UTC&amp;quot;)
+)&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;Now that we know the holidays and have them in a single data.frame it’s time to explore and clean the data collected:&lt;/p&gt;
+&lt;div id=&#34;cleaning-the-data&#34; class=&#34;section level2&#34;&gt;
+&lt;h2&gt;Cleaning the data&lt;/h2&gt;
+&lt;p&gt;After preparing the files in one big file we can load and work with it.
+First steps, check the data and prepare it for what we want:&lt;/p&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;# Use appropriate class
+cran_submissions$snapshot_time &amp;lt;- as.POSIXct(cran_submissions$snapshot_time,
+                                             tz = &amp;quot;UTC&amp;quot;)
+# Fix subfolders structure
+cran_submissions$subfolder[cran_submissions$subfolder %in% c(&amp;quot;&amp;quot;, &amp;quot;/&amp;quot;)] &amp;lt;- NA
+# Remove files or submissions without version number
+cran_submissions &amp;lt;- cran_submissions[!is.na(cran_submissions$version), ]
+cran_submissions &amp;lt;- distinct(cran_submissions, 
+                             snapshot_time, folder, package, version, subfolder,
+                             .keep_all = TRUE)&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;After loading and a preliminary cleanup, set date format, homogenize folder format, remove submissions that are not packages (yes there are pdf and other files on the queue), and remove duplicates we can start.&lt;/p&gt;
+&lt;p&gt;As always start with some checks of the data.
+Note: I should follow more often this advice myself, as this is the last section I’m writing on the post.&lt;/p&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;packges_multiple_versions &amp;lt;- cran_submissions %&amp;gt;% 
+  group_by(package, snapshot_time) %&amp;gt;% 
+  summarize(n = n_distinct(version)) %&amp;gt;% 
+  filter(n != 1) %&amp;gt;% 
+  distinct(package) %&amp;gt;% 
+  pull(package)&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;There are 92 packages with multiple versions at the same time on CRAN queue.&lt;/p&gt;
+&lt;p&gt;Perhaps because packages are left in different folders (2 or even 3) at the same time:&lt;/p&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;package_multiple &amp;lt;- cran_submissions %&amp;gt;% 
+  group_by(snapshot_time, package) %&amp;gt;% 
+  count() %&amp;gt;% 
+  group_by(snapshot_time) %&amp;gt;% 
+  count(n) %&amp;gt;% 
+  filter(n != 1) %&amp;gt;% 
+  summarise(n = sum(nn)) %&amp;gt;% 
+  ungroup()
+ggplot(package_multiple) +
+  geom_point(aes(snapshot_time, n), size = 1) +
+  geom_rect(data = holidays, aes(xmin = start, xmax = end, ymin = 0, ymax = 6),
+            alpha = 0.25, fill = &amp;quot;red&amp;quot;) +
+  annotate(&amp;quot;text&amp;quot;, x = holidays$start + (holidays$end - holidays$start)/2, 
+           y = 3.5, label = &amp;quot;CRAN holidays&amp;quot;) +
+  scale_x_datetime(date_labels = &amp;quot;%Y/%m/%d&amp;quot;, date_breaks = &amp;quot;2 weeks&amp;quot;, 
+                   expand = expansion()) +
+  scale_y_continuous(expand = expansion()) +
+  labs(title = &amp;quot;Packages in multiple folders and subfolders&amp;quot;, 
+       x = element_blank(), y = element_blank())&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;&lt;img src=&#34;https://llrs.dev/post/2021/01/31/cran-review/index_files/figure-html/package-multiple-folders-1.png&#34; width=&#34;120%&#34; /&gt;&lt;/p&gt;
+&lt;p&gt;This happens in 1915 snapshots of 3260, probably due to the manual labor of the CRAN reviews.
+I don’t really know the cause of this, it could be an error on the script recording the data, copying the data around the server.
+But perhaps this indicates further improvements and automatization of the process can be done.&lt;/p&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;cran_submissions &amp;lt;- cran_submissions %&amp;gt;% 
+  arrange(package, snapshot_time, version, folder) %&amp;gt;% 
+  group_by(package, snapshot_time) %&amp;gt;% 
+  mutate(n = 1:n()) %&amp;gt;% 
+  filter(n == n()) %&amp;gt;% 
+  ungroup() %&amp;gt;% 
+  select(-n)&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;Now we removed ~3500 records of packages with two versions remaining on the queue.
+Next we check packages in multiple folders but with the same version and remove them until we are left with a single one (assuming there aren’t parallel steps on the review process followed):&lt;/p&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;cran_submissions &amp;lt;- cran_submissions %&amp;gt;% 
+  arrange(package, snapshot_time, folder) %&amp;gt;% 
+  group_by(package, snapshot_time) %&amp;gt;% 
+  mutate(n = 1:n()) %&amp;gt;% 
+  filter(n == n()) %&amp;gt;% 
+  ungroup() %&amp;gt;% 
+  select(-n)&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;Last, we add the number of submissions, in this period, for each package:&lt;/p&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;diff0 &amp;lt;- structure(0, class = &amp;quot;difftime&amp;quot;, units = &amp;quot;hours&amp;quot;)
+cran_submissions &amp;lt;- cran_submissions %&amp;gt;% 
+  arrange(package, version, snapshot_time) %&amp;gt;% 
+  group_by(package) %&amp;gt;% 
+  # Packages last seen in queue less than 24 ago are considered same submission
+  mutate(diff_time = difftime(snapshot_time,  lag(snapshot_time), units = &amp;quot;hour&amp;quot;),
+         diff_time = if_else(is.na(diff_time), diff0, diff_time), # Fill NAs
+         diff_v = version != lag(version),
+         diff_v = ifelse(is.na(diff_v), TRUE, diff_v), # Fill NAs
+         new_version = !near(diff_time, 1, tol = 24) &amp;amp; diff_v, 
+         new_version = if_else(new_version == FALSE &amp;amp; diff_time == 0, 
+                               TRUE, new_version),
+         submission_n = cumsum(as.numeric(new_version))) %&amp;gt;%
+  ungroup() %&amp;gt;% 
+  select(-diff_time, -diff_v, -new_version)&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;As sometimes after a release there is soon a fast update to fix some bugs raised on the new features introduced, if a package isn’t seen in 24h in the queue it is considered a new submission.
+Also if it change the package version but not if it change the version while addressing the feedback from reviewers.&lt;/p&gt;
+&lt;p&gt;Now we have the data ready for further analysis.&lt;/p&gt;
+&lt;/div&gt;
+&lt;div id=&#34;cran-load&#34; class=&#34;section level2&#34;&gt;
+&lt;h2&gt;CRAN load&lt;/h2&gt;
+&lt;p&gt;We all know that CRAN is busy with updates to fix bugs, improve package, or with petitions to have new packages included on the repository.&lt;/p&gt;
+&lt;p&gt;A first plot we can make is showing the number of distinct packages on each moment:&lt;/p&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;cran_queue &amp;lt;- cran_submissions %&amp;gt;% 
+  group_by(snapshot_time) %&amp;gt;% 
+  summarize(n = n_distinct(package))
+ggplot(cran_queue) +
+  geom_rect(aes(xmin = start, xmax = end, ymin = 0, ymax = 230),
+            alpha = 0.5, fill = &amp;quot;red&amp;quot;, data = holidays) +
+  annotate(&amp;quot;text&amp;quot;, x = holidays$start + (holidays$end - holidays$start)/2, 
+           y = 150, label = &amp;quot;CRAN holidays&amp;quot;) +
+  geom_path(aes(snapshot_time, n)) +
+  scale_x_datetime(date_labels = &amp;quot;%Y/%m/%d&amp;quot;, date_breaks = &amp;quot;2 weeks&amp;quot;, 
+                   expand = expansion()) +
+  scale_y_continuous(expand = expansion()) +
+  labs(x = element_blank(), y = element_blank(), 
+       title = &amp;quot;Packages on CRAN review process&amp;quot;)&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;&lt;img src=&#34;https://llrs.dev/post/2021/01/31/cran-review/index_files/figure-html/cran-queues-1.png&#34; width=&#34;120%&#34; /&gt;&lt;/p&gt;
+&lt;p&gt;We can see that there are some ups and downs, and ranges between 200 to 50.&lt;/p&gt;
+&lt;p&gt;There are some instance were the number of package on the queue have a sudden drop and then a recovery to previous levels.
+This as far as I know is a visual artifact.&lt;/p&gt;
+&lt;p&gt;We can also see that people do not tend to rush and push the package before the holidays.
+But clearly there is some build up of submissions after holidays, as the the highest number of packages on the queue is reached after holidays.&lt;/p&gt;
+&lt;p&gt;On the CRAN review process classifying package in folders seems to be part of the process:&lt;/p&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;man_colors &amp;lt;- RColorBrewer::brewer.pal(8, &amp;quot;Dark2&amp;quot;)
+names(man_colors) &amp;lt;- unique(cran_submissions$folder)
+cran_submissions %&amp;gt;% 
+  group_by(folder, snapshot_time) %&amp;gt;% 
+  summarize(packages = n_distinct(package)) %&amp;gt;% 
+  ggplot() +
+  geom_rect(data = holidays, aes(xmin = start, xmax = end, ymin = 0, ymax = 200),
+            alpha = 0.25, fill = &amp;quot;red&amp;quot;) +
+  annotate(&amp;quot;text&amp;quot;, x = holidays$start + (holidays$end - holidays$start)/2, 
+           y = 105, label = &amp;quot;CRAN holidays&amp;quot;) +
+  geom_path(aes(snapshot_time, packages, col = folder)) +
+  scale_x_datetime(date_labels = &amp;quot;%Y/%m/%d&amp;quot;, date_breaks = &amp;quot;2 weeks&amp;quot;, 
+                   expand = expansion()) +
+  scale_y_continuous(expand = expansion()) +
+  scale_color_manual(values = man_colors) +
+  labs(x = element_blank(), y = element_blank(),
+       title = &amp;quot;Packages by folder&amp;quot;, col = &amp;quot;Folder&amp;quot;) +
+  theme(legend.position = c(0.6, 0.7))&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;&lt;img src=&#34;https://llrs.dev/post/2021/01/31/cran-review/index_files/figure-html/cran-submissions-1.png&#34; width=&#34;120%&#34; /&gt;&lt;/p&gt;
+&lt;p&gt;The queue trend is mostly driven by newbies folder (which ranges between 25 and 150) and after holidays by the pretest folder.&lt;/p&gt;
+&lt;p&gt;Surprisingly when the queue is split by folder we don’t see those sudden drops.
+This might indicate that there is a clean up on some of the folders&lt;a href=&#34;#fn1&#34; class=&#34;footnote-ref&#34; id=&#34;fnref1&#34;&gt;&lt;sup&gt;1&lt;/sup&gt;&lt;/a&gt;.
+What we clearly see is a clean up on holidays for all the folders, when almost all was cleared up.&lt;/p&gt;
+&lt;p&gt;Also the pretest seems to be before the newbies folder raises, so it seems like these tests are done done only to new pacakges.&lt;/p&gt;
+There other folders do not have such an increase
+&lt;details&gt;
+&lt;summary&gt;
+after the holidays .
+&lt;/summary&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;cran_submissions %&amp;gt;% 
+  group_by(folder, snapshot_time) %&amp;gt;% 
+  summarize(packages = n_distinct(package)) %&amp;gt;% 
+  filter(snapshot_time &amp;gt;= holidays$start) %&amp;gt;% 
+  ggplot() +
+  geom_path(aes(snapshot_time, packages, col = folder)) +
+  geom_rect(data = holidays, aes(xmin = start, xmax = end, ymin = 0, ymax = 200),
+            alpha = 0.25, fill = &amp;quot;red&amp;quot;) +
+  annotate(&amp;quot;text&amp;quot;, x = holidays$start + (holidays$end - holidays$start)/2, 
+           y = 105, label = &amp;quot;CRAN holidays&amp;quot;) +
+  scale_x_datetime(date_labels = &amp;quot;%Y/%m/%d&amp;quot;, date_breaks = &amp;quot;1 day&amp;quot;, 
+                   expand = expansion()) +
+  scale_y_continuous(expand = expansion(), limits = c(0, NA)) +
+  scale_color_manual(values = man_colors) +
+  labs(x = element_blank(), y = element_blank(),
+       title = &amp;quot;Holidays&amp;quot;, col = &amp;quot;Folder&amp;quot;) +
+  theme(axis.text.x = element_text(angle = 45, hjust = 1),
+        legend.position = c(0.8, 0.7))&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;&lt;img src=&#34;https://llrs.dev/post/2021/01/31/cran-review/index_files/figure-html/cran-holidays-zoom-1.png&#34; width=&#34;120%&#34; /&gt;&lt;/p&gt;
+&lt;p&gt;It seems like that on the 31st there was a clean up of some packages on the waiting list.
+And we can see the increase of submissions on the first week of January, as described previously.&lt;/p&gt;
+&lt;/details&gt;
+&lt;/div&gt;
+&lt;div id=&#34;time-patterns&#34; class=&#34;section level2&#34;&gt;
+&lt;h2&gt;Time patterns&lt;/h2&gt;
+&lt;p&gt;Some people has expressed they try to submit to CRAN when there are few packages on the queue.
+Thus, looking when does this low moments happens could be relevant.
+We can look for patterns on the queue:&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;a href=&#34;#day-month&#34;&gt;Day of the month&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;#day-week&#34;&gt;Day of the week&lt;/a&gt;&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;Note: I have few to none experience with time series, so the following plots are just using the defaults of `geom_smooth`, just omitting the holidays.&lt;/p&gt;
+&lt;div id=&#34;day-month&#34; class=&#34;section level3&#34;&gt;
+&lt;h3&gt;By day of the month&lt;/h3&gt;
+&lt;p&gt;Looking at folder:&lt;/p&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;cran_times &amp;lt;- cran_submissions %&amp;gt;% 
+  mutate(seconds = seconds(snapshot_time),
+         month = month(snapshot_time),
+         mday = mday(snapshot_time),
+         wday = wday(snapshot_time, locale = &amp;quot;en_GB.UTF-8&amp;quot;),
+         week = week(snapshot_time),
+         date = as_date(snapshot_time))
+cran_times %&amp;gt;% 
+  arrange(folder, date, mday) %&amp;gt;% 
+  filter(snapshot_time &amp;lt; holidays$start | snapshot_time  &amp;gt; holidays$end) %&amp;gt;% 
+  group_by(folder, date, mday) %&amp;gt;% 
+  summarize(packages = n_distinct(package),
+            week = unique(week)) %&amp;gt;% 
+  group_by(folder, mday) %&amp;gt;% 
+  ggplot() +
+  geom_smooth(aes(mday, packages, col = folder)) +
+  labs(x = &amp;quot;Day of the month&amp;quot;, y = &amp;quot;Packages&amp;quot;, col = &amp;quot;Folder&amp;quot;,
+       title = &amp;quot;Evolution by month day&amp;quot;) +
+  scale_color_manual(values = man_colors) +
+  coord_cartesian(ylim = c(0, NA), xlim = c(1, NA)) +
+  scale_x_continuous(expand = expansion()) +
+  scale_y_continuous(expand = expansion()) &lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;&lt;img src=&#34;https://llrs.dev/post/2021/01/31/cran-review/index_files/figure-html/cran-monthly-1.png&#34; width=&#34;120%&#34; /&gt;&lt;/p&gt;
+&lt;p&gt;At the beginning and end of the month there is more variation on several folders (This could also be that there isn’t information of the end of December and beginning of January).
+There seems to be an increase of &lt;strong&gt;new packages submissions towards the beginning of the month&lt;/strong&gt; and later and increase on the newbies folder by the middle of the month.&lt;/p&gt;
+&lt;/div&gt;
+&lt;div id=&#34;day-week&#34; class=&#34;section level3&#34;&gt;
+&lt;h3&gt;By day of the week&lt;/h3&gt;
+&lt;p&gt;I first thought about this, because I was curious if there is more submission on weekends (when aficionados and open source developers might have more time) or the rest of the week.&lt;/p&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;cran_times %&amp;gt;% 
+  filter(snapshot_time &amp;lt; holidays$start | snapshot_time  &amp;gt; holidays$end) %&amp;gt;% 
+  group_by(folder, date, wday) %&amp;gt;% 
+  summarize(packages = n_distinct(package),
+            week = unique(week)) %&amp;gt;% 
+  group_by(folder, wday) %&amp;gt;% 
+  ggplot() +
+  geom_smooth(aes(wday, packages, col = folder)) +
+  labs(x = &amp;quot;Day of the week&amp;quot;, y = &amp;quot;Packages&amp;quot;, col = &amp;quot;Folder&amp;quot;,
+       title = &amp;quot;Evolution by week day&amp;quot;) +
+  scale_color_manual(values = man_colors) +
+  scale_x_continuous(breaks = 1:7, expand = expansion()) +
+  scale_y_continuous(expand = expansion(), limits = c(0, NA))&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;&lt;img src=&#34;https://llrs.dev/post/2021/01/31/cran-review/index_files/figure-html/cran-wday-1.png&#34; width=&#34;120%&#34; /&gt;&lt;/p&gt;
+&lt;p&gt;We see a &lt;strong&gt;rise towards the middle of the week&lt;/strong&gt; of the packages on the pretest folder, indicating new packages submissions.&lt;/p&gt;
+&lt;/div&gt;
+&lt;div id=&#34;other-folders&#34; class=&#34;section level3&#34;&gt;
+&lt;h3&gt;Other folders&lt;/h3&gt;
+&lt;p&gt;There are some folders that seem to be from &lt;a href=&#34;https://www.r-project.org/contributors.html&#34;&gt;R Contributors&lt;/a&gt;.
+We see that some packages are on these folders:&lt;/p&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;cran_members &amp;lt;- c(&amp;quot;LH&amp;quot;, &amp;quot;GS&amp;quot;, &amp;quot;JH&amp;quot;)
+cran_times %&amp;gt;% 
+  filter(subfolder %in% cran_members) %&amp;gt;% 
+  group_by(subfolder, snapshot_time) %&amp;gt;% 
+  summarize(packages = n_distinct(package)) %&amp;gt;% 
+  ggplot() +
+  geom_smooth(aes(snapshot_time, packages, col = subfolder)) +
+    labs(x = element_blank(), y = element_blank(), col = &amp;quot;Folder&amp;quot;,
+       title = &amp;quot;Packages on folders&amp;quot;) +
+  scale_y_continuous(expand = expansion(), breaks = 0:10) +
+  coord_cartesian(y = c(0, NA))  +
+  scale_x_datetime(date_labels = &amp;quot;%Y/%m/%d&amp;quot;, date_breaks = &amp;quot;2 weeks&amp;quot;, 
+               expand = expansion(add = 2)) +
+  theme(legend.position = c(0.1, 0.8))&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;&lt;img src=&#34;https://llrs.dev/post/2021/01/31/cran-review/index_files/figure-html/subfolder-pattern-1.png&#34; width=&#34;120%&#34; /&gt;&lt;/p&gt;
+&lt;p&gt;There doesn’t seem to be any rule about using those folders or, the work was so quick that the hourly updated data didn’t record it.&lt;/p&gt;
+&lt;details&gt;
+&lt;summary&gt;
+Looking for any temporal pattern on those folders isn’t worth it.
+&lt;/summary&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;cran_times %&amp;gt;% 
+  filter(subfolder %in% cran_members) %&amp;gt;% 
+  group_by(subfolder, mday) %&amp;gt;% 
+  summarize(packages = n_distinct(package)) %&amp;gt;% 
+  ungroup() %&amp;gt;% 
+  ggplot() +
+  geom_smooth(aes(mday, packages, col = subfolder)) +
+  labs(x = &amp;quot;Day of the month&amp;quot;, y = &amp;quot;Pacakges&amp;quot;, col = &amp;quot;Subfolder&amp;quot;,
+       title = &amp;quot;Packages on subfolers by day of the month&amp;quot;) +
+  scale_y_continuous(expand = expansion()) +
+  scale_x_continuous(expand = expansion(), breaks = c(1,7,14,21,29)) +
+  coord_cartesian(ylim = c(0, NA))&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;&lt;img src=&#34;https://llrs.dev/post/2021/01/31/cran-review/index_files/figure-html/subfolder-mday-1.png&#34; width=&#34;120%&#34; /&gt;&lt;/p&gt;
+&lt;p&gt;Low number of packages and great variability (except on those that just have 1 package on the folder) on day of month.&lt;/p&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;cran_times %&amp;gt;% 
+  filter(subfolder %in% cran_members) %&amp;gt;% 
+  group_by(subfolder, wday) %&amp;gt;% 
+  summarize(packages = n_distinct(package)) %&amp;gt;% 
+  ungroup() %&amp;gt;% 
+  ggplot() +
+  geom_smooth(aes(wday, packages, col = subfolder)) +
+  labs(x = &amp;quot;Day of the week&amp;quot;, y = &amp;quot;Pacakges&amp;quot;, col = &amp;quot;Subfolder&amp;quot;,
+       title = &amp;quot;Evolution by week day&amp;quot;) +
+  scale_y_continuous(expand = expansion()) +
+  scale_x_continuous(breaks = 1:7, expand = expansion()) +
+  coord_cartesian(ylim =  c(0, NA))&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;&lt;img src=&#34;https://llrs.dev/post/2021/01/31/cran-review/index_files/figure-html/subfolder-wday-1.png&#34; width=&#34;120%&#34; /&gt;&lt;/p&gt;
+&lt;p&gt;There seem to be only 2 people usually working with their folders.
+Suppose that there aren’t a common set of rules the reviewers follow.&lt;/p&gt;
+&lt;/details&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;div id=&#34;information-for-submitters&#34; class=&#34;section level2&#34;&gt;
+&lt;h2&gt;Information for submitters&lt;/h2&gt;
+&lt;p&gt;I’ve read lots of comments recently around CRAN submission.
+However, with the few data available compared to open reviews on &lt;a href=&#34;https://llrs.dev/2020/07/bioconductor-submissions-reviews/&#34; title=&#34;Analysis of Bioconductor reviews&#34;&gt;Bioconductor&lt;/a&gt; and &lt;a href=&#34;https://llrs.dev/2020/09/ropensci-submissions/&#34; title=&#34;Analysis of Bioconductor reviews&#34;&gt;rOpenSci&lt;/a&gt; it is hard to answer them (See those related posts).
+On Bioconductor and rOpenSci it is possible to see people involved, message from the reviewers and other interested parties, steps done to be accepted…&lt;/p&gt;
+&lt;p&gt;One of the big question we can provide information about with the data available is how long it will be a package on the queue:&lt;/p&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;subm &amp;lt;- cran_times %&amp;gt;%
+  arrange(snapshot_time) %&amp;gt;% 
+  select(package, version, submission_n, snapshot_time) %&amp;gt;% 
+  group_by(package, submission_n) %&amp;gt;% 
+  filter(row_number() %in% c(1, last(row_number()))) %&amp;gt;% 
+  arrange(package, submission_n)&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;There are 429 packages that are only seen once.
+It might mean that it is an abandoned, delayed or rejected submissions, other might be acceptances in less than an hour&lt;a href=&#34;#fn2&#34; class=&#34;footnote-ref&#34; id=&#34;fnref2&#34;&gt;&lt;sup&gt;2&lt;/sup&gt;&lt;/a&gt;.&lt;/p&gt;
+&lt;p&gt;If we look at the package submission by date we can see the quick increase of packages of packages:&lt;/p&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;rsubm &amp;lt;- subm %&amp;gt;% 
+  filter(n_distinct(snapshot_time) %% 2 == 0) %&amp;gt;%
+  select(-version) %&amp;gt;% 
+  mutate(time = c(&amp;quot;start&amp;quot;, &amp;quot;end&amp;quot;)) %&amp;gt;% 
+  pivot_wider(values_from = snapshot_time, names_from = time) %&amp;gt;% 
+  ungroup() %&amp;gt;% 
+  mutate(r = row_number(), 
+         time  =  round(difftime(end, start, units = &amp;quot;hour&amp;quot;), 0)) %&amp;gt;% 
+  ungroup()
+lv &amp;lt;- levels(fct_reorder(rsubm$package, rsubm$start, .fun = min, .desc = FALSE))
+ggplot(rsubm) +
+  geom_rect(data = holidays, aes(xmin = start, xmax = end), 
+            ymin = first(lv), ymax = last(lv), alpha = 0.5, fill = &amp;quot;red&amp;quot;) +
+  geom_linerange(aes(y = fct_reorder(package, start, .fun = min, .desc = FALSE),
+                      x = start, xmin = start, xmax = end, 
+                     col = as.factor(submission_n))) + 
+  labs(x = element_blank(), y = element_blank(), title = 
+         &amp;quot;Packages on the queue&amp;quot;, col = &amp;quot;Submissions&amp;quot;) +
+  scale_x_datetime(date_labels = &amp;quot;%Y/%m/%d&amp;quot;, date_breaks = &amp;quot;2 weeks&amp;quot;, 
+                   expand = expansion(add = 2)) +
+  scale_colour_viridis_d() +
+  theme_minimal() +
+  theme(panel.grid.major.y = element_blank(),
+        axis.text.y = element_blank(),
+        legend.position = c(0.15, 0.7))&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;&lt;img src=&#34;https://llrs.dev/post/2021/01/31/cran-review/index_files/figure-html/resubm-1.png&#34; width=&#34;120%&#34; /&gt;&lt;/p&gt;
+&lt;p&gt;Some packages were submitted more than 5 times in this period. Recall the definition for submission used: a package with different version number after 24 hours or which wasn’t seen in the queue for the last 24 hours (even if they have the same version number).&lt;/p&gt;
+&lt;p&gt;Some authors do change the version number when CRAN reviewers require changes before accepting the package on CRAN while others do not and only change the version number according to their release cycle.&lt;/p&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;rsubm %&amp;gt;% 
+  arrange(start) %&amp;gt;% 
+  filter(start &amp;lt; holidays$start, # Look only before the holidays
+    submission_n == 1,# Use only the first submission
+    start &amp;gt; min(start)) %&amp;gt;%   # Just new submissions
+  mutate(r = row_number(),
+         start1 = as.numeric(seconds(start))) %&amp;gt;% 
+  lm(start1 ~ r, data = .) %&amp;gt;% 
+  broom::tidy() %&amp;gt;%  
+  mutate(estimate = estimate/(60*60)) # Hours
+## # A tibble: 2 x 5
+##   term         estimate std.error statistic p.value
+##   &amp;lt;chr&amp;gt;           &amp;lt;dbl&amp;gt;     &amp;lt;dbl&amp;gt;     &amp;lt;dbl&amp;gt;   &amp;lt;dbl&amp;gt;
+## 1 (Intercept) 444325.     6321.     253047.       0
+## 2 r                1.03      4.76      779.       0&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;More or less there is a &lt;strong&gt;new package submission every hour&lt;/strong&gt; on CRAN.
+Despite this submission rate we can see that most submissions are on the queue a short time:&lt;/p&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;library(&amp;quot;patchwork&amp;quot;)
+p1 &amp;lt;- rsubm %&amp;gt;% 
+  group_by(package) %&amp;gt;% 
+  summarize(time = sum(time)) %&amp;gt;% 
+  ggplot() +
+  geom_histogram(aes(time), bins = 100) +
+  labs(title = &amp;quot;Packages total time on queue&amp;quot;, x = &amp;quot;Hours&amp;quot;, 
+       y = element_blank()) +
+  scale_x_continuous(expand = expansion()) +
+  scale_y_continuous(expand = expansion())
+p2 &amp;lt;- rsubm %&amp;gt;% 
+  group_by(package) %&amp;gt;% 
+  summarize(time = sum(time)) %&amp;gt;% 
+  ggplot() +
+  geom_histogram(aes(time), binwidth = 24) +
+  coord_cartesian(xlim = c(0, 24*7)) +
+  labs(subtitle = &amp;quot;Zoom&amp;quot;, x = &amp;quot;Hours&amp;quot;, y = element_blank()) +
+  scale_x_continuous(expand = expansion(), breaks = seq(0, 24*7, by = 24)) +
+  scale_y_continuous(expand = expansion()) +
+  theme(panel.background = element_rect(colour = &amp;quot;white&amp;quot;))
+p1 + inset_element(p2, 0.2, 0.2, 1, 1)&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;&lt;img src=&#34;https://llrs.dev/post/2021/01/31/cran-review/index_files/figure-html/package-time-queue-1.png&#34; width=&#34;120%&#34; /&gt;&lt;/p&gt;
+&lt;p&gt;The accuracy of this data is not great.
+Because I found some packages that remained on the submission queue, and thus picked up by cransays, even after acceptance, so this might be a bit overestimated.
+Also, there are packages that got a speedy submission that didn’t last more than an hour, and they weren’t included.&lt;/p&gt;
+&lt;p&gt;Looking at the recorded submissions might be more accurate:&lt;/p&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;p1 &amp;lt;- rsubm %&amp;gt;% 
+  group_by(package, submission_n) %&amp;gt;% 
+  summarize(time = sum(time)) %&amp;gt;% 
+  ggplot() +
+  geom_histogram(aes(time), bins = 100) +
+  labs(title = &amp;quot;Submission time on queue&amp;quot;, x = &amp;quot;Hours&amp;quot;, 
+       y = element_blank()) +
+  scale_x_continuous(expand = expansion()) +
+  scale_y_continuous(expand = expansion())
+p2 &amp;lt;- rsubm %&amp;gt;% 
+  group_by(package, submission_n) %&amp;gt;% 
+  summarize(time = sum(time)) %&amp;gt;%  
+  ggplot() +
+  geom_histogram(aes(time), binwidth = 24) +
+  coord_cartesian(xlim = c(0, 24*7)) +
+  labs(subtitle = &amp;quot;Zoom&amp;quot;, x = &amp;quot;Hours&amp;quot;, y = element_blank()) +
+  scale_x_continuous(expand = expansion(), breaks = seq(0, 24*7, by = 24)) +
+  scale_y_continuous(expand = expansion()) +
+  theme(panel.background = element_rect(colour = &amp;quot;white&amp;quot;))
+p1 + inset_element(p2, 0.2, 0.2, 1, 1)&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;&lt;img src=&#34;https://llrs.dev/post/2021/01/31/cran-review/index_files/figure-html/submission-queue-1.png&#34; width=&#34;120%&#34; /&gt;&lt;/p&gt;
+&lt;p&gt;Many submissions are shortly spanned.
+Perhaps hinting that more testing should be done before or what to expect on the review should be more clear to the authors, or that they are approved very fast, or…&lt;/p&gt;
+&lt;p&gt;There are 429 packages that are only seen once.
+It might mean that it is an abandoned/rejected submissions other might be acceptances in less than an hour.&lt;/p&gt;
+&lt;p&gt;If we look at the folders of each submission well see different picture:&lt;/p&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;subm2 &amp;lt;- cran_times %&amp;gt;%
+  group_by(package, submission_n, folder) %&amp;gt;% 
+  arrange(snapshot_time) %&amp;gt;% 
+  select(package, version, submission_n, snapshot_time, folder) %&amp;gt;% 
+  filter(row_number() %in% c(1, last(row_number()))) %&amp;gt;% 
+  arrange(submission_n)
+rsubm2 &amp;lt;- subm2 %&amp;gt;% 
+  filter(n_distinct(snapshot_time) %% 2 == 0) %&amp;gt;%
+  mutate(time = c(&amp;quot;start&amp;quot;, &amp;quot;end&amp;quot;)) %&amp;gt;% 
+  pivot_wider(values_from = snapshot_time, names_from = time) %&amp;gt;% 
+  ungroup() %&amp;gt;% 
+  mutate(r = row_number(), 
+         time  =  round(difftime(end, start, units = &amp;quot;hour&amp;quot;), 0)) %&amp;gt;% 
+  ungroup() %&amp;gt;% 
+  filter(!is.na(start), !is.na(end))
+lv &amp;lt;- levels(fct_reorder(rsubm2$package, rsubm2$start, .fun = min, .desc = FALSE))
+ggplot(rsubm2) +
+  geom_rect(data = holidays, aes(xmin = start, xmax = end), 
+            ymin = first(lv), ymax = last(lv), alpha = 0.5, fill = &amp;quot;red&amp;quot;) +
+  geom_linerange(aes(y = fct_reorder(package, start, .fun = min, .desc = FALSE),
+                      x = start, xmin = start, xmax = end, col = folder)) + 
+  labs(x = element_blank(), y = element_blank(), title = 
+         &amp;quot;Packages on the queue&amp;quot;) +
+  scale_color_manual(values = man_colors) +
+  scale_x_datetime(date_labels = &amp;quot;%Y/%m/%d&amp;quot;, date_breaks = &amp;quot;2 weeks&amp;quot;, 
+               expand = expansion(add = 2)) +
+  labs(col = &amp;quot;Folder&amp;quot;) +
+  theme_minimal() +
+  theme(panel.grid.major.y = element_blank(),
+        axis.text.y = element_blank(),
+        legend.position = c(0.2, 0.7))&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;&lt;img src=&#34;https://llrs.dev/post/2021/01/31/cran-review/index_files/figure-html/resubm2-1.png&#34; width=&#34;120%&#34; /&gt;&lt;/p&gt;
+&lt;p&gt;It looks like some packages take a long time to change folder, perhaps the maintainers have troubles fixing the issues pointed by the reviewers, or don’t have time to deal with them.
+Some packages are recorded in just 1 folder and some other go through multiple folders:&lt;/p&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;rsubm2 %&amp;gt;% 
+  group_by(package, submission_n) %&amp;gt;% 
+  summarize(n_folder = n_distinct(folder)) %&amp;gt;% 
+  ggplot() + 
+  geom_histogram(aes(n_folder), bins = 5) +
+  labs(title = &amp;quot;Folders by submission&amp;quot;, x = element_blank(), 
+       y = element_blank())&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;&lt;img src=&#34;https://llrs.dev/post/2021/01/31/cran-review/index_files/figure-html/submissions-n-folders-1.png&#34; width=&#34;120%&#34; /&gt;&lt;/p&gt;
+&lt;p&gt;Most submissions end up in one folder, but some go up to 5 folders.&lt;/p&gt;
+&lt;p&gt;Let’s see the most 5 common folders process of submissions:&lt;/p&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;compact_folders &amp;lt;- function(x) {
+  y &amp;lt;- x != lag(x)
+  y[1] &amp;lt;- TRUE
+  x[y]
+}
+cran_times %&amp;gt;% 
+  group_by(package, submission_n) %&amp;gt;% 
+  summarize (folder = list(compact_folders(folder))) %&amp;gt;% 
+  ungroup() %&amp;gt;% 
+  count(folder, sort = TRUE) %&amp;gt;% 
+  top_n(5) %&amp;gt;% 
+  rename(Folders = folder, Frequency = n) %&amp;gt;% 
+  as.data.frame()
+##            Folders Frequency
+## 1          pretest      1433
+## 2 pretest, inspect       422
+## 3          inspect       301
+## 4 pretest, newbies       279
+## 5          newbies       245&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;As expected the pretest and newbies are one of the most frequent folders.&lt;/p&gt;
+&lt;p&gt;Another way of seeing whether it is a right moment to submit your package, aside of how many packages are on the queue, is looking how much activity there is:&lt;/p&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;subm3 &amp;lt;- cran_times %&amp;gt;%
+  arrange(snapshot_time) %&amp;gt;% 
+  group_by(package) %&amp;gt;% 
+  mutate(autor_change = submission_n != lag(submission_n),
+         cran_change = folder != lag(folder)) %&amp;gt;% 
+  mutate(autor_change = ifelse(is.na(autor_change), TRUE, autor_change),
+         cran_change = ifelse(is.na(cran_change), FALSE, cran_change)) %&amp;gt;% 
+  mutate(cran_change = case_when(subfolder != lag(subfolder) ~ TRUE,
+                                 TRUE ~ cran_change)) %&amp;gt;% 
+  ungroup()
+subm3 %&amp;gt;% 
+  group_by(snapshot_time) %&amp;gt;% 
+  summarize(autor_change = sum(autor_change), cran_change = sum(cran_change)) %&amp;gt;% 
+  filter(row_number() != 1) %&amp;gt;% 
+  filter(autor_change != 0 | cran_change != 0) %&amp;gt;% 
+  ggplot() +
+  geom_rect(data = holidays, aes(xmin = start, xmax = end), 
+            ymin = -26, ymax = 26, alpha = 0.5, fill = &amp;quot;grey&amp;quot;) +
+  geom_point(aes(snapshot_time, autor_change), fill = &amp;quot;blue&amp;quot;, size = 0) +
+  geom_area(aes(snapshot_time, autor_change), fill = &amp;quot;blue&amp;quot;) +
+  geom_point(aes(snapshot_time, -cran_change), fill = &amp;quot;red&amp;quot;, size = 0) +
+  geom_area(aes(snapshot_time, -cran_change), fill = &amp;quot;red&amp;quot;) +
+  scale_x_datetime(date_labels = &amp;quot;%Y/%m/%d&amp;quot;, date_breaks = &amp;quot;2 weeks&amp;quot;, 
+                   expand = expansion(add = 2)) +
+  scale_y_continuous(expand = expansion(add = c(0, 0))) + 
+  coord_cartesian(ylim = c(-26, 26)) +
+  annotate(&amp;quot;text&amp;quot;, label = &amp;quot;CRAN&amp;#39;s&amp;quot;, y = 20, x = as_datetime(&amp;quot;2020/11/02&amp;quot;)) +
+  annotate(&amp;quot;text&amp;quot;, label = &amp;quot;Maintainers&amp;#39;&amp;quot;, y = -20, x = as_datetime(&amp;quot;2020/11/02&amp;quot;)) +
+  labs(y = &amp;quot;Changes&amp;quot;, x = element_blank(), title = &amp;quot;Activity on CRAN:&amp;quot;)&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;&lt;img src=&#34;https://llrs.dev/post/2021/01/31/cran-review/index_files/figure-html/cran-pressure-1.png&#34; width=&#34;120%&#34; /&gt;&lt;/p&gt;
+&lt;p&gt;On this plot we can see that changes on folders or submissions are not simultaneous.
+But they are quite frequent.&lt;/p&gt;
+&lt;div id=&#34;review-process&#34; class=&#34;section level3&#34;&gt;
+&lt;h3&gt;Review process&lt;/h3&gt;
+&lt;p&gt;There is a &lt;a href=&#34;https://lockedata.github.io/cransays/articles/dashboard.html#cran-review-workflow&#34;&gt;scheme&lt;/a&gt; about how does the review process work.
+However, it has been pointed out that it needs an update.&lt;/p&gt;
+&lt;p&gt;We’ve seen which folders go before which ones, but we haven’t looked up what is the last folder in which package appear:&lt;/p&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;cran_times %&amp;gt;% 
+  ungroup() %&amp;gt;% 
+  group_by(package, submission_n) %&amp;gt;% 
+  arrange(snapshot_time) %&amp;gt;% 
+  filter(1:n() == last(n())) %&amp;gt;% 
+  ungroup() %&amp;gt;% 
+  count(folder, sort = TRUE) %&amp;gt;% 
+  knitr::kable(col.names = c(&amp;quot;Last folder&amp;quot;, &amp;quot;Submissions&amp;quot;))&lt;/code&gt;&lt;/pre&gt;
+&lt;table&gt;
+&lt;thead&gt;
+&lt;tr class=&#34;header&#34;&gt;
+&lt;th align=&#34;left&#34;&gt;Last folder&lt;/th&gt;
+&lt;th align=&#34;right&#34;&gt;Submissions&lt;/th&gt;
+&lt;/tr&gt;
+&lt;/thead&gt;
+&lt;tbody&gt;
+&lt;tr class=&#34;odd&#34;&gt;
+&lt;td align=&#34;left&#34;&gt;pretest&lt;/td&gt;
+&lt;td align=&#34;right&#34;&gt;1653&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr class=&#34;even&#34;&gt;
+&lt;td align=&#34;left&#34;&gt;newbies&lt;/td&gt;
+&lt;td align=&#34;right&#34;&gt;981&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr class=&#34;odd&#34;&gt;
+&lt;td align=&#34;left&#34;&gt;inspect&lt;/td&gt;
+&lt;td align=&#34;right&#34;&gt;890&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr class=&#34;even&#34;&gt;
+&lt;td align=&#34;left&#34;&gt;recheck&lt;/td&gt;
+&lt;td align=&#34;right&#34;&gt;555&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr class=&#34;odd&#34;&gt;
+&lt;td align=&#34;left&#34;&gt;publish&lt;/td&gt;
+&lt;td align=&#34;right&#34;&gt;469&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr class=&#34;even&#34;&gt;
+&lt;td align=&#34;left&#34;&gt;waiting&lt;/td&gt;
+&lt;td align=&#34;right&#34;&gt;441&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr class=&#34;odd&#34;&gt;
+&lt;td align=&#34;left&#34;&gt;human&lt;/td&gt;
+&lt;td align=&#34;right&#34;&gt;332&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr class=&#34;even&#34;&gt;
+&lt;td align=&#34;left&#34;&gt;pending&lt;/td&gt;
+&lt;td align=&#34;right&#34;&gt;225&lt;/td&gt;
+&lt;/tr&gt;
+&lt;/tbody&gt;
+&lt;/table&gt;
+&lt;p&gt;We can see that many submissions were left at the pretest, and just a minority on the human or publish folders.&lt;/p&gt;
+&lt;/div&gt;
+&lt;div id=&#34;time-it-takes-to-disappear-from-the-system&#34; class=&#34;section level3&#34;&gt;
+&lt;h3&gt;Time it takes to disappear from the system&lt;/h3&gt;
+&lt;p&gt;One of the motivations to do this post was a &lt;a href=&#34;https://stat.ethz.ch/pipermail/r-package-devel/2020q4/006174.html&#34;&gt;question on R-pkg-devel&lt;/a&gt;, about how long does it usually take for a package to be accepted on CRAN.
+We can look how long does each submission take until it is removed from the queue:&lt;/p&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;package_submissions &amp;lt;- cran_times %&amp;gt;% 
+  group_by(package, submission_n) %&amp;gt;% 
+  summarise(submission_period = difftime(max(snapshot_time), 
+                                         min(snapshot_time), 
+                                         units = &amp;quot;hour&amp;quot;),
+            submission_time = min(snapshot_time)) %&amp;gt;% 
+  ungroup() %&amp;gt;% 
+  filter(submission_period != 0)&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;This is a good approximation about how long does it take a package to be accepted or rejected, but some packages remain on the queue after they are accepted and appear on CRAN.
+Joining this data with data from &lt;a href=&#34;https://r-pkg.org/&#34;&gt;metacran&lt;/a&gt; we could know how often does this happend.
+But I leave that for the reader or some other posts.
+Let’s go back to time spend on the queue:&lt;/p&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;package_submissions %&amp;gt;% 
+  # filter(submission_time &amp;lt; holidays$start) %&amp;gt;% 
+  ggplot() +
+  geom_point(aes(submission_time, submission_period, col = submission_n)) +
+  geom_rect(data = holidays, aes(xmin = start, xmax = end),
+            ymin = 0, ymax = 3500, alpha = 0.5, fill = &amp;quot;red&amp;quot;) + 
+  scale_x_datetime(date_labels = &amp;quot;%Y/%m/%d&amp;quot;, date_breaks = &amp;quot;2 weeks&amp;quot;,
+                   expand = expansion(add = 10)) +
+  scale_y_continuous(expand = expansion(add = 10)) +
+  labs(title = &amp;quot;Time on the queue according to the submission&amp;quot;,
+       x = &amp;quot;Submission&amp;quot;, y = &amp;quot;Time (hours)&amp;quot;, col = &amp;quot;Submission&amp;quot;) +
+  theme(legend.position = c(0.5, 0.8))&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;&lt;img src=&#34;https://llrs.dev/post/2021/01/31/cran-review/index_files/figure-html/time-time-1.png&#34; width=&#34;120%&#34; /&gt;&lt;/p&gt;
+&lt;p&gt;These diagonals suggest that the work is done in batches in a day or an afternoon.
+And the prominent diagonal after holidays are packages still on the queue.&lt;/p&gt;
+&lt;p&gt;If we summarize by day and take the median of all the first package submission we can see how much long is a package on the queue:&lt;/p&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;package_submissions %&amp;gt;% 
+  filter(submission_n == 1) %&amp;gt;% 
+  ungroup() %&amp;gt;%
+  mutate(d = as.Date(submission_time)) %&amp;gt;%
+  group_by(d) %&amp;gt;% 
+  summarize(m = median(submission_period)) %&amp;gt;% 
+  ggplot() +
+  geom_rect(data = holidays, aes(xmin = as.Date(start), xmax = as.Date(end)),
+            ymin = 0, ymax = 80, alpha = 0.5, fill = &amp;quot;red&amp;quot;) + 
+  geom_smooth(aes(d, m)) +
+  coord_cartesian(ylim = c(0, NA)) +
+  scale_x_date(date_labels = &amp;quot;%Y/%m/%d&amp;quot;, date_breaks = &amp;quot;2 weeks&amp;quot;,
+                   expand = expansion(add = 1)) +
+  labs(x = element_blank(), y = &amp;quot;Daily median time in queue (hours)&amp;quot;, 
+       title = &amp;quot;Submission time&amp;quot;)&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;&lt;img src=&#34;https://llrs.dev/post/2021/01/31/cran-review/index_files/figure-html/daily-submission-1.png&#34; width=&#34;120%&#34; /&gt;&lt;/p&gt;
+&lt;p&gt;We can see that usually it takes more than a day to disappear from the queue for a new package submitted on CRAN.&lt;/p&gt;
+&lt;p&gt;There is a lot of variation among submissions:&lt;/p&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;package_submissions %&amp;gt;% 
+  group_by(submission_n) %&amp;gt;% 
+  mutate(submission_n = as.character(submission_n)) %&amp;gt;% 
+  ggplot() +
+  geom_jitter(aes(submission_n, submission_period), height = 0) +
+  scale_y_continuous(limits = c(1, NA), expand = expansion(add = c(1, 10)),
+                     breaks = seq(0,  4550, by = 24*7)) +
+  labs(title = &amp;quot;Submission time in queue&amp;quot;, y = &amp;quot;Hours&amp;quot;, x = element_blank())
+## Warning: Removed 142 rows containing missing values (geom_point).&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;&lt;img src=&#34;https://llrs.dev/post/2021/01/31/cran-review/index_files/figure-html/submission-progression-1.png&#34; width=&#34;120%&#34; /&gt;&lt;/p&gt;
+&lt;p&gt;Surprisingly sometimes a submissions goes missing from the folders for some days (I checked with one package I submitted and it doesn’t appear for 7 days, although it was on the queue).
+This might affect this analysis as it will count them as new submissions but some of them won’t be.&lt;/p&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;package_submissions %&amp;gt;% 
+  filter(submission_period != 0) %&amp;gt;% 
+  group_by(submission_n) %&amp;gt;% 
+  mutate(submission_n = as.character(submission_n)) %&amp;gt;% 
+  filter(n() &amp;gt; 5) %&amp;gt;% 
+  summarize(median = round(median(submission_period), 2)) %&amp;gt;% 
+  knitr::kable(col.names = c(&amp;quot;Submission&amp;quot;, &amp;quot;Median time (h)&amp;quot;))&lt;/code&gt;&lt;/pre&gt;
+&lt;table&gt;
+&lt;thead&gt;
+&lt;tr class=&#34;header&#34;&gt;
+&lt;th align=&#34;left&#34;&gt;Submission&lt;/th&gt;
+&lt;th align=&#34;left&#34;&gt;Median time (h)&lt;/th&gt;
+&lt;/tr&gt;
+&lt;/thead&gt;
+&lt;tbody&gt;
+&lt;tr class=&#34;odd&#34;&gt;
+&lt;td align=&#34;left&#34;&gt;1&lt;/td&gt;
+&lt;td align=&#34;left&#34;&gt;36.13 hours&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr class=&#34;even&#34;&gt;
+&lt;td align=&#34;left&#34;&gt;2&lt;/td&gt;
+&lt;td align=&#34;left&#34;&gt;18.27 hours&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr class=&#34;odd&#34;&gt;
+&lt;td align=&#34;left&#34;&gt;3&lt;/td&gt;
+&lt;td align=&#34;left&#34;&gt;16.47 hours&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr class=&#34;even&#34;&gt;
+&lt;td align=&#34;left&#34;&gt;4&lt;/td&gt;
+&lt;td align=&#34;left&#34;&gt;11.27 hours&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr class=&#34;odd&#34;&gt;
+&lt;td align=&#34;left&#34;&gt;5&lt;/td&gt;
+&lt;td align=&#34;left&#34;&gt;13.37 hours&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr class=&#34;even&#34;&gt;
+&lt;td align=&#34;left&#34;&gt;6&lt;/td&gt;
+&lt;td align=&#34;left&#34;&gt;38.08 hours&lt;/td&gt;
+&lt;/tr&gt;
+&lt;/tbody&gt;
+&lt;/table&gt;
+&lt;p&gt;So it usually takes more than a day for new packages and later is around 12 hours.&lt;/p&gt;
+&lt;p&gt;To set in context the work done by CRAN checking system, which is the one that helps to keep the high quality of the packages, let’s explore other checking system: GitHub actions.&lt;/p&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;div id=&#34;GHAR&#34; class=&#34;section level2&#34;&gt;
+&lt;h2&gt;GitHub action reliability&lt;/h2&gt;
+&lt;p&gt;The data of this post was collected using Github actions by cransays.
+Well use this data to test how reliable GitHub actions are.&lt;/p&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;gha &amp;lt;- cbind(cran_times[, c(&amp;quot;month&amp;quot;, &amp;quot;mday&amp;quot;, &amp;quot;wday&amp;quot;, &amp;quot;week&amp;quot;)], 
+      minute = minute(cran_submissions$snapshot_time), 
+      hour = hour(cran_times$snapshot_time),
+      type = &amp;quot;cransays&amp;quot;) %&amp;gt;% 
+  distinct()
+gha %&amp;gt;% 
+  ggplot() +
+  geom_violin(aes(as.factor(hour), minute)) +
+  scale_y_continuous(expand = expansion(add = 0.5), 
+                     breaks = c(0, 15, 30, 45, 60), limits = c(0, 60)) +
+  scale_x_discrete(expand = expansion())  +
+  labs(x = &amp;quot;Hour&amp;quot;, y = &amp;quot;Minute&amp;quot;, title = &amp;quot;Daily variation&amp;quot;)&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;&lt;img src=&#34;https://llrs.dev/post/2021/01/31/cran-review/index_files/figure-html/gha2-1.png&#34; width=&#34;120%&#34; /&gt;&lt;/p&gt;
+&lt;p&gt;There seems to be a lower limit around 10 minutes except for some builds that I think were manually triggered.
+Aside from this, there is usually low variation and the process end around ~ 15 minutes but it can end much later.
+This is just for one simple script scrapping a site.
+Compared to thousands of packages builds and checks it is much simpler.&lt;/p&gt;
+&lt;p&gt;And last how reliable it is?&lt;/p&gt;
+&lt;p&gt;We can compare how many hours are between the first and the last report and how many do we have recorded.
+If we have less this indicate errors on GHA.&lt;/p&gt;
+&lt;p&gt;So the script and github actions worked on ~96.9646576% of the times.&lt;/p&gt;
+&lt;p&gt;These numbers are great, but on CRAN and Bioconductor all packages are checked daily on several OS consistently.&lt;/p&gt;
+&lt;/div&gt;
+&lt;div id=&#34;conclusions&#34; class=&#34;section level2&#34;&gt;
+&lt;h2&gt;Conclusions&lt;/h2&gt;
+&lt;p&gt;Some of the most important points from this post:&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;Some packages appear on several folders and even there are times that multiple versions of a package are on the queue.&lt;/li&gt;
+&lt;li&gt;Most submission happens in the first days of the week and towards the beginning of the month.&lt;/li&gt;
+&lt;li&gt;Most of the submissions disappear from the CRAN queue in less than a day but new submission take around 36 hours.&lt;/li&gt;
+&lt;li&gt;There’s a new package submission to CRAN every hour.&lt;/li&gt;
+&lt;li&gt;In later submissions time in the queue is considerably shorter.&lt;/li&gt;
+&lt;li&gt;It was impossible to know when there was a reply from CRAN, as no information is provided.&lt;/li&gt;
+&lt;li&gt;Not possible to know when a package has all OK before it hits CRAN as some packages remain in the queue even after acceptance.&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;Last, I compare the review system with other reviews of R software like Bioconductor and rOpenSci.&lt;/p&gt;
+&lt;p&gt;One big difference between CRAN and Bioconductor or rOpenSci is that even if your package is already included each time you want to fix something it gets reviewed by someone.
+This ensures a high quality of the packages, as well as increases the work for the reviewers.&lt;/p&gt;
+&lt;p&gt;Also, the list of reviewers as far as I know is just 5 people who also are part of the developers maintaining and developing R.
+In Bioconductor it is the same (except they do not to take care of R itself) but in rOpenSci this doesn’t happen that way.&lt;/p&gt;
+&lt;p&gt;The next big difference is the lack of transparency on the process of the review itself.
+Perhaps because CRAN started earlier (1997) while Bioconductor in 2002 and rOpenSci much later.
+On CRAN with the information available we don’t know the steps to be accepted beyond the pretest and the manual review.
+We don’t know when the package is accepted or rejected, what is the content of the feedback to the maintainer (or when there is feedback and how long does the maintainer get to address those changes).
+It is no clear how does the process work.
+Additionally, the reviewer’s work seems highly manual as we found some duplicated packages on the queue.&lt;/p&gt;
+&lt;p&gt;Further automatization and transparency on the process could help reduce the load on the reviewers, as well as increasing the number of reviewers.
+A public review could help reduce the burden to CRAN reviewers as outsiders could help solving errors (although this is somewhat already fulfilled by the &lt;a href=&#34;https://www.r-project.org/mail.html&#34;&gt;mailing list&lt;/a&gt; R-package-devel), and would help notice and find a compromise on inconsistencies between reviews.
+As anecdotal evidence I submitted two packages one shortly after the first, on the second package they asked me to change some URLS that on the first I wasn’t required to change.&lt;/p&gt;
+&lt;p&gt;Another difference between these three repositories are the manuals.
+It seems that CRAN repository is equated to be R, so the &lt;a href=&#34;https://cran.r-project.org/doc/manuals/r-release/R-exts.html&#34;&gt;manual for writing R extensions&lt;/a&gt; is under &lt;code&gt;cran.r-project.org&lt;/code&gt;, while this is about extending R and can and does happen outside CRAN.&lt;/p&gt;
+&lt;p&gt;The &lt;a href=&#34;https://cran.r-project.org/web/packages/policies.html&#34;&gt;CRAN policies&lt;/a&gt; changes without notice to the existing developers.
+Sending an email to the maintainers or R-announce mailing list would help developers to notice policy changes.
+Developers had to create a &lt;a href=&#34;http://dirk.eddelbuettel.com/blog/2013/10/23/&#34;&gt;policy watch&lt;/a&gt; and other resources to &lt;a href=&#34;https://blog.r-hub.io/2019/05/29/keep-up-with-cran/&#34;&gt;keep up with CRAN&lt;/a&gt; changes that not only affect them on submitting a package but also on packages already included on CRAN.&lt;/p&gt;
+&lt;p&gt;The CRAN reviewers are involved on multiple demanding tasks: their own regular jobs and outside work (familiar, friend, other interests) commitments, and then, R development and maintenance, CRAN reviews and maintenance, R-journal&lt;a href=&#34;#fn3&#34; class=&#34;footnote-ref&#34; id=&#34;fnref3&#34;&gt;&lt;sup&gt;3&lt;/sup&gt;&lt;/a&gt;.
+One possible solution to reduce the burden for them is increase the number of reviewers.
+Perhaps a mentorship program to review packages or a guideline to what to check training and would help reduce the pressure on the current volunteers.&lt;/p&gt;
+&lt;p&gt;The peace and work of the maintainers as seen on this analysis is huge, and much more that cannot be seen with this data.
+Many thanks to all the volunteers that maintain it, those who donate to the R Foundation and the employers of those volunteers that make possible CRAN and R.&lt;/p&gt;
+&lt;div id=&#34;reproducibility&#34; class=&#34;section level3&#34;&gt;
+&lt;h3&gt;Reproducibility&lt;/h3&gt;
+&lt;details&gt;
+&lt;pre&gt;&lt;code&gt;## NULL
+## ─ Session info ───────────────────────────────────────────────────────────────────────────────────────────────────────
+##  setting  value                       
+##  version  R version 4.0.1 (2020-06-06)
+##  os       Ubuntu 20.04.3 LTS          
+##  system   x86_64, linux-gnu           
+##  ui       X11                         
+##  language (EN)                        
+##  collate  en_US.UTF-8                 
+##  ctype    en_US.UTF-8                 
+##  tz       Europe/Madrid               
+##  date     2021-08-25                  
+## 
+## ─ Packages ───────────────────────────────────────────────────────────────────────────────────────────────────────────
+##  package      * version     date       lib source                              
+##  assertthat     0.2.1       2019-03-21 [1] CRAN (R 4.0.1)                      
+##  backports      1.2.1       2020-12-09 [1] CRAN (R 4.0.1)                      
+##  blogdown       1.3         2021-04-14 [1] CRAN (R 4.0.1)                      
+##  bookdown       0.22        2021-04-22 [1] CRAN (R 4.0.1)                      
+##  broom          0.7.6       2021-04-05 [1] CRAN (R 4.0.1)                      
+##  bslib          0.2.5       2021-05-12 [1] CRAN (R 4.0.1)                      
+##  cellranger     1.1.0       2016-07-27 [1] CRAN (R 4.0.1)                      
+##  cli            2.5.0       2021-04-26 [1] CRAN (R 4.0.1)                      
+##  colorspace     2.0-1       2021-05-04 [1] CRAN (R 4.0.1)                      
+##  crayon         1.4.1       2021-02-08 [1] CRAN (R 4.0.1)                      
+##  DBI            1.1.1       2021-01-15 [1] CRAN (R 4.0.1)                      
+##  dbplyr         2.1.1       2021-04-06 [1] CRAN (R 4.0.1)                      
+##  digest         0.6.27      2020-10-24 [1] CRAN (R 4.0.1)                      
+##  dplyr        * 1.0.6       2021-05-05 [1] CRAN (R 4.0.1)                      
+##  ellipsis       0.3.2       2021-04-29 [1] CRAN (R 4.0.1)                      
+##  evaluate       0.14        2019-05-28 [1] CRAN (R 4.0.1)                      
+##  fansi          0.5.0       2021-05-25 [1] CRAN (R 4.0.1)                      
+##  farver         2.1.0       2021-02-28 [1] CRAN (R 4.0.1)                      
+##  forcats      * 0.5.1       2021-01-27 [1] CRAN (R 4.0.1)                      
+##  fs             1.5.0       2020-07-31 [1] CRAN (R 4.0.1)                      
+##  generics       0.1.0       2020-10-31 [1] CRAN (R 4.0.1)                      
+##  ggplot2      * 3.3.5       2021-06-25 [1] CRAN (R 4.0.1)                      
+##  glue           1.4.2       2020-08-27 [1] CRAN (R 4.0.1)                      
+##  gtable         0.3.0       2019-03-25 [1] CRAN (R 4.0.1)                      
+##  haven          2.4.1       2021-04-23 [1] CRAN (R 4.0.1)                      
+##  here           1.0.1       2020-12-13 [1] CRAN (R 4.0.1)                      
+##  highr          0.9         2021-04-16 [1] CRAN (R 4.0.1)                      
+##  hms          * 1.0.0       2021-01-13 [1] CRAN (R 4.0.1)                      
+##  htmltools      0.5.1.1     2021-01-22 [1] CRAN (R 4.0.1)                      
+##  httr           1.4.2       2020-07-20 [1] CRAN (R 4.0.1)                      
+##  jquerylib      0.1.4       2021-04-26 [1] CRAN (R 4.0.1)                      
+##  jsonlite       1.7.2       2020-12-09 [1] CRAN (R 4.0.1)                      
+##  knitr          1.33        2021-04-24 [1] CRAN (R 4.0.1)                      
+##  labeling       0.4.2       2020-10-20 [1] CRAN (R 4.0.1)                      
+##  lattice        0.20-41     2020-04-02 [1] CRAN (R 4.0.1)                      
+##  lifecycle      1.0.0       2021-02-15 [1] CRAN (R 4.0.1)                      
+##  lubridate    * 1.7.10.9000 2021-06-12 [1] Github (tidyverse/lubridate@1e0d66f)
+##  magrittr       2.0.1       2020-11-17 [1] CRAN (R 4.0.1)                      
+##  Matrix         1.3-2       2021-01-06 [1] CRAN (R 4.0.1)                      
+##  mgcv           1.8-35      2021-04-18 [1] CRAN (R 4.0.1)                      
+##  modelr         0.1.8       2020-05-19 [1] CRAN (R 4.0.1)                      
+##  munsell        0.5.0       2018-06-12 [1] CRAN (R 4.0.1)                      
+##  nlme           3.1-152     2021-02-04 [1] CRAN (R 4.0.1)                      
+##  patchwork    * 1.1.1       2020-12-17 [1] CRAN (R 4.0.1)                      
+##  pillar         1.6.1       2021-05-16 [1] CRAN (R 4.0.1)                      
+##  pkgconfig      2.0.3       2019-09-22 [1] CRAN (R 4.0.1)                      
+##  purrr        * 0.3.4       2020-04-17 [1] CRAN (R 4.0.1)                      
+##  R6             2.5.0       2020-10-28 [1] CRAN (R 4.0.1)                      
+##  RColorBrewer   1.1-2       2014-12-07 [1] CRAN (R 4.0.1)                      
+##  Rcpp           1.0.6       2021-01-15 [1] CRAN (R 4.0.1)                      
+##  readr        * 1.4.0       2020-10-05 [1] CRAN (R 4.0.1)                      
+##  readxl         1.3.1       2019-03-13 [1] CRAN (R 4.0.1)                      
+##  reprex         2.0.0       2021-04-02 [1] CRAN (R 4.0.1)                      
+##  rlang          0.4.11      2021-04-30 [1] CRAN (R 4.0.1)                      
+##  rmarkdown      2.9         2021-06-15 [1] CRAN (R 4.0.1)                      
+##  rprojroot      2.0.2       2020-11-15 [1] CRAN (R 4.0.1)                      
+##  rstudioapi     0.13        2020-11-12 [1] CRAN (R 4.0.1)                      
+##  rvest          1.0.0       2021-03-09 [1] CRAN (R 4.0.1)                      
+##  sass           0.4.0       2021-05-12 [1] CRAN (R 4.0.1)                      
+##  scales         1.1.1       2020-05-11 [1] CRAN (R 4.0.1)                      
+##  sessioninfo    1.1.1       2018-11-05 [1] CRAN (R 4.0.1)                      
+##  stringi        1.6.2       2021-05-17 [1] CRAN (R 4.0.1)                      
+##  stringr      * 1.4.0       2019-02-10 [1] CRAN (R 4.0.1)                      
+##  tibble       * 3.1.2       2021-05-16 [1] CRAN (R 4.0.1)                      
+##  tidyr        * 1.1.3       2021-03-03 [1] CRAN (R 4.0.1)                      
+##  tidyselect     1.1.1       2021-04-30 [1] CRAN (R 4.0.1)                      
+##  tidyverse    * 1.3.1       2021-04-15 [1] CRAN (R 4.0.1)                      
+##  utf8           1.2.1       2021-03-12 [1] CRAN (R 4.0.1)                      
+##  vctrs          0.3.8       2021-04-29 [1] CRAN (R 4.0.1)                      
+##  viridisLite    0.4.0       2021-04-13 [1] CRAN (R 4.0.1)                      
+##  withr          2.4.2       2021-04-18 [1] CRAN (R 4.0.1)                      
+##  xfun           0.24        2021-06-15 [1] CRAN (R 4.0.1)                      
+##  xml2           1.3.2       2020-04-23 [1] CRAN (R 4.0.1)                      
+##  yaml           2.2.1       2020-02-01 [1] CRAN (R 4.0.1)                      
+## 
+## [1] /home/lluis/bin/R/4.0.1/lib/R/library&lt;/code&gt;&lt;/pre&gt;
+&lt;/details&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;div class=&#34;footnotes&#34;&gt;
+&lt;hr /&gt;
+&lt;ol&gt;
+&lt;li id=&#34;fn1&#34;&gt;&lt;p&gt;Or a problem with ggplot2 representing a sudden value that is much different from those around them.&lt;a href=&#34;#fnref1&#34; class=&#34;footnote-back&#34;&gt;↩︎&lt;/a&gt;&lt;/p&gt;&lt;/li&gt;
+&lt;li id=&#34;fn2&#34;&gt;&lt;p&gt;Which now I cannot find the evidence to link to.
+If anyone finds the tweet I would appreciate it.&lt;a href=&#34;#fnref2&#34; class=&#34;footnote-back&#34;&gt;↩︎&lt;/a&gt;&lt;/p&gt;&lt;/li&gt;
+&lt;li id=&#34;fn3&#34;&gt;&lt;p&gt;I’m not aware of anyone whose full job is just R reviewing.&lt;a href=&#34;#fnref3&#34; class=&#34;footnote-back&#34;&gt;↩︎&lt;/a&gt;&lt;/p&gt;&lt;/li&gt;
+&lt;/ol&gt;
+&lt;/div&gt;
+</description>
+    </item>
+    
+    <item>
+      <title>rOpenSci submissions</title>
+      <link>https://llrs.dev/post/2020/09/02/ropensci-submissions/</link>
+      <pubDate>Wed, 02 Sep 2020 00:00:00 +0000</pubDate>
+      <guid>https://llrs.dev/post/2020/09/02/ropensci-submissions/</guid>
+      <description>
+&lt;script src=&#34;index_files/header-attrs/header-attrs.js&#34;&gt;&lt;/script&gt;
+&lt;link href=&#34;index_files/anchor-sections/anchor-sections.css&#34; rel=&#34;stylesheet&#34; /&gt;
+&lt;script src=&#34;index_files/anchor-sections/anchor-sections.js&#34;&gt;&lt;/script&gt;
+
+
+&lt;p&gt;Following &lt;a href=&#34;https://llrs.dev/2020/07/bioconductor-submissions-reviews/&#34;&gt;last post on Bioconductor&lt;/a&gt; I wanted to analyze another venue where code reviews are made: &lt;a href=&#34;https://rOpenSci.org&#34;&gt;rOpenSci&lt;/a&gt;.
+There are some &lt;a href=&#34;https://ropensci.org/blog/2018/04/26/a-satrday-ct-series/&#34;&gt;other analysis&lt;/a&gt; of the the reviews made by rOpenSci themselves:&lt;/p&gt;
+&lt;blockquote&gt;
+&lt;p&gt;The &lt;a href=&#34;https://ropensci.org/blog/2018/04/26/rectangling-onboarding/&#34;&gt;first post&lt;/a&gt; in the series will explain how I rectangled onboarding. The &lt;a href=&#34;https://ropensci.org/blog/2018/05/03/onboarding-is-work/&#34;&gt;second post&lt;/a&gt; will give some clues as to how to quantify the work represented by rOpenSci onboarding. The &lt;a href=&#34;https://ropensci.org/blog/2018/05/10/onboarding-social-weather/&#34;&gt;third and last post&lt;/a&gt; will use tidy text analysis of onboarding threads to characterize the social weather of onboarding.&lt;/p&gt;
+&lt;/blockquote&gt;
+&lt;p&gt;rOpenSci review process has some of the differences:&lt;/p&gt;
+&lt;p&gt;One can ask before hand if the package submitted fits the scope of rOpenSci.
+In addition the review is done by two volunteers usually not affiliated with rOpenSci but with an editor that has the final decision
+Also there is an encouragement on a dialog and iteration to improve the package.
+Lastly, the build process is perform by third parties (Github actions, travis, appveyor …) and the results are not reported on the issue.&lt;/p&gt;
+&lt;p&gt;Despite all these differences following the same methods I downloaded the data on 2020/09/02 to analyze similarly the submissions.&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;index_files/figure-html/first-plot-1.png&#34; width=&#34;672&#34; /&gt;&lt;/p&gt;
+&lt;p&gt;We can see that there are fewer issues opened on rOpenSci but also the timeline is shorter.
+One difference is that there seems to be more events after the initial activity on the issues.&lt;/p&gt;
+&lt;p&gt;If we look at the editors involved on the issues we can see who has commented more and in more issues&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;index_files/figure-html/by-users-1.png&#34; width=&#34;672&#34; /&gt;&lt;/p&gt;
+&lt;p&gt;It seems like there are 10 comments per each issue an editor is involved with.
+Of course, this will change for people submitting software:&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;index_files/figure-html/by-user2-1.png&#34; width=&#34;672&#34; /&gt;&lt;/p&gt;
+&lt;p&gt;Here I kept the same threshold to show the names of users.
+There are more names, indicating more people commenting and involved on the issues.
+I’m surprised to appear on this graph because I haven’t been much involved with rOpenSci.
+Stefanie Butland as the community manager of rOpenSci comments more and is involved in more issues than regular users.&lt;/p&gt;
+&lt;p&gt;Now that we know who is involved comenting, what about the other events?&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;index_files/figure-html/events-view-1.png&#34; width=&#34;672&#34; /&gt;&lt;/p&gt;
+&lt;p&gt;First thing, more people are mentioned between them than on Bioconductor.
+Also there seems to be a lot more of cross-references than on Bioconductor.&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;index_files/figure-html/second-plot-1.png&#34; width=&#34;672&#34; /&gt;&lt;/p&gt;
+&lt;p&gt;The issues do have a highly social component with lots of mentions, subscriptions and comments.
+It is generally rare to unsubscribe from an issue or to have the issue added to a project.&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;index_files/figure-html/events-time-1.png&#34; width=&#34;672&#34; /&gt;&lt;/p&gt;
+&lt;p&gt;Here we don’t see a clear pattern on the events, but most issues have few events (median events of 61).&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;index_files/figure-html/events-time2-1.png&#34; width=&#34;672&#34; /&gt;&lt;/p&gt;
+&lt;p&gt;It is fairly similar to Bioconductor.
+We can see that issues have fewer events than on Bioconductor.
+This is because there isn’t any bot replying with each update to the repository neither a report of the build with every version increment.&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;index_files/figure-html/events-time3-1.png&#34; width=&#34;672&#34; /&gt;&lt;/p&gt;
+&lt;p&gt;Most issues have all the events on the first weeks.&lt;/p&gt;
+&lt;div id=&#34;editor&#34; class=&#34;section level1&#34;&gt;
+&lt;h1&gt;Editor&lt;/h1&gt;
+&lt;p&gt;As mentioned the editor is assigned to find the reviewers and have the final decision on the package.&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;index_files/figure-html/assignments-1.png&#34; width=&#34;672&#34; /&gt;&lt;/p&gt;
+&lt;p&gt;There seem to be few assigned users, and in some cases there are like two users assigned.
+This might be because the reviewers are also assigned that issue or something else.&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;index_files/figure-html/submission-acceptance-1.png&#34; width=&#34;672&#34; /&gt;&lt;/p&gt;
+&lt;p&gt;Editors are fairly more involved on the issues commenting around 11 times.&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;index_files/figure-html/events-days-1.png&#34; width=&#34;672&#34; /&gt;&lt;/p&gt;
+&lt;p&gt;We can see that one presubmission issue took longer to decide than most of the submissions!
+In general submissions show the same behavior as in Bioconductor:
+Most of them have lots of events on a relatively short period of time.
+Some submissions take longer to close and remain without events for long periods of time.&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;index_files/figure-html/events-user-distribution-1.png&#34; width=&#34;672&#34; /&gt;&lt;/p&gt;
+&lt;p&gt;Here are some differences on the number of different events per issue and different users involved.
+There are more users and events involved with issues on rOpenSci than on Bioconductor.
+This is partially expected as the review are done by more people but I expected a similar pattern of events per issue.&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;index_files/figure-html/actor-event-types-1.png&#34; width=&#34;672&#34; /&gt;&lt;/p&gt;
+&lt;p&gt;We can see that users and events are more distributed.&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;index_files/figure-html/actors-events-1.png&#34; width=&#34;672&#34; /&gt;&lt;/p&gt;
+&lt;p&gt;As in Bioconductor the more people involved more events per issue.&lt;/p&gt;
+&lt;/div&gt;
+&lt;div id=&#34;who-does-each-action&#34; class=&#34;section level1&#34;&gt;
+&lt;h1&gt;Who does each action ?&lt;/h1&gt;
+&lt;p&gt;We can look now at who performs what, we know there are 522 participants:&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;index_files/figure-html/who-1.png&#34; width=&#34;672&#34; /&gt;&lt;/p&gt;
+&lt;p&gt;The top 35 people involved is dominated by editors.
+Surprisingly editors do also cross-reference other issues.&lt;/p&gt;
+&lt;p&gt;If we look at how many comments there are on each issue per author and editor we can get a sense of how much work it takes for editors:&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;index_files/figure-html/comments-plot-1.png&#34; width=&#34;672&#34; /&gt;&lt;/p&gt;
+&lt;p&gt;Here we can see that there are more comments from authors and editors.&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;index_files/figure-html/closing-1.png&#34; width=&#34;672&#34; /&gt;&lt;/p&gt;
+&lt;p&gt;Some issues have fairly large number of comments after being closed.
+Perhaps discussing other alternatives or comparing to other existing software.&lt;/p&gt;
+&lt;/div&gt;
+&lt;div id=&#34;mentions&#34; class=&#34;section level1&#34;&gt;
+&lt;h1&gt;Mentions&lt;/h1&gt;
+&lt;p&gt;There are many more mentions than on Bioconductor.
+So what do these people do when added to the conversation ?&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;index_files/figure-html/mentions-1.png&#34; width=&#34;672&#34; /&gt;&lt;/p&gt;
+&lt;p&gt;People mentioned bring their experience by commenting, and cross-referencing some other issues.&lt;/p&gt;
+&lt;/div&gt;
+&lt;div id=&#34;labels&#34; class=&#34;section level1&#34;&gt;
+&lt;h1&gt;Labels&lt;/h1&gt;
+&lt;p&gt;rOpenSci uses labels much more than Bioconductor, with a total of 65 different labels.
+It also uses them to mark on which step of the review process each issue is.
+We can see that it got expanded with time, from initially just three labels to the current 6-7 labels:&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;index_files/figure-html/labels_plot_overview-1.png&#34; width=&#34;672&#34; /&gt;&lt;/p&gt;
+&lt;p&gt;But labels are also used to indicate to which is the topic of each package:&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;index_files/figure-html/labels_topic-1.png&#34; width=&#34;672&#34; /&gt;&lt;/p&gt;
+&lt;p&gt;Surprisingly the focus seems to be on data-access followed by geospatial and data-extraction:&lt;/p&gt;
+&lt;table&gt;
+&lt;thead&gt;
+&lt;tr class=&#34;header&#34;&gt;
+&lt;th align=&#34;left&#34;&gt;Topic&lt;/th&gt;
+&lt;th align=&#34;right&#34;&gt;n&lt;/th&gt;
+&lt;/tr&gt;
+&lt;/thead&gt;
+&lt;tbody&gt;
+&lt;tr class=&#34;odd&#34;&gt;
+&lt;td align=&#34;left&#34;&gt;data-access&lt;/td&gt;
+&lt;td align=&#34;right&#34;&gt;83&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr class=&#34;even&#34;&gt;
+&lt;td align=&#34;left&#34;&gt;geospatial&lt;/td&gt;
+&lt;td align=&#34;right&#34;&gt;30&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr class=&#34;odd&#34;&gt;
+&lt;td align=&#34;left&#34;&gt;data-extraction&lt;/td&gt;
+&lt;td align=&#34;right&#34;&gt;26&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr class=&#34;even&#34;&gt;
+&lt;td align=&#34;left&#34;&gt;reproducibility&lt;/td&gt;
+&lt;td align=&#34;right&#34;&gt;25&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr class=&#34;odd&#34;&gt;
+&lt;td align=&#34;left&#34;&gt;data-munging&lt;/td&gt;
+&lt;td align=&#34;right&#34;&gt;17&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr class=&#34;even&#34;&gt;
+&lt;td align=&#34;left&#34;&gt;text-mining&lt;/td&gt;
+&lt;td align=&#34;right&#34;&gt;17&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr class=&#34;odd&#34;&gt;
+&lt;td align=&#34;left&#34;&gt;data-retrieval&lt;/td&gt;
+&lt;td align=&#34;right&#34;&gt;13&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr class=&#34;even&#34;&gt;
+&lt;td align=&#34;left&#34;&gt;earth-science&lt;/td&gt;
+&lt;td align=&#34;right&#34;&gt;13&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr class=&#34;odd&#34;&gt;
+&lt;td align=&#34;left&#34;&gt;climate-data&lt;/td&gt;
+&lt;td align=&#34;right&#34;&gt;11&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr class=&#34;even&#34;&gt;
+&lt;td align=&#34;left&#34;&gt;literature&lt;/td&gt;
+&lt;td align=&#34;right&#34;&gt;11&lt;/td&gt;
+&lt;/tr&gt;
+&lt;/tbody&gt;
+&lt;/table&gt;
+&lt;p&gt;Labels are also used to classify topics (and initially if it had an editor assigned)&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;index_files/figure-html/labels-other-1.png&#34; width=&#34;672&#34; /&gt;&lt;/p&gt;
+&lt;p&gt;Other labels assigned, seem to be for packages or some other related to the process.
+Surprisingly there have been few submissions to MEE and JOSS according to the “pub:” labels.&lt;/p&gt;
+&lt;p&gt;Looking at the labels for each step can compute the median time required to get them:&lt;/p&gt;
+&lt;table&gt;
+&lt;thead&gt;
+&lt;tr class=&#34;header&#34;&gt;
+&lt;th align=&#34;left&#34;&gt;Step&lt;/th&gt;
+&lt;th align=&#34;right&#34;&gt;Median days&lt;/th&gt;
+&lt;th align=&#34;right&#34;&gt;Total days&lt;/th&gt;
+&lt;/tr&gt;
+&lt;/thead&gt;
+&lt;tbody&gt;
+&lt;tr class=&#34;odd&#34;&gt;
+&lt;td align=&#34;left&#34;&gt;1/editor-checks&lt;/td&gt;
+&lt;td align=&#34;right&#34;&gt;2.1&lt;/td&gt;
+&lt;td align=&#34;right&#34;&gt;2.1&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr class=&#34;even&#34;&gt;
+&lt;td align=&#34;left&#34;&gt;2/seeking-reviewer(s)&lt;/td&gt;
+&lt;td align=&#34;right&#34;&gt;2.5&lt;/td&gt;
+&lt;td align=&#34;right&#34;&gt;4.6&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr class=&#34;odd&#34;&gt;
+&lt;td align=&#34;left&#34;&gt;3/reviewer(s)-assigned&lt;/td&gt;
+&lt;td align=&#34;right&#34;&gt;10.8&lt;/td&gt;
+&lt;td align=&#34;right&#34;&gt;15.4&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr class=&#34;even&#34;&gt;
+&lt;td align=&#34;left&#34;&gt;4/review(s)-in-awaiting-changes&lt;/td&gt;
+&lt;td align=&#34;right&#34;&gt;26.0&lt;/td&gt;
+&lt;td align=&#34;right&#34;&gt;41.4&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr class=&#34;odd&#34;&gt;
+&lt;td align=&#34;left&#34;&gt;5/awaiting-reviewer(s)-response&lt;/td&gt;
+&lt;td align=&#34;right&#34;&gt;30.5&lt;/td&gt;
+&lt;td align=&#34;right&#34;&gt;71.9&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr class=&#34;even&#34;&gt;
+&lt;td align=&#34;left&#34;&gt;6/approved&lt;/td&gt;
+&lt;td align=&#34;right&#34;&gt;17.0&lt;/td&gt;
+&lt;td align=&#34;right&#34;&gt;88.9&lt;/td&gt;
+&lt;/tr&gt;
+&lt;/tbody&gt;
+&lt;/table&gt;
+&lt;p&gt;We see that the slowest step is awaiting reviewers response, right after awaiting changes from the authors.
+According to this the review process is long and it takes around 3 months to get a package approved.
+However, if we look for each issue how much time does it take to get the next label we see another picture:&lt;/p&gt;
+&lt;table&gt;
+&lt;thead&gt;
+&lt;tr class=&#34;header&#34;&gt;
+&lt;th align=&#34;left&#34;&gt;name&lt;/th&gt;
+&lt;th align=&#34;right&#34;&gt;Median days&lt;/th&gt;
+&lt;th align=&#34;right&#34;&gt;Total days&lt;/th&gt;
+&lt;/tr&gt;
+&lt;/thead&gt;
+&lt;tbody&gt;
+&lt;tr class=&#34;odd&#34;&gt;
+&lt;td align=&#34;left&#34;&gt;1/editor-checks&lt;/td&gt;
+&lt;td align=&#34;right&#34;&gt;2.1&lt;/td&gt;
+&lt;td align=&#34;right&#34;&gt;2.1&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr class=&#34;even&#34;&gt;
+&lt;td align=&#34;left&#34;&gt;2/seeking-reviewer(s)&lt;/td&gt;
+&lt;td align=&#34;right&#34;&gt;1.9&lt;/td&gt;
+&lt;td align=&#34;right&#34;&gt;4.0&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr class=&#34;odd&#34;&gt;
+&lt;td align=&#34;left&#34;&gt;3/reviewer(s)-assigned&lt;/td&gt;
+&lt;td align=&#34;right&#34;&gt;6.4&lt;/td&gt;
+&lt;td align=&#34;right&#34;&gt;10.4&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr class=&#34;even&#34;&gt;
+&lt;td align=&#34;left&#34;&gt;4/review(s)-in-awaiting-changes&lt;/td&gt;
+&lt;td align=&#34;right&#34;&gt;25.0&lt;/td&gt;
+&lt;td align=&#34;right&#34;&gt;35.4&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr class=&#34;odd&#34;&gt;
+&lt;td align=&#34;left&#34;&gt;5/awaiting-reviewer(s)-response&lt;/td&gt;
+&lt;td align=&#34;right&#34;&gt;17.1&lt;/td&gt;
+&lt;td align=&#34;right&#34;&gt;52.5&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr class=&#34;even&#34;&gt;
+&lt;td align=&#34;left&#34;&gt;6/approved&lt;/td&gt;
+&lt;td align=&#34;right&#34;&gt;12.2&lt;/td&gt;
+&lt;td align=&#34;right&#34;&gt;64.7&lt;/td&gt;
+&lt;/tr&gt;
+&lt;/tbody&gt;
+&lt;/table&gt;
+&lt;p&gt;Now the longest step is changing the packages with the feedback from the reviewers, followed by awaiting the reviewers comments but that is almost half of the time it was.
+The other times do not change much.
+The total time is still around 2 months, which is the double of what it takes to get a package accepted in Bioconductor.&lt;/p&gt;
+&lt;/div&gt;
+&lt;div id=&#34;conclusions&#34; class=&#34;section level1&#34;&gt;
+&lt;h1&gt;Conclusions&lt;/h1&gt;
+&lt;p&gt;Following the steps/labels the review process is similar enough to be able to compare the review process of &lt;a href=&#34;https://bioconductor.org&#34;&gt;Bioconductor&lt;/a&gt; and &lt;a href=&#34;https://ropensci.org&#34;&gt;rOpenSci&lt;/a&gt;.
+Not having information about the build and check status of packages makes harder to compare some steps and the stage of the package upon submission.
+On some early submissions it was editor’s duties to review the packages like in Bioconductor.
+It was later abandoned in favor of two external reviewers.
+The reviews on the rOpenSci are handled by more people which makes submission to take longer (probably also because usually there are two reviewers) and
+because there might be a clarification of changes and a dialog after the first review.&lt;/p&gt;
+&lt;p&gt;In general it takes longer to get the packages approved than on Bioconductor.&lt;/p&gt;
+&lt;div id=&#34;reproducibility&#34; class=&#34;section level3&#34;&gt;
+&lt;h3&gt;Reproducibility&lt;/h3&gt;
+&lt;details&gt;
+&lt;pre&gt;&lt;code&gt;## ─ Session info ───────────────────────────────────────────────────────────────────────────────────────────────────────
+##  setting  value                       
+##  version  R version 4.0.1 (2020-06-06)
+##  os       Ubuntu 20.04.1 LTS          
+##  system   x86_64, linux-gnu           
+##  ui       X11                         
+##  language (EN)                        
+##  collate  en_US.UTF-8                 
+##  ctype    en_US.UTF-8                 
+##  tz       Europe/Madrid               
+##  date     2020-10-26                  
+## 
+## ─ Packages ───────────────────────────────────────────────────────────────────────────────────────────────────────────
+##  package      * version    date       lib source                             
+##  assertthat     0.2.1      2019-03-21 [1] CRAN (R 4.0.1)                     
+##  backports      1.1.10     2020-09-15 [1] CRAN (R 4.0.1)                     
+##  blob           1.2.1      2020-01-20 [1] CRAN (R 4.0.1)                     
+##  blogdown       0.21       2020-10-11 [1] CRAN (R 4.0.1)                     
+##  bookdown       0.21       2020-10-13 [1] CRAN (R 4.0.1)                     
+##  broom          0.7.2      2020-10-20 [1] CRAN (R 4.0.1)                     
+##  cellranger     1.1.0      2016-07-27 [1] CRAN (R 4.0.1)                     
+##  cli            2.1.0      2020-10-12 [1] CRAN (R 4.0.1)                     
+##  colorspace     1.4-1      2019-03-18 [1] CRAN (R 4.0.1)                     
+##  crayon         1.3.4      2017-09-16 [1] CRAN (R 4.0.1)                     
+##  DBI            1.1.0      2019-12-15 [1] CRAN (R 4.0.1)                     
+##  dbplyr         1.4.4      2020-05-27 [1] CRAN (R 4.0.1)                     
+##  digest         0.6.26     2020-10-17 [1] CRAN (R 4.0.1)                     
+##  dplyr        * 1.0.2      2020-08-18 [1] CRAN (R 4.0.1)                     
+##  ellipsis       0.3.1      2020-05-15 [1] CRAN (R 4.0.1)                     
+##  evaluate       0.14       2019-05-28 [1] CRAN (R 4.0.1)                     
+##  fansi          0.4.1      2020-01-08 [1] CRAN (R 4.0.1)                     
+##  farver         2.0.3      2020-01-16 [1] CRAN (R 4.0.1)                     
+##  forcats      * 0.5.0      2020-03-01 [1] CRAN (R 4.0.1)                     
+##  fs             1.5.0      2020-07-31 [1] CRAN (R 4.0.1)                     
+##  generics       0.0.2      2018-11-29 [1] CRAN (R 4.0.1)                     
+##  ggplot2      * 3.3.2      2020-06-19 [1] CRAN (R 4.0.1)                     
+##  ggrepel      * 0.8.2      2020-03-08 [1] CRAN (R 4.0.1)                     
+##  glue           1.4.2      2020-08-27 [1] CRAN (R 4.0.1)                     
+##  gtable         0.3.0      2019-03-25 [1] CRAN (R 4.0.1)                     
+##  haven          2.3.1      2020-06-01 [1] CRAN (R 4.0.1)                     
+##  here           0.1        2017-05-28 [1] CRAN (R 4.0.1)                     
+##  highr          0.8        2019-03-20 [1] CRAN (R 4.0.1)                     
+##  hms            0.5.3      2020-01-08 [1] CRAN (R 4.0.1)                     
+##  htmltools      0.5.0      2020-06-16 [1] CRAN (R 4.0.1)                     
+##  httr           1.4.2      2020-07-20 [1] CRAN (R 4.0.1)                     
+##  jsonlite       1.7.1      2020-09-07 [1] CRAN (R 4.0.1)                     
+##  knitr          1.30       2020-09-22 [1] CRAN (R 4.0.1)                     
+##  labeling       0.4.2      2020-10-20 [1] CRAN (R 4.0.1)                     
+##  lifecycle      0.2.0      2020-03-06 [1] CRAN (R 4.0.1)                     
+##  lubridate      1.7.9      2020-06-08 [1] CRAN (R 4.0.1)                     
+##  magrittr       1.5.0.9000 2020-08-21 [1] Github (tidyverse/magrittr@1d0559d)
+##  modelr         0.1.8      2020-05-19 [1] CRAN (R 4.0.1)                     
+##  munsell        0.5.0      2018-06-12 [1] CRAN (R 4.0.1)                     
+##  patchwork    * 1.0.1      2020-06-22 [1] CRAN (R 4.0.1)                     
+##  pillar         1.4.6      2020-07-10 [1] CRAN (R 4.0.1)                     
+##  pkgconfig      2.0.3      2019-09-22 [1] CRAN (R 4.0.1)                     
+##  purrr        * 0.3.4      2020-04-17 [1] CRAN (R 4.0.1)                     
+##  R6             2.4.1      2019-11-12 [1] CRAN (R 4.0.1)                     
+##  RColorBrewer   1.1-2      2014-12-07 [1] CRAN (R 4.0.1)                     
+##  Rcpp           1.0.5      2020-07-06 [1] CRAN (R 4.0.1)                     
+##  readr        * 1.4.0      2020-10-05 [1] CRAN (R 4.0.1)                     
+##  readxl         1.3.1      2019-03-13 [1] CRAN (R 4.0.1)                     
+##  reprex         0.3.0      2019-05-16 [1] CRAN (R 4.0.1)                     
+##  rlang          0.4.8      2020-10-08 [1] CRAN (R 4.0.1)                     
+##  rmarkdown      2.5        2020-10-21 [1] CRAN (R 4.0.1)                     
+##  rprojroot      1.3-2      2018-01-03 [1] CRAN (R 4.0.1)                     
+##  rstudioapi     0.11       2020-02-07 [1] CRAN (R 4.0.1)                     
+##  rvest          0.3.6      2020-07-25 [1] CRAN (R 4.0.1)                     
+##  scales         1.1.1      2020-05-11 [1] CRAN (R 4.0.1)                     
+##  sessioninfo    1.1.1      2018-11-05 [1] CRAN (R 4.0.1)                     
+##  stringi        1.5.3      2020-09-09 [1] CRAN (R 4.0.1)                     
+##  stringr      * 1.4.0      2019-02-10 [1] CRAN (R 4.0.1)                     
+##  tibble       * 3.0.4      2020-10-12 [1] CRAN (R 4.0.1)                     
+##  tidyr        * 1.1.2      2020-08-27 [1] CRAN (R 4.0.1)                     
+##  tidyselect     1.1.0      2020-05-11 [1] CRAN (R 4.0.1)                     
+##  tidyverse    * 1.3.0      2019-11-21 [1] CRAN (R 4.0.1)                     
+##  vctrs          0.3.4      2020-08-29 [1] CRAN (R 4.0.1)                     
+##  viridisLite    0.3.0      2018-02-01 [1] CRAN (R 4.0.1)                     
+##  withr          2.3.0      2020-09-22 [1] CRAN (R 4.0.1)                     
+##  xfun           0.18       2020-09-29 [1] CRAN (R 4.0.1)                     
+##  xml2           1.3.2      2020-04-23 [1] CRAN (R 4.0.1)                     
+##  yaml           2.2.1      2020-02-01 [1] CRAN (R 4.0.1)                     
+## 
+## [1] /home/lluis/bin/R/4.0.1/lib/R/library&lt;/code&gt;&lt;/pre&gt;
+&lt;/details&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+</description>
+    </item>
+    
+    <item>
+      <title>Bioconductor submissions: reviews</title>
+      <link>https://llrs.dev/post/2020/07/31/bioconductor-submissions-reviews/</link>
+      <pubDate>Fri, 31 Jul 2020 00:00:00 +0000</pubDate>
+      <guid>https://llrs.dev/post/2020/07/31/bioconductor-submissions-reviews/</guid>
+      <description>
+&lt;script src=&#34;https://llrs.dev/post/2020/07/31/bioconductor-submissions-reviews/index_files/header-attrs/header-attrs.js&#34;&gt;&lt;/script&gt;
+
+
+&lt;p&gt;First post is on &lt;a href=&#34;https://llrs.dev/2020/06/bioconductor-submissions/&#34;&gt;Bioconductor submissions&lt;/a&gt; raised some questions comments but at the time I didn’t have a good way to answer them:&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;issues get closed after they got assigned a reviewer and before the reviewer actually gets a chance to start the review.&lt;/li&gt;
+&lt;li&gt;issues assigned to multiple people or issues that switched reviewers&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;To answer both of them I needed more information.
+On the &lt;a href=&#34;https://llrs.dev/2020/06/bioconductor-submissions/&#34;&gt;previous post&lt;/a&gt; I only gathered the information of the state of the issues at that moment.
+This excluded label changes, reviewer changes, renaming the issues, who commented on the issues and many more things.
+To retrieve these information from github I developed a &lt;a href=&#34;https://llrs.dev/2020/06/social-github/&#34;&gt;new package&lt;/a&gt; &lt;a href=&#34;https://github.com/llrs/socialGH&#34;&gt;&lt;code&gt;{socialGH}&lt;/code&gt;&lt;/a&gt; which downloads it from &lt;a href=&#34;https://github.com&#34;&gt;Github&lt;/a&gt; to make this analysis possible.&lt;/p&gt;
+&lt;p&gt;I gathered all the information on issues using &lt;a href=&#34;https://github.com/llrs/socialGH&#34;&gt;&lt;code&gt;{socialGH}&lt;/code&gt;&lt;/a&gt; on the 2020/08/18 and stored them in a tidy format.
+Now that we have more data about the issues we can plot them similarly to what we did on the previous post:&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;https://llrs.dev/post/2020/07/31/bioconductor-submissions-reviews/index_files/figure-html/first_plot-1.png&#34; width=&#34;672&#34; /&gt;&lt;/p&gt;
+&lt;p&gt;We can see that sometimes the issues remained silent for several months and then had a high level of events, or a single one (closing mainly).&lt;/p&gt;
+&lt;p&gt;Compare to the previous version it is surprising to see that one of the earliest issues still gets new events to date.
+Apparently &lt;a href=&#34;https://github.com/Bioconductor/Contributions/issues/51&#34;&gt;issue 51&lt;/a&gt;, and &lt;a href=&#34;https://github.com/Bioconductor/Contributions/issues?q=label%3ATESTING+is%3Aclosed&#34;&gt;others&lt;/a&gt;, are being used to test the Bioconductor builder or the bot used to automate the process.&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;https://llrs.dev/post/2020/07/31/bioconductor-submissions-reviews/index_files/figure-html/by_user-1.png&#34; width=&#34;672&#34; /&gt;&lt;/p&gt;
+&lt;p&gt;We can see that some reviewers comment more and are involved in more issues, but there is a group of fairly similar comments and issues.&lt;/p&gt;
+&lt;p&gt;Clearly this will not be the same with users who submit packages:&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;https://llrs.dev/post/2020/07/31/bioconductor-submissions-reviews/index_files/figure-html/by_user2-1.png&#34; width=&#34;672&#34; /&gt;&lt;/p&gt;
+&lt;p&gt;We can clearly see that most users are mainly only involved on submitting packages on one issue, but some people participate a lot and/or in several issues.&lt;/p&gt;
+&lt;div id=&#34;events&#34; class=&#34;section level1&#34;&gt;
+&lt;h1&gt;Events&lt;/h1&gt;
+&lt;p&gt;We cab count how many users and issues have been involved with each event type:&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;https://llrs.dev/post/2020/07/31/bioconductor-submissions-reviews/index_files/figure-html/events_view-1.png&#34; width=&#34;672&#34; /&gt;&lt;/p&gt;
+&lt;p&gt;We can see that few issues are locked (remember that it is different than closing the issue) or comments deleted.
+There is an almost equal amount of labeling and unlabeling, performed by few people but on lots of issues.
+There is a group of mentioning, commenting and subscribing too.
+Many people is involved on commenting and creating submissions.&lt;/p&gt;
+&lt;p&gt;Looking a bit further on the issues we can look at the events that take place:&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;https://llrs.dev/post/2020/07/31/bioconductor-submissions-reviews/index_files/figure-html/second_plot-1.png&#34; width=&#34;672&#34; /&gt;&lt;/p&gt;
+&lt;p&gt;We can see that most issues have few events which agrees with the previous findings that issues are handled fairly and expeditiously.&lt;/p&gt;
+&lt;p&gt;The most common event are comments, mentions and the rarest events are deleting comments, locking or referencing them.&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;https://llrs.dev/post/2020/07/31/bioconductor-submissions-reviews/index_files/figure-html/events_time-1.png&#34; width=&#34;672&#34; /&gt;&lt;/p&gt;
+&lt;p&gt;We can see that most issues get around 50 events, but we can clearly see lots of issues that receive very few events.&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;https://llrs.dev/post/2020/07/31/bioconductor-submissions-reviews/index_files/figure-html/events_time2-1.png&#34; width=&#34;672&#34; /&gt;&lt;/p&gt;
+&lt;p&gt;However, looking at the distribution along time most of the events are on the first 6 months after opening the issue.&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;https://llrs.dev/post/2020/07/31/bioconductor-submissions-reviews/index_files/figure-html/events_time3-1.png&#34; width=&#34;672&#34; /&gt;&lt;/p&gt;
+&lt;p&gt;Some submissions have many events while others have few events but last longer.
+This is without looking at issues that were closed and later reopened, or the involvement of bioc-issue-bot.
+We can see that in a short amount of days a lot of events can be triggered.
+This is mostly that for each version update there are at least two messages on the issue.&lt;/p&gt;
+&lt;/div&gt;
+&lt;div id=&#34;reviews&#34; class=&#34;section level1&#34;&gt;
+&lt;h1&gt;Reviews&lt;/h1&gt;
+&lt;p&gt;Most of the differences are due to the automatic or manual review of the submissions.&lt;/p&gt;
+&lt;p&gt;After passing some preliminary checks a reviewer is assigned to manually review the package:&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;https://llrs.dev/post/2020/07/31/bioconductor-submissions-reviews/index_files/figure-html/assignments-1.png&#34; width=&#34;672&#34; /&gt;&lt;/p&gt;
+&lt;p&gt;We can see that usually some adjustment to reviewers is made usually changing them but some times they are added to have more than 1 reviewer (194).
+Almost all the submitted packages without a reviewer (537 submissions) were rejected except for three: &lt;a href=&#34;https://github.com/Bioconductor/Contributions/issues/81&#34;&gt;81&lt;/a&gt;, &lt;a href=&#34;https://github.com/Bioconductor/Contributions/issues/82&#34;&gt;82&lt;/a&gt;, &lt;a href=&#34;https://github.com/Bioconductor/Contributions/issues/83&#34;&gt;83&lt;/a&gt; that were reviewed by &lt;a href=&#34;https://github.com/vobencha&#34;&gt;vobencha&lt;/a&gt; even if not officially assigned.
+Some of these were rejected because they didn’t pass some automatic check and other after preliminary inspection.&lt;/p&gt;
+&lt;p&gt;If some of these preliminary checks aren’t corrected the issue is closed:&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;https://llrs.dev/post/2020/07/31/bioconductor-submissions-reviews/index_files/figure-html/open_close2-1.png&#34; width=&#34;672&#34; /&gt;&lt;/p&gt;
+&lt;p&gt;We can see that is common to close and reopen issues, but they are generally done by the same people (the reviewer, the original submitter or the bot).&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;https://llrs.dev/post/2020/07/31/bioconductor-submissions-reviews/index_files/figure-html/submission_acceptance-1.png&#34; width=&#34;672&#34; /&gt;&lt;/p&gt;
+&lt;p&gt;On submissions with a reviewer assigned that were closed by someone (not the submitter), we can see here that reviews with more than one reviewer do not lead to significantly more comments from the reviewers.&lt;/p&gt;
+&lt;p&gt;Although it seems like this leads to have the package approved.&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;https://llrs.dev/post/2020/07/31/bioconductor-submissions-reviews/index_files/figure-html/reviews-1.png&#34; width=&#34;672&#34; /&gt;&lt;/p&gt;
+&lt;p&gt;We can see that there are slightly more comments from reviewers on the approved packages.
+Perhaps because they provide more feedback once the review starts.&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;https://llrs.dev/post/2020/07/31/bioconductor-submissions-reviews/index_files/figure-html/submission_acceptance2-1.png&#34; width=&#34;672&#34; /&gt;&lt;img src=&#34;https://llrs.dev/post/2020/07/31/bioconductor-submissions-reviews/index_files/figure-html/submission_acceptance2-2.png&#34; width=&#34;672&#34; /&gt;&lt;/p&gt;
+&lt;p&gt;We can see that the percentage of approved on those issues where the reviewer commented is fairly similar and around 80% or above.
+However there is also at least a 5% of submissions that are closed despite the comments from reviewers.
+Usually this has to be with unresponsiveness from the submitter:&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;https://llrs.dev/post/2020/07/31/bioconductor-submissions-reviews/index_files/figure-html/events_days-1.png&#34; width=&#34;672&#34; /&gt;&lt;/p&gt;
+&lt;p&gt;We can see that on the approved packages there are usually more events on the same time period.
+So make sure to follow the advice of the reviewers and the bot and make all the errors and warnings disappear.&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;https://llrs.dev/post/2020/07/31/bioconductor-submissions-reviews/index_files/figure-html/events_user_distribution-1.png&#34; width=&#34;672&#34; /&gt;&lt;/p&gt;
+&lt;p&gt;While most issues have at least 8 different events they usually have 4 users involved.
+Presumably the creator of the issue, bioc-issue-bot, a reviewer and someone else.&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;https://llrs.dev/post/2020/07/31/bioconductor-submissions-reviews/index_files/figure-html/actor_event_types-1.png&#34; width=&#34;672&#34; /&gt;&lt;/p&gt;
+&lt;p&gt;The more users involved, more different type of events are triggered.
+Presumably more people get subscribed or is mentioned.&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;https://llrs.dev/post/2020/07/31/bioconductor-submissions-reviews/index_files/figure-html/actors_events-1.png&#34; width=&#34;672&#34; /&gt;&lt;/p&gt;
+&lt;p&gt;As expected the more users are involved in an issue more events are produced.
+We can also see the submissions that are closed by the bioc-issue-bot with few comments and users.&lt;/p&gt;
+&lt;/div&gt;
+&lt;div id=&#34;who-does-each-action&#34; class=&#34;section level1&#34;&gt;
+&lt;h1&gt;Who does each action ?&lt;/h1&gt;
+&lt;p&gt;We can look now at who performs what, we know there are 951 participants:&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;https://llrs.dev/post/2020/07/31/bioconductor-submissions-reviews/index_files/figure-html/who-1.png&#34; width=&#34;672&#34; /&gt;&lt;/p&gt;
+&lt;p&gt;Here I cut the top 35 people who have triggered more than events.
+We can clearly see who are official reviewers (as seen on the previous post) because they labeled and unlabeled issues.
+bioc-issue-bot is an special user that makes lots of comments and assigning reviewers to issues.
+We can also see that it previously renamed the issues or unassigned reviewers.&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;https://llrs.dev/post/2020/07/31/bioconductor-submissions-reviews/index_files/figure-html/comments_plot-1.png&#34; width=&#34;672&#34; /&gt;&lt;/p&gt;
+&lt;p&gt;Comments by users (excluding the bot), usually only the author, the reviewer comment, frequently mtmorgan also suggests.&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;https://llrs.dev/post/2020/07/31/bioconductor-submissions-reviews/index_files/figure-html/comment_plot2-1.png&#34; width=&#34;672&#34; /&gt;&lt;/p&gt;
+&lt;p&gt;We can see that Martin Morgan has commented on almost all the submissions.
+The odd issue where there are some comments from mtmorgan but no other is the &lt;a href=&#34;https://github.com/Bioconductor.org/Contributions/issue/611&#34;&gt;issue 611&lt;/a&gt; where he is the reviewer and the submitter of a package.&lt;/p&gt;
+&lt;/div&gt;
+&lt;div id=&#34;bioconductor-bot&#34; class=&#34;section level1&#34;&gt;
+&lt;h1&gt;Bioconductor Bot&lt;/h1&gt;
+&lt;p&gt;We have seen that one of the most relevant “users” is bioc-issue-bot.&lt;br /&gt;
+It is a bot that performs and report automatic checks on the submissions (The code can be found &lt;a href=&#34;https://github.com/Bioconductor/issue_tracker_github&#34;&gt;here&lt;/a&gt;).
+Let’s explore what does and what does it report&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;https://llrs.dev/post/2020/07/31/bioconductor-submissions-reviews/index_files/figure-html/bioc_bot_plot-1.png&#34; width=&#34;672&#34; /&gt;&lt;/p&gt;
+&lt;p&gt;Classifying the comments reports that most of the comments are build results or that received a valid push.
+We can also see some changes on the bot, like changing the messages or reporting differently the process triggered.
+However, it also reports common problems on the submission: missing repository, unmatch between the repository name and the package name, reposting the same package, missing SSH key (needed to be able to push to Bioconductor git server), …
+We can see that most of them are related to building the packages being submitted.&lt;/p&gt;
+&lt;p&gt;Let’s check if there is some differences on the comments according to if they are later accepted or not.&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;https://llrs.dev/post/2020/07/31/bioconductor-submissions-reviews/index_files/figure-html/user_events-1.png&#34; width=&#34;672&#34; /&gt;&lt;/p&gt;
+&lt;p&gt;We can see clearly differences on the behavior of the issues, some type of comments are all of the non-accepted packages.
+It seems like some are not corrected.
+We can see here some common areas when submissions fail: failing to provide a valid link to the repository or many links to several repositories, or failing to comply with the guidelines about the repository name and the package name.
+Reposting the same package is also a common reason of not getting that submission approved.&lt;/p&gt;
+&lt;p&gt;The only significant are the build results, the build results, the valid push, received, unmatch between the package name and the repository, and the update version.&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;https://llrs.dev/post/2020/07/31/bioconductor-submissions-reviews/index_files/figure-html/common_feedback-1.png&#34; width=&#34;672&#34; /&gt;&lt;/p&gt;
+&lt;p&gt;We can see, (and I expected so) that comments of bioc-issue-bot are driven by the build system.&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;https://llrs.dev/post/2020/07/31/bioconductor-submissions-reviews/index_files/figure-html/bot_comments_approve-1.png&#34; width=&#34;672&#34; /&gt;&lt;/p&gt;
+&lt;p&gt;But the other comments are more frequent among the not approved packages, mainly errors and other automatically detected problems.&lt;/p&gt;
+&lt;p&gt;Aside from the bot, other users might comment on issues too:&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;https://llrs.dev/post/2020/07/31/bioconductor-submissions-reviews/index_files/figure-html/comments_issues-1.png&#34; width=&#34;672&#34; /&gt;&lt;/p&gt;
+&lt;p&gt;In some issues reviewers comment more than authors, while on some there are more comments from authors than reviewers.
+Surprisingly, in some issues there are more comments from other users than authors or reviewers.&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;https://llrs.dev/post/2020/07/31/bioconductor-submissions-reviews/index_files/figure-html/comments_approved-1.png&#34; width=&#34;672&#34; /&gt;&lt;/p&gt;
+&lt;p&gt;Usually packages not approved have less comments from authors, reviewers and other users.&lt;/p&gt;
+&lt;p&gt;About the time to get feedback we have previously seen that most of the issues were fast.
+However it included automatic actions from the bot, so let’s check again without the automatic events.&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;https://llrs.dev/post/2020/07/31/bioconductor-submissions-reviews/index_files/figure-html/delays-1.png&#34; width=&#34;672&#34; /&gt;&lt;/p&gt;
+&lt;p&gt;Here the squares indicate when a issue is closed, and we can see most comments are before the issues are closed.&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;https://llrs.dev/post/2020/07/31/bioconductor-submissions-reviews/index_files/figure-html/closing-1.png&#34; width=&#34;672&#34; /&gt;&lt;/p&gt;
+&lt;p&gt;And there doesn’t seem to be any difference between approved and not approved packages.&lt;/p&gt;
+&lt;p&gt;I would have expected more comments after closing an issue in the not approved submissions.
+This might indicate that the discussion happens before and/or that the process after closing the issue is not clear enough.&lt;/p&gt;
+&lt;/div&gt;
+&lt;div id=&#34;steps&#34; class=&#34;section level1&#34;&gt;
+&lt;h1&gt;Steps&lt;/h1&gt;
+&lt;p&gt;So far we have compared closed and open issues, users, comments, events, but we haven’t looked how does the proccess goes.&lt;/p&gt;
+&lt;p&gt;Let’s see how much time does it take to start the review and the time till the reviewer comments:&lt;/p&gt;
+&lt;table&gt;
+&lt;thead&gt;
+&lt;tr class=&#34;header&#34;&gt;
+&lt;th align=&#34;left&#34;&gt;Successful build?&lt;/th&gt;
+&lt;th align=&#34;left&#34;&gt;Approved?&lt;/th&gt;
+&lt;th align=&#34;right&#34;&gt;Submissions&lt;/th&gt;
+&lt;/tr&gt;
+&lt;/thead&gt;
+&lt;tbody&gt;
+&lt;tr class=&#34;odd&#34;&gt;
+&lt;td align=&#34;left&#34;&gt;No&lt;/td&gt;
+&lt;td align=&#34;left&#34;&gt;No&lt;/td&gt;
+&lt;td align=&#34;right&#34;&gt;608&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr class=&#34;even&#34;&gt;
+&lt;td align=&#34;left&#34;&gt;Yes&lt;/td&gt;
+&lt;td align=&#34;left&#34;&gt;No&lt;/td&gt;
+&lt;td align=&#34;right&#34;&gt;78&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr class=&#34;odd&#34;&gt;
+&lt;td align=&#34;left&#34;&gt;Yes&lt;/td&gt;
+&lt;td align=&#34;left&#34;&gt;Ongoing&lt;/td&gt;
+&lt;td align=&#34;right&#34;&gt;28&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr class=&#34;even&#34;&gt;
+&lt;td align=&#34;left&#34;&gt;No&lt;/td&gt;
+&lt;td align=&#34;left&#34;&gt;Ongoing&lt;/td&gt;
+&lt;td align=&#34;right&#34;&gt;19&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr class=&#34;odd&#34;&gt;
+&lt;td align=&#34;left&#34;&gt;Yes&lt;/td&gt;
+&lt;td align=&#34;left&#34;&gt;Yes&lt;/td&gt;
+&lt;td align=&#34;right&#34;&gt;723&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr class=&#34;even&#34;&gt;
+&lt;td align=&#34;left&#34;&gt;No&lt;/td&gt;
+&lt;td align=&#34;left&#34;&gt;Yes&lt;/td&gt;
+&lt;td align=&#34;right&#34;&gt;125&lt;/td&gt;
+&lt;/tr&gt;
+&lt;/tbody&gt;
+&lt;/table&gt;
+&lt;p&gt;We can see that most not approved packages do not have a successful build.&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;https://llrs.dev/post/2020/07/31/bioconductor-submissions-reviews/index_files/figure-html/trans_builds-1.png&#34; width=&#34;672&#34; /&gt;&lt;/p&gt;
+&lt;p&gt;An overview of the submissions, when was the first successful build and when was the first comment of the reviewer after the successful build.&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;https://llrs.dev/post/2020/07/31/bioconductor-submissions-reviews/index_files/figure-html/time_comment-1.png&#34; width=&#34;672&#34; /&gt;&lt;/p&gt;
+&lt;p&gt;Usually it takes close to 3 days to have the first successful build on Bioconductor (if there is any as we have seen).&lt;/p&gt;
+&lt;p&gt;After it it takes close to 10 days to the reviewer to comment.&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;https://llrs.dev/post/2020/07/31/bioconductor-submissions-reviews/index_files/figure-html/time_accepted-1.png&#34; width=&#34;672&#34; /&gt;&lt;/p&gt;
+&lt;p&gt;This comment might be the review of the package, as it is only done after the submissions passes all the checks.&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;https://llrs.dev/post/2020/07/31/bioconductor-submissions-reviews/index_files/figure-html/time_build_plot-1.png&#34; width=&#34;672&#34; /&gt;&lt;/p&gt;
+&lt;p&gt;A we have seen on the first table the main blocking point is that many submitted packages do not successfully build on Bioconductor servers.&lt;br /&gt;
+But as we can see approved packages built slightly earlier.
+However the time between the first successful built and the first reviewer comment might be different, let’s check:&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;https://llrs.dev/post/2020/07/31/bioconductor-submissions-reviews/index_files/figure-html/time_review_plot_zoom-1.png&#34; width=&#34;672&#34; /&gt;&lt;/p&gt;
+&lt;p&gt;We can see there aren’t many differences on the time between the first successful built and the first reviewer comment.
+Once a package has built and has the review it takes some time to address the comments till it is accepted:&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;https://llrs.dev/post/2020/07/31/bioconductor-submissions-reviews/index_files/figure-html/acceptance_plot-1.png&#34; width=&#34;672&#34; /&gt;&lt;/p&gt;
+&lt;p&gt;We can see that since submission it usually takes two weeks to have the package accepted.
+However, the time between the first reviewer comment (after the first successful built) and the acceptance of the package might be different:&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;https://llrs.dev/post/2020/07/31/bioconductor-submissions-reviews/index_files/figure-html/time_acceptance_plot-1.png&#34; width=&#34;672&#34; /&gt;&lt;/p&gt;
+&lt;p&gt;We can see that few packages take more than 50 days till acceptance.
+To have a complete picture we can see all the issues on a single plot with how much do they take to move to the next phase:&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;https://llrs.dev/post/2020/07/31/bioconductor-submissions-reviews/index_files/figure-html/times_phases-1.png&#34; width=&#34;672&#34; /&gt;&lt;/p&gt;
+&lt;p&gt;We can see odd packages like the one that built correctly in short time but had some issues and finally got renamed and submitted on a different issue, or the issue that took more than 100 days to build correctly for the first time (and was later rejected).&lt;/p&gt;
+&lt;p&gt;We can see that the steps that take more time is doing the review and later modify the package to address the comments pointed by the reviewers.&lt;/p&gt;
+&lt;table&gt;
+&lt;colgroup&gt;
+&lt;col width=&#34;4%&#34; /&gt;
+&lt;col width=&#34;13%&#34; /&gt;
+&lt;col width=&#34;23%&#34; /&gt;
+&lt;col width=&#34;8%&#34; /&gt;
+&lt;col width=&#34;25%&#34; /&gt;
+&lt;col width=&#34;23%&#34; /&gt;
+&lt;/colgroup&gt;
+&lt;thead&gt;
+&lt;tr class=&#34;header&#34;&gt;
+&lt;th align=&#34;left&#34;&gt;Approved&lt;/th&gt;
+&lt;th align=&#34;right&#34;&gt;Succcessful built (days)&lt;/th&gt;
+&lt;th align=&#34;right&#34;&gt;First reviewer comment after build (days)&lt;/th&gt;
+&lt;th align=&#34;right&#34;&gt;Accepted (days)&lt;/th&gt;
+&lt;th align=&#34;right&#34;&gt;Time between build and reviewer comment (days)&lt;/th&gt;
+&lt;th align=&#34;right&#34;&gt;Time between review and acceptance (days)&lt;/th&gt;
+&lt;/tr&gt;
+&lt;/thead&gt;
+&lt;tbody&gt;
+&lt;tr class=&#34;odd&#34;&gt;
+&lt;td align=&#34;left&#34;&gt;No&lt;/td&gt;
+&lt;td align=&#34;right&#34;&gt;5&lt;/td&gt;
+&lt;td align=&#34;right&#34;&gt;19&lt;/td&gt;
+&lt;td align=&#34;right&#34;&gt;NA&lt;/td&gt;
+&lt;td align=&#34;right&#34;&gt;14&lt;/td&gt;
+&lt;td align=&#34;right&#34;&gt;NA&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr class=&#34;even&#34;&gt;
+&lt;td align=&#34;left&#34;&gt;Ongoing&lt;/td&gt;
+&lt;td align=&#34;right&#34;&gt;3&lt;/td&gt;
+&lt;td align=&#34;right&#34;&gt;25&lt;/td&gt;
+&lt;td align=&#34;right&#34;&gt;NA&lt;/td&gt;
+&lt;td align=&#34;right&#34;&gt;19&lt;/td&gt;
+&lt;td align=&#34;right&#34;&gt;NA&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr class=&#34;odd&#34;&gt;
+&lt;td align=&#34;left&#34;&gt;Yes&lt;/td&gt;
+&lt;td align=&#34;right&#34;&gt;3&lt;/td&gt;
+&lt;td align=&#34;right&#34;&gt;14&lt;/td&gt;
+&lt;td align=&#34;right&#34;&gt;37&lt;/td&gt;
+&lt;td align=&#34;right&#34;&gt;10&lt;/td&gt;
+&lt;td align=&#34;right&#34;&gt;19&lt;/td&gt;
+&lt;/tr&gt;
+&lt;/tbody&gt;
+&lt;/table&gt;
+&lt;p&gt;Looking at the median times of each step we can clearly see the same pattern.&lt;/p&gt;
+&lt;/div&gt;
+&lt;div id=&#34;labels&#34; class=&#34;section level1&#34;&gt;
+&lt;h1&gt;Labels&lt;/h1&gt;
+&lt;p&gt;So far we have looked via a combination of comments from reviewers and labels. However, the official way of showing on which step is a review is using labels.&lt;/p&gt;
+&lt;p&gt;We have seen is the second most frequent event, around 1100 submissions have at least one label annotation. We can see here how many:&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;https://llrs.dev/post/2020/07/31/bioconductor-submissions-reviews/index_files/figure-html/labels_plot_overview-1.png&#34; width=&#34;672&#34; /&gt;&lt;/p&gt;
+&lt;p&gt;We can see that the version bump, and the state of the build are the most frequent labels.&lt;/p&gt;
+&lt;p&gt;Looking into each label we can see differences between acceoted and declined submissions:&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;https://llrs.dev/post/2020/07/31/bioconductor-submissions-reviews/index_files/figure-html/label_differences-1.png&#34; width=&#34;672&#34; /&gt;&lt;/p&gt;
+&lt;p&gt;Here we can see the differences in label assignment on each issue (labels which are assigned only to approved or rejected packages are not shown).&lt;/p&gt;
+&lt;p&gt;Some submissions were initially declined but later got approved, as well as some issues that for some time went inactive but ended up being accepted.&lt;/p&gt;
+&lt;p&gt;The main difference is how many times there are errors, timeouts, warnings, version bump required or OK on the issues approved. Successful packages have more!
+If you submit a package and get those errors don’t worry, it is normal!!&lt;/p&gt;
+&lt;table&gt;
+&lt;colgroup&gt;
+&lt;col width=&#34;6%&#34; /&gt;
+&lt;col width=&#34;14%&#34; /&gt;
+&lt;col width=&#34;4%&#34; /&gt;
+&lt;col width=&#34;6%&#34; /&gt;
+&lt;col width=&#34;2%&#34; /&gt;
+&lt;col width=&#34;5%&#34; /&gt;
+&lt;col width=&#34;6%&#34; /&gt;
+&lt;col width=&#34;15%&#34; /&gt;
+&lt;col width=&#34;8%&#34; /&gt;
+&lt;col width=&#34;14%&#34; /&gt;
+&lt;col width=&#34;8%&#34; /&gt;
+&lt;col width=&#34;8%&#34; /&gt;
+&lt;/colgroup&gt;
+&lt;thead&gt;
+&lt;tr class=&#34;header&#34;&gt;
+&lt;th align=&#34;left&#34;&gt;Approved&lt;/th&gt;
+&lt;th align=&#34;right&#34;&gt;VERSION BUMP REQUIRED&lt;/th&gt;
+&lt;th align=&#34;right&#34;&gt;ERROR&lt;/th&gt;
+&lt;th align=&#34;right&#34;&gt;WARNINGS&lt;/th&gt;
+&lt;th align=&#34;right&#34;&gt;OK&lt;/th&gt;
+&lt;th align=&#34;right&#34;&gt;TIMEOUT&lt;/th&gt;
+&lt;th align=&#34;right&#34;&gt;ABNORMAL&lt;/th&gt;
+&lt;th align=&#34;right&#34;&gt;1. awaiting moderation&lt;/th&gt;
+&lt;th align=&#34;right&#34;&gt;3a. accepted&lt;/th&gt;
+&lt;th align=&#34;right&#34;&gt;2. review in progress&lt;/th&gt;
+&lt;th align=&#34;right&#34;&gt;3c. inactive&lt;/th&gt;
+&lt;th align=&#34;right&#34;&gt;3b. declined&lt;/th&gt;
+&lt;/tr&gt;
+&lt;/thead&gt;
+&lt;tbody&gt;
+&lt;tr class=&#34;odd&#34;&gt;
+&lt;td align=&#34;left&#34;&gt;No&lt;/td&gt;
+&lt;td align=&#34;right&#34;&gt;0&lt;/td&gt;
+&lt;td align=&#34;right&#34;&gt;1&lt;/td&gt;
+&lt;td align=&#34;right&#34;&gt;0&lt;/td&gt;
+&lt;td align=&#34;right&#34;&gt;0&lt;/td&gt;
+&lt;td align=&#34;right&#34;&gt;0&lt;/td&gt;
+&lt;td align=&#34;right&#34;&gt;0&lt;/td&gt;
+&lt;td align=&#34;right&#34;&gt;1&lt;/td&gt;
+&lt;td align=&#34;right&#34;&gt;0&lt;/td&gt;
+&lt;td align=&#34;right&#34;&gt;1&lt;/td&gt;
+&lt;td align=&#34;right&#34;&gt;0&lt;/td&gt;
+&lt;td align=&#34;right&#34;&gt;0&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr class=&#34;even&#34;&gt;
+&lt;td align=&#34;left&#34;&gt;Yes&lt;/td&gt;
+&lt;td align=&#34;right&#34;&gt;2&lt;/td&gt;
+&lt;td align=&#34;right&#34;&gt;2&lt;/td&gt;
+&lt;td align=&#34;right&#34;&gt;1&lt;/td&gt;
+&lt;td align=&#34;right&#34;&gt;2&lt;/td&gt;
+&lt;td align=&#34;right&#34;&gt;0&lt;/td&gt;
+&lt;td align=&#34;right&#34;&gt;0&lt;/td&gt;
+&lt;td align=&#34;right&#34;&gt;1&lt;/td&gt;
+&lt;td align=&#34;right&#34;&gt;1&lt;/td&gt;
+&lt;td align=&#34;right&#34;&gt;1&lt;/td&gt;
+&lt;td align=&#34;right&#34;&gt;0&lt;/td&gt;
+&lt;td align=&#34;right&#34;&gt;0&lt;/td&gt;
+&lt;/tr&gt;
+&lt;/tbody&gt;
+&lt;/table&gt;
+&lt;p&gt;We can see that is more common to have more “troubles” on packages that end up accepted than those than not.
+Note that there are at least two OK per submission, one required before the review start and the other one after the changes before acceptance.&lt;/p&gt;
+&lt;/div&gt;
+&lt;div id=&#34;conclusions&#34; class=&#34;section level1&#34;&gt;
+&lt;h1&gt;Conclusions&lt;/h1&gt;
+&lt;p&gt;Most of the problems with the submissions are formal and automatically detected by the bot.
+Next come problems from the package itself not passing the checks performed on Bioconductor.
+So if you want to have your package included make sure that the package builds on Bioconductor and respond fast to the feedback provided by the bot.
+Once your package successfully builds, then address the comments from the reviewer.
+Follow the steps and if you don’t drop out you’ll see your package accepted.&lt;/p&gt;
+&lt;p&gt;On the next post I’ll explore the data from &lt;a href=&#34;https://ropensci.org/&#34;&gt;rOpenSci&lt;/a&gt;, which also does the &lt;a href=&#34;https://github.com/ropensci/software-review/issues/&#34;&gt;reviews on GitHub&lt;/a&gt;.&lt;/p&gt;
+&lt;div id=&#34;reproducibility&#34; class=&#34;section level3&#34;&gt;
+&lt;h3&gt;Reproducibility&lt;/h3&gt;
+&lt;details&gt;
+&lt;pre&gt;&lt;code&gt;## ─ Session info ───────────────────────────────────────────────────────────────────────────────────────────────────────
+##  setting  value                       
+##  version  R version 4.0.1 (2020-06-06)
+##  os       Ubuntu 20.04.1 LTS          
+##  system   x86_64, linux-gnu           
+##  ui       X11                         
+##  language (EN)                        
+##  collate  en_US.UTF-8                 
+##  ctype    en_US.UTF-8                 
+##  tz       Europe/Madrid               
+##  date     2021-01-08                  
+## 
+## ─ Packages ───────────────────────────────────────────────────────────────────────────────────────────────────────────
+##  package      * version date       lib source                           
+##  assertthat     0.2.1   2019-03-21 [1] CRAN (R 4.0.1)                   
+##  backports      1.2.1   2020-12-09 [1] CRAN (R 4.0.1)                   
+##  blogdown       0.21.84 2021-01-07 [1] Github (rstudio/blogdown@c4fbb58)
+##  bookdown       0.21    2020-10-13 [1] CRAN (R 4.0.1)                   
+##  broom          0.7.3   2020-12-16 [1] CRAN (R 4.0.1)                   
+##  cellranger     1.1.0   2016-07-27 [1] CRAN (R 4.0.1)                   
+##  cli            2.2.0   2020-11-20 [1] CRAN (R 4.0.1)                   
+##  codetools      0.2-18  2020-11-04 [1] CRAN (R 4.0.1)                   
+##  colorspace     2.0-0   2020-11-11 [1] CRAN (R 4.0.1)                   
+##  crayon         1.3.4   2017-09-16 [1] CRAN (R 4.0.1)                   
+##  DBI            1.1.0   2019-12-15 [1] CRAN (R 4.0.1)                   
+##  dbplyr         2.0.0   2020-11-03 [1] CRAN (R 4.0.1)                   
+##  digest         0.6.27  2020-10-24 [1] CRAN (R 4.0.1)                   
+##  dplyr        * 1.0.2   2020-08-18 [1] CRAN (R 4.0.1)                   
+##  ellipsis       0.3.1   2020-05-15 [1] CRAN (R 4.0.1)                   
+##  evaluate       0.14    2019-05-28 [1] CRAN (R 4.0.1)                   
+##  fansi          0.4.1   2020-01-08 [1] CRAN (R 4.0.1)                   
+##  farver         2.0.3   2020-01-16 [1] CRAN (R 4.0.1)                   
+##  forcats      * 0.5.0   2020-03-01 [1] CRAN (R 4.0.1)                   
+##  fs             1.5.0   2020-07-31 [1] CRAN (R 4.0.1)                   
+##  generics       0.1.0   2020-10-31 [1] CRAN (R 4.0.1)                   
+##  ggplot2      * 3.3.3   2020-12-30 [1] CRAN (R 4.0.1)                   
+##  ggrepel      * 0.9.0   2020-12-16 [1] CRAN (R 4.0.1)                   
+##  gh             1.2.0   2020-11-27 [1] CRAN (R 4.0.1)                   
+##  glue           1.4.2   2020-08-27 [1] CRAN (R 4.0.1)                   
+##  gtable         0.3.0   2019-03-25 [1] CRAN (R 4.0.1)                   
+##  haven          2.3.1   2020-06-01 [1] CRAN (R 4.0.1)                   
+##  here           1.0.1   2020-12-13 [1] CRAN (R 4.0.1)                   
+##  highr          0.8     2019-03-20 [1] CRAN (R 4.0.1)                   
+##  hms            0.5.3   2020-01-08 [1] CRAN (R 4.0.1)                   
+##  htmltools      0.5.0   2020-06-16 [1] CRAN (R 4.0.1)                   
+##  httr           1.4.2   2020-07-20 [1] CRAN (R 4.0.1)                   
+##  jsonlite       1.7.2   2020-12-09 [1] CRAN (R 4.0.1)                   
+##  knitr          1.30    2020-09-22 [1] CRAN (R 4.0.1)                   
+##  labeling       0.4.2   2020-10-20 [1] CRAN (R 4.0.1)                   
+##  lifecycle      0.2.0   2020-03-06 [1] CRAN (R 4.0.1)                   
+##  lubridate      1.7.9.2 2020-11-13 [1] CRAN (R 4.0.1)                   
+##  magrittr       2.0.1   2020-11-17 [1] CRAN (R 4.0.1)                   
+##  modelr         0.1.8   2020-05-19 [1] CRAN (R 4.0.1)                   
+##  munsell        0.5.0   2018-06-12 [1] CRAN (R 4.0.1)                   
+##  patchwork    * 1.1.1   2020-12-17 [1] CRAN (R 4.0.1)                   
+##  pillar         1.4.7   2020-11-20 [1] CRAN (R 4.0.1)                   
+##  pkgconfig      2.0.3   2019-09-22 [1] CRAN (R 4.0.1)                   
+##  purrr        * 0.3.4   2020-04-17 [1] CRAN (R 4.0.1)                   
+##  R6             2.5.0   2020-10-28 [1] CRAN (R 4.0.1)                   
+##  RColorBrewer   1.1-2   2014-12-07 [1] CRAN (R 4.0.1)                   
+##  Rcpp           1.0.5   2020-07-06 [1] CRAN (R 4.0.1)                   
+##  readr        * 1.4.0   2020-10-05 [1] CRAN (R 4.0.1)                   
+##  readxl         1.3.1   2019-03-13 [1] CRAN (R 4.0.1)                   
+##  reprex         0.3.0   2019-05-16 [1] CRAN (R 4.0.1)                   
+##  rlang          0.4.10  2020-12-30 [1] CRAN (R 4.0.1)                   
+##  rmarkdown      2.6     2020-12-14 [1] CRAN (R 4.0.1)                   
+##  rprojroot      2.0.2   2020-11-15 [1] CRAN (R 4.0.1)                   
+##  rstudioapi     0.13    2020-11-12 [1] CRAN (R 4.0.1)                   
+##  rvest          0.3.6   2020-07-25 [1] CRAN (R 4.0.1)                   
+##  scales         1.1.1   2020-05-11 [1] CRAN (R 4.0.1)                   
+##  sessioninfo    1.1.1   2018-11-05 [1] CRAN (R 4.0.1)                   
+##  socialGH     * 0.0.3   2020-08-17 [1] local                            
+##  stringi        1.5.3   2020-09-09 [1] CRAN (R 4.0.1)                   
+##  stringr      * 1.4.0   2019-02-10 [1] CRAN (R 4.0.1)                   
+##  tibble       * 3.0.4   2020-10-12 [1] CRAN (R 4.0.1)                   
+##  tidyr        * 1.1.2   2020-08-27 [1] CRAN (R 4.0.1)                   
+##  tidyselect     1.1.0   2020-05-11 [1] CRAN (R 4.0.1)                   
+##  tidyverse    * 1.3.0   2019-11-21 [1] CRAN (R 4.0.1)                   
+##  vctrs          0.3.6   2020-12-17 [1] CRAN (R 4.0.1)                   
+##  viridisLite    0.3.0   2018-02-01 [1] CRAN (R 4.0.1)                   
+##  withr          2.3.0   2020-09-22 [1] CRAN (R 4.0.1)                   
+##  xfun           0.20    2021-01-06 [1] CRAN (R 4.0.1)                   
+##  xml2           1.3.2   2020-04-23 [1] CRAN (R 4.0.1)                   
+##  yaml           2.2.1   2020-02-01 [1] CRAN (R 4.0.1)                   
+## 
+## [1] /home/lluis/bin/R/4.0.1/lib/R/library&lt;/code&gt;&lt;/pre&gt;
+&lt;/details&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+</description>
+    </item>
+    
+  </channel>
+</rss>

@@ -1,0 +1,472 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes" ?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>twitter | B101nfo</title>
+    <link>https://llrs.dev/tags/twitter/</link>
+      <atom:link href="https://llrs.dev/tags/twitter/index.xml" rel="self" type="application/rss+xml" />
+    <description>twitter</description>
+    <generator>Source Themes Academic (https://sourcethemes.com/academic/)</generator><language>en-us</language><copyright>If it is code you can copy and reuse (MIT) if it is text, please cite and reuse CC-BY 2026.</copyright><lastBuildDate>Sat, 25 Apr 2020 00:00:00 +0000</lastBuildDate>
+    <image>
+      <url>img/map[gravatar:%!s(bool=false) shape:circle]</url>
+      <title>twitter</title>
+      <link>https://llrs.dev/tags/twitter/</link>
+    </image>
+    
+    <item>
+      <title>R quarantine house</title>
+      <link>https://llrs.dev/post/2020/04/25/r-quarantine-house/</link>
+      <pubDate>Sat, 25 Apr 2020 00:00:00 +0000</pubDate>
+      <guid>https://llrs.dev/post/2020/04/25/r-quarantine-house/</guid>
+      <description>
+&lt;script src=&#34;https://llrs.dev/post/2020/04/25/r-quarantine-house/index_files/header-attrs/header-attrs.js&#34;&gt;&lt;/script&gt;
+
+
+&lt;p&gt;So I found this funny tweet&lt;/p&gt;
+&lt;blockquote class=&#34;twitter-tweet&#34; data-partner=&#34;tweetdeck&#34;&gt;
+&lt;p lang=&#34;en&#34; dir=&#34;ltr&#34;&gt;
+What&#39;s your R quarantine house? I&#39;m definitely 5 &lt;a href=&#34;https://t.co/h7aiijOqK0&#34;&gt;pic.twitter.com/h7aiijOqK0&lt;/a&gt;
+&lt;/p&gt;
+— Jacqueline Nolis (&lt;span class=&#34;citation&#34;&gt;@skyetetra&lt;/span&gt;) &lt;a href=&#34;https://twitter.com/skyetetra/status/1253774850356768768?ref_src=twsrc%5Etfw&#34;&gt;April 24, 2020&lt;/a&gt;
+&lt;/blockquote&gt;
+&lt;script async src=&#34;https://platform.twitter.com/widgets.js&#34; charset=&#34;utf-8&#34;&gt;&lt;/script&gt;
+&lt;p&gt;And &lt;a href=&#34;https://twitter.com/tylermorganwall/status/1253778147423727621&#34;&gt;Tyler Morgan made the “joke”&lt;/a&gt; to check the dependencies. So, let’s check them:&lt;/p&gt;
+&lt;div id=&#34;list-libraries&#34; class=&#34;section level2&#34;&gt;
+&lt;h2&gt;List libraries&lt;/h2&gt;
+&lt;p&gt;First we set up the original choices:&lt;/p&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;env1 &amp;lt;- c(&amp;quot;ggplot2&amp;quot;, &amp;quot;dplyr&amp;quot;, &amp;quot;data.table&amp;quot;, &amp;quot;purrr&amp;quot;)
+env2 &amp;lt;- c(&amp;quot;forecats&amp;quot;, &amp;quot;glue&amp;quot;, &amp;quot;jsonlite&amp;quot;, &amp;quot;rmarkdown&amp;quot;)
+env3 &amp;lt;- c(&amp;quot;shiny&amp;quot;, &amp;quot;rayshader&amp;quot;, &amp;quot;stringr&amp;quot;, &amp;quot;tidytext&amp;quot;)
+env4 &amp;lt;- c(&amp;quot;devtools&amp;quot;, &amp;quot;xml2&amp;quot;, &amp;quot;tidyr&amp;quot;, &amp;quot;tibble&amp;quot;)
+env5 &amp;lt;- c(&amp;quot;reticulate&amp;quot;, &amp;quot;keras&amp;quot;, &amp;quot;plumber&amp;quot;, &amp;quot;usethis&amp;quot;)
+env6 &amp;lt;- c(&amp;quot;blogdown&amp;quot;, &amp;quot;brickr&amp;quot;, &amp;quot;lubridate&amp;quot;, &amp;quot;igraph&amp;quot;)
+quarantines &amp;lt;- list(env1 = env1, env2 = env2, 
+                    env3 = env3, env4 = env4, 
+                    env5 = env5, env6 = env6)&lt;/code&gt;&lt;/pre&gt;
+&lt;/div&gt;
+&lt;div id=&#34;dependencies&#34; class=&#34;section level2&#34;&gt;
+&lt;h2&gt;Dependencies&lt;/h2&gt;
+&lt;p&gt;All of them are on CRAN (and I don’t have them installed on my computer) so let’s retrieve the available packages from CRAN. Then we can check how many unique packages are needed for each one:&lt;/p&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;library(&amp;quot;tools&amp;quot;)
+ap &amp;lt;- available.packages()
+unique_dep &amp;lt;- function(sets, db) {
+  pd &amp;lt;- package_dependencies(packages = sets, recursive = TRUE, db = db)
+  unique(unlist(pd))
+}
+
+uniq_p &amp;lt;- lapply(quarantines, unique_dep, db = ap)
+sort(lengths(uniq_p))
+## env2 env1 env5 env3 env4 env6 
+##   22   59   63   89   91   96&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;So the environment with more dependencies is the third and the second is the one with least dependencies.&lt;/p&gt;
+&lt;/div&gt;
+&lt;div id=&#34;similarity-of-the-environments&#34; class=&#34;section level2&#34;&gt;
+&lt;h2&gt;Similarity of the environments&lt;/h2&gt;
+&lt;p&gt;We’ve seen that the number of package is quite different. But how many of them is shared?
+A little time ago I wrote a package aimed to this: &lt;a href=&#34;https://bioconductor.org/packages/BioCor&#34;&gt;{&lt;code&gt;BioCor&lt;/code&gt;}&lt;/a&gt; you can install it from Bioconductor. I’ll use it now:&lt;/p&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;library(&amp;quot;BioCor&amp;quot;)
+similarity &amp;lt;- mpathSim(names(uniq_p), inverseList(uniq_p), method = NULL)
+similarity
+##           env1      env2      env3      env4      env5      env6
+## env1 1.0000000 0.2716049 0.5675676 0.5733333 0.5081967 0.7612903
+## env2 0.2716049 1.0000000 0.3783784 0.3716814 0.3294118 0.3728814
+## env3 0.5675676 0.3783784 1.0000000 0.5666667 0.4868421 0.7783784
+## env4 0.5733333 0.3716814 0.5666667 1.0000000 0.6623377 0.6737968
+## env5 0.5081967 0.3294118 0.4868421 0.6623377 1.0000000 0.5031447
+## env6 0.7612903 0.3728814 0.7783784 0.6737968 0.5031447 1.0000000&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;The closer to 1 it means that they share more dependencies, so the most different are the environment 1 and the environment 2
+We can see that the most similar packages are the environment 1 and environment 6 and
+that the environment 6 is the one with higher similarity to the other sets.&lt;/p&gt;
+&lt;/div&gt;
+&lt;div id=&#34;which-quarantine-environment-has-some-of-the-others&#34; class=&#34;section level2&#34;&gt;
+&lt;h2&gt;Which quarantine environment has some of the others?&lt;/h2&gt;
+&lt;p&gt;So some of these environments call other packages from the other environments as dependencies.
+We can now look for how many of them:&lt;/p&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;inside_calls &amp;lt;- lapply(uniq_p, function(x, y) {
+  # Look how many packages of each set is on the dependencies of this set
+  vapply(y, function(z, x) { 
+    sum(z %in% x)
+  }, x = x, numeric(1L))
+}, y = quarantines)
+# Simplify and name for easier understanding
+inside &amp;lt;- simplify2array(inside_calls)
+names(dimnames(inside)) &amp;lt;- list(&amp;quot;Package of&amp;quot;, &amp;quot;Inside of&amp;quot;)
+inside
+##           Inside of
+## Package of env1 env2 env3 env4 env5 env6
+##       env1    1    0    2    2    1    3
+##       env2    2    2    2    2    2    3
+##       env3    0    1    2    1    0    2
+##       env4    1    0    1    2    0    2
+##       env5    0    0    0    1    1    0
+##       env6    0    0    0    0    0    0
+colSums(inside)-diag(inside) # To avoid counting self-dependencies
+## env1 env2 env3 env4 env5 env6 
+##    3    1    5    6    3   10&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;We can see that environment 6 has more packages from the other environments.&lt;/p&gt;
+&lt;/div&gt;
+&lt;div id=&#34;chances-of-survival&#34; class=&#34;section level2&#34;&gt;
+&lt;h2&gt;Chances of survival:&lt;/h2&gt;
+&lt;p&gt;Someone mentioned that the &lt;code&gt;{survival}&lt;/code&gt; package wasn’t on any environment.
+But it might be on the dependencies:&lt;/p&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;vapply(uniq_p, function(x){&amp;quot;survival&amp;quot; %in% x},  logical(1L))
+##  env1  env2  env3  env4  env5  env6 
+## FALSE FALSE FALSE FALSE FALSE FALSE&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;No, it seems like we won’t survive well with this environments :)&lt;/p&gt;
+&lt;/div&gt;
+&lt;div id=&#34;conclusions&#34; class=&#34;section level2&#34;&gt;
+&lt;h2&gt;Conclusions&lt;/h2&gt;
+&lt;p&gt;Environment 6 is the one with more packages from the other environments, but if you want to have more packages use the second one. What you can do with these packages on a quarantine is harder to say :D&lt;/p&gt;
+&lt;div id=&#34;reproducibility&#34; class=&#34;section level3&#34;&gt;
+&lt;h3&gt;Reproducibility&lt;/h3&gt;
+&lt;details&gt;
+&lt;pre&gt;&lt;code&gt;## ─ Session info ───────────────────────────────────────────────────────────────────────────────────────────────────────
+##  setting  value                       
+##  version  R version 4.0.1 (2020-06-06)
+##  os       Ubuntu 20.04.1 LTS          
+##  system   x86_64, linux-gnu           
+##  ui       X11                         
+##  language (EN)                        
+##  collate  en_US.UTF-8                 
+##  ctype    en_US.UTF-8                 
+##  tz       Europe/Madrid               
+##  date     2021-01-08                  
+## 
+## ─ Packages ───────────────────────────────────────────────────────────────────────────────────────────────────────────
+##  package       * version  date       lib source                           
+##  annotate        1.68.0   2020-10-27 [1] Bioconductor                     
+##  AnnotationDbi   1.52.0   2020-10-27 [1] Bioconductor                     
+##  assertthat      0.2.1    2019-03-21 [1] CRAN (R 4.0.1)                   
+##  Biobase         2.50.0   2020-10-27 [1] Bioconductor                     
+##  BiocGenerics    0.36.0   2020-10-27 [1] Bioconductor                     
+##  BioCor        * 1.14.0   2020-10-27 [1] Bioconductor                     
+##  BiocParallel    1.24.1   2020-11-06 [1] Bioconductor                     
+##  bit             4.0.4    2020-08-04 [1] CRAN (R 4.0.1)                   
+##  bit64           4.0.5    2020-08-30 [1] CRAN (R 4.0.1)                   
+##  blob            1.2.1    2020-01-20 [1] CRAN (R 4.0.1)                   
+##  blogdown        0.21.84  2021-01-07 [1] Github (rstudio/blogdown@c4fbb58)
+##  bookdown        0.21     2020-10-13 [1] CRAN (R 4.0.1)                   
+##  cli             2.2.0    2020-11-20 [1] CRAN (R 4.0.1)                   
+##  crayon          1.3.4    2017-09-16 [1] CRAN (R 4.0.1)                   
+##  DBI             1.1.0    2019-12-15 [1] CRAN (R 4.0.1)                   
+##  digest          0.6.27   2020-10-24 [1] CRAN (R 4.0.1)                   
+##  evaluate        0.14     2019-05-28 [1] CRAN (R 4.0.1)                   
+##  fansi           0.4.1    2020-01-08 [1] CRAN (R 4.0.1)                   
+##  glue            1.4.2    2020-08-27 [1] CRAN (R 4.0.1)                   
+##  graph           1.68.0   2020-10-27 [1] Bioconductor                     
+##  GSEABase        1.52.1   2020-12-11 [1] Bioconductor                     
+##  htmltools       0.5.0    2020-06-16 [1] CRAN (R 4.0.1)                   
+##  httr            1.4.2    2020-07-20 [1] CRAN (R 4.0.1)                   
+##  IRanges         2.24.1   2020-12-12 [1] Bioconductor                     
+##  knitr           1.30     2020-09-22 [1] CRAN (R 4.0.1)                   
+##  lattice         0.20-41  2020-04-02 [1] CRAN (R 4.0.1)                   
+##  magrittr        2.0.1    2020-11-17 [1] CRAN (R 4.0.1)                   
+##  Matrix          1.3-2    2021-01-06 [1] CRAN (R 4.0.1)                   
+##  memoise         1.1.0    2017-04-21 [1] CRAN (R 4.0.1)                   
+##  R6              2.5.0    2020-10-28 [1] CRAN (R 4.0.1)                   
+##  Rcpp            1.0.5    2020-07-06 [1] CRAN (R 4.0.1)                   
+##  rlang           0.4.10   2020-12-30 [1] CRAN (R 4.0.1)                   
+##  rmarkdown       2.6      2020-12-14 [1] CRAN (R 4.0.1)                   
+##  RSQLite         2.2.1    2020-09-30 [1] CRAN (R 4.0.1)                   
+##  S4Vectors       0.28.1   2020-12-09 [1] Bioconductor                     
+##  sessioninfo     1.1.1    2018-11-05 [1] CRAN (R 4.0.1)                   
+##  stringi         1.5.3    2020-09-09 [1] CRAN (R 4.0.1)                   
+##  stringr         1.4.0    2019-02-10 [1] CRAN (R 4.0.1)                   
+##  vctrs           0.3.6    2020-12-17 [1] CRAN (R 4.0.1)                   
+##  withr           2.3.0    2020-09-22 [1] CRAN (R 4.0.1)                   
+##  xfun            0.20     2021-01-06 [1] CRAN (R 4.0.1)                   
+##  XML             3.99-0.5 2020-07-23 [1] CRAN (R 4.0.1)                   
+##  xtable          1.8-4    2019-04-21 [1] CRAN (R 4.0.1)                   
+##  yaml            2.2.1    2020-02-01 [1] CRAN (R 4.0.1)                   
+## 
+## [1] /home/lluis/bin/R/4.0.1/lib/R/library&lt;/code&gt;&lt;/pre&gt;
+&lt;/details&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+</description>
+    </item>
+    
+    <item>
+      <title>R weekly new editor</title>
+      <link>https://llrs.dev/post/2020/02/13/r-weekly-new-editor/</link>
+      <pubDate>Thu, 13 Feb 2020 00:00:00 +0000</pubDate>
+      <guid>https://llrs.dev/post/2020/02/13/r-weekly-new-editor/</guid>
+      <description>
+&lt;script src=&#34;https://llrs.dev/post/2020/02/13/r-weekly-new-editor/index_files/header-attrs/header-attrs.js&#34;&gt;&lt;/script&gt;
+
+
+&lt;p&gt;&lt;a href=&#34;https://rweekly.org&#34;&gt;Rweekly&lt;/a&gt; is looking for &lt;a href=&#34;https://docs.google.com/forms/d/e/1FAIpQLSet2Tq_mWWOVsKWxGOSoUg8DzCPlW2-nxIFOSkkRvlUFxQFLw/viewform&#34;&gt;new editors&lt;/a&gt;. But they need to have submitted “at least 6 PRs on R Weekly”. If you submitted something through &lt;a href=&#34;https://rweekly.org/submit&#34;&gt;the webpage&lt;/a&gt; you also can apply. But I’ll look at how many people has submitted pull requests (PR) through GitHub at the repo rweekly/rewekly.&lt;/p&gt;
+&lt;div id=&#34;gh&#34; class=&#34;section level1&#34;&gt;
+&lt;h1&gt;GH&lt;/h1&gt;
+&lt;p&gt;So the GH package is good for this, but we need to know the API of Github. After a quick search I found the end point of the API:&lt;/p&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;library(&amp;quot;gh&amp;quot;)
+PR &amp;lt;- gh(&amp;quot;GET /search/issues?q=repo:rweekly/rweekly.org+is:pr+is:merged&amp;amp;per_page=100&amp;quot;) # Copied from https://developer.github.com/v3/pulls/
+PR$total_count
+## [1] 706&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;We know that there have been 552, we’ll need 8 calls to the appy, because it returns 100 values on each call.&lt;/p&gt;
+&lt;p&gt;This time we’ll use copy and paste for a quick solution:&lt;/p&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;PR2 &amp;lt;- gh(&amp;quot;GET /search/issues?q=repo:rweekly/rweekly.org+is:pr+is:merged&amp;amp;per_page=100&amp;amp;page=2&amp;quot;)
+PR3 &amp;lt;- gh(&amp;quot;GET /search/issues?q=repo:rweekly/rweekly.org+is:pr+is:merged&amp;amp;per_page=100&amp;amp;page=3&amp;quot;)
+PR4 &amp;lt;- gh(&amp;quot;GET /search/issues?q=repo:rweekly/rweekly.org+is:pr+is:merged&amp;amp;per_page=100&amp;amp;page=4&amp;quot;)
+PR5 &amp;lt;- gh(&amp;quot;GET /search/issues?q=repo:rweekly/rweekly.org+is:pr+is:merged&amp;amp;per_page=100&amp;amp;page=5&amp;quot;)
+PR6 &amp;lt;- gh(&amp;quot;GET /search/issues?q=repo:rweekly/rweekly.org+is:pr+is:merged&amp;amp;per_page=100&amp;amp;page=6&amp;quot;)&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;Now that we have the data we need to retrive the user names:&lt;/p&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;data &amp;lt;- list(PR, PR2, PR3, PR4, PR5, PR6)
+
+users &amp;lt;- lapply(data, function(x) {
+  vapply(x$items, function(y) {y$user$login}, character(1L))
+})
+users &amp;lt;- sort(unlist(users))&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;We know now that 171 has contributed through PR.
+Which of them are done by at the same people?&lt;/p&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;ts &amp;lt;- sort(table(users), decreasing = TRUE)
+par(mar = c(8,3,3,0))
+barplot(ts, las = 2, border = &amp;quot;gray&amp;quot;, main = &amp;quot;Contributors to Rweekly.org&amp;quot;)&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;&lt;img src=&#34;https://llrs.dev/post/2020/02/13/r-weekly-new-editor/index_files/figure-html/barplot-1.png&#34; width=&#34;672&#34; /&gt;&lt;/p&gt;
+&lt;p&gt;So we have 34 contributors which are ellegible, less if we remove the current editors:&lt;/p&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;names(ts)[ts &amp;gt;= 6]
+##  [1] &amp;quot;Ryo-N7&amp;quot;          &amp;quot;HenrikBengtsson&amp;quot; &amp;quot;martinctc&amp;quot;       &amp;quot;maelle&amp;quot;         
+##  [5] &amp;quot;amrrs&amp;quot;           &amp;quot;jwijffels&amp;quot;       &amp;quot;lgellis&amp;quot;         &amp;quot;mcdussault&amp;quot;     
+##  [9] &amp;quot;malcolmbarrett&amp;quot;  &amp;quot;moldach&amp;quot;         &amp;quot;dA505819&amp;quot;        &amp;quot;echasnovski&amp;quot;    
+## [13] &amp;quot;jonmcalder&amp;quot;      &amp;quot;jonocarroll&amp;quot;     &amp;quot;mailund&amp;quot;         &amp;quot;suzanbaert&amp;quot;     
+## [17] &amp;quot;seabbs&amp;quot;          &amp;quot;feddelegrand7&amp;quot;   &amp;quot;hfshr&amp;quot;           &amp;quot;lorenzwalthert&amp;quot; 
+## [21] &amp;quot;MilesMcBain&amp;quot;     &amp;quot;RaoOfPhysics&amp;quot;    &amp;quot;tomroh&amp;quot;          &amp;quot;EmilHvitfeldt&amp;quot;  
+## [25] &amp;quot;katiejolly&amp;quot;      &amp;quot;privefl&amp;quot;         &amp;quot;rCarto&amp;quot;          &amp;quot;deanmarchiori&amp;quot;  
+## [29] &amp;quot;DougVegas&amp;quot;       &amp;quot;eokodie&amp;quot;         &amp;quot;jdblischak&amp;quot;      &amp;quot;mkmiecik14&amp;quot;     
+## [33] &amp;quot;noamross&amp;quot;        &amp;quot;rstub&amp;quot;&lt;/code&gt;&lt;/pre&gt;
+&lt;div id=&#34;reproducibility&#34; class=&#34;section level3&#34;&gt;
+&lt;h3&gt;Reproducibility&lt;/h3&gt;
+&lt;details&gt;
+&lt;pre&gt;&lt;code&gt;## ─ Session info ───────────────────────────────────────────────────────────────────────────────────────────────────────
+##  setting  value                       
+##  version  R version 4.0.1 (2020-06-06)
+##  os       Ubuntu 20.04.1 LTS          
+##  system   x86_64, linux-gnu           
+##  ui       X11                         
+##  language (EN)                        
+##  collate  en_US.UTF-8                 
+##  ctype    en_US.UTF-8                 
+##  tz       Europe/Madrid               
+##  date     2021-01-08                  
+## 
+## ─ Packages ───────────────────────────────────────────────────────────────────────────────────────────────────────────
+##  package     * version date       lib source                           
+##  assertthat    0.2.1   2019-03-21 [1] CRAN (R 4.0.1)                   
+##  blogdown      0.21.84 2021-01-07 [1] Github (rstudio/blogdown@c4fbb58)
+##  bookdown      0.21    2020-10-13 [1] CRAN (R 4.0.1)                   
+##  cli           2.2.0   2020-11-20 [1] CRAN (R 4.0.1)                   
+##  crayon        1.3.4   2017-09-16 [1] CRAN (R 4.0.1)                   
+##  curl          4.3     2019-12-02 [1] CRAN (R 4.0.1)                   
+##  digest        0.6.27  2020-10-24 [1] CRAN (R 4.0.1)                   
+##  evaluate      0.14    2019-05-28 [1] CRAN (R 4.0.1)                   
+##  fansi         0.4.1   2020-01-08 [1] CRAN (R 4.0.1)                   
+##  gh          * 1.2.0   2020-11-27 [1] CRAN (R 4.0.1)                   
+##  gitcreds      0.1.1   2020-12-04 [1] CRAN (R 4.0.1)                   
+##  glue          1.4.2   2020-08-27 [1] CRAN (R 4.0.1)                   
+##  htmltools     0.5.0   2020-06-16 [1] CRAN (R 4.0.1)                   
+##  httr          1.4.2   2020-07-20 [1] CRAN (R 4.0.1)                   
+##  jsonlite      1.7.2   2020-12-09 [1] CRAN (R 4.0.1)                   
+##  knitr         1.30    2020-09-22 [1] CRAN (R 4.0.1)                   
+##  magrittr      2.0.1   2020-11-17 [1] CRAN (R 4.0.1)                   
+##  R6            2.5.0   2020-10-28 [1] CRAN (R 4.0.1)                   
+##  rlang         0.4.10  2020-12-30 [1] CRAN (R 4.0.1)                   
+##  rmarkdown     2.6     2020-12-14 [1] CRAN (R 4.0.1)                   
+##  sessioninfo   1.1.1   2018-11-05 [1] CRAN (R 4.0.1)                   
+##  stringi       1.5.3   2020-09-09 [1] CRAN (R 4.0.1)                   
+##  stringr       1.4.0   2019-02-10 [1] CRAN (R 4.0.1)                   
+##  withr         2.3.0   2020-09-22 [1] CRAN (R 4.0.1)                   
+##  xfun          0.20    2021-01-06 [1] CRAN (R 4.0.1)                   
+##  yaml          2.2.1   2020-02-01 [1] CRAN (R 4.0.1)                   
+## 
+## [1] /home/lluis/bin/R/4.0.1/lib/R/library&lt;/code&gt;&lt;/pre&gt;
+&lt;/details&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+</description>
+    </item>
+    
+    <item>
+      <title>Twitter bot</title>
+      <link>https://llrs.dev/post/2019/08/13/twitter-bot/</link>
+      <pubDate>Tue, 13 Aug 2019 00:00:00 +0000</pubDate>
+      <guid>https://llrs.dev/post/2019/08/13/twitter-bot/</guid>
+      <description>
+&lt;script src=&#34;https://llrs.dev/post/2019/08/13/twitter-bot/index_files/header-attrs/header-attrs.js&#34;&gt;&lt;/script&gt;
+
+
+&lt;p&gt;I was talking with a friend about social networks when he mentioned that it
+wasn’t worth his time to invest on podcasts.
+He said that I looked up his twitter account, that that’s more useful for him.
+This reminded me that I haven’t used these wonderful tools about twitter nor had I the motivation for analyzing time serie data.&lt;/p&gt;
+&lt;p&gt;This blogpost is my attempt to find how this user uses some kind of automated mechanism to publish.&lt;/p&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;library(&amp;quot;rtweet&amp;quot;)
+user_tweets &amp;lt;- get_timeline(user, n = 180000, type = &amp;quot;mixed&amp;quot;, 
+                            include_rts = TRUE)&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;Now that we have the tweets we can look if he is a bot:&lt;/p&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;library(&amp;quot;tweetbotornot&amp;quot;) # from mkearney/tweetbotornot
+# you might need to install this specific version of textfeatures:
+# devtools::install_version(&amp;#39;textfeatures&amp;#39;, version=&amp;#39;0.2.0&amp;#39;)
+botornot(user_tweets)&lt;/code&gt;&lt;/pre&gt;
+&lt;pre&gt;&lt;code&gt;## [32m↪[39m [38;5;244mCounting features in text...[39m
+## [32m↪[39m [38;5;244mSentiment analysis...[39m
+## [32m↪[39m [38;5;244mParts of speech...[39m
+## [32m↪[39m [38;5;244mWord dimensions started[39m
+## [32m✔[39m Job&amp;#39;s done!&lt;/code&gt;&lt;/pre&gt;
+&lt;pre&gt;&lt;code&gt;## # A tibble: 1 x 3
+##   screen_name    user_id   prob_bot
+##   &amp;lt;chr&amp;gt;          &amp;lt;chr&amp;gt;        &amp;lt;dbl&amp;gt;
+## 1 josemariasiota 288661791    0.386&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;It gives a very high probability.&lt;/p&gt;
+&lt;p&gt;We can visualize them with:&lt;/p&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;library(&amp;quot;ggplot2&amp;quot;)
+ts_plot(user_tweets, &amp;quot;weeks&amp;quot;) +
+  theme_bw() +
+  labs(title = &amp;quot;Tweets by @josemariasiota&amp;quot;,
+       subtitle = &amp;quot;Grouped by week&amp;quot;, x = NULL, y = &amp;quot;tweets&amp;quot;)&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;&lt;img src=&#34;https://llrs.dev/post/2019/08/13/twitter-bot/index_files/figure-html/unnamed-chunk-4-1.png&#34; width=&#34;672&#34; /&gt;&lt;/p&gt;
+&lt;p&gt;We can group the tweets by the source of them, if interactive or using some other service:&lt;/p&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;library(&amp;quot;dplyr&amp;quot;)&lt;/code&gt;&lt;/pre&gt;
+&lt;pre&gt;&lt;code&gt;## 
+## Attaching package: &amp;#39;dplyr&amp;#39;&lt;/code&gt;&lt;/pre&gt;
+&lt;pre&gt;&lt;code&gt;## The following objects are masked from &amp;#39;package:stats&amp;#39;:
+## 
+##     filter, lag&lt;/code&gt;&lt;/pre&gt;
+&lt;pre&gt;&lt;code&gt;## The following objects are masked from &amp;#39;package:base&amp;#39;:
+## 
+##     intersect, setdiff, setequal, union&lt;/code&gt;&lt;/pre&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;count(user_tweets, source, sort = TRUE)&lt;/code&gt;&lt;/pre&gt;
+&lt;pre&gt;&lt;code&gt;## # A tibble: 9 x 2
+##   source                               n
+##   &amp;lt;chr&amp;gt;                            &amp;lt;int&amp;gt;
+## 1 dlvr.it                           1738
+## 2 twitterfeed                        676
+## 3 Twitter Web Client                 553
+## 4 Twitter Web App                    149
+## 5 Twitter for iPhone                  78
+## 6 Twitter for Advertisers (legacy)    21
+## 7 Hootsuite                           13
+## 8 Twitter for iPad                     2
+## 9 Twitter for Websites                 2&lt;/code&gt;&lt;/pre&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;user &amp;lt;- user_tweets %&amp;gt;% 
+  mutate(source = case_when(
+    grepl(&amp;quot; for | on | Web &amp;quot;, source) ~ &amp;quot;direct&amp;quot;,
+    TRUE ~ source
+  ))
+
+user %&amp;gt;% 
+  count(source, sort = TRUE)&lt;/code&gt;&lt;/pre&gt;
+&lt;pre&gt;&lt;code&gt;## # A tibble: 4 x 2
+##   source          n
+##   &amp;lt;chr&amp;gt;       &amp;lt;int&amp;gt;
+## 1 dlvr.it      1738
+## 2 direct        805
+## 3 twitterfeed   676
+## 4 Hootsuite      13&lt;/code&gt;&lt;/pre&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;user &amp;lt;- user %&amp;gt;% 
+  mutate(reply = case_when(
+    is.na(reply_to_status_id) ~  &amp;quot;content?&amp;quot;,
+    TRUE ~ &amp;quot;reply&amp;quot;))
+user %&amp;gt;% 
+  count(reply, source, sort = TRUE)&lt;/code&gt;&lt;/pre&gt;
+&lt;pre&gt;&lt;code&gt;## # A tibble: 5 x 3
+##   reply    source          n
+##   &amp;lt;chr&amp;gt;    &amp;lt;chr&amp;gt;       &amp;lt;int&amp;gt;
+## 1 content? dlvr.it      1738
+## 2 content? direct        731
+## 3 content? twitterfeed   676
+## 4 reply    direct         74
+## 5 content? Hootsuite      13&lt;/code&gt;&lt;/pre&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;library(&amp;quot;stringr&amp;quot;)
+user &amp;lt;- user %&amp;gt;% 
+  mutate(link = str_extract(text, &amp;quot;https?://.+\\b&amp;quot;),
+         n_link = str_count(text, &amp;quot;https?://&amp;quot;),
+         n_users = str_count(text, &amp;quot;@[:alnum:]+\\b&amp;quot;),
+         n_hashtags = str_count(text, &amp;quot;#[:alnum:]+\\b&amp;quot;),
+         via = str_count(text, &amp;quot;\\bvia\\b&amp;quot;))
+user %&amp;gt;% count(n_link, reply, sort = TRUE)&lt;/code&gt;&lt;/pre&gt;
+&lt;pre&gt;&lt;code&gt;## # A tibble: 7 x 3
+##   n_link reply        n
+##    &amp;lt;int&amp;gt; &amp;lt;chr&amp;gt;    &amp;lt;int&amp;gt;
+## 1      1 content?  2508
+## 2      2 content?   629
+## 3      0 reply       57
+## 4      0 content?    14
+## 5      1 reply       14
+## 6      3 content?     7
+## 7      2 reply        3&lt;/code&gt;&lt;/pre&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;user %&amp;gt;% 
+  group_by(lang, source) %&amp;gt;% 
+  summarise(n = n(), n_link = sum(n_link), n_users = sum(n_users), n_hashtags = sum(n_hashtags)) %&amp;gt;% 
+  arrange(-n) %&amp;gt;% 
+  ggplot() +
+  geom_point(aes(lang, source, size = n)) +
+  theme_bw()&lt;/code&gt;&lt;/pre&gt;
+&lt;pre&gt;&lt;code&gt;## `summarise()` regrouping output by &amp;#39;lang&amp;#39; (override with `.groups` argument)&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;&lt;img src=&#34;https://llrs.dev/post/2019/08/13/twitter-bot/index_files/figure-html/count-1.png&#34; width=&#34;672&#34; /&gt;&lt;/p&gt;
+&lt;p&gt;We can see that depending on the service there are some languages that are not used.&lt;/p&gt;
+&lt;p&gt;We can visualize the tweets as they happen with:&lt;/p&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;user %&amp;gt;% 
+  mutate(hms = hms::as_hms(created_at),
+         d = as.Date(created_at)) %&amp;gt;% 
+  ggplot(aes(d, hms, col = source, shape = reply)) +
+  geom_point() +
+  theme_bw() +
+  labs(y = &amp;quot;Hour&amp;quot;, x = &amp;quot;Date&amp;quot;, title = &amp;quot;Tweets&amp;quot;) +
+  scale_x_date(date_breaks = &amp;quot;1 year&amp;quot;, date_labels = &amp;quot;%Y&amp;quot;, 
+               expand = c(0.01, 0)) +
+  scale_y_time(labels = function(x) strftime(x, &amp;quot;%H&amp;quot;),
+               breaks = hms::hms(seq(0, 24, 1)*60*60), expand = c(0.01, 0))&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;&lt;img src=&#34;https://llrs.dev/post/2019/08/13/twitter-bot/index_files/figure-html/unnamed-chunk-5-1.png&#34; width=&#34;672&#34; /&gt;&lt;/p&gt;
+&lt;p&gt;We can clearly see a change on the end of 2016, I will focus on that point forward.&lt;/p&gt;
+&lt;p&gt;A package that got my attention on twitter was &lt;a href=&#34;https://cran.r-project.org/package=anomalize&#34;&gt;&lt;code&gt;anomalize&lt;/code&gt;&lt;/a&gt; which search for anomalies on time series of data. I hope that using this algorithm it will find when the data is not automated&lt;/p&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;library(&amp;quot;anomalize&amp;quot;)&lt;/code&gt;&lt;/pre&gt;
+&lt;pre&gt;&lt;code&gt;## ══ Use anomalize to improve your Forecasts by 50%! ═════════════════════════════
+## Business Science offers a 1-hour course - Lab #18: Time Series Anomaly Detection!
+## &amp;lt;/&amp;gt; Learn more at: https://university.business-science.io/p/learning-labs-pro &amp;lt;/&amp;gt;&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;The excellent guide at their &lt;a href=&#34;https://business-science.github.io/anomalize/&#34;&gt;website&lt;/a&gt; is easy to understand and follow&lt;/p&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;user &amp;lt;- user %&amp;gt;% 
+  filter(created_at &amp;gt; as.Date(&amp;quot;2016-11-01&amp;quot;)) %&amp;gt;% 
+  arrange(created_at) %&amp;gt;% 
+  time_decompose(created_at, method = &amp;quot;stl&amp;quot;, merge = TRUE, message = TRUE) &lt;/code&gt;&lt;/pre&gt;
+&lt;pre&gt;&lt;code&gt;## Warning in mask$eval_all_filter(dots, env_filter): Incompatible methods
+## (&amp;quot;Ops.POSIXt&amp;quot;, &amp;quot;Ops.Date&amp;quot;) for &amp;quot;&amp;gt;&amp;quot;&lt;/code&gt;&lt;/pre&gt;
+&lt;pre&gt;&lt;code&gt;## Converting from tbl_df to tbl_time.
+## Auto-index message: index = created_at&lt;/code&gt;&lt;/pre&gt;
+&lt;pre&gt;&lt;code&gt;## frequency = 2 hours&lt;/code&gt;&lt;/pre&gt;
+&lt;pre&gt;&lt;code&gt;## trend = 42.5 hours&lt;/code&gt;&lt;/pre&gt;
+&lt;pre&gt;&lt;code&gt;## Registered S3 method overwritten by &amp;#39;quantmod&amp;#39;:
+##   method            from
+##   as.zoo.data.frame zoo&lt;/code&gt;&lt;/pre&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;user %&amp;gt;% 
+  filter(created_at &amp;gt; as.Date(&amp;quot;2016-11-01&amp;quot;)) %&amp;gt;% 
+  anomalize(remainder, method = &amp;quot;iqr&amp;quot;) %&amp;gt;%
+  time_recompose() %&amp;gt;%
+  # Anomaly Visualization
+  plot_anomalies(time_recomposed = TRUE, ncol = 3, alpha_dots = 0.25) +
+  labs(title = &amp;quot;User anomalies&amp;quot;, 
+       subtitle = &amp;quot;STL + IQR Methods&amp;quot;, 
+       x = &amp;quot;Time&amp;quot;) &lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;&lt;img src=&#34;https://llrs.dev/post/2019/08/13/twitter-bot/index_files/figure-html/unnamed-chunk-7-1.png&#34; width=&#34;672&#34; /&gt;&lt;/p&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;user %&amp;gt;% 
+  filter(created_at &amp;gt; as.Date(&amp;quot;2016-11-01&amp;quot;)) %&amp;gt;% 
+  anomalize(remainder, method = &amp;quot;iqr&amp;quot;) %&amp;gt;%
+  plot_anomaly_decomposition() +
+  labs(title = &amp;quot;Decomposition of Anomalized Lubridate Downloads&amp;quot;)&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;&lt;img src=&#34;https://llrs.dev/post/2019/08/13/twitter-bot/index_files/figure-html/unnamed-chunk-7-2.png&#34; width=&#34;672&#34; /&gt;&lt;/p&gt;
+&lt;p&gt;We can clearly see some tendencies on the tweeting so it is automated, since then. We can further check it with:&lt;/p&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;user %&amp;gt;% 
+  filter(created_at &amp;gt; as.Date(&amp;quot;2016-11-01&amp;quot;)) %&amp;gt;% 
+  botornot()&lt;/code&gt;&lt;/pre&gt;
+&lt;pre&gt;&lt;code&gt;## [32m↪[39m [38;5;244mCounting features in text...[39m
+## [32m↪[39m [38;5;244mSentiment analysis...[39m
+## [32m↪[39m [38;5;244mParts of speech...[39m
+## [32m↪[39m [38;5;244mWord dimensions started[39m
+## [32m✔[39m Job&amp;#39;s done!&lt;/code&gt;&lt;/pre&gt;
+&lt;pre&gt;&lt;code&gt;## # A tibble: 1 x 3
+##   screen_name    user_id   prob_bot
+##   &amp;lt;chr&amp;gt;          &amp;lt;chr&amp;gt;        &amp;lt;dbl&amp;gt;
+## 1 josemariasiota 288661791    0.469&lt;/code&gt;&lt;/pre&gt;
+</description>
+    </item>
+    
+  </channel>
+</rss>

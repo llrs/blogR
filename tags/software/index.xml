@@ -1,0 +1,274 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes" ?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>software | B101nfo</title>
+    <link>https://llrs.dev/tags/software/</link>
+      <atom:link href="https://llrs.dev/tags/software/index.xml" rel="self" type="application/rss+xml" />
+    <description>software</description>
+    <generator>Source Themes Academic (https://sourcethemes.com/academic/)</generator><language>en-us</language><copyright>If it is code you can copy and reuse (MIT) if it is text, please cite and reuse CC-BY 2026.</copyright><lastBuildDate>Wed, 08 Feb 2023 00:00:00 +0000</lastBuildDate>
+    <image>
+      <url>img/map[gravatar:%!s(bool=false) shape:circle]</url>
+      <title>software</title>
+      <link>https://llrs.dev/tags/software/</link>
+    </image>
+    
+    <item>
+      <title>Accessing REDCap from R</title>
+      <link>https://llrs.dev/post/2023/02/08/accessing-redcap-from-r/</link>
+      <pubDate>Wed, 08 Feb 2023 00:00:00 +0000</pubDate>
+      <guid>https://llrs.dev/post/2023/02/08/accessing-redcap-from-r/</guid>
+      <description>
+
+
+&lt;p&gt;In this post, I want to summarize some of the packages to connect to &lt;a href=&#34;https://www.project-redcap.org/&#34;&gt;REDCap&lt;/a&gt;.
+For those who don’t know, REDCap is a database designed for clinical usage, which allows easy data collection of patients’ responses by clinicians and interactions with the patients via surveys.&lt;/p&gt;
+&lt;p&gt;It has specific features such as scheduling surveys sent to patients, compatibility with tablets and mobile phones for data entry while visiting patients, grouping data in instruments (for repeating the same questions multiple times), multiple choice and check buttons, and different arms (like paths for patients).
+Most importantly is relatively easy to manage by clinical administrators.&lt;/p&gt;
+&lt;p&gt;In CRAN there are ~11 &lt;a href=&#34;https://search.r-project.org/?P=REDCap&amp;amp;SORT=&amp;amp;HITSPERPAGE=10&amp;amp;DB=cran-info&amp;amp;DEFAULTOP=and&amp;amp;FMT=query&amp;amp;xDB=all&amp;amp;xFILTERS=.%7E%7E&#34;&gt;packages mentioning it&lt;/a&gt; at the time of writing it.
+The purpose of this post is to help decide which packages can be helpful in which situations.
+This post won’t be a deep analysis or comparison of capabilities, it describes some of the best and worse features of each package.&lt;/p&gt;
+&lt;div id=&#34;redcapr&#34; class=&#34;section level2&#34;&gt;
+&lt;h2&gt;REDCapR&lt;/h2&gt;
+&lt;p&gt;&lt;a href=&#34;https://cran.r-project.org/package=REDCapR&#34;&gt;REDCapR&lt;/a&gt; is the official package to connect to the database.
+It allows you to read, write and filter the requests.
+It has some security-related functions.&lt;/p&gt;
+&lt;/div&gt;
+&lt;div id=&#34;redcaptidier&#34; class=&#34;section level2&#34;&gt;
+&lt;h2&gt;REDCapTidieR&lt;/h2&gt;
+&lt;p&gt;&lt;a href=&#34;https://cran.r-project.org/package=REDCapTidieR&#34;&gt;REDCapTidieR&lt;/a&gt; is a package that provides summaries of tables and helps with nested tibbles data by arm.
+It depends on REDCapR.&lt;/p&gt;
+&lt;/div&gt;
+&lt;div id=&#34;tidyredcap&#34; class=&#34;section level2&#34;&gt;
+&lt;h2&gt;tidyREDCap&lt;/h2&gt;
+&lt;p&gt;&lt;a href=&#34;https://cran.r-project.org/package=tidyREDCap&#34;&gt;tidyREDCap&lt;/a&gt; is a package that simplifies the tables for instruments and choose-all or choose-one question types.
+It is easy to make tables and it depends on REDCapR.
+It requires the first and last columns to make instruments.&lt;/p&gt;
+&lt;div class=&#34;figure&#34;&gt;
+&lt;img src=&#34;images/redcap_design.jpg&#34; alt=&#34;&#34; /&gt;
+&lt;p class=&#34;caption&#34;&gt;Screenshot of a design with several instruments in a single arm (from &lt;a href=&#34;https://www.project-redcap.org/&#34; class=&#34;uri&#34;&gt;https://www.project-redcap.org/&lt;/a&gt;)&lt;/p&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;div id=&#34;redcapexporter&#34; class=&#34;section level2&#34;&gt;
+&lt;h2&gt;REDCapExporter&lt;/h2&gt;
+&lt;p&gt;&lt;a href=&#34;https://cran.r-project.org/package=REDCapExporter&#34;&gt;REDCapExporter&lt;/a&gt; is a package to build a data package from a database for redistribution.
+It does not depend on REDCapR.&lt;/p&gt;
+&lt;/div&gt;
+&lt;div id=&#34;redcapapi&#34; class=&#34;section level2&#34;&gt;
+&lt;h2&gt;redcapAPI&lt;/h2&gt;
+&lt;p&gt;&lt;a href=&#34;https://cran.r-project.org/package=redcapAPI&#34;&gt;redcapAPI&lt;/a&gt; is a package for making data accessible and analysis-ready as quickly as possible with huge documentation in a wiki but has no vignette or examples and it does not depend on REDCapR.&lt;/p&gt;
+&lt;/div&gt;
+&lt;div id=&#34;redcapdm&#34; class=&#34;section level2&#34;&gt;
+&lt;h2&gt;REDCapDM&lt;/h2&gt;
+&lt;p&gt;&lt;a href=&#34;https://cran.r-project.org/package=REDCapDM&#34;&gt;REDCapDM&lt;/a&gt; is a package that provides functions to read and manage REDCap data and identify missing or extreme values as well as transform the data provided by the API.
+It depends on REDCapR.&lt;/p&gt;
+&lt;/div&gt;
+&lt;div id=&#34;reviewr&#34; class=&#34;section level2&#34;&gt;
+&lt;h2&gt;ReviewR&lt;/h2&gt;
+&lt;p&gt;&lt;a href=&#34;https://cran.r-project.org/package=ReviewR&#34;&gt;ReviewR&lt;/a&gt; is a package that creates a shiny website with data from the database to explore it.
+It uses the REDCapR to connect to your instance.&lt;/p&gt;
+&lt;/div&gt;
+&lt;div id=&#34;rccola&#34; class=&#34;section level2&#34;&gt;
+&lt;h2&gt;rccola&lt;/h2&gt;
+&lt;p&gt;&lt;a href=&#34;https://cran.r-project.org/package=rccola&#34;&gt;rccola&lt;/a&gt; is a package to provide a secure connection to the database but it doesn’t provide any handling of the data.
+It uses redcapAPI to connect to the database.&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;https://llrs.dev/post/2023/02/08/accessing-redcap-from-r/index.en_files/figure-html/unnamed-chunk-1-1.png&#34; alt=&#34;Barplot with the dependencies: from less to more: REDCapExporter, rccola, redcapAPI, REDCapR, tidyREDCap, REDCapDM, REDCapTidieR, ReviewR&#34; width=&#34;672&#34; /&gt;&lt;/p&gt;
+&lt;/div&gt;
+&lt;div id=&#34;other-packages&#34; class=&#34;section level2&#34;&gt;
+&lt;h2&gt;Other packages&lt;/h2&gt;
+&lt;p&gt;Other packages mention REDCap:&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;a href=&#34;https://cran.r-project.org/package=nmadb&#34;&gt;nmadb&lt;/a&gt;: which implements its own connection procedure for a specific REDCap database of network meta-analyses.&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;https://cran.r-project.org/package=distcomp&#34;&gt;distcomp&lt;/a&gt;: Allows to do computation on a distributed data also in REDCap.&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;https://cran.r-project.org/package=cgmanalysis&#34;&gt;cgmanalysis&lt;/a&gt;: which mentions that data produced is compatible with REDCap.&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/div&gt;
+&lt;div id=&#34;conclusion&#34; class=&#34;section level1&#34;&gt;
+&lt;h1&gt;Conclusion&lt;/h1&gt;
+&lt;p&gt;I’m sure that many packages briefly described here can do much more than what I understood from a glance at their documentation and DESCRIPTION.&lt;/p&gt;
+&lt;p&gt;Most packages provide some data for the examples (and probably tests), while others do not.
+This is a technical problem that might impact users if there are no examples in the functions.&lt;/p&gt;
+&lt;p&gt;REDCapR is used by most packages to access the database, but most of the packages focus on transforming the data provided by the API (or data exported) or the exported data.
+It highlights that the data exported is useful but that depending on the preferences of the users it needs to be transformed for easy usage.&lt;/p&gt;
+&lt;/div&gt;
+</description>
+    </item>
+    
+    <item>
+      <title>Concepts around open source/free software</title>
+      <link>https://llrs.dev/post/2022/03/16/concepts-around-open-source-free-software/</link>
+      <pubDate>Wed, 16 Mar 2022 00:00:00 +0000</pubDate>
+      <guid>https://llrs.dev/post/2022/03/16/concepts-around-open-source-free-software/</guid>
+      <description>
+&lt;script src=&#34;https://llrs.dev/post/2022/03/16/concepts-around-open-source-free-software/index.en_files/header-attrs/header-attrs.js&#34;&gt;&lt;/script&gt;
+
+
+&lt;p&gt;This post is to lay out some concepts I picked up after reading &lt;a href=&#34;https://www.amazon.com/Working-Public-Making-Maintenance-Software/dp/0578675862&#34;&gt;“The Making and maintenance of open source software”&lt;/a&gt;.
+Having these concepts in mind might help me on my contributions to R and OSS in general.
+I write these thought to come back to in future posts.&lt;/p&gt;
+&lt;p&gt;The book classify projects by two axis, contribution growth and user growth:&lt;/p&gt;
+&lt;table&gt;
+&lt;thead&gt;
+&lt;tr class=&#34;header&#34;&gt;
+&lt;th&gt;&lt;/th&gt;
+&lt;th&gt;High user growth&lt;/th&gt;
+&lt;th&gt;low user growth&lt;/th&gt;
+&lt;/tr&gt;
+&lt;/thead&gt;
+&lt;tbody&gt;
+&lt;tr class=&#34;odd&#34;&gt;
+&lt;td&gt;&lt;strong&gt;High contributor growth&lt;/strong&gt;&lt;/td&gt;
+&lt;td&gt;Federations&lt;/td&gt;
+&lt;td&gt;Clubs&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr class=&#34;even&#34;&gt;
+&lt;td&gt;&lt;strong&gt;Low contributor growth&lt;/strong&gt;&lt;/td&gt;
+&lt;td&gt;Stadiums&lt;/td&gt;
+&lt;td&gt;Toys&lt;/td&gt;
+&lt;/tr&gt;
+&lt;/tbody&gt;
+&lt;/table&gt;
+&lt;p&gt;And classify projects according to the following characteristics :&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;p&gt;Technical&lt;/p&gt;&lt;/li&gt;
+&lt;li&gt;&lt;p&gt;Support&lt;/p&gt;&lt;/li&gt;
+&lt;li&gt;&lt;p&gt;Ease of participation&lt;/p&gt;&lt;/li&gt;
+&lt;li&gt;&lt;p&gt;User adoption&lt;/p&gt;&lt;/li&gt;
+&lt;li&gt;&lt;p&gt;Contributor growth&lt;/p&gt;&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;Code seems like a common good which require the following characteristics:&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;p&gt;Intrinsic motivation&lt;/p&gt;&lt;/li&gt;
+&lt;li&gt;&lt;p&gt;Modular&lt;/p&gt;&lt;/li&gt;
+&lt;li&gt;&lt;p&gt;Granular&lt;/p&gt;&lt;/li&gt;
+&lt;li&gt;&lt;p&gt;Low cost of coordination&lt;/p&gt;&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;On the author’s opinion only maintainers are interested in the success of the whole community and need to make trade off between different interest of the community around the project.&lt;/p&gt;
+&lt;p&gt;Motivation is very important and I classify based on the source of motivation and the sign of it:&lt;/p&gt;
+&lt;table&gt;
+&lt;thead&gt;
+&lt;tr class=&#34;header&#34;&gt;
+&lt;th&gt;&lt;/th&gt;
+&lt;th&gt;Positive&lt;/th&gt;
+&lt;th&gt;Negative&lt;/th&gt;
+&lt;/tr&gt;
+&lt;/thead&gt;
+&lt;tbody&gt;
+&lt;tr class=&#34;odd&#34;&gt;
+&lt;td&gt;&lt;strong&gt;Intrinsic&lt;/strong&gt;&lt;/td&gt;
+&lt;td&gt;Learn skills&lt;/td&gt;
+&lt;td&gt;Burn out&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr class=&#34;even&#34;&gt;
+&lt;td&gt;&lt;strong&gt;Extrinsic&lt;/strong&gt;&lt;/td&gt;
+&lt;td&gt;Social benefits&lt;/td&gt;
+&lt;td&gt;Friction, or lack of feedback&lt;/td&gt;
+&lt;/tr&gt;
+&lt;/tbody&gt;
+&lt;/table&gt;
+&lt;p&gt;Following the book, contributors can be grouped in two:&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;p&gt;Invested: Lurk before making a contribution, learn the quirks of the community&lt;/p&gt;&lt;/li&gt;
+&lt;li&gt;&lt;p&gt;Casual: Adding value to themselves and other&lt;/p&gt;&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;Contributors might spend many time learning about the community before making their first contribution (or show themselves).
+That’s why only knowing if this is the first contribution of someone doesn’t mean they will continue contributing on the project.&lt;/p&gt;
+&lt;p&gt;Users, can be classified in two groups: passive, they use the software and nothing else, or active.
+Active users might do one of the following:&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;p&gt;Educate others: write a blog post, or material&lt;/p&gt;&lt;/li&gt;
+&lt;li&gt;&lt;p&gt;Spread the word: Announce they use the software&lt;/p&gt;&lt;/li&gt;
+&lt;li&gt;&lt;p&gt;Support: Solve other’s users questions&lt;/p&gt;&lt;/li&gt;
+&lt;li&gt;&lt;p&gt;Fill bug reports&lt;/p&gt;&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;The health of the project depends on the popularity dependencies and active and future maintenance of the software.&lt;/p&gt;
+&lt;p&gt;However, the book says that one contributor is not the same as the other.
+For instance removing a maintainer causes more harm than a casual contributor.&lt;/p&gt;
+&lt;p&gt;The source of this is that software is like a puppy.
+The value of the code is how live it is, static code has null value.
+but once it is being used it is very valuable.&lt;/p&gt;
+&lt;p&gt;For this reason the maintenance costs once there are users is very high.
+However, in general there are few ways to know how many users does a piece of software have.&lt;/p&gt;
+&lt;p&gt;This produces marginal costs to maintainer, which are driven by how are these goods:&lt;/p&gt;
+&lt;table&gt;
+&lt;thead&gt;
+&lt;tr class=&#34;header&#34;&gt;
+&lt;th&gt;&lt;/th&gt;
+&lt;th&gt;Excludable&lt;/th&gt;
+&lt;th&gt;Non-Excludable&lt;/th&gt;
+&lt;/tr&gt;
+&lt;/thead&gt;
+&lt;tbody&gt;
+&lt;tr class=&#34;odd&#34;&gt;
+&lt;td&gt;&lt;strong&gt;Rivalrous&lt;/strong&gt;&lt;/td&gt;
+&lt;td&gt;Private goods&lt;/td&gt;
+&lt;td&gt;Commons good&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr class=&#34;even&#34;&gt;
+&lt;td&gt;&lt;strong&gt;Non-Rivalrous&lt;/strong&gt;&lt;/td&gt;
+&lt;td&gt;Club goods&lt;/td&gt;
+&lt;td&gt;Public goods&lt;/td&gt;
+&lt;/tr&gt;
+&lt;/tbody&gt;
+&lt;/table&gt;
+&lt;p&gt;Costs are mainly attention from the maintainers from the users and contributors.
+Users are like a cars in a highway initially there is no problem, but at high levels of traffic adding new lanes don’t solve traffic jam.&lt;/p&gt;
+&lt;p&gt;However, the cost increase with more request, the bandwidth to download software and hosting&lt;/p&gt;
+&lt;p&gt;More users leads to more requests, which lead to a competition for maintainers to do less proactive work and do more reactive work.&lt;/p&gt;
+&lt;p&gt;This leads to start on very simple organiztion and evolve to more disorganized complexity and then to a organized complexity to just cope with the costs of the project.
+On this organization complexity relationships with maintainers become important.&lt;/p&gt;
+&lt;p&gt;&lt;code&gt;Value = usage+dependencies-maintenance+substitutability+switching cost+enabling&lt;/code&gt; while &lt;code&gt;Cost = development +maintenance+attention&lt;/code&gt;.&lt;/p&gt;
+&lt;p&gt;The common (and scarce) good is the attention of both maintainers and developers.
+Which requires judgement call on which kind of requests dedicate their time: extractive or non-extractive requests.&lt;/p&gt;
+&lt;p&gt;The benefit for maintainers once the reputation/recognition is enough is almost non existent.&lt;/p&gt;
+&lt;p&gt;The book cites several communities Python, ruby, Linux, javascript, java, but I don’t think they used R community as a source. So what are the implication of these concepts to the R community? How do we help maintainers to keep up with their work or let in new maintainers?&lt;/p&gt;
+&lt;div id=&#34;reproducibility&#34; class=&#34;section level3&#34;&gt;
+&lt;h3&gt;Reproducibility&lt;/h3&gt;
+&lt;details&gt;
+&lt;pre&gt;&lt;code&gt;## ─ Session info ───────────────────────────────────────────────────────────────────────────────────────────────────────
+##  setting  value
+##  version  R version 4.1.2 (2021-11-01)
+##  os       Ubuntu 20.04.4 LTS
+##  system   x86_64, linux-gnu
+##  ui       X11
+##  language (EN)
+##  collate  en_US.UTF-8
+##  ctype    en_US.UTF-8
+##  tz       Europe/Madrid
+##  date     2022-03-16
+##  pandoc   2.17.1.1 @ /usr/lib/rstudio/bin/quarto/bin/ (via rmarkdown)
+## 
+## ─ Packages ───────────────────────────────────────────────────────────────────────────────────────────────────────────
+##  package     * version date (UTC) lib source
+##  blogdown      1.8.1   2022-02-19 [1] Github (rstudio/blogdown@9af7733)
+##  bookdown      0.24    2021-09-02 [1] CRAN (R 4.1.2)
+##  bslib         0.3.1   2021-10-06 [1] CRAN (R 4.1.2)
+##  cli           3.2.0   2022-02-14 [1] CRAN (R 4.1.2)
+##  digest        0.6.29  2021-12-01 [1] CRAN (R 4.1.2)
+##  evaluate      0.15    2022-02-18 [1] CRAN (R 4.1.2)
+##  fastmap       1.1.0   2021-01-25 [1] CRAN (R 4.1.2)
+##  htmltools     0.5.2   2021-08-25 [1] CRAN (R 4.1.2)
+##  jquerylib     0.1.4   2021-04-26 [1] CRAN (R 4.1.2)
+##  jsonlite      1.8.0   2022-02-22 [1] CRAN (R 4.1.2)
+##  knitr         1.37    2021-12-16 [1] CRAN (R 4.1.2)
+##  magrittr      2.0.2   2022-01-26 [1] CRAN (R 4.1.2)
+##  R6            2.5.1   2021-08-19 [1] CRAN (R 4.1.2)
+##  rlang         1.0.2   2022-03-04 [1] CRAN (R 4.1.2)
+##  rmarkdown     2.13    2022-03-10 [1] CRAN (R 4.1.2)
+##  rstudioapi    0.13    2020-11-12 [1] CRAN (R 4.1.2)
+##  sass          0.4.0   2021-05-12 [1] CRAN (R 4.1.2)
+##  sessioninfo   1.2.2   2021-12-06 [1] CRAN (R 4.1.2)
+##  stringi       1.7.6   2021-11-29 [1] CRAN (R 4.1.2)
+##  stringr       1.4.0   2019-02-10 [1] CRAN (R 4.1.2)
+##  xfun          0.30    2022-03-02 [1] CRAN (R 4.1.2)
+##  yaml          2.3.5   2022-02-21 [1] CRAN (R 4.1.2)
+## 
+##  [1] /home/lluis/bin/R/4.1.2/lib/R/library
+## 
+## ──────────────────────────────────────────────────────────────────────────────────────────────────────────────────────&lt;/code&gt;&lt;/pre&gt;
+&lt;/details&gt;
+&lt;/div&gt;
+</description>
+    </item>
+    
+  </channel>
+</rss>

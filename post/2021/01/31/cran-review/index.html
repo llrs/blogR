@@ -1,0 +1,1887 @@
+<!DOCTYPE html>
+<html lang="en-us">
+
+<head>
+
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="generator" content="Source Themes Academic 4.8.0">
+
+  
+
+  
+  
+  
+  
+  
+    
+    
+    
+  
+  
+
+  <meta name="author" content="Lluís Revilla Sancho">
+
+  
+  
+  
+    
+  
+  <meta name="description" content="I’ve been doing some analysis on the review submissions of several projects of R. However, till recently I couldn’t analyze the CRAN submission. There was cransays’ package to check package submissions which on the online documentation provided a dashboard which updated each hour.">
+
+  
+  <link rel="alternate" hreflang="en-us" href="https://llrs.dev/post/2021/01/31/cran-review/">
+
+  
+
+
+  
+  
+  
+  <meta name="theme-color" content="#2962ff">
+  
+
+  
+  
+
+  
+  
+  
+  
+    
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/academicons/1.8.6/css/academicons.min.css" integrity="sha256-uFVgMKfistnJAfoCUQigIl+JfUaP47GrRKjf6CTPVmw=" crossorigin="anonymous">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.12.0-1/css/all.min.css" integrity="sha256-4w9DunooKSr3MFXHXWyFER38WmPdm361bQS/2KUWZbU=" crossorigin="anonymous">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/fancybox/3.5.7/jquery.fancybox.min.css" integrity="sha256-Vzbj7sDDS/woiFS3uNKo8eIuni59rjyNGtXfstRzStA=" crossorigin="anonymous">
+
+    
+    
+    
+      
+    
+    
+      
+      
+        
+          <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.18.1/styles/github.min.css" crossorigin="anonymous" title="hl-light">
+          <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.18.1/styles/dracula.min.css" crossorigin="anonymous" title="hl-dark" disabled>
+        
+      
+    
+
+    
+
+    
+
+    
+    
+      
+
+      
+      
+
+      
+    
+      
+
+      
+      
+
+      
+    
+      
+
+      
+      
+
+      
+    
+      
+
+      
+      
+
+      
+    
+      
+
+      
+      
+
+      
+    
+      
+
+      
+      
+
+      
+    
+      
+
+      
+      
+
+      
+    
+      
+
+      
+      
+
+      
+    
+      
+
+      
+      
+
+      
+    
+      
+
+      
+      
+
+      
+    
+      
+
+      
+      
+
+      
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/lazysizes/5.1.2/lazysizes.min.js" integrity="sha256-Md1qLToewPeKjfAHU1zyPwOutccPAm5tahnaw7Osw0A=" crossorigin="anonymous" async></script>
+      
+    
+      
+
+      
+      
+
+      
+    
+      
+
+      
+      
+
+      
+    
+      
+
+      
+      
+        
+      
+
+      
+    
+      
+
+      
+      
+
+      
+    
+
+  
+
+  
+  
+  
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Montserrat:400,700%7CRoboto:400,400italic,700%7CRoboto+Mono&display=swap">
+  
+
+  
+  
+  
+  
+  <link rel="stylesheet" href="/css/academic.css">
+
+  
+
+
+
+
+  
+
+
+  
+
+  <link rel="manifest" href="/index.webmanifest">
+  <link rel="icon" type="image/png" href="/images/icon_hud03320d081f55857e6179906aee3769c_2658_32x32_fill_lanczos_center_3.png">
+  <link rel="apple-touch-icon" type="image/png" href="/images/icon_hud03320d081f55857e6179906aee3769c_2658_192x192_fill_lanczos_center_3.png">
+
+  <link rel="canonical" href="https://llrs.dev/post/2021/01/31/cran-review/">
+
+  
+  
+  
+  
+  
+    
+    
+  
+  
+  <meta property="twitter:card" content="summary">
+  
+  <meta property="og:site_name" content="B101nfo">
+  <meta property="og:url" content="https://llrs.dev/post/2021/01/31/cran-review/">
+  <meta property="og:title" content="CRAN review | B101nfo">
+  <meta property="og:description" content="I’ve been doing some analysis on the review submissions of several projects of R. However, till recently I couldn’t analyze the CRAN submission. There was cransays’ package to check package submissions which on the online documentation provided a dashboard which updated each hour."><meta property="og:image" content="img/map[gravatar:%!s(bool=false) shape:circle]">
+  <meta property="twitter:image" content="img/map[gravatar:%!s(bool=false) shape:circle]"><meta property="og:locale" content="en-us">
+  
+    
+      <meta property="article:published_time" content="2021-01-31T00:00:00&#43;00:00">
+    
+    <meta property="article:modified_time" content="2021-01-31T00:00:00&#43;00:00">
+  
+
+  
+
+
+    
+
+
+
+
+
+
+  
+
+
+
+
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "BlogPosting",
+  "mainEntityOfPage": {
+    "@type": "WebPage",
+    "@id": "https://llrs.dev/post/2021/01/31/cran-review/"
+  },
+  "headline": "CRAN review",
+  
+  "datePublished": "2021-01-31T00:00:00Z",
+  "dateModified": "2021-01-31T00:00:00Z",
+  
+  "author": {
+    "@type": "Person",
+    "name": "Lluís Revilla Sancho"
+  },
+  
+  "publisher": {
+    "@type": "Organization",
+    "name": "B101nfo",
+    "logo": {
+      "@type": "ImageObject",
+      "url": "https://llrs.dev/images/icon_hud03320d081f55857e6179906aee3769c_2658_192x192_fill_lanczos_center_3.png"
+    }
+  },
+  "description": "I’ve been doing some analysis on the review submissions of several projects of R. However, till recently I couldn’t analyze the CRAN submission. There was cransays’ package to check package submissions which on the online documentation provided a dashboard which updated each hour."
+}
+</script>
+
+  
+
+  
+
+
+  
+
+
+  
+
+
+
+
+
+  <title>CRAN review | B101nfo</title>
+
+</head>
+
+<body id="top" data-spy="scroll" data-offset="70" data-target="#TableOfContents" >
+
+  <aside class="search-results" id="search">
+  <div class="container">
+    <section class="search-header">
+
+      <div class="row no-gutters justify-content-between mb-3">
+        <div class="col-6">
+          <h1>Search</h1>
+        </div>
+        <div class="col-6 col-search-close">
+          <a class="js-search" href="#"><i class="fas fa-times-circle text-muted" aria-hidden="true"></i></a>
+        </div>
+      </div>
+
+      <div id="search-box">
+        
+        <input name="q" id="search-query" placeholder="Search..." autocapitalize="off"
+        autocomplete="off" autocorrect="off" spellcheck="false" type="search">
+        
+      </div>
+
+    </section>
+    <section class="section-search-results">
+
+      <div id="search-hits">
+        
+      </div>
+
+    </section>
+  </div>
+</aside>
+
+
+  
+
+
+
+
+
+
+
+<nav class="navbar navbar-expand-lg navbar-light compensate-for-scrollbar" id="navbar-main">
+  <div class="container">
+
+    
+    <div class="d-none d-lg-inline-flex">
+      <a class="navbar-brand" href="/">B101nfo</a>
+    </div>
+    
+
+    
+    <button type="button" class="navbar-toggler" data-toggle="collapse"
+            data-target="#navbar-content" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
+    <span><i class="fas fa-bars"></i></span>
+    </button>
+    
+
+    
+    <div class="navbar-brand-mobile-wrapper d-inline-flex d-lg-none">
+      <a class="navbar-brand" href="/">B101nfo</a>
+    </div>
+    
+
+    
+    
+    <div class="navbar-collapse main-menu-item collapse justify-content-start" id="navbar-content">
+
+      
+      <ul class="navbar-nav d-md-inline-flex">
+        
+
+        
+
+        
+        
+        
+          
+        
+
+        
+        
+        
+        
+        
+        
+          
+          
+          
+            
+          
+          
+        
+
+        <li class="nav-item">
+          <a class="nav-link " href="/#about"><span>Home</span></a>
+        </li>
+
+        
+        
+
+        
+
+        
+        
+        
+
+        
+        
+        
+        
+        
+        
+
+        <li class="nav-item">
+          <a class="nav-link  active" href="/post"><span>Blog</span></a>
+        </li>
+
+        
+        
+
+        
+
+        
+        
+        
+
+        
+        
+        
+        
+        
+        
+
+        <li class="nav-item">
+          <a class="nav-link " href="/talk"><span>Talks</span></a>
+        </li>
+
+        
+        
+
+      
+
+        
+      </ul>
+    </div>
+
+    <ul class="nav-icons navbar-nav flex-row ml-auto d-flex pl-md-2">
+      
+      <li class="nav-item">
+        <a class="nav-link js-search" href="#"><i class="fas fa-search" aria-hidden="true"></i></a>
+      </li>
+      
+
+      
+      <li class="nav-item">
+        <a class="nav-link js-dark-toggle" href="#"><i class="fas fa-moon" aria-hidden="true"></i></a>
+      </li>
+      
+
+      
+
+    </ul>
+
+  </div>
+</nav>
+
+
+  <article class="article">
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+  
+  
+  
+<div class="article-container pt-3">
+  <h1>CRAN review</h1>
+
+  
+
+  
+    
+
+
+<div class="article-metadata">
+
+  
+  
+
+  
+  <span class="article-date">
+    
+    
+      
+    
+    Jan 31, 2021
+  </span>
+  
+
+  
+
+  
+  <span class="middot-divider"></span>
+  <span class="article-reading-time">
+    28 min read
+  </span>
+  
+
+  
+  
+  
+
+  
+  
+  <span class="middot-divider"></span>
+  <span class="article-categories">
+    <i class="fas fa-folder mr-1"></i><a href="/categories/r/">r</a>, <a href="/categories/cran/">CRAN</a></span>
+  
+
+</div>
+
+    
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+</div>
+
+
+
+  <div class="article-container">
+
+    <div class="article-style">
+      
+<script src="https://llrs.dev/post/2021/01/31/cran-review/index_files/header-attrs/header-attrs.js"></script>
+
+
+<p>I’ve been doing some <a href="https://llrs.dev/tags/reviews/">analysis on the review submissions</a> of several projects of R.
+However, till recently I couldn’t analyze the CRAN submission.
+There was <a href="https://github.com/lockedata/cransays">cransays</a>’ package to check package submissions which on the online documentation provided a <a href="https://lockedata.github.io/cransays/articles/dashboard.html">dashboard</a> which updated each hour.
+Since 2020/09/12 the status of the queues and folders of submissions are saved on a branch.
+Using this information and basing in <a href="https://github.com/tjtnew/newbies">script provided by Tim Taylor</a> I’ll check how are the submissions on CRAN handled.</p>
+<p>I’ll look at the <a href="#cran-load">CRAN queue</a>, I’ll explore some <a href="#time-patterns">time patterns</a> and also check the meaning of those <a href="#subfolder">subfolder</a>.
+Later I’ll go to a more <a href="#information-for-submitters">practical information</a> for people submitting a package.
+Lastly, we’ll see how hard is the job of the CRAN team by looking at the reliability of the <a href="#GHAR">Github action used</a>.</p>
+<p>Before all this we need preliminary work to download the data and clean it:</p>
+<pre class="r"><code># Downloading the cransays repository branch history
+download.file(&quot;https://github.com/lockedata/cransays/archive/history.zip&quot;, 
+              destfile = &quot;static/cransays-history.zip&quot;)
+path_zip &lt;- here::here(&quot;static&quot;, &quot;cransays-history.zip&quot;) 
+# We unzip the files to read them
+dat &lt;- unzip(path_zip, exdir = &quot;static&quot;)
+csv &lt;- dat[grepl(&quot;*.csv$&quot;, x = dat)]
+f &lt;- lapply(csv, read.csv)
+m &lt;- function(x, y) {
+  merge(x, y, sort = FALSE, all = TRUE)
+}
+updates &lt;- Reduce(m, f) # Merge all files (Because the file format changed)
+write.csv(updates, file = &quot;static/cran_till_now.csv&quot;,  row.names = FALSE)
+# Clean up
+unlink(&quot;static/cransays-history/&quot;, recursive = TRUE)
+unlink(&quot;static/cransays-history.zip&quot;, recursive = TRUE)</code></pre>
+<p>Once we have the data we can load it, and we load the libraries used for the analysis:</p>
+<pre class="r"><code>library(&quot;tidyverse&quot;)
+library(&quot;lubridate&quot;)
+library(&quot;hms&quot;)
+path_file &lt;- here::here(&quot;static&quot;, &quot;cran_till_now.csv&quot;)
+cran_submissions &lt;- read.csv(path_file)
+theme_set(theme_minimal()) # For plotting
+col_names &lt;- c(&quot;package&quot;, &quot;version&quot;, &quot;snapshot_time&quot;, &quot;folder&quot;, &quot;subfolder&quot;)
+cran_submissions &lt;- cran_submissions[, col_names]</code></pre>
+<p>The period we are going to analyze is from the beginning of the records till 2021-01-30.
+It includes some well earned holiday time for the CRAN team, during which submissions were not possible.</p>
+<p>I’ve read some comments on the inconsistencies of where the holidays of the CRAN teams are reported and I couldn’t find it for previous years.</p>
+<p>For the 4 months we are analyzing which only has one holiday period I used a <a href="https://twitter.com/krlmlr/status/1346005787668336640">screenshot</a> found on twitter.</p>
+<pre class="r"><code>holidays &lt;- data.frame(
+  start = as.POSIXct(&quot;18/12/2020&quot;, format = &quot;%d/%m/%Y&quot;, tz = &quot;UTC&quot;), 
+  end = as.POSIXct(&quot;04/01/2021&quot;, format = &quot;%d/%m/%Y&quot;, tz = &quot;UTC&quot;)
+)</code></pre>
+<p>Now that we know the holidays and have them in a single data.frame it’s time to explore and clean the data collected:</p>
+<div id="cleaning-the-data" class="section level2">
+<h2>Cleaning the data</h2>
+<p>After preparing the files in one big file we can load and work with it.
+First steps, check the data and prepare it for what we want:</p>
+<pre class="r"><code># Use appropriate class
+cran_submissions$snapshot_time &lt;- as.POSIXct(cran_submissions$snapshot_time,
+                                             tz = &quot;UTC&quot;)
+# Fix subfolders structure
+cran_submissions$subfolder[cran_submissions$subfolder %in% c(&quot;&quot;, &quot;/&quot;)] &lt;- NA
+# Remove files or submissions without version number
+cran_submissions &lt;- cran_submissions[!is.na(cran_submissions$version), ]
+cran_submissions &lt;- distinct(cran_submissions, 
+                             snapshot_time, folder, package, version, subfolder,
+                             .keep_all = TRUE)</code></pre>
+<p>After loading and a preliminary cleanup, set date format, homogenize folder format, remove submissions that are not packages (yes there are pdf and other files on the queue), and remove duplicates we can start.</p>
+<p>As always start with some checks of the data.
+Note: I should follow more often this advice myself, as this is the last section I’m writing on the post.</p>
+<pre class="r"><code>packges_multiple_versions &lt;- cran_submissions %&gt;% 
+  group_by(package, snapshot_time) %&gt;% 
+  summarize(n = n_distinct(version)) %&gt;% 
+  filter(n != 1) %&gt;% 
+  distinct(package) %&gt;% 
+  pull(package)</code></pre>
+<p>There are 92 packages with multiple versions at the same time on CRAN queue.</p>
+<p>Perhaps because packages are left in different folders (2 or even 3) at the same time:</p>
+<pre class="r"><code>package_multiple &lt;- cran_submissions %&gt;% 
+  group_by(snapshot_time, package) %&gt;% 
+  count() %&gt;% 
+  group_by(snapshot_time) %&gt;% 
+  count(n) %&gt;% 
+  filter(n != 1) %&gt;% 
+  summarise(n = sum(nn)) %&gt;% 
+  ungroup()
+ggplot(package_multiple) +
+  geom_point(aes(snapshot_time, n), size = 1) +
+  geom_rect(data = holidays, aes(xmin = start, xmax = end, ymin = 0, ymax = 6),
+            alpha = 0.25, fill = &quot;red&quot;) +
+  annotate(&quot;text&quot;, x = holidays$start + (holidays$end - holidays$start)/2, 
+           y = 3.5, label = &quot;CRAN holidays&quot;) +
+  scale_x_datetime(date_labels = &quot;%Y/%m/%d&quot;, date_breaks = &quot;2 weeks&quot;, 
+                   expand = expansion()) +
+  scale_y_continuous(expand = expansion()) +
+  labs(title = &quot;Packages in multiple folders and subfolders&quot;, 
+       x = element_blank(), y = element_blank())</code></pre>
+<p><img src="https://llrs.dev/post/2021/01/31/cran-review/index_files/figure-html/package-multiple-folders-1.png" width="120%" /></p>
+<p>This happens in 1915 snapshots of 3260, probably due to the manual labor of the CRAN reviews.
+I don’t really know the cause of this, it could be an error on the script recording the data, copying the data around the server.
+But perhaps this indicates further improvements and automatization of the process can be done.</p>
+<pre class="r"><code>cran_submissions &lt;- cran_submissions %&gt;% 
+  arrange(package, snapshot_time, version, folder) %&gt;% 
+  group_by(package, snapshot_time) %&gt;% 
+  mutate(n = 1:n()) %&gt;% 
+  filter(n == n()) %&gt;% 
+  ungroup() %&gt;% 
+  select(-n)</code></pre>
+<p>Now we removed ~3500 records of packages with two versions remaining on the queue.
+Next we check packages in multiple folders but with the same version and remove them until we are left with a single one (assuming there aren’t parallel steps on the review process followed):</p>
+<pre class="r"><code>cran_submissions &lt;- cran_submissions %&gt;% 
+  arrange(package, snapshot_time, folder) %&gt;% 
+  group_by(package, snapshot_time) %&gt;% 
+  mutate(n = 1:n()) %&gt;% 
+  filter(n == n()) %&gt;% 
+  ungroup() %&gt;% 
+  select(-n)</code></pre>
+<p>Last, we add the number of submissions, in this period, for each package:</p>
+<pre class="r"><code>diff0 &lt;- structure(0, class = &quot;difftime&quot;, units = &quot;hours&quot;)
+cran_submissions &lt;- cran_submissions %&gt;% 
+  arrange(package, version, snapshot_time) %&gt;% 
+  group_by(package) %&gt;% 
+  # Packages last seen in queue less than 24 ago are considered same submission
+  mutate(diff_time = difftime(snapshot_time,  lag(snapshot_time), units = &quot;hour&quot;),
+         diff_time = if_else(is.na(diff_time), diff0, diff_time), # Fill NAs
+         diff_v = version != lag(version),
+         diff_v = ifelse(is.na(diff_v), TRUE, diff_v), # Fill NAs
+         new_version = !near(diff_time, 1, tol = 24) &amp; diff_v, 
+         new_version = if_else(new_version == FALSE &amp; diff_time == 0, 
+                               TRUE, new_version),
+         submission_n = cumsum(as.numeric(new_version))) %&gt;%
+  ungroup() %&gt;% 
+  select(-diff_time, -diff_v, -new_version)</code></pre>
+<p>As sometimes after a release there is soon a fast update to fix some bugs raised on the new features introduced, if a package isn’t seen in 24h in the queue it is considered a new submission.
+Also if it change the package version but not if it change the version while addressing the feedback from reviewers.</p>
+<p>Now we have the data ready for further analysis.</p>
+</div>
+<div id="cran-load" class="section level2">
+<h2>CRAN load</h2>
+<p>We all know that CRAN is busy with updates to fix bugs, improve package, or with petitions to have new packages included on the repository.</p>
+<p>A first plot we can make is showing the number of distinct packages on each moment:</p>
+<pre class="r"><code>cran_queue &lt;- cran_submissions %&gt;% 
+  group_by(snapshot_time) %&gt;% 
+  summarize(n = n_distinct(package))
+ggplot(cran_queue) +
+  geom_rect(aes(xmin = start, xmax = end, ymin = 0, ymax = 230),
+            alpha = 0.5, fill = &quot;red&quot;, data = holidays) +
+  annotate(&quot;text&quot;, x = holidays$start + (holidays$end - holidays$start)/2, 
+           y = 150, label = &quot;CRAN holidays&quot;) +
+  geom_path(aes(snapshot_time, n)) +
+  scale_x_datetime(date_labels = &quot;%Y/%m/%d&quot;, date_breaks = &quot;2 weeks&quot;, 
+                   expand = expansion()) +
+  scale_y_continuous(expand = expansion()) +
+  labs(x = element_blank(), y = element_blank(), 
+       title = &quot;Packages on CRAN review process&quot;)</code></pre>
+<p><img src="https://llrs.dev/post/2021/01/31/cran-review/index_files/figure-html/cran-queues-1.png" width="120%" /></p>
+<p>We can see that there are some ups and downs, and ranges between 200 to 50.</p>
+<p>There are some instance were the number of package on the queue have a sudden drop and then a recovery to previous levels.
+This as far as I know is a visual artifact.</p>
+<p>We can also see that people do not tend to rush and push the package before the holidays.
+But clearly there is some build up of submissions after holidays, as the the highest number of packages on the queue is reached after holidays.</p>
+<p>On the CRAN review process classifying package in folders seems to be part of the process:</p>
+<pre class="r"><code>man_colors &lt;- RColorBrewer::brewer.pal(8, &quot;Dark2&quot;)
+names(man_colors) &lt;- unique(cran_submissions$folder)
+cran_submissions %&gt;% 
+  group_by(folder, snapshot_time) %&gt;% 
+  summarize(packages = n_distinct(package)) %&gt;% 
+  ggplot() +
+  geom_rect(data = holidays, aes(xmin = start, xmax = end, ymin = 0, ymax = 200),
+            alpha = 0.25, fill = &quot;red&quot;) +
+  annotate(&quot;text&quot;, x = holidays$start + (holidays$end - holidays$start)/2, 
+           y = 105, label = &quot;CRAN holidays&quot;) +
+  geom_path(aes(snapshot_time, packages, col = folder)) +
+  scale_x_datetime(date_labels = &quot;%Y/%m/%d&quot;, date_breaks = &quot;2 weeks&quot;, 
+                   expand = expansion()) +
+  scale_y_continuous(expand = expansion()) +
+  scale_color_manual(values = man_colors) +
+  labs(x = element_blank(), y = element_blank(),
+       title = &quot;Packages by folder&quot;, col = &quot;Folder&quot;) +
+  theme(legend.position = c(0.6, 0.7))</code></pre>
+<p><img src="https://llrs.dev/post/2021/01/31/cran-review/index_files/figure-html/cran-submissions-1.png" width="120%" /></p>
+<p>The queue trend is mostly driven by newbies folder (which ranges between 25 and 150) and after holidays by the pretest folder.</p>
+<p>Surprisingly when the queue is split by folder we don’t see those sudden drops.
+This might indicate that there is a clean up on some of the folders<a href="#fn1" class="footnote-ref" id="fnref1"><sup>1</sup></a>.
+What we clearly see is a clean up on holidays for all the folders, when almost all was cleared up.</p>
+<p>Also the pretest seems to be before the newbies folder raises, so it seems like these tests are done done only to new pacakges.</p>
+There other folders do not have such an increase
+<details>
+<summary>
+after the holidays .
+</summary>
+<pre class="r"><code>cran_submissions %&gt;% 
+  group_by(folder, snapshot_time) %&gt;% 
+  summarize(packages = n_distinct(package)) %&gt;% 
+  filter(snapshot_time &gt;= holidays$start) %&gt;% 
+  ggplot() +
+  geom_path(aes(snapshot_time, packages, col = folder)) +
+  geom_rect(data = holidays, aes(xmin = start, xmax = end, ymin = 0, ymax = 200),
+            alpha = 0.25, fill = &quot;red&quot;) +
+  annotate(&quot;text&quot;, x = holidays$start + (holidays$end - holidays$start)/2, 
+           y = 105, label = &quot;CRAN holidays&quot;) +
+  scale_x_datetime(date_labels = &quot;%Y/%m/%d&quot;, date_breaks = &quot;1 day&quot;, 
+                   expand = expansion()) +
+  scale_y_continuous(expand = expansion(), limits = c(0, NA)) +
+  scale_color_manual(values = man_colors) +
+  labs(x = element_blank(), y = element_blank(),
+       title = &quot;Holidays&quot;, col = &quot;Folder&quot;) +
+  theme(axis.text.x = element_text(angle = 45, hjust = 1),
+        legend.position = c(0.8, 0.7))</code></pre>
+<p><img src="https://llrs.dev/post/2021/01/31/cran-review/index_files/figure-html/cran-holidays-zoom-1.png" width="120%" /></p>
+<p>It seems like that on the 31st there was a clean up of some packages on the waiting list.
+And we can see the increase of submissions on the first week of January, as described previously.</p>
+</details>
+</div>
+<div id="time-patterns" class="section level2">
+<h2>Time patterns</h2>
+<p>Some people has expressed they try to submit to CRAN when there are few packages on the queue.
+Thus, looking when does this low moments happens could be relevant.
+We can look for patterns on the queue:</p>
+<ul>
+<li><a href="#day-month">Day of the month</a></li>
+<li><a href="#day-week">Day of the week</a></li>
+</ul>
+<p>Note: I have few to none experience with time series, so the following plots are just using the defaults of `geom_smooth`, just omitting the holidays.</p>
+<div id="day-month" class="section level3">
+<h3>By day of the month</h3>
+<p>Looking at folder:</p>
+<pre class="r"><code>cran_times &lt;- cran_submissions %&gt;% 
+  mutate(seconds = seconds(snapshot_time),
+         month = month(snapshot_time),
+         mday = mday(snapshot_time),
+         wday = wday(snapshot_time, locale = &quot;en_GB.UTF-8&quot;),
+         week = week(snapshot_time),
+         date = as_date(snapshot_time))
+cran_times %&gt;% 
+  arrange(folder, date, mday) %&gt;% 
+  filter(snapshot_time &lt; holidays$start | snapshot_time  &gt; holidays$end) %&gt;% 
+  group_by(folder, date, mday) %&gt;% 
+  summarize(packages = n_distinct(package),
+            week = unique(week)) %&gt;% 
+  group_by(folder, mday) %&gt;% 
+  ggplot() +
+  geom_smooth(aes(mday, packages, col = folder)) +
+  labs(x = &quot;Day of the month&quot;, y = &quot;Packages&quot;, col = &quot;Folder&quot;,
+       title = &quot;Evolution by month day&quot;) +
+  scale_color_manual(values = man_colors) +
+  coord_cartesian(ylim = c(0, NA), xlim = c(1, NA)) +
+  scale_x_continuous(expand = expansion()) +
+  scale_y_continuous(expand = expansion()) </code></pre>
+<p><img src="https://llrs.dev/post/2021/01/31/cran-review/index_files/figure-html/cran-monthly-1.png" width="120%" /></p>
+<p>At the beginning and end of the month there is more variation on several folders (This could also be that there isn’t information of the end of December and beginning of January).
+There seems to be an increase of <strong>new packages submissions towards the beginning of the month</strong> and later and increase on the newbies folder by the middle of the month.</p>
+</div>
+<div id="day-week" class="section level3">
+<h3>By day of the week</h3>
+<p>I first thought about this, because I was curious if there is more submission on weekends (when aficionados and open source developers might have more time) or the rest of the week.</p>
+<pre class="r"><code>cran_times %&gt;% 
+  filter(snapshot_time &lt; holidays$start | snapshot_time  &gt; holidays$end) %&gt;% 
+  group_by(folder, date, wday) %&gt;% 
+  summarize(packages = n_distinct(package),
+            week = unique(week)) %&gt;% 
+  group_by(folder, wday) %&gt;% 
+  ggplot() +
+  geom_smooth(aes(wday, packages, col = folder)) +
+  labs(x = &quot;Day of the week&quot;, y = &quot;Packages&quot;, col = &quot;Folder&quot;,
+       title = &quot;Evolution by week day&quot;) +
+  scale_color_manual(values = man_colors) +
+  scale_x_continuous(breaks = 1:7, expand = expansion()) +
+  scale_y_continuous(expand = expansion(), limits = c(0, NA))</code></pre>
+<p><img src="https://llrs.dev/post/2021/01/31/cran-review/index_files/figure-html/cran-wday-1.png" width="120%" /></p>
+<p>We see a <strong>rise towards the middle of the week</strong> of the packages on the pretest folder, indicating new packages submissions.</p>
+</div>
+<div id="other-folders" class="section level3">
+<h3>Other folders</h3>
+<p>There are some folders that seem to be from <a href="https://www.r-project.org/contributors.html">R Contributors</a>.
+We see that some packages are on these folders:</p>
+<pre class="r"><code>cran_members &lt;- c(&quot;LH&quot;, &quot;GS&quot;, &quot;JH&quot;)
+cran_times %&gt;% 
+  filter(subfolder %in% cran_members) %&gt;% 
+  group_by(subfolder, snapshot_time) %&gt;% 
+  summarize(packages = n_distinct(package)) %&gt;% 
+  ggplot() +
+  geom_smooth(aes(snapshot_time, packages, col = subfolder)) +
+    labs(x = element_blank(), y = element_blank(), col = &quot;Folder&quot;,
+       title = &quot;Packages on folders&quot;) +
+  scale_y_continuous(expand = expansion(), breaks = 0:10) +
+  coord_cartesian(y = c(0, NA))  +
+  scale_x_datetime(date_labels = &quot;%Y/%m/%d&quot;, date_breaks = &quot;2 weeks&quot;, 
+               expand = expansion(add = 2)) +
+  theme(legend.position = c(0.1, 0.8))</code></pre>
+<p><img src="https://llrs.dev/post/2021/01/31/cran-review/index_files/figure-html/subfolder-pattern-1.png" width="120%" /></p>
+<p>There doesn’t seem to be any rule about using those folders or, the work was so quick that the hourly updated data didn’t record it.</p>
+<details>
+<summary>
+Looking for any temporal pattern on those folders isn’t worth it.
+</summary>
+<pre class="r"><code>cran_times %&gt;% 
+  filter(subfolder %in% cran_members) %&gt;% 
+  group_by(subfolder, mday) %&gt;% 
+  summarize(packages = n_distinct(package)) %&gt;% 
+  ungroup() %&gt;% 
+  ggplot() +
+  geom_smooth(aes(mday, packages, col = subfolder)) +
+  labs(x = &quot;Day of the month&quot;, y = &quot;Pacakges&quot;, col = &quot;Subfolder&quot;,
+       title = &quot;Packages on subfolers by day of the month&quot;) +
+  scale_y_continuous(expand = expansion()) +
+  scale_x_continuous(expand = expansion(), breaks = c(1,7,14,21,29)) +
+  coord_cartesian(ylim = c(0, NA))</code></pre>
+<p><img src="https://llrs.dev/post/2021/01/31/cran-review/index_files/figure-html/subfolder-mday-1.png" width="120%" /></p>
+<p>Low number of packages and great variability (except on those that just have 1 package on the folder) on day of month.</p>
+<pre class="r"><code>cran_times %&gt;% 
+  filter(subfolder %in% cran_members) %&gt;% 
+  group_by(subfolder, wday) %&gt;% 
+  summarize(packages = n_distinct(package)) %&gt;% 
+  ungroup() %&gt;% 
+  ggplot() +
+  geom_smooth(aes(wday, packages, col = subfolder)) +
+  labs(x = &quot;Day of the week&quot;, y = &quot;Pacakges&quot;, col = &quot;Subfolder&quot;,
+       title = &quot;Evolution by week day&quot;) +
+  scale_y_continuous(expand = expansion()) +
+  scale_x_continuous(breaks = 1:7, expand = expansion()) +
+  coord_cartesian(ylim =  c(0, NA))</code></pre>
+<p><img src="https://llrs.dev/post/2021/01/31/cran-review/index_files/figure-html/subfolder-wday-1.png" width="120%" /></p>
+<p>There seem to be only 2 people usually working with their folders.
+Suppose that there aren’t a common set of rules the reviewers follow.</p>
+</details>
+</div>
+</div>
+<div id="information-for-submitters" class="section level2">
+<h2>Information for submitters</h2>
+<p>I’ve read lots of comments recently around CRAN submission.
+However, with the few data available compared to open reviews on <a href="https://llrs.dev/2020/07/bioconductor-submissions-reviews/" title="Analysis of Bioconductor reviews">Bioconductor</a> and <a href="https://llrs.dev/2020/09/ropensci-submissions/" title="Analysis of Bioconductor reviews">rOpenSci</a> it is hard to answer them (See those related posts).
+On Bioconductor and rOpenSci it is possible to see people involved, message from the reviewers and other interested parties, steps done to be accepted…</p>
+<p>One of the big question we can provide information about with the data available is how long it will be a package on the queue:</p>
+<pre class="r"><code>subm &lt;- cran_times %&gt;%
+  arrange(snapshot_time) %&gt;% 
+  select(package, version, submission_n, snapshot_time) %&gt;% 
+  group_by(package, submission_n) %&gt;% 
+  filter(row_number() %in% c(1, last(row_number()))) %&gt;% 
+  arrange(package, submission_n)</code></pre>
+<p>There are 429 packages that are only seen once.
+It might mean that it is an abandoned, delayed or rejected submissions, other might be acceptances in less than an hour<a href="#fn2" class="footnote-ref" id="fnref2"><sup>2</sup></a>.</p>
+<p>If we look at the package submission by date we can see the quick increase of packages of packages:</p>
+<pre class="r"><code>rsubm &lt;- subm %&gt;% 
+  filter(n_distinct(snapshot_time) %% 2 == 0) %&gt;%
+  select(-version) %&gt;% 
+  mutate(time = c(&quot;start&quot;, &quot;end&quot;)) %&gt;% 
+  pivot_wider(values_from = snapshot_time, names_from = time) %&gt;% 
+  ungroup() %&gt;% 
+  mutate(r = row_number(), 
+         time  =  round(difftime(end, start, units = &quot;hour&quot;), 0)) %&gt;% 
+  ungroup()
+lv &lt;- levels(fct_reorder(rsubm$package, rsubm$start, .fun = min, .desc = FALSE))
+ggplot(rsubm) +
+  geom_rect(data = holidays, aes(xmin = start, xmax = end), 
+            ymin = first(lv), ymax = last(lv), alpha = 0.5, fill = &quot;red&quot;) +
+  geom_linerange(aes(y = fct_reorder(package, start, .fun = min, .desc = FALSE),
+                      x = start, xmin = start, xmax = end, 
+                     col = as.factor(submission_n))) + 
+  labs(x = element_blank(), y = element_blank(), title = 
+         &quot;Packages on the queue&quot;, col = &quot;Submissions&quot;) +
+  scale_x_datetime(date_labels = &quot;%Y/%m/%d&quot;, date_breaks = &quot;2 weeks&quot;, 
+                   expand = expansion(add = 2)) +
+  scale_colour_viridis_d() +
+  theme_minimal() +
+  theme(panel.grid.major.y = element_blank(),
+        axis.text.y = element_blank(),
+        legend.position = c(0.15, 0.7))</code></pre>
+<p><img src="https://llrs.dev/post/2021/01/31/cran-review/index_files/figure-html/resubm-1.png" width="120%" /></p>
+<p>Some packages were submitted more than 5 times in this period. Recall the definition for submission used: a package with different version number after 24 hours or which wasn’t seen in the queue for the last 24 hours (even if they have the same version number).</p>
+<p>Some authors do change the version number when CRAN reviewers require changes before accepting the package on CRAN while others do not and only change the version number according to their release cycle.</p>
+<pre class="r"><code>rsubm %&gt;% 
+  arrange(start) %&gt;% 
+  filter(start &lt; holidays$start, # Look only before the holidays
+    submission_n == 1,# Use only the first submission
+    start &gt; min(start)) %&gt;%   # Just new submissions
+  mutate(r = row_number(),
+         start1 = as.numeric(seconds(start))) %&gt;% 
+  lm(start1 ~ r, data = .) %&gt;% 
+  broom::tidy() %&gt;%  
+  mutate(estimate = estimate/(60*60)) # Hours
+## # A tibble: 2 x 5
+##   term         estimate std.error statistic p.value
+##   &lt;chr&gt;           &lt;dbl&gt;     &lt;dbl&gt;     &lt;dbl&gt;   &lt;dbl&gt;
+## 1 (Intercept) 444325.     6321.     253047.       0
+## 2 r                1.03      4.76      779.       0</code></pre>
+<p>More or less there is a <strong>new package submission every hour</strong> on CRAN.
+Despite this submission rate we can see that most submissions are on the queue a short time:</p>
+<pre class="r"><code>library(&quot;patchwork&quot;)
+p1 &lt;- rsubm %&gt;% 
+  group_by(package) %&gt;% 
+  summarize(time = sum(time)) %&gt;% 
+  ggplot() +
+  geom_histogram(aes(time), bins = 100) +
+  labs(title = &quot;Packages total time on queue&quot;, x = &quot;Hours&quot;, 
+       y = element_blank()) +
+  scale_x_continuous(expand = expansion()) +
+  scale_y_continuous(expand = expansion())
+p2 &lt;- rsubm %&gt;% 
+  group_by(package) %&gt;% 
+  summarize(time = sum(time)) %&gt;% 
+  ggplot() +
+  geom_histogram(aes(time), binwidth = 24) +
+  coord_cartesian(xlim = c(0, 24*7)) +
+  labs(subtitle = &quot;Zoom&quot;, x = &quot;Hours&quot;, y = element_blank()) +
+  scale_x_continuous(expand = expansion(), breaks = seq(0, 24*7, by = 24)) +
+  scale_y_continuous(expand = expansion()) +
+  theme(panel.background = element_rect(colour = &quot;white&quot;))
+p1 + inset_element(p2, 0.2, 0.2, 1, 1)</code></pre>
+<p><img src="https://llrs.dev/post/2021/01/31/cran-review/index_files/figure-html/package-time-queue-1.png" width="120%" /></p>
+<p>The accuracy of this data is not great.
+Because I found some packages that remained on the submission queue, and thus picked up by cransays, even after acceptance, so this might be a bit overestimated.
+Also, there are packages that got a speedy submission that didn’t last more than an hour, and they weren’t included.</p>
+<p>Looking at the recorded submissions might be more accurate:</p>
+<pre class="r"><code>p1 &lt;- rsubm %&gt;% 
+  group_by(package, submission_n) %&gt;% 
+  summarize(time = sum(time)) %&gt;% 
+  ggplot() +
+  geom_histogram(aes(time), bins = 100) +
+  labs(title = &quot;Submission time on queue&quot;, x = &quot;Hours&quot;, 
+       y = element_blank()) +
+  scale_x_continuous(expand = expansion()) +
+  scale_y_continuous(expand = expansion())
+p2 &lt;- rsubm %&gt;% 
+  group_by(package, submission_n) %&gt;% 
+  summarize(time = sum(time)) %&gt;%  
+  ggplot() +
+  geom_histogram(aes(time), binwidth = 24) +
+  coord_cartesian(xlim = c(0, 24*7)) +
+  labs(subtitle = &quot;Zoom&quot;, x = &quot;Hours&quot;, y = element_blank()) +
+  scale_x_continuous(expand = expansion(), breaks = seq(0, 24*7, by = 24)) +
+  scale_y_continuous(expand = expansion()) +
+  theme(panel.background = element_rect(colour = &quot;white&quot;))
+p1 + inset_element(p2, 0.2, 0.2, 1, 1)</code></pre>
+<p><img src="https://llrs.dev/post/2021/01/31/cran-review/index_files/figure-html/submission-queue-1.png" width="120%" /></p>
+<p>Many submissions are shortly spanned.
+Perhaps hinting that more testing should be done before or what to expect on the review should be more clear to the authors, or that they are approved very fast, or…</p>
+<p>There are 429 packages that are only seen once.
+It might mean that it is an abandoned/rejected submissions other might be acceptances in less than an hour.</p>
+<p>If we look at the folders of each submission well see different picture:</p>
+<pre class="r"><code>subm2 &lt;- cran_times %&gt;%
+  group_by(package, submission_n, folder) %&gt;% 
+  arrange(snapshot_time) %&gt;% 
+  select(package, version, submission_n, snapshot_time, folder) %&gt;% 
+  filter(row_number() %in% c(1, last(row_number()))) %&gt;% 
+  arrange(submission_n)
+rsubm2 &lt;- subm2 %&gt;% 
+  filter(n_distinct(snapshot_time) %% 2 == 0) %&gt;%
+  mutate(time = c(&quot;start&quot;, &quot;end&quot;)) %&gt;% 
+  pivot_wider(values_from = snapshot_time, names_from = time) %&gt;% 
+  ungroup() %&gt;% 
+  mutate(r = row_number(), 
+         time  =  round(difftime(end, start, units = &quot;hour&quot;), 0)) %&gt;% 
+  ungroup() %&gt;% 
+  filter(!is.na(start), !is.na(end))
+lv &lt;- levels(fct_reorder(rsubm2$package, rsubm2$start, .fun = min, .desc = FALSE))
+ggplot(rsubm2) +
+  geom_rect(data = holidays, aes(xmin = start, xmax = end), 
+            ymin = first(lv), ymax = last(lv), alpha = 0.5, fill = &quot;red&quot;) +
+  geom_linerange(aes(y = fct_reorder(package, start, .fun = min, .desc = FALSE),
+                      x = start, xmin = start, xmax = end, col = folder)) + 
+  labs(x = element_blank(), y = element_blank(), title = 
+         &quot;Packages on the queue&quot;) +
+  scale_color_manual(values = man_colors) +
+  scale_x_datetime(date_labels = &quot;%Y/%m/%d&quot;, date_breaks = &quot;2 weeks&quot;, 
+               expand = expansion(add = 2)) +
+  labs(col = &quot;Folder&quot;) +
+  theme_minimal() +
+  theme(panel.grid.major.y = element_blank(),
+        axis.text.y = element_blank(),
+        legend.position = c(0.2, 0.7))</code></pre>
+<p><img src="https://llrs.dev/post/2021/01/31/cran-review/index_files/figure-html/resubm2-1.png" width="120%" /></p>
+<p>It looks like some packages take a long time to change folder, perhaps the maintainers have troubles fixing the issues pointed by the reviewers, or don’t have time to deal with them.
+Some packages are recorded in just 1 folder and some other go through multiple folders:</p>
+<pre class="r"><code>rsubm2 %&gt;% 
+  group_by(package, submission_n) %&gt;% 
+  summarize(n_folder = n_distinct(folder)) %&gt;% 
+  ggplot() + 
+  geom_histogram(aes(n_folder), bins = 5) +
+  labs(title = &quot;Folders by submission&quot;, x = element_blank(), 
+       y = element_blank())</code></pre>
+<p><img src="https://llrs.dev/post/2021/01/31/cran-review/index_files/figure-html/submissions-n-folders-1.png" width="120%" /></p>
+<p>Most submissions end up in one folder, but some go up to 5 folders.</p>
+<p>Let’s see the most 5 common folders process of submissions:</p>
+<pre class="r"><code>compact_folders &lt;- function(x) {
+  y &lt;- x != lag(x)
+  y[1] &lt;- TRUE
+  x[y]
+}
+cran_times %&gt;% 
+  group_by(package, submission_n) %&gt;% 
+  summarize (folder = list(compact_folders(folder))) %&gt;% 
+  ungroup() %&gt;% 
+  count(folder, sort = TRUE) %&gt;% 
+  top_n(5) %&gt;% 
+  rename(Folders = folder, Frequency = n) %&gt;% 
+  as.data.frame()
+##            Folders Frequency
+## 1          pretest      1433
+## 2 pretest, inspect       422
+## 3          inspect       301
+## 4 pretest, newbies       279
+## 5          newbies       245</code></pre>
+<p>As expected the pretest and newbies are one of the most frequent folders.</p>
+<p>Another way of seeing whether it is a right moment to submit your package, aside of how many packages are on the queue, is looking how much activity there is:</p>
+<pre class="r"><code>subm3 &lt;- cran_times %&gt;%
+  arrange(snapshot_time) %&gt;% 
+  group_by(package) %&gt;% 
+  mutate(autor_change = submission_n != lag(submission_n),
+         cran_change = folder != lag(folder)) %&gt;% 
+  mutate(autor_change = ifelse(is.na(autor_change), TRUE, autor_change),
+         cran_change = ifelse(is.na(cran_change), FALSE, cran_change)) %&gt;% 
+  mutate(cran_change = case_when(subfolder != lag(subfolder) ~ TRUE,
+                                 TRUE ~ cran_change)) %&gt;% 
+  ungroup()
+subm3 %&gt;% 
+  group_by(snapshot_time) %&gt;% 
+  summarize(autor_change = sum(autor_change), cran_change = sum(cran_change)) %&gt;% 
+  filter(row_number() != 1) %&gt;% 
+  filter(autor_change != 0 | cran_change != 0) %&gt;% 
+  ggplot() +
+  geom_rect(data = holidays, aes(xmin = start, xmax = end), 
+            ymin = -26, ymax = 26, alpha = 0.5, fill = &quot;grey&quot;) +
+  geom_point(aes(snapshot_time, autor_change), fill = &quot;blue&quot;, size = 0) +
+  geom_area(aes(snapshot_time, autor_change), fill = &quot;blue&quot;) +
+  geom_point(aes(snapshot_time, -cran_change), fill = &quot;red&quot;, size = 0) +
+  geom_area(aes(snapshot_time, -cran_change), fill = &quot;red&quot;) +
+  scale_x_datetime(date_labels = &quot;%Y/%m/%d&quot;, date_breaks = &quot;2 weeks&quot;, 
+                   expand = expansion(add = 2)) +
+  scale_y_continuous(expand = expansion(add = c(0, 0))) + 
+  coord_cartesian(ylim = c(-26, 26)) +
+  annotate(&quot;text&quot;, label = &quot;CRAN&#39;s&quot;, y = 20, x = as_datetime(&quot;2020/11/02&quot;)) +
+  annotate(&quot;text&quot;, label = &quot;Maintainers&#39;&quot;, y = -20, x = as_datetime(&quot;2020/11/02&quot;)) +
+  labs(y = &quot;Changes&quot;, x = element_blank(), title = &quot;Activity on CRAN:&quot;)</code></pre>
+<p><img src="https://llrs.dev/post/2021/01/31/cran-review/index_files/figure-html/cran-pressure-1.png" width="120%" /></p>
+<p>On this plot we can see that changes on folders or submissions are not simultaneous.
+But they are quite frequent.</p>
+<div id="review-process" class="section level3">
+<h3>Review process</h3>
+<p>There is a <a href="https://lockedata.github.io/cransays/articles/dashboard.html#cran-review-workflow">scheme</a> about how does the review process work.
+However, it has been pointed out that it needs an update.</p>
+<p>We’ve seen which folders go before which ones, but we haven’t looked up what is the last folder in which package appear:</p>
+<pre class="r"><code>cran_times %&gt;% 
+  ungroup() %&gt;% 
+  group_by(package, submission_n) %&gt;% 
+  arrange(snapshot_time) %&gt;% 
+  filter(1:n() == last(n())) %&gt;% 
+  ungroup() %&gt;% 
+  count(folder, sort = TRUE) %&gt;% 
+  knitr::kable(col.names = c(&quot;Last folder&quot;, &quot;Submissions&quot;))</code></pre>
+<table>
+<thead>
+<tr class="header">
+<th align="left">Last folder</th>
+<th align="right">Submissions</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td align="left">pretest</td>
+<td align="right">1653</td>
+</tr>
+<tr class="even">
+<td align="left">newbies</td>
+<td align="right">981</td>
+</tr>
+<tr class="odd">
+<td align="left">inspect</td>
+<td align="right">890</td>
+</tr>
+<tr class="even">
+<td align="left">recheck</td>
+<td align="right">555</td>
+</tr>
+<tr class="odd">
+<td align="left">publish</td>
+<td align="right">469</td>
+</tr>
+<tr class="even">
+<td align="left">waiting</td>
+<td align="right">441</td>
+</tr>
+<tr class="odd">
+<td align="left">human</td>
+<td align="right">332</td>
+</tr>
+<tr class="even">
+<td align="left">pending</td>
+<td align="right">225</td>
+</tr>
+</tbody>
+</table>
+<p>We can see that many submissions were left at the pretest, and just a minority on the human or publish folders.</p>
+</div>
+<div id="time-it-takes-to-disappear-from-the-system" class="section level3">
+<h3>Time it takes to disappear from the system</h3>
+<p>One of the motivations to do this post was a <a href="https://stat.ethz.ch/pipermail/r-package-devel/2020q4/006174.html">question on R-pkg-devel</a>, about how long does it usually take for a package to be accepted on CRAN.
+We can look how long does each submission take until it is removed from the queue:</p>
+<pre class="r"><code>package_submissions &lt;- cran_times %&gt;% 
+  group_by(package, submission_n) %&gt;% 
+  summarise(submission_period = difftime(max(snapshot_time), 
+                                         min(snapshot_time), 
+                                         units = &quot;hour&quot;),
+            submission_time = min(snapshot_time)) %&gt;% 
+  ungroup() %&gt;% 
+  filter(submission_period != 0)</code></pre>
+<p>This is a good approximation about how long does it take a package to be accepted or rejected, but some packages remain on the queue after they are accepted and appear on CRAN.
+Joining this data with data from <a href="https://r-pkg.org/">metacran</a> we could know how often does this happend.
+But I leave that for the reader or some other posts.
+Let’s go back to time spend on the queue:</p>
+<pre class="r"><code>package_submissions %&gt;% 
+  # filter(submission_time &lt; holidays$start) %&gt;% 
+  ggplot() +
+  geom_point(aes(submission_time, submission_period, col = submission_n)) +
+  geom_rect(data = holidays, aes(xmin = start, xmax = end),
+            ymin = 0, ymax = 3500, alpha = 0.5, fill = &quot;red&quot;) + 
+  scale_x_datetime(date_labels = &quot;%Y/%m/%d&quot;, date_breaks = &quot;2 weeks&quot;,
+                   expand = expansion(add = 10)) +
+  scale_y_continuous(expand = expansion(add = 10)) +
+  labs(title = &quot;Time on the queue according to the submission&quot;,
+       x = &quot;Submission&quot;, y = &quot;Time (hours)&quot;, col = &quot;Submission&quot;) +
+  theme(legend.position = c(0.5, 0.8))</code></pre>
+<p><img src="https://llrs.dev/post/2021/01/31/cran-review/index_files/figure-html/time-time-1.png" width="120%" /></p>
+<p>These diagonals suggest that the work is done in batches in a day or an afternoon.
+And the prominent diagonal after holidays are packages still on the queue.</p>
+<p>If we summarize by day and take the median of all the first package submission we can see how much long is a package on the queue:</p>
+<pre class="r"><code>package_submissions %&gt;% 
+  filter(submission_n == 1) %&gt;% 
+  ungroup() %&gt;%
+  mutate(d = as.Date(submission_time)) %&gt;%
+  group_by(d) %&gt;% 
+  summarize(m = median(submission_period)) %&gt;% 
+  ggplot() +
+  geom_rect(data = holidays, aes(xmin = as.Date(start), xmax = as.Date(end)),
+            ymin = 0, ymax = 80, alpha = 0.5, fill = &quot;red&quot;) + 
+  geom_smooth(aes(d, m)) +
+  coord_cartesian(ylim = c(0, NA)) +
+  scale_x_date(date_labels = &quot;%Y/%m/%d&quot;, date_breaks = &quot;2 weeks&quot;,
+                   expand = expansion(add = 1)) +
+  labs(x = element_blank(), y = &quot;Daily median time in queue (hours)&quot;, 
+       title = &quot;Submission time&quot;)</code></pre>
+<p><img src="https://llrs.dev/post/2021/01/31/cran-review/index_files/figure-html/daily-submission-1.png" width="120%" /></p>
+<p>We can see that usually it takes more than a day to disappear from the queue for a new package submitted on CRAN.</p>
+<p>There is a lot of variation among submissions:</p>
+<pre class="r"><code>package_submissions %&gt;% 
+  group_by(submission_n) %&gt;% 
+  mutate(submission_n = as.character(submission_n)) %&gt;% 
+  ggplot() +
+  geom_jitter(aes(submission_n, submission_period), height = 0) +
+  scale_y_continuous(limits = c(1, NA), expand = expansion(add = c(1, 10)),
+                     breaks = seq(0,  4550, by = 24*7)) +
+  labs(title = &quot;Submission time in queue&quot;, y = &quot;Hours&quot;, x = element_blank())
+## Warning: Removed 142 rows containing missing values (geom_point).</code></pre>
+<p><img src="https://llrs.dev/post/2021/01/31/cran-review/index_files/figure-html/submission-progression-1.png" width="120%" /></p>
+<p>Surprisingly sometimes a submissions goes missing from the folders for some days (I checked with one package I submitted and it doesn’t appear for 7 days, although it was on the queue).
+This might affect this analysis as it will count them as new submissions but some of them won’t be.</p>
+<pre class="r"><code>package_submissions %&gt;% 
+  filter(submission_period != 0) %&gt;% 
+  group_by(submission_n) %&gt;% 
+  mutate(submission_n = as.character(submission_n)) %&gt;% 
+  filter(n() &gt; 5) %&gt;% 
+  summarize(median = round(median(submission_period), 2)) %&gt;% 
+  knitr::kable(col.names = c(&quot;Submission&quot;, &quot;Median time (h)&quot;))</code></pre>
+<table>
+<thead>
+<tr class="header">
+<th align="left">Submission</th>
+<th align="left">Median time (h)</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td align="left">1</td>
+<td align="left">36.13 hours</td>
+</tr>
+<tr class="even">
+<td align="left">2</td>
+<td align="left">18.27 hours</td>
+</tr>
+<tr class="odd">
+<td align="left">3</td>
+<td align="left">16.47 hours</td>
+</tr>
+<tr class="even">
+<td align="left">4</td>
+<td align="left">11.27 hours</td>
+</tr>
+<tr class="odd">
+<td align="left">5</td>
+<td align="left">13.37 hours</td>
+</tr>
+<tr class="even">
+<td align="left">6</td>
+<td align="left">38.08 hours</td>
+</tr>
+</tbody>
+</table>
+<p>So it usually takes more than a day for new packages and later is around 12 hours.</p>
+<p>To set in context the work done by CRAN checking system, which is the one that helps to keep the high quality of the packages, let’s explore other checking system: GitHub actions.</p>
+</div>
+</div>
+<div id="GHAR" class="section level2">
+<h2>GitHub action reliability</h2>
+<p>The data of this post was collected using Github actions by cransays.
+Well use this data to test how reliable GitHub actions are.</p>
+<pre class="r"><code>gha &lt;- cbind(cran_times[, c(&quot;month&quot;, &quot;mday&quot;, &quot;wday&quot;, &quot;week&quot;)], 
+      minute = minute(cran_submissions$snapshot_time), 
+      hour = hour(cran_times$snapshot_time),
+      type = &quot;cransays&quot;) %&gt;% 
+  distinct()
+gha %&gt;% 
+  ggplot() +
+  geom_violin(aes(as.factor(hour), minute)) +
+  scale_y_continuous(expand = expansion(add = 0.5), 
+                     breaks = c(0, 15, 30, 45, 60), limits = c(0, 60)) +
+  scale_x_discrete(expand = expansion())  +
+  labs(x = &quot;Hour&quot;, y = &quot;Minute&quot;, title = &quot;Daily variation&quot;)</code></pre>
+<p><img src="https://llrs.dev/post/2021/01/31/cran-review/index_files/figure-html/gha2-1.png" width="120%" /></p>
+<p>There seems to be a lower limit around 10 minutes except for some builds that I think were manually triggered.
+Aside from this, there is usually low variation and the process end around ~ 15 minutes but it can end much later.
+This is just for one simple script scrapping a site.
+Compared to thousands of packages builds and checks it is much simpler.</p>
+<p>And last how reliable it is?</p>
+<p>We can compare how many hours are between the first and the last report and how many do we have recorded.
+If we have less this indicate errors on GHA.</p>
+<p>So the script and github actions worked on ~96.9646576% of the times.</p>
+<p>These numbers are great, but on CRAN and Bioconductor all packages are checked daily on several OS consistently.</p>
+</div>
+<div id="conclusions" class="section level2">
+<h2>Conclusions</h2>
+<p>Some of the most important points from this post:</p>
+<ul>
+<li>Some packages appear on several folders and even there are times that multiple versions of a package are on the queue.</li>
+<li>Most submission happens in the first days of the week and towards the beginning of the month.</li>
+<li>Most of the submissions disappear from the CRAN queue in less than a day but new submission take around 36 hours.</li>
+<li>There’s a new package submission to CRAN every hour.</li>
+<li>In later submissions time in the queue is considerably shorter.</li>
+<li>It was impossible to know when there was a reply from CRAN, as no information is provided.</li>
+<li>Not possible to know when a package has all OK before it hits CRAN as some packages remain in the queue even after acceptance.</li>
+</ul>
+<p>Last, I compare the review system with other reviews of R software like Bioconductor and rOpenSci.</p>
+<p>One big difference between CRAN and Bioconductor or rOpenSci is that even if your package is already included each time you want to fix something it gets reviewed by someone.
+This ensures a high quality of the packages, as well as increases the work for the reviewers.</p>
+<p>Also, the list of reviewers as far as I know is just 5 people who also are part of the developers maintaining and developing R.
+In Bioconductor it is the same (except they do not to take care of R itself) but in rOpenSci this doesn’t happen that way.</p>
+<p>The next big difference is the lack of transparency on the process of the review itself.
+Perhaps because CRAN started earlier (1997) while Bioconductor in 2002 and rOpenSci much later.
+On CRAN with the information available we don’t know the steps to be accepted beyond the pretest and the manual review.
+We don’t know when the package is accepted or rejected, what is the content of the feedback to the maintainer (or when there is feedback and how long does the maintainer get to address those changes).
+It is no clear how does the process work.
+Additionally, the reviewer’s work seems highly manual as we found some duplicated packages on the queue.</p>
+<p>Further automatization and transparency on the process could help reduce the load on the reviewers, as well as increasing the number of reviewers.
+A public review could help reduce the burden to CRAN reviewers as outsiders could help solving errors (although this is somewhat already fulfilled by the <a href="https://www.r-project.org/mail.html">mailing list</a> R-package-devel), and would help notice and find a compromise on inconsistencies between reviews.
+As anecdotal evidence I submitted two packages one shortly after the first, on the second package they asked me to change some URLS that on the first I wasn’t required to change.</p>
+<p>Another difference between these three repositories are the manuals.
+It seems that CRAN repository is equated to be R, so the <a href="https://cran.r-project.org/doc/manuals/r-release/R-exts.html">manual for writing R extensions</a> is under <code>cran.r-project.org</code>, while this is about extending R and can and does happen outside CRAN.</p>
+<p>The <a href="https://cran.r-project.org/web/packages/policies.html">CRAN policies</a> changes without notice to the existing developers.
+Sending an email to the maintainers or R-announce mailing list would help developers to notice policy changes.
+Developers had to create a <a href="http://dirk.eddelbuettel.com/blog/2013/10/23/">policy watch</a> and other resources to <a href="https://blog.r-hub.io/2019/05/29/keep-up-with-cran/">keep up with CRAN</a> changes that not only affect them on submitting a package but also on packages already included on CRAN.</p>
+<p>The CRAN reviewers are involved on multiple demanding tasks: their own regular jobs and outside work (familiar, friend, other interests) commitments, and then, R development and maintenance, CRAN reviews and maintenance, R-journal<a href="#fn3" class="footnote-ref" id="fnref3"><sup>3</sup></a>.
+One possible solution to reduce the burden for them is increase the number of reviewers.
+Perhaps a mentorship program to review packages or a guideline to what to check training and would help reduce the pressure on the current volunteers.</p>
+<p>The peace and work of the maintainers as seen on this analysis is huge, and much more that cannot be seen with this data.
+Many thanks to all the volunteers that maintain it, those who donate to the R Foundation and the employers of those volunteers that make possible CRAN and R.</p>
+<div id="reproducibility" class="section level3">
+<h3>Reproducibility</h3>
+<details>
+<pre><code>## NULL
+## ─ Session info ───────────────────────────────────────────────────────────────────────────────────────────────────────
+##  setting  value                       
+##  version  R version 4.0.1 (2020-06-06)
+##  os       Ubuntu 20.04.3 LTS          
+##  system   x86_64, linux-gnu           
+##  ui       X11                         
+##  language (EN)                        
+##  collate  en_US.UTF-8                 
+##  ctype    en_US.UTF-8                 
+##  tz       Europe/Madrid               
+##  date     2021-08-25                  
+## 
+## ─ Packages ───────────────────────────────────────────────────────────────────────────────────────────────────────────
+##  package      * version     date       lib source                              
+##  assertthat     0.2.1       2019-03-21 [1] CRAN (R 4.0.1)                      
+##  backports      1.2.1       2020-12-09 [1] CRAN (R 4.0.1)                      
+##  blogdown       1.3         2021-04-14 [1] CRAN (R 4.0.1)                      
+##  bookdown       0.22        2021-04-22 [1] CRAN (R 4.0.1)                      
+##  broom          0.7.6       2021-04-05 [1] CRAN (R 4.0.1)                      
+##  bslib          0.2.5       2021-05-12 [1] CRAN (R 4.0.1)                      
+##  cellranger     1.1.0       2016-07-27 [1] CRAN (R 4.0.1)                      
+##  cli            2.5.0       2021-04-26 [1] CRAN (R 4.0.1)                      
+##  colorspace     2.0-1       2021-05-04 [1] CRAN (R 4.0.1)                      
+##  crayon         1.4.1       2021-02-08 [1] CRAN (R 4.0.1)                      
+##  DBI            1.1.1       2021-01-15 [1] CRAN (R 4.0.1)                      
+##  dbplyr         2.1.1       2021-04-06 [1] CRAN (R 4.0.1)                      
+##  digest         0.6.27      2020-10-24 [1] CRAN (R 4.0.1)                      
+##  dplyr        * 1.0.6       2021-05-05 [1] CRAN (R 4.0.1)                      
+##  ellipsis       0.3.2       2021-04-29 [1] CRAN (R 4.0.1)                      
+##  evaluate       0.14        2019-05-28 [1] CRAN (R 4.0.1)                      
+##  fansi          0.5.0       2021-05-25 [1] CRAN (R 4.0.1)                      
+##  farver         2.1.0       2021-02-28 [1] CRAN (R 4.0.1)                      
+##  forcats      * 0.5.1       2021-01-27 [1] CRAN (R 4.0.1)                      
+##  fs             1.5.0       2020-07-31 [1] CRAN (R 4.0.1)                      
+##  generics       0.1.0       2020-10-31 [1] CRAN (R 4.0.1)                      
+##  ggplot2      * 3.3.5       2021-06-25 [1] CRAN (R 4.0.1)                      
+##  glue           1.4.2       2020-08-27 [1] CRAN (R 4.0.1)                      
+##  gtable         0.3.0       2019-03-25 [1] CRAN (R 4.0.1)                      
+##  haven          2.4.1       2021-04-23 [1] CRAN (R 4.0.1)                      
+##  here           1.0.1       2020-12-13 [1] CRAN (R 4.0.1)                      
+##  highr          0.9         2021-04-16 [1] CRAN (R 4.0.1)                      
+##  hms          * 1.0.0       2021-01-13 [1] CRAN (R 4.0.1)                      
+##  htmltools      0.5.1.1     2021-01-22 [1] CRAN (R 4.0.1)                      
+##  httr           1.4.2       2020-07-20 [1] CRAN (R 4.0.1)                      
+##  jquerylib      0.1.4       2021-04-26 [1] CRAN (R 4.0.1)                      
+##  jsonlite       1.7.2       2020-12-09 [1] CRAN (R 4.0.1)                      
+##  knitr          1.33        2021-04-24 [1] CRAN (R 4.0.1)                      
+##  labeling       0.4.2       2020-10-20 [1] CRAN (R 4.0.1)                      
+##  lattice        0.20-41     2020-04-02 [1] CRAN (R 4.0.1)                      
+##  lifecycle      1.0.0       2021-02-15 [1] CRAN (R 4.0.1)                      
+##  lubridate    * 1.7.10.9000 2021-06-12 [1] Github (tidyverse/lubridate@1e0d66f)
+##  magrittr       2.0.1       2020-11-17 [1] CRAN (R 4.0.1)                      
+##  Matrix         1.3-2       2021-01-06 [1] CRAN (R 4.0.1)                      
+##  mgcv           1.8-35      2021-04-18 [1] CRAN (R 4.0.1)                      
+##  modelr         0.1.8       2020-05-19 [1] CRAN (R 4.0.1)                      
+##  munsell        0.5.0       2018-06-12 [1] CRAN (R 4.0.1)                      
+##  nlme           3.1-152     2021-02-04 [1] CRAN (R 4.0.1)                      
+##  patchwork    * 1.1.1       2020-12-17 [1] CRAN (R 4.0.1)                      
+##  pillar         1.6.1       2021-05-16 [1] CRAN (R 4.0.1)                      
+##  pkgconfig      2.0.3       2019-09-22 [1] CRAN (R 4.0.1)                      
+##  purrr        * 0.3.4       2020-04-17 [1] CRAN (R 4.0.1)                      
+##  R6             2.5.0       2020-10-28 [1] CRAN (R 4.0.1)                      
+##  RColorBrewer   1.1-2       2014-12-07 [1] CRAN (R 4.0.1)                      
+##  Rcpp           1.0.6       2021-01-15 [1] CRAN (R 4.0.1)                      
+##  readr        * 1.4.0       2020-10-05 [1] CRAN (R 4.0.1)                      
+##  readxl         1.3.1       2019-03-13 [1] CRAN (R 4.0.1)                      
+##  reprex         2.0.0       2021-04-02 [1] CRAN (R 4.0.1)                      
+##  rlang          0.4.11      2021-04-30 [1] CRAN (R 4.0.1)                      
+##  rmarkdown      2.9         2021-06-15 [1] CRAN (R 4.0.1)                      
+##  rprojroot      2.0.2       2020-11-15 [1] CRAN (R 4.0.1)                      
+##  rstudioapi     0.13        2020-11-12 [1] CRAN (R 4.0.1)                      
+##  rvest          1.0.0       2021-03-09 [1] CRAN (R 4.0.1)                      
+##  sass           0.4.0       2021-05-12 [1] CRAN (R 4.0.1)                      
+##  scales         1.1.1       2020-05-11 [1] CRAN (R 4.0.1)                      
+##  sessioninfo    1.1.1       2018-11-05 [1] CRAN (R 4.0.1)                      
+##  stringi        1.6.2       2021-05-17 [1] CRAN (R 4.0.1)                      
+##  stringr      * 1.4.0       2019-02-10 [1] CRAN (R 4.0.1)                      
+##  tibble       * 3.1.2       2021-05-16 [1] CRAN (R 4.0.1)                      
+##  tidyr        * 1.1.3       2021-03-03 [1] CRAN (R 4.0.1)                      
+##  tidyselect     1.1.1       2021-04-30 [1] CRAN (R 4.0.1)                      
+##  tidyverse    * 1.3.1       2021-04-15 [1] CRAN (R 4.0.1)                      
+##  utf8           1.2.1       2021-03-12 [1] CRAN (R 4.0.1)                      
+##  vctrs          0.3.8       2021-04-29 [1] CRAN (R 4.0.1)                      
+##  viridisLite    0.4.0       2021-04-13 [1] CRAN (R 4.0.1)                      
+##  withr          2.4.2       2021-04-18 [1] CRAN (R 4.0.1)                      
+##  xfun           0.24        2021-06-15 [1] CRAN (R 4.0.1)                      
+##  xml2           1.3.2       2020-04-23 [1] CRAN (R 4.0.1)                      
+##  yaml           2.2.1       2020-02-01 [1] CRAN (R 4.0.1)                      
+## 
+## [1] /home/lluis/bin/R/4.0.1/lib/R/library</code></pre>
+</details>
+</div>
+</div>
+<div class="footnotes">
+<hr />
+<ol>
+<li id="fn1"><p>Or a problem with ggplot2 representing a sudden value that is much different from those around them.<a href="#fnref1" class="footnote-back">↩︎</a></p></li>
+<li id="fn2"><p>Which now I cannot find the evidence to link to.
+If anyone finds the tweet I would appreciate it.<a href="#fnref2" class="footnote-back">↩︎</a></p></li>
+<li id="fn3"><p>I’m not aware of anyone whose full job is just R reviewing.<a href="#fnref3" class="footnote-back">↩︎</a></p></li>
+</ol>
+</div>
+
+    </div>
+
+    
+
+
+
+
+
+  
+  
+
+<p class="edit-page">
+  <a href="https://github.com/llrs/blogR/edit/master/content/post/2021-01-17-cran-review/index.html">
+    <i class="fas fa-pen pr-2"></i>Edit this page
+  </a>
+</p>
+
+
+
+
+
+<div class="article-tags">
+  
+  <a class="badge badge-light" href="/tags/cran/">CRAN</a>
+  
+  <a class="badge badge-light" href="/tags/r/">R</a>
+  
+  <a class="badge badge-light" href="/tags/reviews/">reviews</a>
+  
+</div>
+
+
+
+<div class="share-box" aria-hidden="true">
+  <ul class="share">
+    
+      
+      
+      
+        
+      
+      
+      
+      <li>
+        <a href="https://twitter.com/intent/tweet?url=https://llrs.dev/post/2021/01/31/cran-review/&amp;text=CRAN%20review" target="_blank" rel="noopener" class="share-btn-twitter">
+          <i class="fab fa-twitter"></i>
+        </a>
+      </li>
+    
+      
+      
+      
+        
+      
+      
+      
+      <li>
+        <a href="https://www.facebook.com/sharer.php?u=https://llrs.dev/post/2021/01/31/cran-review/&amp;t=CRAN%20review" target="_blank" rel="noopener" class="share-btn-facebook">
+          <i class="fab fa-facebook"></i>
+        </a>
+      </li>
+    
+      
+      
+      
+        
+      
+      
+      
+      <li>
+        <a href="mailto:?subject=CRAN%20review&amp;body=https://llrs.dev/post/2021/01/31/cran-review/" target="_blank" rel="noopener" class="share-btn-email">
+          <i class="fas fa-envelope"></i>
+        </a>
+      </li>
+    
+      
+      
+      
+        
+      
+      
+      
+      <li>
+        <a href="https://www.linkedin.com/shareArticle?url=https://llrs.dev/post/2021/01/31/cran-review/&amp;title=CRAN%20review" target="_blank" rel="noopener" class="share-btn-linkedin">
+          <i class="fab fa-linkedin-in"></i>
+        </a>
+      </li>
+    
+      
+      
+      
+        
+      
+      
+      
+      <li>
+        <a href="https://web.whatsapp.com/send?text=CRAN%20review%20https://llrs.dev/post/2021/01/31/cran-review/" target="_blank" rel="noopener" class="share-btn-whatsapp">
+          <i class="fab fa-whatsapp"></i>
+        </a>
+      </li>
+    
+  </ul>
+</div>
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+
+
+
+
+
+  
+  
+  
+    
+  
+  
+  
+  <div class="media author-card content-widget-hr">
+    
+      
+      <img class="avatar mr-3 avatar-circle" src="/authors/admin/avatar_hu41a1d1cb0c2270d3fd463263214d3794_229497_270x270_fill_lanczos_center_3.png" alt="Avatar">
+    
+
+    <div class="media-body">
+      <h5 class="card-title"><a href="https://llrs.dev/">Lluís Revilla Sancho</a></h5>
+      <h6 class="card-subtitle">Data scientist</h6>
+      <p class="card-text">Data scientist with interests in software quality, mostly R.</p>
+      <ul class="network-icon" aria-hidden="true">
+  
+    
+    
+    
+      
+    
+    
+    
+    
+    
+    <li>
+      <a href="mailto:lluis.revilla&#43;blog@gmail.com" >
+        <i class="fas fa-envelope"></i>
+      </a>
+    </li>
+  
+    
+    
+    
+      
+    
+    
+    
+    
+    
+      
+    
+    <li>
+      <a href="https://linkedin.com/in/lluisrevilla/" target="_blank" rel="noopener">
+        <i class="fab fa-linkedin-in"></i>
+      </a>
+    </li>
+  
+    
+    
+    
+      
+    
+    
+    
+    
+    
+      
+    
+    <li>
+      <a href="https://fosstodon.org/@Lluis_Revilla" target="_blank" rel="noopener">
+        <i class="fab fa-mastodon"></i>
+      </a>
+    </li>
+  
+    
+    
+    
+      
+    
+    
+    
+    
+    
+      
+    
+    <li>
+      <a href="https://github.com/llrs" target="_blank" rel="noopener">
+        <i class="fab fa-github"></i>
+      </a>
+    </li>
+  
+    
+    
+    
+    
+    
+    
+    
+      
+    
+    <li>
+      <a href="https://scholar.google.es/citations?user=Hin4p3MAAAAJ&amp;hl" target="_blank" rel="noopener">
+        <i class="ai ai-google-scholar"></i>
+      </a>
+    </li>
+  
+    
+    
+    
+    
+    
+    
+    
+      
+    
+    <li>
+      <a href="https://orcid.org/0000-0001-9747-2570" target="_blank" rel="noopener">
+        <i class="ai ai-orcid"></i>
+      </a>
+    </li>
+  
+    
+    
+    
+      
+    
+    
+    
+    
+    
+      
+    
+    <li>
+      <a href="https://www.buymeacoffee.com/llrs" target="_blank" rel="noopener">
+        <i class="fas fa-pizza-slice"></i>
+      </a>
+    </li>
+  
+</ul>
+
+    </div>
+  </div>
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <div class="article-widget content-widget-hr">
+    <h3>Related</h3>
+    <ul>
+      
+      <li><a href="/post/2020/09/02/ropensci-submissions/">rOpenSci submissions</a></li>
+      
+      <li><a href="/post/2020/07/31/bioconductor-submissions-reviews/">Bioconductor submissions: reviews</a></li>
+      
+      <li><a href="/post/2020/01/25/cran-dependencies/">CRAN dependencies</a></li>
+      
+    </ul>
+  </div>
+  
+
+
+
+  </div>
+</article>
+
+      
+
+    
+    
+    
+      <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.4.1/jquery.min.js" integrity="sha256-CSXorXvZcTkaix6Yvo6HppcZGetbYMGWSFlBw8HfCJo=" crossorigin="anonymous"></script>
+      <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery.imagesloaded/4.1.4/imagesloaded.pkgd.min.js" integrity="sha256-lqvxZrPLtfffUl2G/e7szqSvPBILGbwmsGE1MKlOi0Q=" crossorigin="anonymous"></script>
+      <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery.isotope/3.0.6/isotope.pkgd.min.js" integrity="sha256-CBrpuqrMhXwcLLUd5tvQ4euBHCdh7wGlDfNz8vbu/iI=" crossorigin="anonymous"></script>
+      <script src="https://cdnjs.cloudflare.com/ajax/libs/fancybox/3.5.7/jquery.fancybox.min.js" integrity="sha256-yt2kYMy0w8AbtF89WXb2P1rfjcP/HTHLT7097U8Y5b8=" crossorigin="anonymous"></script>
+
+      
+
+      
+        
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.18.1/highlight.min.js" integrity="sha256-eOgo0OtLL4cdq7RdwRUiGKLX9XsIJ7nGhWEKbohmVAQ=" crossorigin="anonymous"></script>
+        
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.18.1/languages/r.min.js"></script>
+        
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.18.1/languages/phython.min.js"></script>
+        
+      
+
+    
+
+    
+    
+
+    
+    
+    <script>const code_highlighting = true;</script>
+    
+
+    
+    
+    <script>const isSiteThemeDark = false;</script>
+    
+
+    
+    
+    
+    
+    
+    
+    <script>
+      const search_config = {"indexURI":"/index.json","minLength":1,"threshold":0.3};
+      const i18n = {"no_results":"No results found","placeholder":"Search...","results":"results found"};
+      const content_type = {
+        'post': "Posts",
+        'project': "Projects",
+        'publication' : "Publications",
+        'talk' : "Talks"
+        };
+    </script>
+    
+
+    
+    
+
+    
+    
+    <script id="search-hit-fuse-template" type="text/x-template">
+      <div class="search-hit" id="summary-{{key}}">
+      <div class="search-hit-content">
+        <div class="search-hit-name">
+          <a href="{{relpermalink}}">{{title}}</a>
+          <div class="article-metadata search-hit-type">{{type}}</div>
+          <p class="search-hit-description">{{snippet}}</p>
+        </div>
+      </div>
+      </div>
+    </script>
+    
+
+    
+    
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/fuse.js/3.2.1/fuse.min.js" integrity="sha256-VzgmKYmhsGNNN4Ph1kMW+BjoYJM2jV5i4IlFoeZA9XI=" crossorigin="anonymous"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/mark.js/8.11.1/jquery.mark.min.js" integrity="sha256-4HLtjeVgH0eIB3aZ9mLYF6E8oU5chNdjU6p6rrXpl9U=" crossorigin="anonymous"></script>
+    
+
+    
+    
+
+    
+    
+
+    
+    
+    
+    
+    
+    
+    
+    
+    
+      
+    
+    
+    
+    
+    <script src="/js/academic.min.6f1005d1a84220e2f466ff3d8e712f31.js"></script>
+
+    
+
+
+
+
+
+
+  
+  
+  <div class="container">
+    <footer class="site-footer">
+  
+  <p class="powered-by">
+    
+      <a href="/privacy/">Privacy Policy</a>
+    
+    
+  </p>
+  
+
+  <p class="powered-by">
+    If it is code you can copy and reuse (MIT) if it is text, please cite and reuse CC-BY 2026. &middot; 
+
+    Powered by the
+    <a href="https://sourcethemes.com/academic/" target="_blank" rel="noopener">Academic theme</a> for
+    <a href="https://gohugo.io" target="_blank" rel="noopener">Hugo</a>.
+
+    
+    <span class="float-right" aria-hidden="true">
+      <a href="#" class="back-to-top">
+        <span class="button_icon">
+          <i class="fas fa-chevron-up fa-2x"></i>
+        </span>
+      </a>
+    </span>
+    
+  </p>
+</footer>
+
+  </div>
+  
+
+  
+<div id="modal" class="modal fade" role="dialog">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title">Cite</h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+        <pre><code class="tex hljs"></code></pre>
+      </div>
+      <div class="modal-footer">
+        <a class="btn btn-outline-primary my-1 js-copy-cite" href="#" target="_blank">
+          <i class="fas fa-copy"></i> Copy
+        </a>
+        <a class="btn btn-outline-primary my-1 js-download-cite" href="#" target="_blank">
+          <i class="fas fa-download"></i> Download
+        </a>
+        <div id="modal-error"></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+</body>
+</html>

@@ -1,0 +1,1877 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes" ?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>API | B101nfo</title>
+    <link>https://llrs.dev/tags/api/</link>
+      <atom:link href="https://llrs.dev/tags/api/index.xml" rel="self" type="application/rss+xml" />
+    <description>API</description>
+    <generator>Source Themes Academic (https://sourcethemes.com/academic/)</generator><language>en-us</language><copyright>If it is code you can copy and reuse (MIT) if it is text, please cite and reuse CC-BY 2026.</copyright><lastBuildDate>Mon, 04 Jul 2022 00:00:00 +0000</lastBuildDate>
+    <image>
+      <url>img/map[gravatar:%!s(bool=false) shape:circle]</url>
+      <title>API</title>
+      <link>https://llrs.dev/tags/api/</link>
+    </image>
+    
+    <item>
+      <title>Upgrading rtweet to 1.0.2</title>
+      <link>https://llrs.dev/post/2022/07/04/rtweet-1-0-0/</link>
+      <pubDate>Mon, 04 Jul 2022 00:00:00 +0000</pubDate>
+      <guid>https://llrs.dev/post/2022/07/04/rtweet-1-0-0/</guid>
+      <description>
+
+
+&lt;p&gt;In this post I will provide some examples of what has changed between rtweet 0.7.0 and rtweet 1.0.2.
+I hope both the changes and this guide will help all users.
+I highlight the most important and interesting changes in this blog post, and for a full list of changes you can consult it on the &lt;a href=&#34;https://docs.ropensci.org/rtweet/news/index.html&#34;&gt;NEWS&lt;/a&gt;.&lt;/p&gt;
+&lt;div id=&#34;big-breaking-changes&#34; class=&#34;section level2&#34;&gt;
+&lt;h2&gt;&lt;strong&gt;Big breaking changes&lt;/strong&gt;&lt;/h2&gt;
+&lt;div id=&#34;more-consistent-output&#34; class=&#34;section level3&#34;&gt;
+&lt;h3&gt;More consistent output&lt;/h3&gt;
+&lt;p&gt;This is probably what will affect the most users.
+All functions that return data about tweets&lt;a href=&#34;#fn1&#34; class=&#34;footnote-ref&#34; id=&#34;fnref1&#34;&gt;&lt;sup&gt;1&lt;/sup&gt;&lt;/a&gt; now return the same columns.&lt;/p&gt;
+&lt;p&gt;For example if we search some tweets we’ll get the following columns:&lt;/p&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;&amp;gt; tweets &amp;lt;- search_tweets(&amp;quot;weather&amp;quot;)
+&amp;gt; colnames(tweets)
+ [1] &amp;quot;created_at&amp;quot;                    &amp;quot;id&amp;quot;                           
+ [3] &amp;quot;id_str&amp;quot;                        &amp;quot;full_text&amp;quot;                    
+ [5] &amp;quot;truncated&amp;quot;                     &amp;quot;display_text_range&amp;quot;           
+ [7] &amp;quot;entities&amp;quot;                      &amp;quot;metadata&amp;quot;                     
+ [9] &amp;quot;source&amp;quot;                        &amp;quot;in_reply_to_status_id&amp;quot;        
+[11] &amp;quot;in_reply_to_status_id_str&amp;quot;     &amp;quot;in_reply_to_user_id&amp;quot;          
+[13] &amp;quot;in_reply_to_user_id_str&amp;quot;       &amp;quot;in_reply_to_screen_name&amp;quot;      
+[15] &amp;quot;geo&amp;quot;                           &amp;quot;coordinates&amp;quot;                  
+[17] &amp;quot;place&amp;quot;                         &amp;quot;contributors&amp;quot;                 
+[19] &amp;quot;is_quote_status&amp;quot;               &amp;quot;retweet_count&amp;quot;                
+[21] &amp;quot;favorite_count&amp;quot;                &amp;quot;favorited&amp;quot;                    
+[23] &amp;quot;retweeted&amp;quot;                     &amp;quot;lang&amp;quot;                         
+[25] &amp;quot;quoted_status_id&amp;quot;              &amp;quot;quoted_status_id_str&amp;quot;         
+[27] &amp;quot;quoted_status&amp;quot;                 &amp;quot;possibly_sensitive&amp;quot;           
+[29] &amp;quot;retweeted_status&amp;quot;              &amp;quot;text&amp;quot;                         
+[31] &amp;quot;favorited_by&amp;quot;                  &amp;quot;scopes&amp;quot;                       
+[33] &amp;quot;display_text_width&amp;quot;            &amp;quot;quoted_status_permalink&amp;quot;      
+[35] &amp;quot;quote_count&amp;quot;                   &amp;quot;timestamp_ms&amp;quot;                 
+[37] &amp;quot;reply_count&amp;quot;                   &amp;quot;filter_level&amp;quot;                 
+[39] &amp;quot;query&amp;quot;                         &amp;quot;withheld_scope&amp;quot;               
+[41] &amp;quot;withheld_copyright&amp;quot;            &amp;quot;withheld_in_countries&amp;quot;        
+[43] &amp;quot;possibly_sensitive_appealable&amp;quot;&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;rtweet now minimizes the processing of tweets and only returns the same data as provided by the API while making it easier to handle by R.
+However, to preserve the nested nature of the data returned some fields are now nested inside other.
+For example, previously fields &lt;code&gt;&#34;bbpx_coords&#34;&lt;/code&gt;, &lt;code&gt;&#34;geo_coords&#34;&lt;/code&gt;, &lt;code&gt;&#34;coords_coords&#34;&lt;/code&gt; were returned as separate columns, but they are now nested inside &lt;code&gt;&#34;place&#34;&lt;/code&gt;, &lt;code&gt;&#34;coordinates&#34;&lt;/code&gt; or &lt;code&gt;&#34;geo&#34;&lt;/code&gt; depending where they are provided.
+Some columns previously calculated by rtweet are now not returned, like &lt;code&gt;&#34;rtweet_favorite_count&#34;&lt;/code&gt;.
+At the same time it provides with new columns about each tweet like the &lt;code&gt;&#34;withheld_*&#34;&lt;/code&gt; columns.&lt;/p&gt;
+&lt;p&gt;If you scanned through the columns you might have noticed that columns &lt;code&gt;&#34;user_id&#34;&lt;/code&gt; and &lt;code&gt;&#34;screen_name&#34;&lt;/code&gt; are no longer returned.
+This data is still returned by the API but it is now made available to the rtweet users via &lt;code&gt;users_data()&lt;/code&gt;:&lt;/p&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;&amp;gt; colnames(users_data(tweets))
+ [1] &amp;quot;id&amp;quot;                      &amp;quot;id_str&amp;quot;                 
+ [3] &amp;quot;name&amp;quot;                    &amp;quot;screen_name&amp;quot;            
+ [5] &amp;quot;location&amp;quot;                &amp;quot;description&amp;quot;            
+ [7] &amp;quot;url&amp;quot;                     &amp;quot;protected&amp;quot;              
+ [9] &amp;quot;followers_count&amp;quot;         &amp;quot;friends_count&amp;quot;          
+[11] &amp;quot;listed_count&amp;quot;            &amp;quot;created_at&amp;quot;             
+[13] &amp;quot;favourites_count&amp;quot;        &amp;quot;verified&amp;quot;               
+[15] &amp;quot;statuses_count&amp;quot;          &amp;quot;profile_image_url_https&amp;quot;
+[17] &amp;quot;profile_banner_url&amp;quot;      &amp;quot;default_profile&amp;quot;        
+[19] &amp;quot;default_profile_image&amp;quot;   &amp;quot;withheld_in_countries&amp;quot;  
+[21] &amp;quot;derived&amp;quot;                 &amp;quot;withheld_scope&amp;quot;         
+[23] &amp;quot;entities&amp;quot; &lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;This blog post should help you find the right data columns, but if you don’t find what you are looking for it might be nested inside a column.&lt;br /&gt;
+Try using &lt;code&gt;dplyr::glimpse()&lt;/code&gt; to explore the data and locate nested columns.
+For example the entities column (which is present in both tweets and users) have the following useful columns:&lt;/p&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;&amp;gt; names(tweets$entities[[1]])
+[1] &amp;quot;hashtags&amp;quot;      &amp;quot;symbols&amp;quot;       &amp;quot;user_mentions&amp;quot; &amp;quot;urls&amp;quot;         
+[5] &amp;quot;media&amp;quot; &lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;Similarly if you look up a user via &lt;code&gt;search_users()&lt;/code&gt; or &lt;code&gt;lookup_users()&lt;/code&gt; you’ll get consistent data:&lt;/p&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;&amp;gt; users &amp;lt;- lookup_users(c(&amp;quot;twitter&amp;quot;, &amp;quot;rladiesglobal&amp;quot;, &amp;quot;_R_Foundation&amp;quot;))
+&amp;gt; colnames(users)
+ [1] &amp;quot;id&amp;quot;                      &amp;quot;id_str&amp;quot;                 
+ [3] &amp;quot;name&amp;quot;                    &amp;quot;screen_name&amp;quot;            
+ [5] &amp;quot;location&amp;quot;                &amp;quot;description&amp;quot;            
+ [7] &amp;quot;url&amp;quot;                     &amp;quot;protected&amp;quot;              
+ [9] &amp;quot;followers_count&amp;quot;         &amp;quot;friends_count&amp;quot;          
+[11] &amp;quot;listed_count&amp;quot;            &amp;quot;created_at&amp;quot;             
+[13] &amp;quot;favourites_count&amp;quot;        &amp;quot;verified&amp;quot;               
+[15] &amp;quot;statuses_count&amp;quot;          &amp;quot;profile_image_url_https&amp;quot;
+[17] &amp;quot;profile_banner_url&amp;quot;      &amp;quot;default_profile&amp;quot;        
+[19] &amp;quot;default_profile_image&amp;quot;   &amp;quot;withheld_in_countries&amp;quot;  
+[21] &amp;quot;derived&amp;quot;                 &amp;quot;withheld_scope&amp;quot;         
+[23] &amp;quot;entities&amp;quot;               &lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;You can use &lt;code&gt;tweets_data()&lt;/code&gt; to retrieve information about their latest tweet:&lt;/p&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;&amp;gt; colnames(tweets_data(users))
+ [1] &amp;quot;created_at&amp;quot;                    &amp;quot;id&amp;quot;                           
+ [3] &amp;quot;id_str&amp;quot;                        &amp;quot;text&amp;quot;                         
+ [5] &amp;quot;truncated&amp;quot;                     &amp;quot;entities&amp;quot;                     
+ [7] &amp;quot;source&amp;quot;                        &amp;quot;in_reply_to_status_id&amp;quot;        
+ [9] &amp;quot;in_reply_to_status_id_str&amp;quot;     &amp;quot;in_reply_to_user_id&amp;quot;          
+[11] &amp;quot;in_reply_to_user_id_str&amp;quot;       &amp;quot;in_reply_to_screen_name&amp;quot;      
+[13] &amp;quot;geo&amp;quot;                           &amp;quot;coordinates&amp;quot;                  
+[15] &amp;quot;place&amp;quot;                         &amp;quot;contributors&amp;quot;                 
+[17] &amp;quot;is_quote_status&amp;quot;               &amp;quot;retweet_count&amp;quot;                
+[19] &amp;quot;favorite_count&amp;quot;                &amp;quot;favorited&amp;quot;                    
+[21] &amp;quot;retweeted&amp;quot;                     &amp;quot;lang&amp;quot;                         
+[23] &amp;quot;retweeted_status&amp;quot;              &amp;quot;possibly_sensitive&amp;quot;           
+[25] &amp;quot;quoted_status&amp;quot;                 &amp;quot;display_text_width&amp;quot;           
+[27] &amp;quot;user&amp;quot;                          &amp;quot;full_text&amp;quot;                    
+[29] &amp;quot;favorited_by&amp;quot;                  &amp;quot;scopes&amp;quot;                       
+[31] &amp;quot;display_text_range&amp;quot;            &amp;quot;quoted_status_id&amp;quot;             
+[33] &amp;quot;quoted_status_id_str&amp;quot;          &amp;quot;quoted_status_permalink&amp;quot;      
+[35] &amp;quot;quote_count&amp;quot;                   &amp;quot;timestamp_ms&amp;quot;                 
+[37] &amp;quot;reply_count&amp;quot;                   &amp;quot;filter_level&amp;quot;                 
+[39] &amp;quot;metadata&amp;quot;                      &amp;quot;query&amp;quot;                        
+[41] &amp;quot;withheld_scope&amp;quot;                &amp;quot;withheld_copyright&amp;quot;           
+[43] &amp;quot;withheld_in_countries&amp;quot;         &amp;quot;possibly_sensitive_appealable&amp;quot;&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;You can merge them via:&lt;/p&gt;
+&lt;pre&gt;&lt;code&gt;users_and_last_tweets &amp;lt;- cbind(users, id_str = tweets_data(users)[, &amp;quot;id_str&amp;quot;])&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;In the future (&lt;a href=&#34;#future&#34;&gt;see below&lt;/a&gt;), with helper functions managing the output of rtweet will become easier.&lt;/p&gt;
+&lt;p&gt;Finally, &lt;code&gt;get_followers()&lt;/code&gt; and &lt;code&gt;get_friends()&lt;/code&gt; now return the same columns:&lt;/p&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;&amp;gt; colnames(get_followers(&amp;quot;_R_Foundation&amp;quot;))
+[1] &amp;quot;from_id&amp;quot; &amp;quot;to_id&amp;quot;  
+&amp;gt; colnames(get_friends(&amp;quot;_R_Foundation&amp;quot;))
+[1] &amp;quot;from_id&amp;quot; &amp;quot;to_id&amp;quot;  &lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;This will make it easier to build networks of connections (although you might want to convert screen names to ids or vice versa).&lt;/p&gt;
+&lt;/div&gt;
+&lt;div id=&#34;more-consistent-interface&#34; class=&#34;section level3&#34;&gt;
+&lt;h3&gt;More consistent interface&lt;/h3&gt;
+&lt;p&gt;All paginated functions that don’t return tweets now use a consistent pagination interface (except the premium endpoints).
+They all store the “next cursor” in an &lt;code&gt;rtweet_cursor&lt;/code&gt; attribute, which will be automatically retrieved when you use the &lt;code&gt;cursor&lt;/code&gt; argument.
+This will make it easier to continue a query you started:&lt;/p&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;users &amp;lt;- get_followers(&amp;quot;_R_Foundation&amp;quot;)
+users
+     
+# use `cursor` to find the next &amp;quot;page&amp;quot; of results
+more_users &amp;lt;- get_followers(&amp;quot;_R_Foundation&amp;quot;, cursor = users)&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;They support &lt;code&gt;max_id&lt;/code&gt; and &lt;code&gt;since_id&lt;/code&gt; to find earlier and later tweets respectively:&lt;/p&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;# Retrieve all the tweets made since the previous request
+newer &amp;lt;- search_tweets(&amp;quot;weather&amp;quot;, since_id = tweets)
+# Retrieve tweets made before the previous request
+older &amp;lt;- search_tweets(&amp;quot;weather&amp;quot;, max_id = tweets)&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;If you want more tweets than it is allowed by the rate limits of the API, you can use &lt;code&gt;retryonratelimit&lt;/code&gt; to wait as long as needed:&lt;/p&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;long &amp;lt;- search_tweets(&amp;quot;weather&amp;quot;, n = 1000, retryonratelimit = TRUE)&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;This will keep busy your terminal until the 1000 tweets are retrieved.&lt;/p&gt;
+&lt;/div&gt;
+&lt;div id=&#34;saving-data&#34; class=&#34;section level3&#34;&gt;
+&lt;h3&gt;Saving data&lt;/h3&gt;
+&lt;p&gt;An unexpected consequence of returning more data (now matching that returned by the API) is that it is harder to save it in a tabular format.
+For instance one tweet might have one media, mention two users and have three hashtags.
+There isn’t a simple way to save it in a single row uniformly for all tweets or
+it could lead to confusion.&lt;/p&gt;
+&lt;p&gt;This resulted in deprecating &lt;code&gt;save_as_csv&lt;/code&gt;, &lt;code&gt;read_twitter_csv&lt;/code&gt; and related functions because they don’t work with the new data structure and it won’t be possible to load the complete data from a csv.
+They will be removed in later versions.&lt;/p&gt;
+&lt;p&gt;Many users will benefit from saving to RDS (e.g., &lt;code&gt;saveRDS()&lt;/code&gt; or &lt;code&gt;readr::write_rds()&lt;/code&gt;), and those wanting to export to tabular format can simplify the data to include only that of interest before saving with generic R functions (e.g., &lt;code&gt;write.csv()&lt;/code&gt; or &lt;code&gt;readr::write_csv()&lt;/code&gt;).&lt;/p&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;div id=&#34;other-breaking-changes&#34; class=&#34;section level2&#34;&gt;
+&lt;h2&gt;&lt;strong&gt;Other breaking changes&lt;/strong&gt;&lt;/h2&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;p&gt;Accessibility is important and for this reason if you tweet via &lt;code&gt;post_tweet()&lt;/code&gt; and add an image, gif or video you’ll need to provide the media alternative text.
+Without &lt;code&gt;media_alt_text&lt;/code&gt; it will not allow you to post.&lt;/p&gt;&lt;/li&gt;
+&lt;li&gt;&lt;p&gt;&lt;code&gt;tweet_shot()&lt;/code&gt; has been deprecated as it no longer works correctly.
+It might be possible to bring it back, but the code is complex and I do not understand enough to maintain it.
+If you’re interested in seeing this feature return, checkout the discussion about this &lt;a href=&#34;https://github.com/ropensci/rtweet/issues/458&#34;&gt;issue&lt;/a&gt; and let me know if you have any suggestions.&lt;/p&gt;&lt;/li&gt;
+&lt;li&gt;&lt;p&gt;rtweet also used to provide functions for data on &lt;code&gt;emojis&lt;/code&gt;, &lt;code&gt;langs&lt;/code&gt; and &lt;code&gt;stopwordslangs&lt;/code&gt;.
+These are useful resources for text mining in general - not only in tweets - however they need to be updated to be helpful and would be better placed in other packages, for instance emojis is now on the &lt;a href=&#34;https://cran.r-project.org/package=bdpar&#34;&gt;bdpar package&lt;/a&gt;.
+Therefore they are no longer available in rtweet.&lt;/p&gt;&lt;/li&gt;
+&lt;li&gt;&lt;p&gt;The functions like &lt;code&gt;suggested_*()&lt;/code&gt; have been removed as they have been broken since 2019.&lt;/p&gt;&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/div&gt;
+&lt;div id=&#34;easier-authentication&#34; class=&#34;section level2&#34;&gt;
+&lt;h2&gt;&lt;strong&gt;Easier authentication&lt;/strong&gt;&lt;/h2&gt;
+&lt;p&gt;An exciting part of this release has been a big rewrite of the authentication protocol.
+While it is compatible with previous rtweet authentication methods it has also some important new functions which make it easier to work with rtweet and the twitter API in different ways.&lt;/p&gt;
+&lt;div id=&#34;different-ways-to-authenticate&#34; class=&#34;section level3&#34;&gt;
+&lt;h3&gt;Different ways to authenticate&lt;/h3&gt;
+&lt;p&gt;If you just want to test the package, use the default authentication &lt;code&gt;auth_setup_default()&lt;/code&gt; that comes with rtweet.
+If you use it for one or two days you won’t notice any problem.&lt;/p&gt;
+&lt;p&gt;If you want to use the package for more than a couple of days, I recommend you set up your own token via &lt;code&gt;rtweet_user()&lt;/code&gt;.
+It will open a window to authenticate via the authenticated account in your default browser.
+This authentication won’t allow you to do everything but it will avoid running out of requests and being rate-limited.&lt;/p&gt;
+&lt;p&gt;If you plan to make heavy use of the package, I recommend registering yourself as developer and using one of the following two mechanisms, depending on your plans:&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;Collect data and analyze: &lt;code&gt;rtweet_app()&lt;/code&gt;.&lt;/li&gt;
+&lt;li&gt;Set up a bot: &lt;code&gt;rtweet_bot()&lt;/code&gt;&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;Find more information in the &lt;a href=&#34;https://docs.ropensci.org/rtweet/articles/auth.html&#34;&gt;Authentication with rtweet vignette&lt;/a&gt;.&lt;/p&gt;
+&lt;/div&gt;
+&lt;div id=&#34;storing-credentials&#34; class=&#34;section level3&#34;&gt;
+&lt;h3&gt;Storing credentials&lt;/h3&gt;
+&lt;p&gt;Previously rtweet saved each token created, but now non-default tokens are only saved if you ask. You can save them manually via &lt;code&gt;auth_save(token, &#34;my_app&#34;)&lt;/code&gt;.
+Bonus, if you name your token as default (&lt;code&gt;auth_save(token, &#34;default&#34;)&lt;/code&gt;) it will be used automatically upon loading the library.&lt;/p&gt;
+&lt;p&gt;Further, tokens are now saved in the location output by &lt;code&gt;tools::R_user_dir(&#34;rtweet&#34;, &#34;config&#34;)&lt;/code&gt;, rather than in your home directory.
+If you have previous tokens saved or problems identifying which token is which use &lt;code&gt;auth_sitrep()&lt;/code&gt;.
+This will provides clues to which tokens might be duplicated or misconfigured but it won’t check if they work.
+It will also automatically move your tokens to the new path.&lt;/p&gt;
+&lt;p&gt;To check which credentials you have stored use &lt;code&gt;auth_list()&lt;/code&gt; and load them via &lt;code&gt;auth_as(&#34;my_app&#34;)&lt;/code&gt;.
+All the rtweet functions will use the latest token loaded with &lt;code&gt;auth_as&lt;/code&gt; (unless you manually specify one when calling it).
+If you are not sure which token you are using you can use &lt;code&gt;auth_get()&lt;/code&gt; it will return the token in use, list them or ask you to authenticate.&lt;/p&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;div id=&#34;other-changes-of-note&#34; class=&#34;section level2&#34;&gt;
+&lt;h2&gt;&lt;strong&gt;Other changes of note&lt;/strong&gt;&lt;/h2&gt;
+&lt;p&gt;This is a list of other changes that aren’t too big or are not breaking changes but are worthy enough of a mention:&lt;/p&gt;
+&lt;div id=&#34;iteration-and-continuation-of-requests&#34; class=&#34;section level3&#34;&gt;
+&lt;h3&gt;Iteration and continuation of requests&lt;/h3&gt;
+&lt;p&gt;Using cursors, pagination or waiting until you can make more queries is now easier.
+For example you can continue previous requests via:&lt;/p&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;users &amp;lt;- get_followers(&amp;quot;_R_Foundation&amp;quot;)
+users
+
+# use `cursor` to find the next &amp;quot;page&amp;quot; of results
+more_users &amp;lt;- get_followers(&amp;quot;_R_Foundation&amp;quot;, cursor = users)&lt;/code&gt;&lt;/pre&gt;
+&lt;/div&gt;
+&lt;div id=&#34;additions&#34; class=&#34;section level3&#34;&gt;
+&lt;h3&gt;Additions&lt;/h3&gt;
+&lt;p&gt;There is now a function to find a thread of a user.
+You can start from any tweet and it will find all the tweets of the thread:
+&lt;code&gt;tweet_threading(&#34;1461776330584956929&#34;)&lt;/code&gt;.&lt;/p&gt;
+&lt;p&gt;There is a lot of interest in downloading and keeping track of interactions on Twitter.
+The amount of interest is big enough that Twitter is releasing a new API to provide more information of this nature.&lt;/p&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;div id=&#34;future&#34; class=&#34;section level2&#34;&gt;
+&lt;h2&gt;&lt;strong&gt;Future&lt;/strong&gt;&lt;/h2&gt;
+&lt;p&gt;Twitter API v2 is being released and soon it will replace API v1.
+rtweet up to now, including this release, uses API v1 so it will need to adapt to the new endpoints and new data returned.&lt;/p&gt;
+&lt;p&gt;First will be the streaming endpoints in November, so expect more (breaking?) changes around those dates if not earlier.&lt;/p&gt;
+&lt;p&gt;I would also like to make it easier for users, dependencies and the package itself to handle the outputs.
+To this regard I would like to provide some classes to handle the different type of objects it returns.&lt;/p&gt;
+&lt;p&gt;This will help avoid some of the current shortcomings.
+Specifically I would like to provide functions to make it easier to reply to previous tweets,
+extract nested data, and subset tweets and the accompanying user information.&lt;/p&gt;
+&lt;/div&gt;
+&lt;div id=&#34;conclusions&#34; class=&#34;section level2&#34;&gt;
+&lt;h2&gt;&lt;strong&gt;Conclusions&lt;/strong&gt;&lt;/h2&gt;
+&lt;p&gt;While I made many breaking changes I hope these changes will smooth future development and help both users and maintainers.&lt;/p&gt;
+&lt;p&gt;Feel free to ask on the &lt;a href=&#34;https://discuss.ropensci.org/tag/rtweet&#34;&gt;rOpenSci community&lt;/a&gt; if you have questions about the transition or find something amiss.
+Please let me know! It will help me prioritize which endpoints are more relevant to the community.
+(And yes, the academic archive endpoint is on the radar.)&lt;/p&gt;
+&lt;p&gt;It is also possible that I overlooked something and I thought the code is working when it isn’t.
+For example, after several months of changing the way the API is parsed, several users found it wasn’t handling some elements.
+Let me know of such or similar cases and I’ll try to fix it.&lt;/p&gt;
+&lt;p&gt;In case you find a bug, check the open issues and if it has not already been reported, open an &lt;a href=&#34;https://github.com/ropensci/rtweet/issues/&#34;&gt;issue on GitHub&lt;/a&gt;.
+Don’t forget to make a &lt;a href=&#34;https://cran.r-project.org/web/packages/reprex/readme/README.html&#34;&gt;reprex&lt;/a&gt; and if possible provide the id of the tweets you are having trouble with.
+Unfortunately it has happened that when I came to look at a bug I couldn’t reproduce it as I wasn’t able to find the tweet which caused the error.&lt;/p&gt;
+&lt;p&gt;This release includes contributions from Hadely Wicham, Bob Rudis, Alex Hayes, Simon Heß, Diego Hernán, Michael Chirico, Jonathan Sidi, Jon Harmon, Andrew Fraser and many other that reported bugs or provided feedback.
+Many thanks all for using it, your interest to keep it working and improving rtweet for all.&lt;/p&gt;
+&lt;p&gt;Finally, you can read the whole &lt;a href=&#34;https://docs.ropensci.org/rtweet/news/index.html&#34;&gt;NEWS online&lt;/a&gt; and the examples.&lt;/p&gt;
+&lt;p&gt;Happy tweeting!&lt;/p&gt;
+&lt;/div&gt;
+&lt;div id=&#34;acknowledgements&#34; class=&#34;section level2&#34;&gt;
+&lt;h2&gt;Acknowledgements&lt;/h2&gt;
+&lt;p&gt;This is a repost of the &lt;a href=&#34;https://ropensci.org/blog/2022/07/21/rtweet-1-0-0/&#34;&gt;entry for rOpenSci&lt;/a&gt;.
+The post was edited and improved by Yanina Bellini Saibene and Steffi LaZerte, the community manager and assistant. Many thanks&lt;/p&gt;
+&lt;/div&gt;
+&lt;div class=&#34;footnotes footnotes-end-of-document&#34;&gt;
+&lt;hr /&gt;
+&lt;ol&gt;
+&lt;li id=&#34;fn1&#34;&gt;&lt;p&gt;Specifically these: &lt;code&gt;get_favorites()&lt;/code&gt;, &lt;code&gt;get_favorites_user()&lt;/code&gt;, &lt;code&gt;get_mentions()&lt;/code&gt;,
+&lt;code&gt;get_my_timeline()&lt;/code&gt;, &lt;code&gt;get_retweets()&lt;/code&gt;, &lt;code&gt;get_timeline()&lt;/code&gt;, &lt;code&gt;get_timeline_user()&lt;/code&gt;,
+&lt;code&gt;lists_statuses()&lt;/code&gt;, &lt;code&gt;lookup_statuses()&lt;/code&gt;, &lt;code&gt;lookup_tweets()&lt;/code&gt;, &lt;code&gt;search_30day()&lt;/code&gt;,
+&lt;code&gt;search_fullarchive()&lt;/code&gt;, &lt;code&gt;search_tweets()&lt;/code&gt;, &lt;code&gt;tweet_shot()&lt;/code&gt; and &lt;code&gt;tweet_threading()&lt;/code&gt;.&lt;a href=&#34;#fnref1&#34; class=&#34;footnote-back&#34;&gt;↩︎&lt;/a&gt;&lt;/p&gt;&lt;/li&gt;
+&lt;/ol&gt;
+&lt;/div&gt;
+</description>
+    </item>
+    
+    <item>
+      <title>Bugs in R</title>
+      <link>https://llrs.dev/post/2021/11/16/bugs-in-r/</link>
+      <pubDate>Tue, 16 Nov 2021 00:00:00 +0000</pubDate>
+      <guid>https://llrs.dev/post/2021/11/16/bugs-in-r/</guid>
+      <description>
+&lt;script src=&#34;https://llrs.dev/post/2021/11/16/bugs-in-r/index.en_files/header-attrs/header-attrs.js&#34;&gt;&lt;/script&gt;
+&lt;script src=&#34;https://llrs.dev/post/2021/11/16/bugs-in-r/index.en_files/kePrint/kePrint.js&#34;&gt;&lt;/script&gt;
+&lt;link href=&#34;https://llrs.dev/post/2021/11/16/bugs-in-r/index.en_files/lightable/lightable.css&#34; rel=&#34;stylesheet&#34; /&gt;
+
+
+&lt;p&gt;This post has a relatively long introduction, you can skip and go ahead to the &lt;a href=&#34;#The-analysis&#34;&gt;analysis&lt;/a&gt;.&lt;/p&gt;
+&lt;p&gt;I knew about the r-devel (abbreviated Rd) mailing list that is where some discussions about the language happen and I had read that post of the &lt;a href=&#34;https://developer.r-project.org/Blog/public/2019/10/09/r-can-use-your-help-reviewing-bug-reports/index.html&#34;&gt;R core requesting help reviewing bug reports&lt;/a&gt; and I had &lt;a href=&#34;https://www.r-project.org/bugs.html&#34;&gt;requested an account&lt;/a&gt; the same day it came out to be able to post on &lt;a href=&#34;https://bugs.r-project.org/&#34;&gt;Bugzilla: https://bugs.r-project.org/&lt;/a&gt;.
+But I hadn’t reported any bug or anything, what had I to bring?&lt;/p&gt;
+&lt;p&gt;After RStudio 2021 I saw announced the &lt;a href=&#34;https://r-devel.slack.com&#34; class=&#34;uri&#34;&gt;https://r-devel.slack.com&lt;/a&gt; (you can join via &lt;a href=&#34;https://forwards.github.io/rcontribution/&#34;&gt;this website&lt;/a&gt;) and when I joined I checked some bugs and I found something odd.
+This lead to the creation of my first R bug: &lt;a href=&#34;https://bugs.r-project.org/show_bug.cgi?id=18055&#34;&gt;18055&lt;/a&gt;.&lt;/p&gt;
+&lt;p&gt;Then I thinking about the analysis about &lt;a href=&#34;https://llrs.dev/tags/reviews/&#34;&gt;package reviews&lt;/a&gt; I realized it was analyzing issues.
+Then it came to me that I could actually also analyse the issues of R, aka bugs reports.&lt;/p&gt;
+&lt;div id=&#34;collecting-the-data&#34; class=&#34;section level1&#34;&gt;
+&lt;h1&gt;Collecting the data&lt;/h1&gt;
+&lt;p&gt;First was step was collecting the data needed.
+Similar with the rOpenSci and Bioconductor analysis I knew I might need to create a package or a script just to retrieve the data.&lt;/p&gt;
+&lt;p&gt;I found somehow that it reports some data as xml and I though I could use that.
+But exploring the documentation I found it had an API that could be used to retrieve data.
+It required authentication to interact with the API.
+Instead of putting me off it made it a reasonable challenge and progression.
+If previously I used the &lt;a href=&#34;https://cran.r-project.org/package=gh&#34;&gt;gh package&lt;/a&gt; to authenticate and retrieve the raw data this time I had to learn how to authenticate to an API.
+I already developed a package that uses a poorly explained API to &lt;a href=&#34;https://ropenspain.github.io/BOE/,&#34; title=&#34;Collect the national gazette&#34;&gt;retrieve documents&lt;/a&gt; and adding a new step to authenticate requests was a small enough step.&lt;/p&gt;
+&lt;p&gt;I also found a package, &lt;a href=&#34;https://github.com/mvkorpel/bugtractr/&#34;&gt;bugtractr&lt;/a&gt;, that did this already but I had some problems using it and didn’t use authenticated requests to get the data.
+This meant it couldn’t retrieve all data I wanted.
+So I went on developing my own package to interact with Bugzilla’s API.&lt;/p&gt;
+&lt;p&gt;As I was learning to interact with API and I wanted to make it useful for the R community I looked at how to make that.
+Lukyly for me at the time I was doing this, I found the book &lt;a href=&#34;https://books.ropensci.org/http-testing/index.html&#34;&gt;HTTP testing in R&lt;/a&gt;, which was still under heavy writing but almost complete, and started reading and using its helpful advice to learn.
+One of the &lt;a href=&#34;https://books.ropensci.org/http-testing/graceful.html#choose-the-http-resource-wisely&#34;&gt;first recommendations&lt;/a&gt; was to contact with the API providers, so I email the R core about my intentions.&lt;/p&gt;
+&lt;p&gt;They raised some concerns: - Impact on the load of the machine.
+- if the API is robust enough.
+- However, semi-automating report submissions needs more thought.&lt;/p&gt;
+&lt;p&gt;Yes, at that time I had realized that the API allows to submit bug reports on the database (comments and attachments too), so I thought it could be an easy way to help people submit more bugs: submitting bugs from R itself.&lt;/p&gt;
+&lt;p&gt;After some exchanges about why, and how I was trying to retrieve data from Bugzilla I was deferred Simon Urbanek.&lt;/p&gt;
+&lt;p&gt;By that time I already posted about this on R-devel and got some interest from R contributing working group to which I presented the idea on March 12 (One month after the first commit on the package).&lt;/p&gt;
+&lt;p&gt;It was suggested on that meeting to present a Google Summer of Code&lt;a href=&#34;#fn1&#34; class=&#34;footnote-ref&#34; id=&#34;fnref1&#34;&gt;&lt;sup&gt;1&lt;/sup&gt;&lt;/a&gt; project which closed the project submission period shortly after.
+Soon two students contacted me and Heather Turner, who agreed to co-mentor the project, to write a proposal to work on my project.&lt;/p&gt;
+&lt;p&gt;By that time Simon kindly provided a database dump (without the user list) due to concerns on privacy and load on the server (which I found it can return different results on the same query), and provided the id of R core members.&lt;/p&gt;
+&lt;/div&gt;
+&lt;div id=&#34;the-analysis&#34; class=&#34;section level1&#34;&gt;
+&lt;h1&gt;The analysis&lt;/h1&gt;
+&lt;p&gt;This is a mix of analysis for three several purposes:&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;To understand what is going on with bug reports.&lt;/li&gt;
+&lt;li&gt;To understand how to make better bug reports to help bug submissions via bugRzilla.&lt;/li&gt;
+&lt;li&gt;To help the R contributor working group and R forwards to identify contributors.&lt;/li&gt;
+&lt;li&gt;To help the R core team identifying possible areas of improvements.&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;It is based on the &lt;a href=&#34;https://llrs.github.io/bugzilla_viz/bugRzilla_review.html&#34;&gt;analysis by Piyush Kumar&lt;/a&gt; and &lt;a href=&#34;https://llrs.github.io/bugzilla_viz/&#34;&gt;myself&lt;/a&gt;.
+If you want code and explore the database follow these links and you’ll be able to download it.&lt;/p&gt;
+&lt;p&gt;A first exploration is to see the bug ids and the creation time of the bug id:&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;https://llrs.dev/post/2021/11/16/bugs-in-r/index.en_files/figure-html/database-1.png&#34; width=&#34;768&#34; /&gt;&lt;/p&gt;
+&lt;p&gt;The first suprising thing are these three points that appear outside the line the other bugs form.&lt;/p&gt;
+&lt;p&gt;One of these outliers is &lt;a href=&#34;https://bugs.r-project.org/show_bug.cgi?id=1&#34;&gt;a test&lt;/a&gt; when the bug reports moved from Jitterbug to Bugzilla as &lt;a href=&#34;https://stat.ethz.ch/pipermail/r-devel/2010-March/056954.html&#34;&gt;mentioned on the mailing list&lt;/a&gt;.&lt;/p&gt;
+&lt;p&gt;I don’t know the reason of the move, probably due to SPAM or interface improvements.
+If we look at those missing ids we can estimate the SPAM, note that some might be vulnerabilities on R (but I doubt that there are this much):&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;https://llrs.dev/post/2021/11/16/bugs-in-r/index.en_files/figure-html/spam-1.png&#34; width=&#34;768&#34; /&gt;&lt;/p&gt;
+&lt;p&gt;The first observable thing is the high number of ids missing on Jitterbug.
+I heard that this was an abuse of the site, which seems particularly bad arround two dates.&lt;/p&gt;
+&lt;p&gt;Later on when the system moved to Bugzilla there are much less missing ids, until one day there are around 120 missing ids and the date later to have an account it was required to send a message to the R core about it.
+Probably spamers abused the Bugzilla’s API. Is understandable that the R core team is concerned on receiving spam messages from those past experiences.&lt;/p&gt;
+&lt;p&gt;As the information from Jitterbug is both old and not as reach as those bugs on Bugzilla I will limit from now on to analyze those bugs reported on Bugzilla.
+In addition the number of bugs reported on Bugzilla is similar to the ones on Jitterbug:&lt;/p&gt;
+&lt;table class=&#34;table&#34; style=&#34;margin-left: auto; margin-right: auto;&#34;&gt;
+&lt;thead&gt;
+&lt;tr&gt;
+&lt;th style=&#34;text-align:left;&#34;&gt;
+Reported on
+&lt;/th&gt;
+&lt;th style=&#34;text-align:right;&#34;&gt;
+Reports
+&lt;/th&gt;
+&lt;/tr&gt;
+&lt;/thead&gt;
+&lt;tbody&gt;
+&lt;tr&gt;
+&lt;td style=&#34;text-align:left;&#34;&gt;
+Jitterbug
+&lt;/td&gt;
+&lt;td style=&#34;text-align:right;&#34;&gt;
+3594
+&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td style=&#34;text-align:left;&#34;&gt;
+Bugzilla
+&lt;/td&gt;
+&lt;td style=&#34;text-align:right;&#34;&gt;
+3448
+&lt;/td&gt;
+&lt;/tr&gt;
+&lt;/tbody&gt;
+&lt;/table&gt;
+&lt;p&gt;There are some old bugs opened on Jitterbug modified on Bugzilla (428) and still not closed.&lt;/p&gt;
+&lt;div id=&#34;openning-bugs-reports&#34; class=&#34;section level2&#34;&gt;
+&lt;h2&gt;Openning bugs reports&lt;/h2&gt;
+&lt;p&gt;If we focus only on bugs reported on Bugzilla we find the following number of bugs:&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;https://llrs.dev/post/2021/11/16/bugs-in-r/index.en_files/figure-html/reportin2-1.png&#34; width=&#34;768&#34; /&gt;&lt;/p&gt;
+&lt;p&gt;Most bugs are closed followed by unconfirmed:&lt;/p&gt;
+&lt;table class=&#34;table&#34; style=&#34;margin-left: auto; margin-right: auto;&#34;&gt;
+&lt;thead&gt;
+&lt;tr&gt;
+&lt;th style=&#34;text-align:left;&#34;&gt;
+Status
+&lt;/th&gt;
+&lt;th style=&#34;text-align:right;&#34;&gt;
+Bug reports
+&lt;/th&gt;
+&lt;/tr&gt;
+&lt;/thead&gt;
+&lt;tbody&gt;
+&lt;tr&gt;
+&lt;td style=&#34;text-align:left;&#34;&gt;
+CLOSED
+&lt;/td&gt;
+&lt;td style=&#34;text-align:right;&#34;&gt;
+2792
+&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td style=&#34;text-align:left;&#34;&gt;
+UNCONFIRMED
+&lt;/td&gt;
+&lt;td style=&#34;text-align:right;&#34;&gt;
+324
+&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td style=&#34;text-align:left;&#34;&gt;
+NEW
+&lt;/td&gt;
+&lt;td style=&#34;text-align:right;&#34;&gt;
+125
+&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td style=&#34;text-align:left;&#34;&gt;
+ASSIGNED
+&lt;/td&gt;
+&lt;td style=&#34;text-align:right;&#34;&gt;
+39
+&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td style=&#34;text-align:left;&#34;&gt;
+CONFIRMED
+&lt;/td&gt;
+&lt;td style=&#34;text-align:right;&#34;&gt;
+13
+&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td style=&#34;text-align:left;&#34;&gt;
+REOPENED
+&lt;/td&gt;
+&lt;td style=&#34;text-align:right;&#34;&gt;
+11
+&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td style=&#34;text-align:left;&#34;&gt;
+RESOLVED
+&lt;/td&gt;
+&lt;td style=&#34;text-align:right;&#34;&gt;
+9
+&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td style=&#34;text-align:left;&#34;&gt;
+VERIFIED
+&lt;/td&gt;
+&lt;td style=&#34;text-align:right;&#34;&gt;
+3
+&lt;/td&gt;
+&lt;/tr&gt;
+&lt;/tbody&gt;
+&lt;/table&gt;
+&lt;p&gt;Do bugs reported have an attachment with a patch?&lt;/p&gt;
+&lt;img src=&#34;https://llrs.dev/post/2021/11/16/bugs-in-r/index.en_files/figure-html/attachments-1.png&#34; width=&#34;768&#34; /&gt;
+&lt;table class=&#34;table&#34; style=&#34;margin-left: auto; margin-right: auto;&#34;&gt;
+&lt;thead&gt;
+&lt;tr&gt;
+&lt;th style=&#34;text-align:center;&#34;&gt;
+Attachment on opening
+&lt;/th&gt;
+&lt;th style=&#34;text-align:center;&#34;&gt;
+Patch
+&lt;/th&gt;
+&lt;th style=&#34;text-align:center;&#34;&gt;
+Bugs
+&lt;/th&gt;
+&lt;th style=&#34;text-align:center;&#34;&gt;
+%
+&lt;/th&gt;
+&lt;/tr&gt;
+&lt;/thead&gt;
+&lt;tbody&gt;
+&lt;tr&gt;
+&lt;td style=&#34;text-align:center;&#34;&gt;
+No
+&lt;/td&gt;
+&lt;td style=&#34;text-align:center;&#34;&gt;
+No
+&lt;/td&gt;
+&lt;td style=&#34;text-align:center;&#34;&gt;
+380
+&lt;/td&gt;
+&lt;td style=&#34;text-align:center;&#34;&gt;
+43.18
+&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td style=&#34;text-align:center;&#34;&gt;
+No
+&lt;/td&gt;
+&lt;td style=&#34;text-align:center;&#34;&gt;
+Yes
+&lt;/td&gt;
+&lt;td style=&#34;text-align:center;&#34;&gt;
+500
+&lt;/td&gt;
+&lt;td style=&#34;text-align:center;&#34;&gt;
+56.82
+&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td style=&#34;text-align:center;&#34;&gt;
+Yes
+&lt;/td&gt;
+&lt;td style=&#34;text-align:center;&#34;&gt;
+No
+&lt;/td&gt;
+&lt;td style=&#34;text-align:center;&#34;&gt;
+438
+&lt;/td&gt;
+&lt;td style=&#34;text-align:center;&#34;&gt;
+61.60
+&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td style=&#34;text-align:center;&#34;&gt;
+Yes
+&lt;/td&gt;
+&lt;td style=&#34;text-align:center;&#34;&gt;
+Yes
+&lt;/td&gt;
+&lt;td style=&#34;text-align:center;&#34;&gt;
+273
+&lt;/td&gt;
+&lt;td style=&#34;text-align:center;&#34;&gt;
+38.40
+&lt;/td&gt;
+&lt;/tr&gt;
+&lt;/tbody&gt;
+&lt;/table&gt;
+&lt;p&gt;Many bug reports have attachments on opening, mostly they contain code to reproduce the problem.
+If bugs do not contain attachments and they receive an attachment it will usually be a patch (but it might not).&lt;/p&gt;
+&lt;/div&gt;
+&lt;div id=&#34;what-happens-after-submitting-a-bug-report&#34; class=&#34;section level2&#34;&gt;
+&lt;h2&gt;What happens after submitting a bug report?&lt;/h2&gt;
+&lt;p&gt;One of the most common thing to happen is that someone might comment on the bug either to ask for clarification or to discuss the bug report and possible solutions:&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;https://llrs.dev/post/2021/11/16/bugs-in-r/index.en_files/figure-html/activity-1.png&#34; width=&#34;768&#34; /&gt;&lt;/p&gt;
+&lt;p&gt;Most common action is receiving a comment, whose author is added on the CC field.&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;https://llrs.dev/post/2021/11/16/bugs-in-r/index.en_files/figure-html/r-core-1.png&#34; width=&#34;768&#34; /&gt;&lt;/p&gt;
+&lt;p&gt;The R core is very active answering on the bug reports, only it seems that those that are trivial do not receive a reply as often as the other categories.&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;https://llrs.dev/post/2021/11/16/bugs-in-r/index.en_files/figure-html/comment-core-1.png&#34; width=&#34;768&#34; /&gt;&lt;/p&gt;
+&lt;p&gt;If we look by component and OS there are some combinations that received few comments, mostly those that are wishes for R.&lt;/p&gt;
+&lt;p&gt;If we split them between peitions to improve R and actual bug reports we can see a different pattern:&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;https://llrs.dev/post/2021/11/16/bugs-in-r/index.en_files/figure-html/comments-enhancements-1.png&#34; width=&#34;768&#34; /&gt;&lt;/p&gt;
+&lt;p&gt;Enhancements usually receive less comments from the R core.
+Wishlists receive more comments from the R core among the enhancements.&lt;/p&gt;
+&lt;p&gt;What about the comments made by the original poster?
+Do they comment when they receive some feedback from other users?&lt;/p&gt;
+&lt;table class=&#34;table&#34; style=&#34;margin-left: auto; margin-right: auto;&#34;&gt;
+&lt;thead&gt;
+&lt;tr&gt;
+&lt;th style=&#34;text-align:left;&#34;&gt;
+Responsive
+&lt;/th&gt;
+&lt;th style=&#34;text-align:right;&#34;&gt;
+Bugs reports
+&lt;/th&gt;
+&lt;/tr&gt;
+&lt;/thead&gt;
+&lt;tbody&gt;
+&lt;tr&gt;
+&lt;td style=&#34;text-align:left;&#34;&gt;
+no
+&lt;/td&gt;
+&lt;td style=&#34;text-align:right;&#34;&gt;
+409
+&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td style=&#34;text-align:left;&#34;&gt;
+yes
+&lt;/td&gt;
+&lt;td style=&#34;text-align:right;&#34;&gt;
+122
+&lt;/td&gt;
+&lt;/tr&gt;
+&lt;/tbody&gt;
+&lt;/table&gt;
+&lt;p&gt;Most of them do not reply back when they receive a comment.
+There might be several causes, one of them is if their bug report is closed or assigned to an R core member.&lt;/p&gt;
+&lt;table class=&#34;table&#34; style=&#34;margin-left: auto; margin-right: auto;&#34;&gt;
+&lt;thead&gt;
+&lt;tr&gt;
+&lt;th style=&#34;text-align:left;&#34;&gt;
+handled
+&lt;/th&gt;
+&lt;th style=&#34;text-align:right;&#34;&gt;
+bugs
+&lt;/th&gt;
+&lt;/tr&gt;
+&lt;/thead&gt;
+&lt;tbody&gt;
+&lt;tr&gt;
+&lt;td style=&#34;text-align:left;&#34;&gt;
+no
+&lt;/td&gt;
+&lt;td style=&#34;text-align:right;&#34;&gt;
+177
+&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td style=&#34;text-align:left;&#34;&gt;
+yes
+&lt;/td&gt;
+&lt;td style=&#34;text-align:right;&#34;&gt;
+232
+&lt;/td&gt;
+&lt;/tr&gt;
+&lt;/tbody&gt;
+&lt;/table&gt;
+&lt;p&gt;Which shows that the majority of those who do not respond is because either the bug report is closed (fixed or not) or a R core member is assigned (usually to himself).&lt;/p&gt;
+&lt;/div&gt;
+&lt;div id=&#34;who-is-active&#34; class=&#34;section level2&#34;&gt;
+&lt;h2&gt;Who is active ?&lt;/h2&gt;
+&lt;p&gt;So far we have explored the activity of users who report a bug and the R core members that receive this.
+But there are some users that beyond this they also participate and collaborate with the R core.
+To make it more recent we will look at those users active on the bugs opened on the last three years.&lt;/p&gt;
+&lt;table&gt;
+&lt;thead&gt;
+&lt;tr&gt;
+&lt;th style=&#34;text-align:right;&#34;&gt;
+ID
+&lt;/th&gt;
+&lt;th style=&#34;text-align:left;&#34;&gt;
+Name
+&lt;/th&gt;
+&lt;th style=&#34;text-align:right;&#34;&gt;
+All comments
+&lt;/th&gt;
+&lt;th style=&#34;text-align:right;&#34;&gt;
+All attachments
+&lt;/th&gt;
+&lt;th style=&#34;text-align:right;&#34;&gt;
+Comments
+&lt;/th&gt;
+&lt;th style=&#34;text-align:right;&#34;&gt;
+Attachments
+&lt;/th&gt;
+&lt;th style=&#34;text-align:right;&#34;&gt;
+Bugs opened
+&lt;/th&gt;
+&lt;th style=&#34;text-align:right;&#34;&gt;
+Bugs interacted
+&lt;/th&gt;
+&lt;th style=&#34;text-align:right;&#34;&gt;
+Actions
+&lt;/th&gt;
+&lt;/tr&gt;
+&lt;/thead&gt;
+&lt;tbody&gt;
+&lt;tr&gt;
+&lt;td style=&#34;text-align:right;&#34;&gt;
+3299
+&lt;/td&gt;
+&lt;td style=&#34;text-align:left;&#34;&gt;
+Elin Waring
+&lt;/td&gt;
+&lt;td style=&#34;text-align:right;&#34;&gt;
+100
+&lt;/td&gt;
+&lt;td style=&#34;text-align:right;&#34;&gt;
+2
+&lt;/td&gt;
+&lt;td style=&#34;text-align:right;&#34;&gt;
+99
+&lt;/td&gt;
+&lt;td style=&#34;text-align:right;&#34;&gt;
+1
+&lt;/td&gt;
+&lt;td style=&#34;text-align:right;&#34;&gt;
+1
+&lt;/td&gt;
+&lt;td style=&#34;text-align:right;&#34;&gt;
+66
+&lt;/td&gt;
+&lt;td style=&#34;text-align:right;&#34;&gt;
+101
+&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td style=&#34;text-align:right;&#34;&gt;
+963
+&lt;/td&gt;
+&lt;td style=&#34;text-align:left;&#34;&gt;
+Suharto Anggono
+&lt;/td&gt;
+&lt;td style=&#34;text-align:right;&#34;&gt;
+115
+&lt;/td&gt;
+&lt;td style=&#34;text-align:right;&#34;&gt;
+39
+&lt;/td&gt;
+&lt;td style=&#34;text-align:right;&#34;&gt;
+55
+&lt;/td&gt;
+&lt;td style=&#34;text-align:right;&#34;&gt;
+7
+&lt;/td&gt;
+&lt;td style=&#34;text-align:right;&#34;&gt;
+21
+&lt;/td&gt;
+&lt;td style=&#34;text-align:right;&#34;&gt;
+42
+&lt;/td&gt;
+&lt;td style=&#34;text-align:right;&#34;&gt;
+83
+&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td style=&#34;text-align:right;&#34;&gt;
+274
+&lt;/td&gt;
+&lt;td style=&#34;text-align:left;&#34;&gt;
+Sebastian Meyer
+&lt;/td&gt;
+&lt;td style=&#34;text-align:right;&#34;&gt;
+80
+&lt;/td&gt;
+&lt;td style=&#34;text-align:right;&#34;&gt;
+24
+&lt;/td&gt;
+&lt;td style=&#34;text-align:right;&#34;&gt;
+49
+&lt;/td&gt;
+&lt;td style=&#34;text-align:right;&#34;&gt;
+11
+&lt;/td&gt;
+&lt;td style=&#34;text-align:right;&#34;&gt;
+18
+&lt;/td&gt;
+&lt;td style=&#34;text-align:right;&#34;&gt;
+58
+&lt;/td&gt;
+&lt;td style=&#34;text-align:right;&#34;&gt;
+78
+&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td style=&#34;text-align:right;&#34;&gt;
+430
+&lt;/td&gt;
+&lt;td style=&#34;text-align:left;&#34;&gt;
+Benjamin Tyner
+&lt;/td&gt;
+&lt;td style=&#34;text-align:right;&#34;&gt;
+59
+&lt;/td&gt;
+&lt;td style=&#34;text-align:right;&#34;&gt;
+4
+&lt;/td&gt;
+&lt;td style=&#34;text-align:right;&#34;&gt;
+52
+&lt;/td&gt;
+&lt;td style=&#34;text-align:right;&#34;&gt;
+4
+&lt;/td&gt;
+&lt;td style=&#34;text-align:right;&#34;&gt;
+5
+&lt;/td&gt;
+&lt;td style=&#34;text-align:right;&#34;&gt;
+32
+&lt;/td&gt;
+&lt;td style=&#34;text-align:right;&#34;&gt;
+61
+&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td style=&#34;text-align:right;&#34;&gt;
+3256
+&lt;/td&gt;
+&lt;td style=&#34;text-align:left;&#34;&gt;
+Michael Chirico
+&lt;/td&gt;
+&lt;td style=&#34;text-align:right;&#34;&gt;
+110
+&lt;/td&gt;
+&lt;td style=&#34;text-align:right;&#34;&gt;
+51
+&lt;/td&gt;
+&lt;td style=&#34;text-align:right;&#34;&gt;
+2
+&lt;/td&gt;
+&lt;td style=&#34;text-align:right;&#34;&gt;
+1
+&lt;/td&gt;
+&lt;td style=&#34;text-align:right;&#34;&gt;
+52
+&lt;/td&gt;
+&lt;td style=&#34;text-align:right;&#34;&gt;
+54
+&lt;/td&gt;
+&lt;td style=&#34;text-align:right;&#34;&gt;
+55
+&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td style=&#34;text-align:right;&#34;&gt;
+1044
+&lt;/td&gt;
+&lt;td style=&#34;text-align:left;&#34;&gt;
+Kevin Ushey
+&lt;/td&gt;
+&lt;td style=&#34;text-align:right;&#34;&gt;
+65
+&lt;/td&gt;
+&lt;td style=&#34;text-align:right;&#34;&gt;
+10
+&lt;/td&gt;
+&lt;td style=&#34;text-align:right;&#34;&gt;
+4
+&lt;/td&gt;
+&lt;td style=&#34;text-align:right;&#34;&gt;
+0
+&lt;/td&gt;
+&lt;td style=&#34;text-align:right;&#34;&gt;
+35
+&lt;/td&gt;
+&lt;td style=&#34;text-align:right;&#34;&gt;
+39
+&lt;/td&gt;
+&lt;td style=&#34;text-align:right;&#34;&gt;
+39
+&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td style=&#34;text-align:right;&#34;&gt;
+1036
+&lt;/td&gt;
+&lt;td style=&#34;text-align:left;&#34;&gt;
+Henrik Bengtsson
+&lt;/td&gt;
+&lt;td style=&#34;text-align:right;&#34;&gt;
+56
+&lt;/td&gt;
+&lt;td style=&#34;text-align:right;&#34;&gt;
+14
+&lt;/td&gt;
+&lt;td style=&#34;text-align:right;&#34;&gt;
+9
+&lt;/td&gt;
+&lt;td style=&#34;text-align:right;&#34;&gt;
+1
+&lt;/td&gt;
+&lt;td style=&#34;text-align:right;&#34;&gt;
+26
+&lt;/td&gt;
+&lt;td style=&#34;text-align:right;&#34;&gt;
+31
+&lt;/td&gt;
+&lt;td style=&#34;text-align:right;&#34;&gt;
+36
+&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td style=&#34;text-align:right;&#34;&gt;
+2307
+&lt;/td&gt;
+&lt;td style=&#34;text-align:left;&#34;&gt;
+Lionel Henry
+&lt;/td&gt;
+&lt;td style=&#34;text-align:right;&#34;&gt;
+41
+&lt;/td&gt;
+&lt;td style=&#34;text-align:right;&#34;&gt;
+25
+&lt;/td&gt;
+&lt;td style=&#34;text-align:right;&#34;&gt;
+6
+&lt;/td&gt;
+&lt;td style=&#34;text-align:right;&#34;&gt;
+2
+&lt;/td&gt;
+&lt;td style=&#34;text-align:right;&#34;&gt;
+20
+&lt;/td&gt;
+&lt;td style=&#34;text-align:right;&#34;&gt;
+22
+&lt;/td&gt;
+&lt;td style=&#34;text-align:right;&#34;&gt;
+28
+&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td style=&#34;text-align:right;&#34;&gt;
+1056
+&lt;/td&gt;
+&lt;td style=&#34;text-align:left;&#34;&gt;
+Bill Dunlap
+&lt;/td&gt;
+&lt;td style=&#34;text-align:right;&#34;&gt;
+28
+&lt;/td&gt;
+&lt;td style=&#34;text-align:right;&#34;&gt;
+0
+&lt;/td&gt;
+&lt;td style=&#34;text-align:right;&#34;&gt;
+1
+&lt;/td&gt;
+&lt;td style=&#34;text-align:right;&#34;&gt;
+0
+&lt;/td&gt;
+&lt;td style=&#34;text-align:right;&#34;&gt;
+21
+&lt;/td&gt;
+&lt;td style=&#34;text-align:right;&#34;&gt;
+22
+&lt;/td&gt;
+&lt;td style=&#34;text-align:right;&#34;&gt;
+22
+&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td style=&#34;text-align:right;&#34;&gt;
+2801
+&lt;/td&gt;
+&lt;td style=&#34;text-align:left;&#34;&gt;
+Bob Rudis
+&lt;/td&gt;
+&lt;td style=&#34;text-align:right;&#34;&gt;
+19
+&lt;/td&gt;
+&lt;td style=&#34;text-align:right;&#34;&gt;
+4
+&lt;/td&gt;
+&lt;td style=&#34;text-align:right;&#34;&gt;
+16
+&lt;/td&gt;
+&lt;td style=&#34;text-align:right;&#34;&gt;
+2
+&lt;/td&gt;
+&lt;td style=&#34;text-align:right;&#34;&gt;
+2
+&lt;/td&gt;
+&lt;td style=&#34;text-align:right;&#34;&gt;
+12
+&lt;/td&gt;
+&lt;td style=&#34;text-align:right;&#34;&gt;
+20
+&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td style=&#34;text-align:right;&#34;&gt;
+1299
+&lt;/td&gt;
+&lt;td style=&#34;text-align:left;&#34;&gt;
+Gabriel Becker
+&lt;/td&gt;
+&lt;td style=&#34;text-align:right;&#34;&gt;
+52
+&lt;/td&gt;
+&lt;td style=&#34;text-align:right;&#34;&gt;
+28
+&lt;/td&gt;
+&lt;td style=&#34;text-align:right;&#34;&gt;
+0
+&lt;/td&gt;
+&lt;td style=&#34;text-align:right;&#34;&gt;
+0
+&lt;/td&gt;
+&lt;td style=&#34;text-align:right;&#34;&gt;
+18
+&lt;/td&gt;
+&lt;td style=&#34;text-align:right;&#34;&gt;
+18
+&lt;/td&gt;
+&lt;td style=&#34;text-align:right;&#34;&gt;
+18
+&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td style=&#34;text-align:right;&#34;&gt;
+11
+&lt;/td&gt;
+&lt;td style=&#34;text-align:left;&#34;&gt;
+Ben Bolker
+&lt;/td&gt;
+&lt;td style=&#34;text-align:right;&#34;&gt;
+14
+&lt;/td&gt;
+&lt;td style=&#34;text-align:right;&#34;&gt;
+0
+&lt;/td&gt;
+&lt;td style=&#34;text-align:right;&#34;&gt;
+11
+&lt;/td&gt;
+&lt;td style=&#34;text-align:right;&#34;&gt;
+0
+&lt;/td&gt;
+&lt;td style=&#34;text-align:right;&#34;&gt;
+3
+&lt;/td&gt;
+&lt;td style=&#34;text-align:right;&#34;&gt;
+9
+&lt;/td&gt;
+&lt;td style=&#34;text-align:right;&#34;&gt;
+14
+&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td style=&#34;text-align:right;&#34;&gt;
+114
+&lt;/td&gt;
+&lt;td style=&#34;text-align:left;&#34;&gt;
+Gabor Csardi
+&lt;/td&gt;
+&lt;td style=&#34;text-align:right;&#34;&gt;
+26
+&lt;/td&gt;
+&lt;td style=&#34;text-align:right;&#34;&gt;
+8
+&lt;/td&gt;
+&lt;td style=&#34;text-align:right;&#34;&gt;
+4
+&lt;/td&gt;
+&lt;td style=&#34;text-align:right;&#34;&gt;
+0
+&lt;/td&gt;
+&lt;td style=&#34;text-align:right;&#34;&gt;
+10
+&lt;/td&gt;
+&lt;td style=&#34;text-align:right;&#34;&gt;
+11
+&lt;/td&gt;
+&lt;td style=&#34;text-align:right;&#34;&gt;
+14
+&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td style=&#34;text-align:right;&#34;&gt;
+610
+&lt;/td&gt;
+&lt;td style=&#34;text-align:left;&#34;&gt;
+Jeroen Ooms
+&lt;/td&gt;
+&lt;td style=&#34;text-align:right;&#34;&gt;
+15
+&lt;/td&gt;
+&lt;td style=&#34;text-align:right;&#34;&gt;
+4
+&lt;/td&gt;
+&lt;td style=&#34;text-align:right;&#34;&gt;
+6
+&lt;/td&gt;
+&lt;td style=&#34;text-align:right;&#34;&gt;
+1
+&lt;/td&gt;
+&lt;td style=&#34;text-align:right;&#34;&gt;
+7
+&lt;/td&gt;
+&lt;td style=&#34;text-align:right;&#34;&gt;
+11
+&lt;/td&gt;
+&lt;td style=&#34;text-align:right;&#34;&gt;
+14
+&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td style=&#34;text-align:right;&#34;&gt;
+1602
+&lt;/td&gt;
+&lt;td style=&#34;text-align:left;&#34;&gt;
+brodie.gaslam@
+&lt;/td&gt;
+&lt;td style=&#34;text-align:right;&#34;&gt;
+53
+&lt;/td&gt;
+&lt;td style=&#34;text-align:right;&#34;&gt;
+16
+&lt;/td&gt;
+&lt;td style=&#34;text-align:right;&#34;&gt;
+0
+&lt;/td&gt;
+&lt;td style=&#34;text-align:right;&#34;&gt;
+0
+&lt;/td&gt;
+&lt;td style=&#34;text-align:right;&#34;&gt;
+13
+&lt;/td&gt;
+&lt;td style=&#34;text-align:right;&#34;&gt;
+13
+&lt;/td&gt;
+&lt;td style=&#34;text-align:right;&#34;&gt;
+13
+&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td style=&#34;text-align:right;&#34;&gt;
+6
+&lt;/td&gt;
+&lt;td style=&#34;text-align:left;&#34;&gt;
+Duncan Murdoch
+&lt;/td&gt;
+&lt;td style=&#34;text-align:right;&#34;&gt;
+22
+&lt;/td&gt;
+&lt;td style=&#34;text-align:right;&#34;&gt;
+7
+&lt;/td&gt;
+&lt;td style=&#34;text-align:right;&#34;&gt;
+0
+&lt;/td&gt;
+&lt;td style=&#34;text-align:right;&#34;&gt;
+0
+&lt;/td&gt;
+&lt;td style=&#34;text-align:right;&#34;&gt;
+12
+&lt;/td&gt;
+&lt;td style=&#34;text-align:right;&#34;&gt;
+12
+&lt;/td&gt;
+&lt;td style=&#34;text-align:right;&#34;&gt;
+12
+&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td style=&#34;text-align:right;&#34;&gt;
+921
+&lt;/td&gt;
+&lt;td style=&#34;text-align:left;&#34;&gt;
+Dirk Eddelbuettel
+&lt;/td&gt;
+&lt;td style=&#34;text-align:right;&#34;&gt;
+17
+&lt;/td&gt;
+&lt;td style=&#34;text-align:right;&#34;&gt;
+4
+&lt;/td&gt;
+&lt;td style=&#34;text-align:right;&#34;&gt;
+4
+&lt;/td&gt;
+&lt;td style=&#34;text-align:right;&#34;&gt;
+0
+&lt;/td&gt;
+&lt;td style=&#34;text-align:right;&#34;&gt;
+7
+&lt;/td&gt;
+&lt;td style=&#34;text-align:right;&#34;&gt;
+11
+&lt;/td&gt;
+&lt;td style=&#34;text-align:right;&#34;&gt;
+11
+&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td style=&#34;text-align:right;&#34;&gt;
+1715
+&lt;/td&gt;
+&lt;td style=&#34;text-align:left;&#34;&gt;
+Herv� Pag�s
+&lt;/td&gt;
+&lt;td style=&#34;text-align:right;&#34;&gt;
+24
+&lt;/td&gt;
+&lt;td style=&#34;text-align:right;&#34;&gt;
+1
+&lt;/td&gt;
+&lt;td style=&#34;text-align:right;&#34;&gt;
+5
+&lt;/td&gt;
+&lt;td style=&#34;text-align:right;&#34;&gt;
+1
+&lt;/td&gt;
+&lt;td style=&#34;text-align:right;&#34;&gt;
+5
+&lt;/td&gt;
+&lt;td style=&#34;text-align:right;&#34;&gt;
+7
+&lt;/td&gt;
+&lt;td style=&#34;text-align:right;&#34;&gt;
+11
+&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td style=&#34;text-align:right;&#34;&gt;
+2885
+&lt;/td&gt;
+&lt;td style=&#34;text-align:left;&#34;&gt;
+Jan Gorecki
+&lt;/td&gt;
+&lt;td style=&#34;text-align:right;&#34;&gt;
+14
+&lt;/td&gt;
+&lt;td style=&#34;text-align:right;&#34;&gt;
+1
+&lt;/td&gt;
+&lt;td style=&#34;text-align:right;&#34;&gt;
+1
+&lt;/td&gt;
+&lt;td style=&#34;text-align:right;&#34;&gt;
+0
+&lt;/td&gt;
+&lt;td style=&#34;text-align:right;&#34;&gt;
+9
+&lt;/td&gt;
+&lt;td style=&#34;text-align:right;&#34;&gt;
+10
+&lt;/td&gt;
+&lt;td style=&#34;text-align:right;&#34;&gt;
+10
+&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td style=&#34;text-align:right;&#34;&gt;
+3051
+&lt;/td&gt;
+&lt;td style=&#34;text-align:left;&#34;&gt;
+Xianying Tan
+&lt;/td&gt;
+&lt;td style=&#34;text-align:right;&#34;&gt;
+20
+&lt;/td&gt;
+&lt;td style=&#34;text-align:right;&#34;&gt;
+0
+&lt;/td&gt;
+&lt;td style=&#34;text-align:right;&#34;&gt;
+4
+&lt;/td&gt;
+&lt;td style=&#34;text-align:right;&#34;&gt;
+0
+&lt;/td&gt;
+&lt;td style=&#34;text-align:right;&#34;&gt;
+6
+&lt;/td&gt;
+&lt;td style=&#34;text-align:right;&#34;&gt;
+7
+&lt;/td&gt;
+&lt;td style=&#34;text-align:right;&#34;&gt;
+10
+&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td style=&#34;text-align:right;&#34;&gt;
+3228
+&lt;/td&gt;
+&lt;td style=&#34;text-align:left;&#34;&gt;
+Emil Bode
+&lt;/td&gt;
+&lt;td style=&#34;text-align:right;&#34;&gt;
+16
+&lt;/td&gt;
+&lt;td style=&#34;text-align:right;&#34;&gt;
+4
+&lt;/td&gt;
+&lt;td style=&#34;text-align:right;&#34;&gt;
+0
+&lt;/td&gt;
+&lt;td style=&#34;text-align:right;&#34;&gt;
+0
+&lt;/td&gt;
+&lt;td style=&#34;text-align:right;&#34;&gt;
+10
+&lt;/td&gt;
+&lt;td style=&#34;text-align:right;&#34;&gt;
+10
+&lt;/td&gt;
+&lt;td style=&#34;text-align:right;&#34;&gt;
+10
+&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td style=&#34;text-align:right;&#34;&gt;
+3344
+&lt;/td&gt;
+&lt;td style=&#34;text-align:left;&#34;&gt;
+Joe Cheng
+&lt;/td&gt;
+&lt;td style=&#34;text-align:right;&#34;&gt;
+7
+&lt;/td&gt;
+&lt;td style=&#34;text-align:right;&#34;&gt;
+3
+&lt;/td&gt;
+&lt;td style=&#34;text-align:right;&#34;&gt;
+7
+&lt;/td&gt;
+&lt;td style=&#34;text-align:right;&#34;&gt;
+3
+&lt;/td&gt;
+&lt;td style=&#34;text-align:right;&#34;&gt;
+0
+&lt;/td&gt;
+&lt;td style=&#34;text-align:right;&#34;&gt;
+1
+&lt;/td&gt;
+&lt;td style=&#34;text-align:right;&#34;&gt;
+10
+&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td style=&#34;text-align:right;&#34;&gt;
+2264
+&lt;/td&gt;
+&lt;td style=&#34;text-align:left;&#34;&gt;
+Neal Fultz
+&lt;/td&gt;
+&lt;td style=&#34;text-align:right;&#34;&gt;
+20
+&lt;/td&gt;
+&lt;td style=&#34;text-align:right;&#34;&gt;
+5
+&lt;/td&gt;
+&lt;td style=&#34;text-align:right;&#34;&gt;
+0
+&lt;/td&gt;
+&lt;td style=&#34;text-align:right;&#34;&gt;
+0
+&lt;/td&gt;
+&lt;td style=&#34;text-align:right;&#34;&gt;
+9
+&lt;/td&gt;
+&lt;td style=&#34;text-align:right;&#34;&gt;
+9
+&lt;/td&gt;
+&lt;td style=&#34;text-align:right;&#34;&gt;
+9
+&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td style=&#34;text-align:right;&#34;&gt;
+317
+&lt;/td&gt;
+&lt;td style=&#34;text-align:left;&#34;&gt;
+Mikko Korpela
+&lt;/td&gt;
+&lt;td style=&#34;text-align:right;&#34;&gt;
+9
+&lt;/td&gt;
+&lt;td style=&#34;text-align:right;&#34;&gt;
+0
+&lt;/td&gt;
+&lt;td style=&#34;text-align:right;&#34;&gt;
+5
+&lt;/td&gt;
+&lt;td style=&#34;text-align:right;&#34;&gt;
+0
+&lt;/td&gt;
+&lt;td style=&#34;text-align:right;&#34;&gt;
+3
+&lt;/td&gt;
+&lt;td style=&#34;text-align:right;&#34;&gt;
+6
+&lt;/td&gt;
+&lt;td style=&#34;text-align:right;&#34;&gt;
+8
+&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td style=&#34;text-align:right;&#34;&gt;
+847
+&lt;/td&gt;
+&lt;td style=&#34;text-align:left;&#34;&gt;
+Pavel N. Krivitsky
+&lt;/td&gt;
+&lt;td style=&#34;text-align:right;&#34;&gt;
+15
+&lt;/td&gt;
+&lt;td style=&#34;text-align:right;&#34;&gt;
+2
+&lt;/td&gt;
+&lt;td style=&#34;text-align:right;&#34;&gt;
+0
+&lt;/td&gt;
+&lt;td style=&#34;text-align:right;&#34;&gt;
+0
+&lt;/td&gt;
+&lt;td style=&#34;text-align:right;&#34;&gt;
+8
+&lt;/td&gt;
+&lt;td style=&#34;text-align:right;&#34;&gt;
+8
+&lt;/td&gt;
+&lt;td style=&#34;text-align:right;&#34;&gt;
+8
+&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td style=&#34;text-align:right;&#34;&gt;
+1251
+&lt;/td&gt;
+&lt;td style=&#34;text-align:left;&#34;&gt;
+Arni Magnusson
+&lt;/td&gt;
+&lt;td style=&#34;text-align:right;&#34;&gt;
+13
+&lt;/td&gt;
+&lt;td style=&#34;text-align:right;&#34;&gt;
+8
+&lt;/td&gt;
+&lt;td style=&#34;text-align:right;&#34;&gt;
+0
+&lt;/td&gt;
+&lt;td style=&#34;text-align:right;&#34;&gt;
+0
+&lt;/td&gt;
+&lt;td style=&#34;text-align:right;&#34;&gt;
+8
+&lt;/td&gt;
+&lt;td style=&#34;text-align:right;&#34;&gt;
+8
+&lt;/td&gt;
+&lt;td style=&#34;text-align:right;&#34;&gt;
+8
+&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td style=&#34;text-align:right;&#34;&gt;
+1849
+&lt;/td&gt;
+&lt;td style=&#34;text-align:left;&#34;&gt;
+Andre Mikulec
+&lt;/td&gt;
+&lt;td style=&#34;text-align:right;&#34;&gt;
+21
+&lt;/td&gt;
+&lt;td style=&#34;text-align:right;&#34;&gt;
+4
+&lt;/td&gt;
+&lt;td style=&#34;text-align:right;&#34;&gt;
+1
+&lt;/td&gt;
+&lt;td style=&#34;text-align:right;&#34;&gt;
+0
+&lt;/td&gt;
+&lt;td style=&#34;text-align:right;&#34;&gt;
+7
+&lt;/td&gt;
+&lt;td style=&#34;text-align:right;&#34;&gt;
+8
+&lt;/td&gt;
+&lt;td style=&#34;text-align:right;&#34;&gt;
+8
+&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td style=&#34;text-align:right;&#34;&gt;
+3330
+&lt;/td&gt;
+&lt;td style=&#34;text-align:left;&#34;&gt;
+André Gillibert
+&lt;/td&gt;
+&lt;td style=&#34;text-align:right;&#34;&gt;
+20
+&lt;/td&gt;
+&lt;td style=&#34;text-align:right;&#34;&gt;
+10
+&lt;/td&gt;
+&lt;td style=&#34;text-align:right;&#34;&gt;
+0
+&lt;/td&gt;
+&lt;td style=&#34;text-align:right;&#34;&gt;
+0
+&lt;/td&gt;
+&lt;td style=&#34;text-align:right;&#34;&gt;
+8
+&lt;/td&gt;
+&lt;td style=&#34;text-align:right;&#34;&gt;
+8
+&lt;/td&gt;
+&lt;td style=&#34;text-align:right;&#34;&gt;
+8
+&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td style=&#34;text-align:right;&#34;&gt;
+3376
+&lt;/td&gt;
+&lt;td style=&#34;text-align:left;&#34;&gt;
+Hangfan Zhang
+&lt;/td&gt;
+&lt;td style=&#34;text-align:right;&#34;&gt;
+14
+&lt;/td&gt;
+&lt;td style=&#34;text-align:right;&#34;&gt;
+3
+&lt;/td&gt;
+&lt;td style=&#34;text-align:right;&#34;&gt;
+0
+&lt;/td&gt;
+&lt;td style=&#34;text-align:right;&#34;&gt;
+0
+&lt;/td&gt;
+&lt;td style=&#34;text-align:right;&#34;&gt;
+8
+&lt;/td&gt;
+&lt;td style=&#34;text-align:right;&#34;&gt;
+8
+&lt;/td&gt;
+&lt;td style=&#34;text-align:right;&#34;&gt;
+8
+&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td style=&#34;text-align:right;&#34;&gt;
+2040
+&lt;/td&gt;
+&lt;td style=&#34;text-align:left;&#34;&gt;
+Bill Denney
+&lt;/td&gt;
+&lt;td style=&#34;text-align:right;&#34;&gt;
+16
+&lt;/td&gt;
+&lt;td style=&#34;text-align:right;&#34;&gt;
+1
+&lt;/td&gt;
+&lt;td style=&#34;text-align:right;&#34;&gt;
+0
+&lt;/td&gt;
+&lt;td style=&#34;text-align:right;&#34;&gt;
+0
+&lt;/td&gt;
+&lt;td style=&#34;text-align:right;&#34;&gt;
+7
+&lt;/td&gt;
+&lt;td style=&#34;text-align:right;&#34;&gt;
+7
+&lt;/td&gt;
+&lt;td style=&#34;text-align:right;&#34;&gt;
+7
+&lt;/td&gt;
+&lt;/tr&gt;
+&lt;/tbody&gt;
+&lt;/table&gt;
+&lt;p&gt;(You can find a sortable anf filterable version of this table &lt;a href=&#34;https://llrs.github.io/bugzilla_viz/#R_contributors&#34;&gt;here&lt;/a&gt;).
+One of the top contributors was recently added as R core member.
+Other&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;https://llrs.dev/post/2021/11/16/bugs-in-r/index.en_files/figure-html/users-1.png&#34; width=&#34;768&#34; /&gt;&lt;/p&gt;
+&lt;p&gt;Some contributors focus on providing patches, other’s open many bugs, other’s comment on the bugs to confirm bugs or provide context to the bugs.&lt;/p&gt;
+&lt;/div&gt;
+&lt;div id=&#34;future-of-the-report-system&#34; class=&#34;section level2&#34;&gt;
+&lt;h2&gt;Future of the report system ?&lt;/h2&gt;
+&lt;p&gt;Last what is the progression of bugs&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;https://llrs.dev/post/2021/11/16/bugs-in-r/index.en_files/figure-html/speed-1.png&#34; width=&#34;768&#34; /&gt;&lt;/p&gt;
+&lt;p&gt;If we look only at bug reports and not enhancements every 1.52 day there is one bug report and one enhancement petitions per 4.44 days.&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;https://llrs.dev/post/2021/11/16/bugs-in-r/index.en_files/figure-html/speed-comments-1.png&#34; width=&#34;768&#34; /&gt;&lt;/p&gt;
+&lt;p&gt;If we look only at bug reports and not enhancements there are 1.48 comments every day from R users, one comment on enhancement per 1.9 days.&lt;/p&gt;
+&lt;p&gt;Both of them has remained fairly constant over the years, at times a bit faster and sometimes slower.&lt;/p&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;div id=&#34;final-comments&#34; class=&#34;section level1&#34;&gt;
+&lt;h1&gt;Final comments&lt;/h1&gt;
+&lt;p&gt;This is probably the post that took longer so far.
+I started on February to work on this blog post but until now I haven’t actually written the blog post I wanted.&lt;/p&gt;
+&lt;p&gt;Many thanks to Simon Urbanek for providing the database dump, without it would have been slower and harder if not impossible to do this analysis.
+Thanks to Heather Turner for encouraging me to do more on this project and providing valuable feedback about what kind of analysis could be useful and co-mentoring Pyush Kumar who I also like to thank the first analysis on the data and his contributions during GSoC.
+Many thanks to Gabe Becker and Michael Quirico for their feedback on the R contributors working group.&lt;/p&gt;
+&lt;p&gt;Now that the analysis is done, I want to finish the bugRzilla package (which I already started to use for small tasks on this analysis).
+I’m still working on it testing how is the best way to submit properly formatted bug reports with a developer instance set up by Simon.
+Then I’ll ask the R core if the way it submits bug reports works well for them.&lt;/p&gt;
+&lt;p&gt;&lt;strong&gt;TL:DR:&lt;/strong&gt; There are many bug reported and handled by the R core and many users contribute on solving the bug reports.
+The peace of new bug reports and comments is constant as well as enhancements on the language itself.&lt;/p&gt;
+&lt;/div&gt;
+&lt;div id=&#34;reproducibility&#34; class=&#34;section level1&#34;&gt;
+&lt;h1&gt;Reproducibility&lt;/h1&gt;
+&lt;details&gt;
+&lt;summary&gt;
+&lt;p&gt;Session Info&lt;/p&gt;
+&lt;/summary&gt;
+&lt;pre&gt;&lt;code&gt;## ─ Session info  ──────────────────────────────────────────────────────────────────────────────────────────────────────
+##  hash: nail polish: medium skin tone, woman artist: dark skin tone, pager
+## 
+##  setting  value
+##  version  R version 4.1.2 (2021-11-01)
+##  os       Ubuntu 20.04.3 LTS
+##  system   x86_64, linux-gnu
+##  ui       X11
+##  language (EN)
+##  collate  en_US.UTF-8
+##  ctype    en_US.UTF-8
+##  tz       Europe/Madrid
+##  date     2021-11-16
+##  pandoc   2.14.0.3 @ /usr/lib/rstudio/bin/pandoc/ (via rmarkdown)
+## 
+## ─ Packages ───────────────────────────────────────────────────────────────────────────────────────────────────────────
+##  package     * version   date (UTC) lib source
+##  assertthat    0.2.1     2019-03-21 [1] CRAN (R 4.1.2)
+##  backports     1.3.0     2021-10-27 [1] CRAN (R 4.1.2)
+##  bit           4.0.4     2020-08-04 [1] CRAN (R 4.1.2)
+##  bit64         4.0.5     2020-08-30 [1] CRAN (R 4.1.2)
+##  blob          1.2.2     2021-07-23 [1] CRAN (R 4.1.2)
+##  blogdown      1.6       2021-11-09 [1] CRAN (R 4.1.2)
+##  bookdown      0.24      2021-09-02 [1] CRAN (R 4.1.2)
+##  broom         0.7.10    2021-10-31 [1] CRAN (R 4.1.2)
+##  bslib         0.3.1     2021-10-06 [1] CRAN (R 4.1.2)
+##  bugRzilla   * 0.0.90001 2021-11-13 [1] Github (llrs/bugRzilla@24bc5de)
+##  cachem        1.0.6     2021-08-19 [1] CRAN (R 4.1.2)
+##  cli           3.1.0     2021-10-27 [1] CRAN (R 4.1.2)
+##  colorspace    2.0-2     2021-06-24 [1] CRAN (R 4.1.2)
+##  crayon        1.4.2     2021-10-29 [1] CRAN (R 4.1.2)
+##  curl          4.3.2     2021-06-23 [1] CRAN (R 4.1.2)
+##  DBI         * 1.1.1     2021-01-15 [1] CRAN (R 4.1.2)
+##  dbplyr      * 2.1.1     2021-04-06 [1] CRAN (R 4.1.2)
+##  digest        0.6.28    2021-09-23 [1] CRAN (R 4.1.2)
+##  dplyr       * 1.0.7     2021-06-18 [1] CRAN (R 4.1.2)
+##  ellipsis      0.3.2     2021-04-29 [1] CRAN (R 4.1.2)
+##  evaluate      0.14      2019-05-28 [1] CRAN (R 4.1.2)
+##  fansi         0.5.0     2021-05-25 [1] CRAN (R 4.1.2)
+##  farver        2.1.0     2021-02-28 [1] CRAN (R 4.1.2)
+##  fastmap       1.1.0     2021-01-25 [1] CRAN (R 4.1.2)
+##  forcats     * 0.5.1     2021-01-27 [1] CRAN (R 4.1.2)
+##  generics      0.1.1     2021-10-25 [1] CRAN (R 4.1.2)
+##  ggpattern   * 0.2.2     2021-11-11 [1] Github (coolbutuseless/ggpattern@7214181)
+##  ggplot2     * 3.3.5     2021-06-25 [1] CRAN (R 4.1.2)
+##  ggrepel     * 0.9.1     2021-01-15 [1] CRAN (R 4.1.2)
+##  glue          1.5.0     2021-11-07 [1] CRAN (R 4.1.2)
+##  gtable        0.3.0     2019-03-25 [1] CRAN (R 4.1.2)
+##  highr         0.9       2021-04-16 [1] CRAN (R 4.1.2)
+##  htmltools     0.5.2     2021-08-25 [1] CRAN (R 4.1.2)
+##  httr          1.4.2     2020-07-20 [1] CRAN (R 4.1.2)
+##  jquerylib     0.1.4     2021-04-26 [1] CRAN (R 4.1.2)
+##  jsonlite      1.7.2     2020-12-09 [1] CRAN (R 4.1.2)
+##  kableExtra    1.3.4     2021-02-20 [1] CRAN (R 4.1.2)
+##  knitr         1.36      2021-09-29 [1] CRAN (R 4.1.2)
+##  labeling      0.4.2     2020-10-20 [1] CRAN (R 4.1.2)
+##  lattice       0.20-45   2021-09-22 [1] CRAN (R 4.1.2)
+##  lifecycle     1.0.1     2021-09-24 [1] CRAN (R 4.1.2)
+##  lubridate   * 1.8.0     2021-10-07 [1] CRAN (R 4.1.2)
+##  magrittr      2.0.1     2020-11-17 [1] CRAN (R 4.1.2)
+##  Matrix        1.3-4     2021-06-01 [1] CRAN (R 4.1.2)
+##  memoise       2.0.0     2021-01-26 [1] CRAN (R 4.1.2)
+##  mgcv          1.8-38    2021-10-06 [1] CRAN (R 4.1.2)
+##  munsell       0.5.0     2018-06-12 [1] CRAN (R 4.1.2)
+##  nlme          3.1-153   2021-09-07 [1] CRAN (R 4.1.2)
+##  patchwork   * 1.1.1     2020-12-17 [1] CRAN (R 4.1.2)
+##  pillar        1.6.4     2021-10-18 [1] CRAN (R 4.1.2)
+##  pkgconfig     2.0.3     2019-09-22 [1] CRAN (R 4.1.2)
+##  purrr         0.3.4     2020-04-17 [1] CRAN (R 4.1.2)
+##  R6            2.5.1     2021-08-19 [1] CRAN (R 4.1.2)
+##  Rcpp          1.0.7     2021-07-07 [1] CRAN (R 4.1.2)
+##  rlang         0.4.12    2021-10-18 [1] CRAN (R 4.1.2)
+##  rmarkdown     2.11      2021-09-14 [1] CRAN (R 4.1.2)
+##  RMySQL      * 0.10.22   2021-06-22 [1] CRAN (R 4.1.2)
+##  RSQLite     * 2.2.8     2021-08-21 [1] CRAN (R 4.1.2)
+##  rstudioapi    0.13      2020-11-12 [1] CRAN (R 4.1.2)
+##  rvest         1.0.2     2021-10-16 [1] CRAN (R 4.1.2)
+##  sass          0.4.0     2021-05-12 [1] CRAN (R 4.1.2)
+##  scales        1.1.1     2020-05-11 [1] CRAN (R 4.1.2)
+##  sessioninfo   1.2.1     2021-11-02 [1] CRAN (R 4.1.2)
+##  stringi       1.7.5     2021-10-04 [1] CRAN (R 4.1.2)
+##  stringr       1.4.0     2019-02-10 [1] CRAN (R 4.1.2)
+##  svglite       2.0.0     2021-02-20 [1] CRAN (R 4.1.2)
+##  systemfonts   1.0.3     2021-10-13 [1] CRAN (R 4.1.2)
+##  tibble        3.1.6     2021-11-07 [1] CRAN (R 4.1.2)
+##  tidyr         1.1.4     2021-09-27 [1] CRAN (R 4.1.2)
+##  tidyselect    1.1.1     2021-04-30 [1] CRAN (R 4.1.2)
+##  utf8          1.2.2     2021-07-24 [1] CRAN (R 4.1.2)
+##  vctrs         0.3.8     2021-04-29 [1] CRAN (R 4.1.2)
+##  viridisLite   0.4.0     2021-04-13 [1] CRAN (R 4.1.2)
+##  webshot       0.5.2     2019-11-22 [1] CRAN (R 4.1.2)
+##  withr         2.4.2     2021-04-18 [1] CRAN (R 4.1.2)
+##  xfun          0.28      2021-11-04 [1] CRAN (R 4.1.2)
+##  xml2          1.3.2     2020-04-23 [1] CRAN (R 4.1.2)
+##  yaml          2.2.1     2020-02-01 [1] CRAN (R 4.1.2)
+## 
+##  [1] /home/lluis/bin/R/4.1.2/lib/R/library
+## 
+## ──────────────────────────────────────────────────────────────────────────────────────────────────────────────────────&lt;/code&gt;&lt;/pre&gt;
+&lt;/details&gt;
+&lt;/div&gt;
+&lt;div class=&#34;footnotes&#34;&gt;
+&lt;hr /&gt;
+&lt;ol&gt;
+&lt;li id=&#34;fn1&#34;&gt;&lt;p&gt;A program from Google where they sponsor students and organizations to work on open source projects.
+I didn’t knew R participated, but here is the &lt;a href=&#34;https://github.com/rstats-gsoc&#34;&gt;organization on Github&lt;/a&gt;.&lt;a href=&#34;#fnref1&#34; class=&#34;footnote-back&#34;&gt;↩︎&lt;/a&gt;&lt;/p&gt;&lt;/li&gt;
+&lt;/ol&gt;
+&lt;/div&gt;
+</description>
+    </item>
+    
+    <item>
+      <title>Social activities on GitHub</title>
+      <link>https://llrs.dev/post/2020/06/21/social-github/</link>
+      <pubDate>Sun, 21 Jun 2020 00:00:00 +0000</pubDate>
+      <guid>https://llrs.dev/post/2020/06/21/social-github/</guid>
+      <description>
+&lt;script src=&#34;https://llrs.dev/post/2020/06/21/social-github/index_files/header-attrs/header-attrs.js&#34;&gt;&lt;/script&gt;
+
+
+&lt;p&gt;On my &lt;a href=&#34;http://llrs.dev/post/2020/06/bioconductor-submission.html&#34;&gt;last post&lt;/a&gt; I explored the Bioconductor submissions using &lt;a href=&#34;https://cran.r-project.org/package=gh&#34;&gt;&lt;code&gt;{gh}&lt;/code&gt;&lt;/a&gt; to retrieve some data.
+After some feedback from the Bioconductor community I realized I should download other kind of data to improve my analysis on the reviews.&lt;/p&gt;
+&lt;p&gt;To make this I developed a new package to retrieve information from GitHub.&lt;/p&gt;
+&lt;div id=&#34;socialgh&#34; class=&#34;section level2&#34;&gt;
+&lt;h2&gt;socialGH&lt;/h2&gt;
+&lt;p&gt;&lt;a href=&#34;https://github.com/llrs/socialGH&#34;&gt;This package&lt;/a&gt; based on &lt;a href=&#34;https://cran.r-project.org/package=gh&#34;&gt;&lt;code&gt;{gh}&lt;/code&gt;&lt;/a&gt;, allows to retrieve, data from Github.&lt;/p&gt;
+&lt;p&gt;You can install it with&lt;/p&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;remotes::install_github(&amp;quot;llrs/socialGH&amp;quot;)&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;Basically pulls the data in list format and transforms it into a data.frame in order to be able to do analysis, filter it or analyze it.&lt;/p&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;library(&amp;quot;socialGH&amp;quot;)
+library(&amp;quot;tidyverse&amp;quot;)
+## ── Attaching packages ─────────────────────────────────────── tidyverse 1.3.0 ──
+## ✓ ggplot2 3.3.3     ✓ purrr   0.3.4
+## ✓ tibble  3.0.4     ✓ dplyr   1.0.2
+## ✓ tidyr   1.1.2     ✓ stringr 1.4.0
+## ✓ readr   1.4.0     ✓ forcats 0.5.0
+## ── Conflicts ────────────────────────────────────────── tidyverse_conflicts() ──
+## x dplyr::filter() masks stats::filter()
+## x dplyr::lag()    masks stats::lag()&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;It allows to selective download comments, pull requests, issues, events, labels and the timeline of an issue.&lt;/p&gt;
+&lt;p&gt;With the issues we can see the labels, how many coments and many information:&lt;/p&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;issues_blog &amp;lt;- get_issues(&amp;quot;llrs/blogR&amp;quot;)
+dim(issues_blog)
+## [1] 46 15
+colnames(issues_blog)
+##  [1] &amp;quot;assignees&amp;quot;   &amp;quot;assignee&amp;quot;    &amp;quot;label&amp;quot;       &amp;quot;state&amp;quot;       &amp;quot;locked&amp;quot;     
+##  [6] &amp;quot;milestone&amp;quot;   &amp;quot;n_comments&amp;quot;  &amp;quot;title&amp;quot;       &amp;quot;created&amp;quot;     &amp;quot;updated&amp;quot;    
+## [11] &amp;quot;association&amp;quot; &amp;quot;text&amp;quot;        &amp;quot;id&amp;quot;          &amp;quot;closer&amp;quot;      &amp;quot;poster&amp;quot;
+# Labels used
+issues_blog %&amp;gt;% 
+  pull(label) %&amp;gt;% 
+  unlist(FALSE, FALSE) %&amp;gt;% 
+  table()
+## .
+##  b101nfo.blogspot.com          Bioconductor                config 
+##                     1                     4                     1 
+##                  CRAN             goverment           help wanted 
+##                     3                     1                     1 
+##               invalid               package                  Post 
+##                     1                     2                    27 
+##              question              rOpenSci todo 🗒 
+##                     2                     1                     4 
+##               website 
+##                     1
+count(issues_blog, state)
+##    state  n
+## 1 closed 27
+## 2   open 19
+count(issues_blog, n_comments)
+##   n_comments  n
+## 1          0 24
+## 2          1 15
+## 3          2  2
+## 4          3  4
+## 5          5  1&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;However, it doesn’t retrieve each comment of an issue.&lt;/p&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;# Issues with comments
+issues_blog %&amp;gt;% 
+  filter(n_comments &amp;gt; 0) %&amp;gt;% 
+  pull(id)
+##  [1] 46 42 40 39 36 34 33 29 28 26 25 23 16 10  9  8  7  6  5  4  3  2
+
+comments &amp;lt;- get_comments(&amp;quot;llrs/blogR&amp;quot;)
+dim(comments)
+## [1] 36  6
+colnames(comments)
+## [1] &amp;quot;text&amp;quot;        &amp;quot;created&amp;quot;     &amp;quot;updated&amp;quot;     &amp;quot;association&amp;quot; &amp;quot;id&amp;quot;         
+## [6] &amp;quot;commenter&amp;quot;
+count(comments, association)
+##   association  n
+## 1       OWNER 36&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;We can see that I was the only one writing on the issues and we already retrieved the text of the comments.&lt;/p&gt;
+&lt;p&gt;We can also look for events on issues:&lt;/p&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;events &amp;lt;- get_events(&amp;quot;llrs/blogR&amp;quot;, 23)
+count(events, event)
+##     event n
+## 1 labeled 1
+## 2  closed 1&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;On all the functions you can provide a number of the issue and you’ll retrieve the information just for that issue. If you don’t provide an issue it will search the whole repository:&lt;/p&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;events &amp;lt;- get_events(&amp;quot;llrs/blogR&amp;quot;)
+count(events, event)
+##                 event  n
+## 1             labeled 50
+## 2              closed 27
+## 3             renamed  4
+## 4 marked_as_duplicate  1
+## 5            assigned  6
+## 6          subscribed  3
+## 7           mentioned  3
+## 8           unlabeled  1&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;However it is better if we look to the timeline of an issue:, which downloads each comment of the issues.&lt;/p&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;gt &amp;lt;- get_timelines(&amp;quot;llrs/blogR&amp;quot;, 23)
+## Warning: This is under preview and may fail.
+gt[, c(&amp;quot;label&amp;quot;, &amp;quot;event&amp;quot;, &amp;quot;created&amp;quot;, &amp;quot;association&amp;quot;, &amp;quot;actor&amp;quot;)]
+##   label     event             created association             actor
+## 1    NA commented 2020-02-14 00:39:47       OWNER llrs, User, FALSE
+## 2    NA commented 2020-02-14 09:44:26       OWNER llrs, User, FALSE
+## 3  Post   labeled 2020-02-18 10:10:35        &amp;lt;NA&amp;gt; llrs, User, FALSE
+## 4    NA commented 2020-02-29 17:58:51       OWNER llrs, User, FALSE
+## 5    NA    closed 2020-02-29 17:58:51        &amp;lt;NA&amp;gt; llrs, User, FALSE&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;With timeline we don’t get the initial information of when the issue was created and we’ll need to call &lt;code&gt;get_issue(&#34;llrs/blogR&#34;, 23)&lt;/code&gt; to know that.
+Here I did omit the text of the comment to make it readable, but we can see what has been happening and by who or who is affecting.&lt;/p&gt;
+&lt;/div&gt;
+&lt;div id=&#34;learning&#34; class=&#34;section level2&#34;&gt;
+&lt;h2&gt;Learning&lt;/h2&gt;
+&lt;p&gt;Developing this package I learned more about the &lt;code&gt;{gh}&lt;/code&gt; package (In the previous blog I wrote manually the calls to different pages, which later on I discovered it is automatically handled by &lt;code&gt;{gh}&lt;/code&gt;).
+And learned that the different accept headers have influenced on the total information returned (and that you cannot pass several accept headers at the same time).&lt;br /&gt;
+Hope to learn more about the R community that is using Github as a way to help each other, improve packages and process.&lt;/p&gt;
+&lt;div id=&#34;reproducibility&#34; class=&#34;section level3&#34;&gt;
+&lt;h3&gt;Reproducibility&lt;/h3&gt;
+&lt;details&gt;
+&lt;pre&gt;&lt;code&gt;## ─ Session info ───────────────────────────────────────────────────────────────────────────────────────────────────────
+##  setting  value                       
+##  version  R version 4.0.1 (2020-06-06)
+##  os       Ubuntu 20.04.1 LTS          
+##  system   x86_64, linux-gnu           
+##  ui       X11                         
+##  language (EN)                        
+##  collate  en_US.UTF-8                 
+##  ctype    en_US.UTF-8                 
+##  tz       Europe/Madrid               
+##  date     2021-01-08                  
+## 
+## ─ Packages ───────────────────────────────────────────────────────────────────────────────────────────────────────────
+##  package     * version date       lib source                           
+##  assertthat    0.2.1   2019-03-21 [1] CRAN (R 4.0.1)                   
+##  backports     1.2.1   2020-12-09 [1] CRAN (R 4.0.1)                   
+##  blogdown      0.21.84 2021-01-07 [1] Github (rstudio/blogdown@c4fbb58)
+##  bookdown      0.21    2020-10-13 [1] CRAN (R 4.0.1)                   
+##  broom         0.7.3   2020-12-16 [1] CRAN (R 4.0.1)                   
+##  cellranger    1.1.0   2016-07-27 [1] CRAN (R 4.0.1)                   
+##  cli           2.2.0   2020-11-20 [1] CRAN (R 4.0.1)                   
+##  colorspace    2.0-0   2020-11-11 [1] CRAN (R 4.0.1)                   
+##  crayon        1.3.4   2017-09-16 [1] CRAN (R 4.0.1)                   
+##  curl          4.3     2019-12-02 [1] CRAN (R 4.0.1)                   
+##  DBI           1.1.0   2019-12-15 [1] CRAN (R 4.0.1)                   
+##  dbplyr        2.0.0   2020-11-03 [1] CRAN (R 4.0.1)                   
+##  digest        0.6.27  2020-10-24 [1] CRAN (R 4.0.1)                   
+##  dplyr       * 1.0.2   2020-08-18 [1] CRAN (R 4.0.1)                   
+##  ellipsis      0.3.1   2020-05-15 [1] CRAN (R 4.0.1)                   
+##  evaluate      0.14    2019-05-28 [1] CRAN (R 4.0.1)                   
+##  fansi         0.4.1   2020-01-08 [1] CRAN (R 4.0.1)                   
+##  forcats     * 0.5.0   2020-03-01 [1] CRAN (R 4.0.1)                   
+##  fs            1.5.0   2020-07-31 [1] CRAN (R 4.0.1)                   
+##  generics      0.1.0   2020-10-31 [1] CRAN (R 4.0.1)                   
+##  ggplot2     * 3.3.3   2020-12-30 [1] CRAN (R 4.0.1)                   
+##  gh            1.2.0   2020-11-27 [1] CRAN (R 4.0.1)                   
+##  gitcreds      0.1.1   2020-12-04 [1] CRAN (R 4.0.1)                   
+##  glue          1.4.2   2020-08-27 [1] CRAN (R 4.0.1)                   
+##  gtable        0.3.0   2019-03-25 [1] CRAN (R 4.0.1)                   
+##  haven         2.3.1   2020-06-01 [1] CRAN (R 4.0.1)                   
+##  hms           0.5.3   2020-01-08 [1] CRAN (R 4.0.1)                   
+##  htmltools     0.5.0   2020-06-16 [1] CRAN (R 4.0.1)                   
+##  httr          1.4.2   2020-07-20 [1] CRAN (R 4.0.1)                   
+##  jsonlite      1.7.2   2020-12-09 [1] CRAN (R 4.0.1)                   
+##  knitr         1.30    2020-09-22 [1] CRAN (R 4.0.1)                   
+##  lifecycle     0.2.0   2020-03-06 [1] CRAN (R 4.0.1)                   
+##  lubridate     1.7.9.2 2020-11-13 [1] CRAN (R 4.0.1)                   
+##  magrittr      2.0.1   2020-11-17 [1] CRAN (R 4.0.1)                   
+##  modelr        0.1.8   2020-05-19 [1] CRAN (R 4.0.1)                   
+##  munsell       0.5.0   2018-06-12 [1] CRAN (R 4.0.1)                   
+##  pillar        1.4.7   2020-11-20 [1] CRAN (R 4.0.1)                   
+##  pkgconfig     2.0.3   2019-09-22 [1] CRAN (R 4.0.1)                   
+##  purrr       * 0.3.4   2020-04-17 [1] CRAN (R 4.0.1)                   
+##  R6            2.5.0   2020-10-28 [1] CRAN (R 4.0.1)                   
+##  Rcpp          1.0.5   2020-07-06 [1] CRAN (R 4.0.1)                   
+##  readr       * 1.4.0   2020-10-05 [1] CRAN (R 4.0.1)                   
+##  readxl        1.3.1   2019-03-13 [1] CRAN (R 4.0.1)                   
+##  reprex        0.3.0   2019-05-16 [1] CRAN (R 4.0.1)                   
+##  rlang         0.4.10  2020-12-30 [1] CRAN (R 4.0.1)                   
+##  rmarkdown     2.6     2020-12-14 [1] CRAN (R 4.0.1)                   
+##  rstudioapi    0.13    2020-11-12 [1] CRAN (R 4.0.1)                   
+##  rvest         0.3.6   2020-07-25 [1] CRAN (R 4.0.1)                   
+##  scales        1.1.1   2020-05-11 [1] CRAN (R 4.0.1)                   
+##  sessioninfo   1.1.1   2018-11-05 [1] CRAN (R 4.0.1)                   
+##  socialGH    * 0.0.3   2020-08-17 [1] local                            
+##  stringi       1.5.3   2020-09-09 [1] CRAN (R 4.0.1)                   
+##  stringr     * 1.4.0   2019-02-10 [1] CRAN (R 4.0.1)                   
+##  tibble      * 3.0.4   2020-10-12 [1] CRAN (R 4.0.1)                   
+##  tidyr       * 1.1.2   2020-08-27 [1] CRAN (R 4.0.1)                   
+##  tidyselect    1.1.0   2020-05-11 [1] CRAN (R 4.0.1)                   
+##  tidyverse   * 1.3.0   2019-11-21 [1] CRAN (R 4.0.1)                   
+##  vctrs         0.3.6   2020-12-17 [1] CRAN (R 4.0.1)                   
+##  withr         2.3.0   2020-09-22 [1] CRAN (R 4.0.1)                   
+##  xfun          0.20    2021-01-06 [1] CRAN (R 4.0.1)                   
+##  xml2          1.3.2   2020-04-23 [1] CRAN (R 4.0.1)                   
+##  yaml          2.2.1   2020-02-01 [1] CRAN (R 4.0.1)                   
+## 
+## [1] /home/lluis/bin/R/4.0.1/lib/R/library&lt;/code&gt;&lt;/pre&gt;
+&lt;/details&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+</description>
+    </item>
+    
+  </channel>
+</rss>

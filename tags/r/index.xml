@@ -1,0 +1,2210 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes" ?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>r | B101nfo</title>
+    <link>https://llrs.dev/tags/r/</link>
+      <atom:link href="https://llrs.dev/tags/r/index.xml" rel="self" type="application/rss+xml" />
+    <description>r</description>
+    <generator>Source Themes Academic (https://sourcethemes.com/academic/)</generator><language>en-us</language><copyright>If it is code you can copy and reuse (MIT) if it is text, please cite and reuse CC-BY 2026.</copyright><lastBuildDate>Mon, 10 Feb 2025 00:00:00 +0000</lastBuildDate>
+    <image>
+      <url>img/map[gravatar:%!s(bool=false) shape:circle]</url>
+      <title>r</title>
+      <link>https://llrs.dev/tags/r/</link>
+    </image>
+    
+    <item>
+      <title>A Code of Conduct committee</title>
+      <link>https://llrs.dev/post/2025/02/10/a-code-of-conduct-committee/</link>
+      <pubDate>Mon, 10 Feb 2025 00:00:00 +0000</pubDate>
+      <guid>https://llrs.dev/post/2025/02/10/a-code-of-conduct-committee/</guid>
+      <description>
+
+
+&lt;p&gt;For the last 2 years I served as part of the Code of Conduct (CoC) committee of Bioconductor.
+I partially served to learn how these committees worked, as it was unclear from outside what they did.
+The following is a blog post with my observations and opinions on the Code of Conduct committee (CoCC) I saw.
+This content has been reviewed by the current serving committee.&lt;/p&gt;
+&lt;div id=&#34;volunteering&#34; class=&#34;section level2&#34;&gt;
+&lt;h2&gt;Volunteering&lt;/h2&gt;
+&lt;p&gt;I volunteered after a direct message through Bioconductor slack from the then president of the committee.
+She asked me to serve it as she noted I could be a good candidate.
+I think what moved her was my activity on Bioconductor’s slack.
+The inclusion process is simple, when there are some spots open they open a form to get candidates.
+As a candidate I filled it and waited to see if I was selected.&lt;/p&gt;
+&lt;p&gt;The form has some basic introduction questions, name, origin, … whether one had read the CoC and a couple of questions related to the CoC: not wrong or right questions but one’s opinion and merits.
+I was unsure what to write on those questions. I
+wrote around one short paragraph on those questions.&lt;/p&gt;
+&lt;/div&gt;
+&lt;div id=&#34;onboarding&#34; class=&#34;section level2&#34;&gt;
+&lt;h2&gt;Onboarding&lt;/h2&gt;
+&lt;p&gt;Needless to say I got accepted.
+A couple of weeks after finishing the selection process, we had a video call with a couple of people on the CoCC.
+We got a brief introduction on how it works and some internal documentation and files.&lt;/p&gt;
+&lt;p&gt;In this onboarding meeting it was highlighted the confidentiality of the work we would take on and which measures we took to reduce the possibility of leaking information.
+It was stressed that we were not the police, we were not supposed to be actively patrolling.
+We should wait and expect the members of the community to come to us.
+However, if we saw something we should raise the issue but our duties didn’t mean looking for incidents actively.&lt;/p&gt;
+&lt;/div&gt;
+&lt;div id=&#34;quarterly-duties&#34; class=&#34;section level2&#34;&gt;
+&lt;h2&gt;Quarterly duties&lt;/h2&gt;
+&lt;p&gt;From then on we meet once a quarter.
+If there were any reports we might replace a scheduled meeting by one about the reported incident.
+Other than that, we would rarely communicate via the private slack channel we had.&lt;/p&gt;
+&lt;p&gt;The meetings were usually about discussing other cases, or related news or improving the wording of the CoC.
+Some of these meetings were also about the people stepping down and the new elections.
+The serving period is 2 years. People might step off earlier or be candidates for re-election.
+We would also meet around those dates but we kept many interactions asynchronous.&lt;/p&gt;
+&lt;/div&gt;
+&lt;div id=&#34;on-demand-duties&#34; class=&#34;section level2&#34;&gt;
+&lt;h2&gt;On demand duties&lt;/h2&gt;
+&lt;p&gt;During my servicing period we received several communications we had to consider how to resolve.
+Some of them were incidents that people in the community wanted to check in with the CoC to see if a specific person’s behavior was within the expected behavior.
+Other were about receiving the CoCC opinion on some matters.&lt;/p&gt;
+&lt;/div&gt;
+&lt;div id=&#34;out-boarding&#34; class=&#34;section level2&#34;&gt;
+&lt;h2&gt;Out boarding&lt;/h2&gt;
+&lt;p&gt;Two years after my election, once a new election selected the new members I resigned.
+I had the opportunity to be at the introduction meeting of the new members.
+I waited a bit after my period ended but I left without much ceremony or specific recommendations.&lt;/p&gt;
+&lt;/div&gt;
+&lt;div id=&#34;other-considerations&#34; class=&#34;section level2&#34;&gt;
+&lt;h2&gt;Other considerations&lt;/h2&gt;
+&lt;p&gt;During the elections of new members, I saw some signs that we looked up for similar traits to those on the committee.
+I think this is especially important when selecting new members that will participate in future decisions.
+But at the same time just because someone came from a different background or with different experience doesn’t make that person better suited for such a committee.&lt;/p&gt;
+&lt;p&gt;In addition, during the discussions for incidents or cases there were always a few people that voiced their opinions.
+I hardly ever heard of some of them and/or some attended few meetings.
+I think that the CoCC should hear from each one of the members at least if they agree or disagree with a particular position.
+I think that silence in such a committee might not always mean they agree.
+Even if they agree with a given decision they might have a different way to see it that could improve (the wording of) the resolution.&lt;/p&gt;
+&lt;p&gt;Last and not least, as in any system where there are different independent bodies/boards, the power of the CoCC is enforced by someone else.
+I’m worried because at least once, the CoCC’s decisions were not fully implemented.
+Likely due to overlapping or unclear communication or roles.&lt;/p&gt;
+&lt;p&gt;I hope the Code of Conduct committee continues to help Bioconductor users and beyond.&lt;/p&gt;
+&lt;/div&gt;
+</description>
+    </item>
+    
+    <item>
+      <title>Exploring CRAN&#39;s files: part 3</title>
+      <link>https://llrs.dev/post/2024/12/23/cran-files-3/</link>
+      <pubDate>Mon, 23 Dec 2024 00:00:00 +0000</pubDate>
+      <guid>https://llrs.dev/post/2024/12/23/cran-files-3/</guid>
+      <description>
+
+
+&lt;p&gt;In the blog post of CRAN files, I &lt;a href=&#34;https://llrs.dev/post/2022/07/23/cran-files-1/&#34;&gt;initially explored the database&lt;/a&gt; (mostly around &lt;code&gt;CRAN_package_db()&lt;/code&gt;). On the &lt;a href=&#34;https://llrs.dev/post/2022/07/28/cran-files-2/&#34;&gt;second post&lt;/a&gt; I moved to analyze the archive around &lt;code&gt;CRAN_archive_db()&lt;/code&gt;.&lt;/p&gt;
+&lt;p&gt;Recently at useR!2024, Kurt Hornik offered to export data from CRAN. After an email &lt;a href=&#34;https://developer.r-project.org/blosxom.cgi/R-devel/NEWS/2024/08/22#n2024-08-22&#34;&gt;several new functions were exported&lt;/a&gt; and introduced to base R.&lt;/p&gt;
+&lt;p&gt;In that presentation and in a previous exchange with Kurt, he explained his project about providing the HTML manual pages of all CRAN packages.
+One of the problems with this projects is providing links to the right pages of the packages (others are making it accessible for all users).&lt;/p&gt;
+&lt;p&gt;In R-devel now there are test that ensure links to other pages are in the right format &lt;a href=&#34;#fn1&#34; class=&#34;footnote-ref&#34; id=&#34;fnref1&#34;&gt;&lt;sup&gt;1&lt;/sup&gt;&lt;/a&gt;.
+In this post we we’ll explore links between documentation pages, what manuals say about them and what is the state of base R and the CRAN packages.&lt;/p&gt;
+&lt;div id=&#34;introduction&#34; class=&#34;section level1&#34;&gt;
+&lt;h1&gt;Introduction&lt;/h1&gt;
+&lt;p&gt;Help pages are defined in R documentation files, commonly with the &lt;code&gt;.Rd&lt;/code&gt; extension.
+Each documentation file can have multiple topics.
+A topic is defined in R documentation format with &lt;code&gt;\alias{topic}&lt;/code&gt;, so once can use interchangeably alias and topics.
+Links, or cross-references (xref for short) &lt;a href=&#34;https://cran.r-project.org/doc/manuals/r-devel/R-exts.html#Cross_002dreferences&#34;&gt;should be to an alias&lt;/a&gt;, not to files (allowing to move topics between help pages)&lt;a href=&#34;#fn2&#34; class=&#34;footnote-ref&#34; id=&#34;fnref2&#34;&gt;&lt;sup&gt;2&lt;/sup&gt;&lt;/a&gt;.&lt;/p&gt;
+&lt;p&gt;One can define links with &lt;code&gt;\link{alias}&lt;/code&gt; or &lt;code&gt;\link[=alias]{name}&lt;/code&gt; if the link is to a different place than the name &lt;a href=&#34;#fn3&#34; class=&#34;footnote-ref&#34; id=&#34;fnref3&#34;&gt;&lt;sup&gt;3&lt;/sup&gt;&lt;/a&gt;.
+In the second form the content within the square bracket is known as anchor.&lt;/p&gt;
+&lt;p&gt;There are two other forms accepted: &lt;code&gt;\link[pkg]{alias}&lt;/code&gt; and &lt;code&gt;\link[pkg:alias]{name}&lt;/code&gt; which do not use the &lt;code&gt;=&lt;/code&gt; inside the anchor &lt;a href=&#34;#fn4&#34; class=&#34;footnote-ref&#34; id=&#34;fnref4&#34;&gt;&lt;sup&gt;4&lt;/sup&gt;&lt;/a&gt;.
+These last two forms are only used in the HTML format.
+Packages referred to on these square brackets should be declared in the DESCRIPTION file, in the ‘Depends’, ‘Imports’, ‘Suggests’ or ‘Enhances’ fields.&lt;/p&gt;
+&lt;p&gt;One important thing is that links are case sensitive: &lt;code&gt;?Complex&lt;/code&gt; leads to a different help page than &lt;code&gt;?complex&lt;/code&gt;.&lt;/p&gt;
+&lt;p&gt;With this in mind we can check to which packages have more manual pages, have more cross-references, or have an overview help page (those with &lt;em&gt;pkgname&lt;/em&gt;-package.Rd).
+We will also check which documentation pages have more links, are more linked to, or needs its links fixed.&lt;/p&gt;
+&lt;/div&gt;
+&lt;div id=&#34;base-r&#34; class=&#34;section level1&#34;&gt;
+&lt;h1&gt;Base R&lt;/h1&gt;
+&lt;p&gt;Before looking to CRAN packages we can start by looking to R base packages.&lt;/p&gt;
+&lt;p&gt;Previously there wasn’t a way to know the links and aliases in base R. Since recently (~2024/08/20) we can download them (on R-devel till it is released on R 4.5) with &lt;code&gt;tools::base_aliases_db()&lt;/code&gt; and &lt;code&gt;tools::base_rdxrefs_db()&lt;/code&gt;.&lt;/p&gt;
+&lt;div id=&#34;aliases&#34; class=&#34;section level2&#34;&gt;
+&lt;h2&gt;Aliases&lt;/h2&gt;
+&lt;p&gt;On base R there are 1458 help pages with 4676 topics/aliases.&lt;/p&gt;
+&lt;p&gt;There are some help files with the same name in base R that can be accessed via their targets (via &lt;code&gt;?Target&lt;/code&gt;).
+Those files are dev.Rd, format.Rd, units.Rd.&lt;br /&gt;
+To distinguish between those files one need to check the title(s) and content of the pages.&lt;/p&gt;
+&lt;p&gt;Similarly there are multiple help pages of different packages with the same topics:&lt;/p&gt;
+&lt;table&gt;
+&lt;caption&gt;&lt;span id=&#34;tab:base-dup-targets&#34;&gt;Table 1: &lt;/span&gt;&lt;strong&gt;Duplicate alias on R base packages.&lt;/strong&gt; Alias and packages with the same alias.&lt;/caption&gt;
+&lt;thead&gt;
+&lt;tr class=&#34;header&#34;&gt;
+&lt;th align=&#34;left&#34;&gt;Alias&lt;/th&gt;
+&lt;th align=&#34;left&#34;&gt;Packages&lt;/th&gt;
+&lt;/tr&gt;
+&lt;/thead&gt;
+&lt;tbody&gt;
+&lt;tr class=&#34;odd&#34;&gt;
+&lt;td align=&#34;left&#34;&gt;Complex&lt;/td&gt;
+&lt;td align=&#34;left&#34;&gt;base, methods&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr class=&#34;even&#34;&gt;
+&lt;td align=&#34;left&#34;&gt;GSC&lt;/td&gt;
+&lt;td align=&#34;left&#34;&gt;base, tools&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr class=&#34;odd&#34;&gt;
+&lt;td align=&#34;left&#34;&gt;Logic&lt;/td&gt;
+&lt;td align=&#34;left&#34;&gt;base, methods&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr class=&#34;even&#34;&gt;
+&lt;td align=&#34;left&#34;&gt;Math&lt;/td&gt;
+&lt;td align=&#34;left&#34;&gt;base, methods&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr class=&#34;odd&#34;&gt;
+&lt;td align=&#34;left&#34;&gt;Ops&lt;/td&gt;
+&lt;td align=&#34;left&#34;&gt;base, methods&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr class=&#34;even&#34;&gt;
+&lt;td align=&#34;left&#34;&gt;R_GSCMD&lt;/td&gt;
+&lt;td align=&#34;left&#34;&gt;base, tools&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr class=&#34;odd&#34;&gt;
+&lt;td align=&#34;left&#34;&gt;S4&lt;/td&gt;
+&lt;td align=&#34;left&#34;&gt;base, methods&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr class=&#34;even&#34;&gt;
+&lt;td align=&#34;left&#34;&gt;Summary&lt;/td&gt;
+&lt;td align=&#34;left&#34;&gt;base, methods&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr class=&#34;odd&#34;&gt;
+&lt;td align=&#34;left&#34;&gt;clipboard&lt;/td&gt;
+&lt;td align=&#34;left&#34;&gt;base, utils&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr class=&#34;even&#34;&gt;
+&lt;td align=&#34;left&#34;&gt;hat&lt;/td&gt;
+&lt;td align=&#34;left&#34;&gt;grDevices, stats&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr class=&#34;odd&#34;&gt;
+&lt;td align=&#34;left&#34;&gt;matrixOps&lt;/td&gt;
+&lt;td align=&#34;left&#34;&gt;base, methods&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr class=&#34;even&#34;&gt;
+&lt;td align=&#34;left&#34;&gt;plot&lt;/td&gt;
+&lt;td align=&#34;left&#34;&gt;base, graphics&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr class=&#34;odd&#34;&gt;
+&lt;td align=&#34;left&#34;&gt;show-methods&lt;/td&gt;
+&lt;td align=&#34;left&#34;&gt;methods, stats4&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr class=&#34;even&#34;&gt;
+&lt;td align=&#34;left&#34;&gt;symbol&lt;/td&gt;
+&lt;td align=&#34;left&#34;&gt;base, grDevices&lt;/td&gt;
+&lt;/tr&gt;
+&lt;/tbody&gt;
+&lt;/table&gt;
+&lt;p&gt;Most of them are in base and other packages, from the methods package to tools, grDevices, graphics, and utils.&lt;/p&gt;
+&lt;p&gt;To access them directly one needs to use &lt;code&gt;help()&lt;/code&gt;: &lt;code&gt;help(&#34;clipboard&#34;, package = &#34;utils&#34;)&lt;/code&gt; otherwise one will need to choose them from the menu it will pop up from using &lt;code&gt;?clipboard&lt;/code&gt;.
+This works to access any other help page too.&lt;/p&gt;
+&lt;p&gt;There are 665 help pages that only have one alias.
+For example, &lt;code&gt;.BasicFunsList&lt;/code&gt;, &lt;code&gt;.Platform&lt;/code&gt; or &lt;code&gt;.Last.value&lt;/code&gt;.
+Some of these are datasets or very specific help pages.&lt;/p&gt;
+&lt;p&gt;Last, we can check the topics for the packages’ help page.
+While usually packages have at least two alias, &lt;code&gt;pkg&lt;/code&gt; and one &lt;code&gt;pkgname-package&lt;/code&gt;, there are two packages that do not have this, &lt;strong&gt;grid&lt;/strong&gt; and &lt;strong&gt;methods&lt;/strong&gt; packages.&lt;br /&gt;
+These packages do not have the alias for &lt;code&gt;pkgname&lt;/code&gt; to their own package help page.
+&lt;code&gt;?grid&lt;/code&gt; could be confused with &lt;code&gt;graphics::grid&lt;/code&gt; and &lt;code&gt;?methods&lt;/code&gt; could be confused with &lt;code&gt;utils::methods&lt;/code&gt;.&lt;/p&gt;
+&lt;/div&gt;
+&lt;div id=&#34;cross-references&#34; class=&#34;section level2&#34;&gt;
+&lt;h2&gt;Cross references&lt;/h2&gt;
+&lt;p&gt;Having explored the topics on the help pages, it is time to move to the cross references on R.&lt;/p&gt;
+&lt;p&gt;We can check where these help pages link to, starting by knowing how many are directly to the alias or those that use an anchor:&lt;/p&gt;
+&lt;div class=&#34;figure&#34;&gt;&lt;span style=&#34;display:block;&#34; id=&#34;fig:links-base&#34;&gt;&lt;/span&gt;
+&lt;img src=&#34;https://llrs.dev/post/2024/12/23/cran-files-3/index.en_files/figure-html/links-base-1.png&#34; alt=&#34;**Packages with links using alias per help page.** Each point is a help pages with different number of links. Some packages directly link a lot while others are more mixed.&#34; width=&#34;672&#34; /&gt;
+&lt;p class=&#34;caption&#34;&gt;
+Figure 1: &lt;strong&gt;Packages with links using alias per help page.&lt;/strong&gt; Each point is a help pages with different number of links. Some packages directly link a lot while others are more mixed.
+&lt;/p&gt;
+&lt;/div&gt;
+&lt;p&gt;We can further explore to where they link if we find out the package and topic, instead of just the topic used.&lt;/p&gt;
+&lt;p&gt;We can check for pages that link to themselves.
+The cross-reference system doesn’t provide a way to link to a specific section (yet?).
+When users follow those links they are redirected to the top of the same help page,
+while probably they were expecting to go to another help page.
+At least this is something I have felt in the past.
+In my opinion these links could be deleted and rewritten to explain which section should the user read:&lt;/p&gt;
+&lt;table&gt;
+&lt;caption&gt;&lt;span id=&#34;tab:self-references&#34;&gt;Table 2: &lt;/span&gt;&lt;strong&gt;Help pages on base with links to themselves&lt;/strong&gt;. These links could be removed or perhaps a linking to a specific section could be implemented.&lt;/caption&gt;
+&lt;thead&gt;
+&lt;tr class=&#34;header&#34;&gt;
+&lt;th align=&#34;left&#34;&gt;Package&lt;/th&gt;
+&lt;th align=&#34;left&#34;&gt;Help page&lt;/th&gt;
+&lt;/tr&gt;
+&lt;/thead&gt;
+&lt;tbody&gt;
+&lt;tr class=&#34;odd&#34;&gt;
+&lt;td align=&#34;left&#34;&gt;base&lt;/td&gt;
+&lt;td align=&#34;left&#34;&gt;double.Rd&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr class=&#34;even&#34;&gt;
+&lt;td align=&#34;left&#34;&gt;base&lt;/td&gt;
+&lt;td align=&#34;left&#34;&gt;numeric.Rd&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr class=&#34;odd&#34;&gt;
+&lt;td align=&#34;left&#34;&gt;base&lt;/td&gt;
+&lt;td align=&#34;left&#34;&gt;parse.Rd&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr class=&#34;even&#34;&gt;
+&lt;td align=&#34;left&#34;&gt;base&lt;/td&gt;
+&lt;td align=&#34;left&#34;&gt;call.Rd&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr class=&#34;odd&#34;&gt;
+&lt;td align=&#34;left&#34;&gt;base&lt;/td&gt;
+&lt;td align=&#34;left&#34;&gt;is.unsorted.Rd&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr class=&#34;even&#34;&gt;
+&lt;td align=&#34;left&#34;&gt;base&lt;/td&gt;
+&lt;td align=&#34;left&#34;&gt;showConnections.Rd&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr class=&#34;odd&#34;&gt;
+&lt;td align=&#34;left&#34;&gt;base&lt;/td&gt;
+&lt;td align=&#34;left&#34;&gt;taskCallback.Rd&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr class=&#34;even&#34;&gt;
+&lt;td align=&#34;left&#34;&gt;grDevices&lt;/td&gt;
+&lt;td align=&#34;left&#34;&gt;axisTicks.Rd&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr class=&#34;odd&#34;&gt;
+&lt;td align=&#34;left&#34;&gt;grid&lt;/td&gt;
+&lt;td align=&#34;left&#34;&gt;grid.add.Rd&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr class=&#34;even&#34;&gt;
+&lt;td align=&#34;left&#34;&gt;grid&lt;/td&gt;
+&lt;td align=&#34;left&#34;&gt;grid.get.Rd&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr class=&#34;odd&#34;&gt;
+&lt;td align=&#34;left&#34;&gt;methods&lt;/td&gt;
+&lt;td align=&#34;left&#34;&gt;setIs.Rd&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr class=&#34;even&#34;&gt;
+&lt;td align=&#34;left&#34;&gt;parallel&lt;/td&gt;
+&lt;td align=&#34;left&#34;&gt;makeCluster.Rd&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr class=&#34;odd&#34;&gt;
+&lt;td align=&#34;left&#34;&gt;parallel&lt;/td&gt;
+&lt;td align=&#34;left&#34;&gt;unix/children.Rd&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr class=&#34;even&#34;&gt;
+&lt;td align=&#34;left&#34;&gt;stats&lt;/td&gt;
+&lt;td align=&#34;left&#34;&gt;uniroot.Rd&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr class=&#34;odd&#34;&gt;
+&lt;td align=&#34;left&#34;&gt;stats&lt;/td&gt;
+&lt;td align=&#34;left&#34;&gt;NLSstRtAsymptote.Rd&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr class=&#34;even&#34;&gt;
+&lt;td align=&#34;left&#34;&gt;stats&lt;/td&gt;
+&lt;td align=&#34;left&#34;&gt;dist.Rd&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr class=&#34;odd&#34;&gt;
+&lt;td align=&#34;left&#34;&gt;stats&lt;/td&gt;
+&lt;td align=&#34;left&#34;&gt;dendrogram.Rd&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr class=&#34;even&#34;&gt;
+&lt;td align=&#34;left&#34;&gt;stats&lt;/td&gt;
+&lt;td align=&#34;left&#34;&gt;stepfun.Rd&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr class=&#34;odd&#34;&gt;
+&lt;td align=&#34;left&#34;&gt;utils&lt;/td&gt;
+&lt;td align=&#34;left&#34;&gt;update.packages.Rd&lt;/td&gt;
+&lt;/tr&gt;
+&lt;/tbody&gt;
+&lt;/table&gt;
+&lt;p&gt;There are 19 links to their own help pages that could be removed.&lt;/p&gt;
+&lt;p&gt;R documentation files with references to other help pages:&lt;/p&gt;
+&lt;div class=&#34;figure&#34;&gt;&lt;span style=&#34;display:block;&#34; id=&#34;fig:plot-base-package-links&#34;&gt;&lt;/span&gt;
+&lt;img src=&#34;https://llrs.dev/post/2024/12/23/cran-files-3/index.en_files/figure-html/plot-base-package-links-1.png&#34; alt=&#34;**Links between R help pages are predominantly to their own package.** Base is more connected than any other package. Some packages recieve links from very few packages.&#34; width=&#34;672&#34; /&gt;
+&lt;p class=&#34;caption&#34;&gt;
+Figure 2: &lt;strong&gt;Links between R help pages are predominantly to their own package.&lt;/strong&gt; Base is more connected than any other package. Some packages recieve links from very few packages.
+&lt;/p&gt;
+&lt;/div&gt;
+&lt;p&gt;We can clearly see that the packages link more between their own package but there are some heavily connected packages like utils and base or stats and base.
+Surprisingly, &lt;strong&gt;compiler&lt;/strong&gt; package doesn’t have any reference to other packages.&lt;/p&gt;
+&lt;p&gt;There were help pages that use the file names instead of topics to link pages&lt;a href=&#34;#fn5&#34; class=&#34;footnote-ref&#34; id=&#34;fnref5&#34;&gt;&lt;sup&gt;5&lt;/sup&gt;&lt;/a&gt;.
+I raised this issue on the &lt;a href=&#34;https://stat.ethz.ch/pipermail/r-devel/2024-September/083626.html&#34;&gt;mailing list&lt;/a&gt; and submitted a patch later on &lt;a href=&#34;https://bugs.r-project.org/show_bug.cgi?id=18815&#34;&gt;18815&lt;/a&gt; that got them fixed before publishing this post.&lt;/p&gt;
+&lt;p&gt;We also observed that some packages do not provide links.
+How frequent is this and how it affects base R?&lt;/p&gt;
+&lt;table&gt;
+&lt;caption&gt;&lt;span id=&#34;tab:base-pages-links&#34;&gt;Table 3: &lt;/span&gt;&lt;strong&gt;References on help pages.&lt;/strong&gt; Most base help pages are referenced and link to other help pages.&lt;/caption&gt;
+&lt;thead&gt;
+&lt;tr class=&#34;header&#34;&gt;
+&lt;th align=&#34;left&#34;&gt;Link from&lt;/th&gt;
+&lt;th align=&#34;left&#34;&gt;Reference to&lt;/th&gt;
+&lt;th align=&#34;right&#34;&gt;Help pages&lt;/th&gt;
+&lt;th align=&#34;left&#34;&gt;perc&lt;/th&gt;
+&lt;/tr&gt;
+&lt;/thead&gt;
+&lt;tbody&gt;
+&lt;tr class=&#34;odd&#34;&gt;
+&lt;td align=&#34;left&#34;&gt;TRUE&lt;/td&gt;
+&lt;td align=&#34;left&#34;&gt;TRUE&lt;/td&gt;
+&lt;td align=&#34;right&#34;&gt;1093&lt;/td&gt;
+&lt;td align=&#34;left&#34;&gt;74.8%&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr class=&#34;even&#34;&gt;
+&lt;td align=&#34;left&#34;&gt;TRUE&lt;/td&gt;
+&lt;td align=&#34;left&#34;&gt;FALSE&lt;/td&gt;
+&lt;td align=&#34;right&#34;&gt;211&lt;/td&gt;
+&lt;td align=&#34;left&#34;&gt;14.4%&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr class=&#34;odd&#34;&gt;
+&lt;td align=&#34;left&#34;&gt;FALSE&lt;/td&gt;
+&lt;td align=&#34;left&#34;&gt;FALSE&lt;/td&gt;
+&lt;td align=&#34;right&#34;&gt;113&lt;/td&gt;
+&lt;td align=&#34;left&#34;&gt;7.7%&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr class=&#34;even&#34;&gt;
+&lt;td align=&#34;left&#34;&gt;FALSE&lt;/td&gt;
+&lt;td align=&#34;left&#34;&gt;TRUE&lt;/td&gt;
+&lt;td align=&#34;right&#34;&gt;44&lt;/td&gt;
+&lt;td align=&#34;left&#34;&gt;3.0%&lt;/td&gt;
+&lt;/tr&gt;
+&lt;/tbody&gt;
+&lt;/table&gt;
+&lt;p&gt;Almost all help pages have links and most of them receive references from other help pages (compre this with Table &lt;a href=&#34;#tab:cran-pages-links&#34;&gt;9&lt;/a&gt;).
+Only 113 help pages do not have links or receive references, so unless they are documented somewhere else, like &lt;a href=&#34;https://cran.r-project.org/doc/manuals/r-devel/R-ints.html&#34;&gt;R internals&lt;/a&gt;, &lt;a href=&#34;https://cran.r-project.org/doc/manuals/r-devel/R-exts.html&#34;&gt;Writing R extensions&lt;/a&gt;, &lt;a href=&#34;https://cran.r-project.org/doc/manuals/r-devel/R-admin.html&#34;&gt;R Installation and Administration&lt;/a&gt;, it will be hard to find them.&lt;/p&gt;
+&lt;p&gt;This seems a good opportunity to patch documentation and make it easier to find and use those help pages.
+For example there is currently no CRAN package, or base package that links to &lt;code&gt;Rmcd()&lt;/code&gt;.
+This makes it harder to discover and use it.&lt;/p&gt;
+&lt;div class=&#34;figure&#34;&gt;&lt;span style=&#34;display:block;&#34; id=&#34;fig:base-pages-links2&#34;&gt;&lt;/span&gt;
+&lt;img src=&#34;https://llrs.dev/post/2024/12/23/cran-files-3/index.en_files/figure-html/base-pages-links2-1.png&#34; alt=&#34;**Help pages receiving and sending references to other help pages.** The help page more linked on base is the options help page&#34; width=&#34;672&#34; /&gt;
+&lt;p class=&#34;caption&#34;&gt;
+Figure 3: &lt;strong&gt;Help pages receiving and sending references to other help pages.&lt;/strong&gt; The help page more linked on base is the options help page
+&lt;/p&gt;
+&lt;/div&gt;
+&lt;p&gt;While so far we focus on links if we compare that with the existing help pages we might find some interesting patterns:&lt;/p&gt;
+&lt;table&gt;
+&lt;caption&gt;&lt;span id=&#34;tab:base-no-link&#34;&gt;Table 4: &lt;/span&gt;&lt;strong&gt;Help pages with no links to them&lt;/strong&gt;.&lt;/caption&gt;
+&lt;thead&gt;
+&lt;tr class=&#34;header&#34;&gt;
+&lt;th align=&#34;left&#34;&gt;Package&lt;/th&gt;
+&lt;th align=&#34;right&#34;&gt;Help pages&lt;/th&gt;
+&lt;/tr&gt;
+&lt;/thead&gt;
+&lt;tbody&gt;
+&lt;tr class=&#34;odd&#34;&gt;
+&lt;td align=&#34;left&#34;&gt;datasets&lt;/td&gt;
+&lt;td align=&#34;right&#34;&gt;67&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr class=&#34;even&#34;&gt;
+&lt;td align=&#34;left&#34;&gt;grid&lt;/td&gt;
+&lt;td align=&#34;right&#34;&gt;50&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr class=&#34;odd&#34;&gt;
+&lt;td align=&#34;left&#34;&gt;base&lt;/td&gt;
+&lt;td align=&#34;right&#34;&gt;46&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr class=&#34;even&#34;&gt;
+&lt;td align=&#34;left&#34;&gt;stats&lt;/td&gt;
+&lt;td align=&#34;right&#34;&gt;40&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr class=&#34;odd&#34;&gt;
+&lt;td align=&#34;left&#34;&gt;utils&lt;/td&gt;
+&lt;td align=&#34;right&#34;&gt;32&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr class=&#34;even&#34;&gt;
+&lt;td align=&#34;left&#34;&gt;tools&lt;/td&gt;
+&lt;td align=&#34;right&#34;&gt;28&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr class=&#34;odd&#34;&gt;
+&lt;td align=&#34;left&#34;&gt;methods&lt;/td&gt;
+&lt;td align=&#34;right&#34;&gt;20&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr class=&#34;even&#34;&gt;
+&lt;td align=&#34;left&#34;&gt;graphics&lt;/td&gt;
+&lt;td align=&#34;right&#34;&gt;10&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr class=&#34;odd&#34;&gt;
+&lt;td align=&#34;left&#34;&gt;stats4&lt;/td&gt;
+&lt;td align=&#34;right&#34;&gt;10&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr class=&#34;even&#34;&gt;
+&lt;td align=&#34;left&#34;&gt;grDevices&lt;/td&gt;
+&lt;td align=&#34;right&#34;&gt;7&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr class=&#34;odd&#34;&gt;
+&lt;td align=&#34;left&#34;&gt;tcltk&lt;/td&gt;
+&lt;td align=&#34;right&#34;&gt;6&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr class=&#34;even&#34;&gt;
+&lt;td align=&#34;left&#34;&gt;splines&lt;/td&gt;
+&lt;td align=&#34;right&#34;&gt;5&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr class=&#34;odd&#34;&gt;
+&lt;td align=&#34;left&#34;&gt;parallel&lt;/td&gt;
+&lt;td align=&#34;right&#34;&gt;3&lt;/td&gt;
+&lt;/tr&gt;
+&lt;/tbody&gt;
+&lt;/table&gt;
+&lt;p&gt;As one could expect there aren’t many links on documentation help pages from datasets.
+Surprisingly grid is the next package without links from other base packages, followed by base itself.
+It would be interesting to see which help pages, as connecting these help pages to other topics might help users to find what R is capable.&lt;/p&gt;
+&lt;table&gt;
+&lt;caption&gt;&lt;span id=&#34;tab:base-no-ref&#34;&gt;Table 5: &lt;/span&gt;&lt;strong&gt;Help pages with no references from them&lt;/strong&gt;.&lt;/caption&gt;
+&lt;thead&gt;
+&lt;tr class=&#34;header&#34;&gt;
+&lt;th align=&#34;left&#34;&gt;Package&lt;/th&gt;
+&lt;th align=&#34;right&#34;&gt;Help pages&lt;/th&gt;
+&lt;/tr&gt;
+&lt;/thead&gt;
+&lt;tbody&gt;
+&lt;tr class=&#34;odd&#34;&gt;
+&lt;td align=&#34;left&#34;&gt;datasets&lt;/td&gt;
+&lt;td align=&#34;right&#34;&gt;71&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr class=&#34;even&#34;&gt;
+&lt;td align=&#34;left&#34;&gt;base&lt;/td&gt;
+&lt;td align=&#34;right&#34;&gt;20&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr class=&#34;odd&#34;&gt;
+&lt;td align=&#34;left&#34;&gt;grid&lt;/td&gt;
+&lt;td align=&#34;right&#34;&gt;13&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr class=&#34;even&#34;&gt;
+&lt;td align=&#34;left&#34;&gt;stats&lt;/td&gt;
+&lt;td align=&#34;right&#34;&gt;12&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr class=&#34;odd&#34;&gt;
+&lt;td align=&#34;left&#34;&gt;tools&lt;/td&gt;
+&lt;td align=&#34;right&#34;&gt;12&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr class=&#34;even&#34;&gt;
+&lt;td align=&#34;left&#34;&gt;utils&lt;/td&gt;
+&lt;td align=&#34;right&#34;&gt;11&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr class=&#34;odd&#34;&gt;
+&lt;td align=&#34;left&#34;&gt;grDevices&lt;/td&gt;
+&lt;td align=&#34;right&#34;&gt;6&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr class=&#34;even&#34;&gt;
+&lt;td align=&#34;left&#34;&gt;methods&lt;/td&gt;
+&lt;td align=&#34;right&#34;&gt;2&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr class=&#34;odd&#34;&gt;
+&lt;td align=&#34;left&#34;&gt;parallel&lt;/td&gt;
+&lt;td align=&#34;right&#34;&gt;2&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr class=&#34;even&#34;&gt;
+&lt;td align=&#34;left&#34;&gt;splines&lt;/td&gt;
+&lt;td align=&#34;right&#34;&gt;2&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr class=&#34;odd&#34;&gt;
+&lt;td align=&#34;left&#34;&gt;stats4&lt;/td&gt;
+&lt;td align=&#34;right&#34;&gt;2&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr class=&#34;even&#34;&gt;
+&lt;td align=&#34;left&#34;&gt;tcltk&lt;/td&gt;
+&lt;td align=&#34;right&#34;&gt;2&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr class=&#34;odd&#34;&gt;
+&lt;td align=&#34;left&#34;&gt;compiler&lt;/td&gt;
+&lt;td align=&#34;right&#34;&gt;1&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr class=&#34;even&#34;&gt;
+&lt;td align=&#34;left&#34;&gt;graphics&lt;/td&gt;
+&lt;td align=&#34;right&#34;&gt;1&lt;/td&gt;
+&lt;/tr&gt;
+&lt;/tbody&gt;
+&lt;/table&gt;
+&lt;p&gt;Similar to the table above there are many help pages that do not link to them&lt;/p&gt;
+&lt;p&gt;But having links to and from help pages is not enough for discovering them.
+They could form a closed graph, where some pages are unreachable from the others.&lt;/p&gt;
+&lt;div class=&#34;figure&#34;&gt;&lt;span style=&#34;display:block;&#34; id=&#34;fig:plot-base-links-files&#34;&gt;&lt;/span&gt;
+&lt;img src=&#34;https://llrs.dev/post/2024/12/23/cran-files-3/index.en_files/figure-html/plot-base-links-files-1.png&#34; alt=&#34;**Graph of all the links between help pages of base R**. There are some help pages that are not connected to any other help page&#34; width=&#34;672&#34; /&gt;
+&lt;p class=&#34;caption&#34;&gt;
+Figure 4: &lt;strong&gt;Graph of all the links between help pages of base R&lt;/strong&gt;. There are some help pages that are not connected to any other help page
+&lt;/p&gt;
+&lt;/div&gt;
+&lt;p&gt;Apparently there are some help page on base R that don’t have links to navigate to the rest of the documentation.
+There are 4 isolated clusters of help pages.
+These are tools:toHTML.Rd, tools:HTMLheader.Rd, grid:absolute.size.Rd, grid:widthDetails.Rd, grid:gridCoords.Rd, grid:grobCoords.Rd.
+These help pages would be easier to find if at least they were linked from other help pages from base R.&lt;/p&gt;
+&lt;div id=&#34;to-cran&#34; class=&#34;section level3&#34;&gt;
+&lt;h3&gt;To CRAN&lt;/h3&gt;
+&lt;p&gt;We can also ask which packages are linked from R that are not part of R.&lt;/p&gt;
+&lt;table&gt;
+&lt;caption&gt;&lt;span id=&#34;tab:cran-database&#34;&gt;Table 6: &lt;/span&gt;&lt;strong&gt;Most packages linked from base R are from current R core members.&lt;/strong&gt; Information about non-base packages linked from base R.&lt;/caption&gt;
+&lt;thead&gt;
+&lt;tr class=&#34;header&#34;&gt;
+&lt;th align=&#34;left&#34;&gt;Package&lt;/th&gt;
+&lt;th align=&#34;right&#34;&gt;links&lt;/th&gt;
+&lt;th align=&#34;left&#34;&gt;Priority&lt;/th&gt;
+&lt;th align=&#34;left&#34;&gt;Maintainer&lt;/th&gt;
+&lt;th align=&#34;left&#34;&gt;Core member&lt;/th&gt;
+&lt;/tr&gt;
+&lt;/thead&gt;
+&lt;tbody&gt;
+&lt;tr class=&#34;odd&#34;&gt;
+&lt;td align=&#34;left&#34;&gt;MASS&lt;/td&gt;
+&lt;td align=&#34;right&#34;&gt;23&lt;/td&gt;
+&lt;td align=&#34;left&#34;&gt;recommended&lt;/td&gt;
+&lt;td align=&#34;left&#34;&gt;Brian Ripley&lt;/td&gt;
+&lt;td align=&#34;left&#34;&gt;TRUE&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr class=&#34;even&#34;&gt;
+&lt;td align=&#34;left&#34;&gt;Matrix&lt;/td&gt;
+&lt;td align=&#34;right&#34;&gt;10&lt;/td&gt;
+&lt;td align=&#34;left&#34;&gt;recommended&lt;/td&gt;
+&lt;td align=&#34;left&#34;&gt;Martin Maechler&lt;/td&gt;
+&lt;td align=&#34;left&#34;&gt;TRUE&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr class=&#34;odd&#34;&gt;
+&lt;td align=&#34;left&#34;&gt;KernSmooth&lt;/td&gt;
+&lt;td align=&#34;right&#34;&gt;9&lt;/td&gt;
+&lt;td align=&#34;left&#34;&gt;recommended&lt;/td&gt;
+&lt;td align=&#34;left&#34;&gt;Brian Ripley&lt;/td&gt;
+&lt;td align=&#34;left&#34;&gt;TRUE&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr class=&#34;even&#34;&gt;
+&lt;td align=&#34;left&#34;&gt;lattice&lt;/td&gt;
+&lt;td align=&#34;right&#34;&gt;8&lt;/td&gt;
+&lt;td align=&#34;left&#34;&gt;recommended&lt;/td&gt;
+&lt;td align=&#34;left&#34;&gt;Deepayan Sarkar&lt;/td&gt;
+&lt;td align=&#34;left&#34;&gt;TRUE&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr class=&#34;odd&#34;&gt;
+&lt;td align=&#34;left&#34;&gt;nlme&lt;/td&gt;
+&lt;td align=&#34;right&#34;&gt;7&lt;/td&gt;
+&lt;td align=&#34;left&#34;&gt;recommended&lt;/td&gt;
+&lt;td align=&#34;left&#34;&gt;R Core Team&lt;/td&gt;
+&lt;td align=&#34;left&#34;&gt;TRUE&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr class=&#34;even&#34;&gt;
+&lt;td align=&#34;left&#34;&gt;cluster&lt;/td&gt;
+&lt;td align=&#34;right&#34;&gt;6&lt;/td&gt;
+&lt;td align=&#34;left&#34;&gt;recommended&lt;/td&gt;
+&lt;td align=&#34;left&#34;&gt;Martin Maechler&lt;/td&gt;
+&lt;td align=&#34;left&#34;&gt;TRUE&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr class=&#34;odd&#34;&gt;
+&lt;td align=&#34;left&#34;&gt;survival&lt;/td&gt;
+&lt;td align=&#34;right&#34;&gt;3&lt;/td&gt;
+&lt;td align=&#34;left&#34;&gt;recommended&lt;/td&gt;
+&lt;td align=&#34;left&#34;&gt;Terry M Therneau&lt;/td&gt;
+&lt;td align=&#34;left&#34;&gt;FALSE&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr class=&#34;even&#34;&gt;
+&lt;td align=&#34;left&#34;&gt;SuppDists&lt;/td&gt;
+&lt;td align=&#34;right&#34;&gt;3&lt;/td&gt;
+&lt;td align=&#34;left&#34;&gt;&lt;/td&gt;
+&lt;td align=&#34;left&#34;&gt;Thorsten Pohlert&lt;/td&gt;
+&lt;td align=&#34;left&#34;&gt;FALSE&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr class=&#34;odd&#34;&gt;
+&lt;td align=&#34;left&#34;&gt;coin&lt;/td&gt;
+&lt;td align=&#34;right&#34;&gt;3&lt;/td&gt;
+&lt;td align=&#34;left&#34;&gt;&lt;/td&gt;
+&lt;td align=&#34;left&#34;&gt;Torsten Hothorn&lt;/td&gt;
+&lt;td align=&#34;left&#34;&gt;FALSE&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr class=&#34;even&#34;&gt;
+&lt;td align=&#34;left&#34;&gt;knitr&lt;/td&gt;
+&lt;td align=&#34;right&#34;&gt;2&lt;/td&gt;
+&lt;td align=&#34;left&#34;&gt;&lt;/td&gt;
+&lt;td align=&#34;left&#34;&gt;Yihui Xie&lt;/td&gt;
+&lt;td align=&#34;left&#34;&gt;FALSE&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr class=&#34;odd&#34;&gt;
+&lt;td align=&#34;left&#34;&gt;mathjaxr&lt;/td&gt;
+&lt;td align=&#34;right&#34;&gt;2&lt;/td&gt;
+&lt;td align=&#34;left&#34;&gt;&lt;/td&gt;
+&lt;td align=&#34;left&#34;&gt;Wolfgang Viechtbauer&lt;/td&gt;
+&lt;td align=&#34;left&#34;&gt;FALSE&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr class=&#34;even&#34;&gt;
+&lt;td align=&#34;left&#34;&gt;vcd&lt;/td&gt;
+&lt;td align=&#34;right&#34;&gt;2&lt;/td&gt;
+&lt;td align=&#34;left&#34;&gt;&lt;/td&gt;
+&lt;td align=&#34;left&#34;&gt;David Meyer&lt;/td&gt;
+&lt;td align=&#34;left&#34;&gt;FALSE&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr class=&#34;odd&#34;&gt;
+&lt;td align=&#34;left&#34;&gt;nnet&lt;/td&gt;
+&lt;td align=&#34;right&#34;&gt;1&lt;/td&gt;
+&lt;td align=&#34;left&#34;&gt;recommended&lt;/td&gt;
+&lt;td align=&#34;left&#34;&gt;Brian Ripley&lt;/td&gt;
+&lt;td align=&#34;left&#34;&gt;TRUE&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr class=&#34;even&#34;&gt;
+&lt;td align=&#34;left&#34;&gt;rpart&lt;/td&gt;
+&lt;td align=&#34;right&#34;&gt;1&lt;/td&gt;
+&lt;td align=&#34;left&#34;&gt;recommended&lt;/td&gt;
+&lt;td align=&#34;left&#34;&gt;Beth Atkinson&lt;/td&gt;
+&lt;td align=&#34;left&#34;&gt;FALSE&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr class=&#34;odd&#34;&gt;
+&lt;td align=&#34;left&#34;&gt;chron&lt;/td&gt;
+&lt;td align=&#34;right&#34;&gt;1&lt;/td&gt;
+&lt;td align=&#34;left&#34;&gt;&lt;/td&gt;
+&lt;td align=&#34;left&#34;&gt;Kurt Hornik&lt;/td&gt;
+&lt;td align=&#34;left&#34;&gt;TRUE&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr class=&#34;even&#34;&gt;
+&lt;td align=&#34;left&#34;&gt;date&lt;/td&gt;
+&lt;td align=&#34;right&#34;&gt;1&lt;/td&gt;
+&lt;td align=&#34;left&#34;&gt;&lt;/td&gt;
+&lt;td align=&#34;left&#34;&gt;Kurt Hornik&lt;/td&gt;
+&lt;td align=&#34;left&#34;&gt;TRUE&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr class=&#34;odd&#34;&gt;
+&lt;td align=&#34;left&#34;&gt;robustbase&lt;/td&gt;
+&lt;td align=&#34;right&#34;&gt;1&lt;/td&gt;
+&lt;td align=&#34;left&#34;&gt;&lt;/td&gt;
+&lt;td align=&#34;left&#34;&gt;Martin Maechler&lt;/td&gt;
+&lt;td align=&#34;left&#34;&gt;TRUE&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr class=&#34;even&#34;&gt;
+&lt;td align=&#34;left&#34;&gt;round&lt;/td&gt;
+&lt;td align=&#34;right&#34;&gt;1&lt;/td&gt;
+&lt;td align=&#34;left&#34;&gt;&lt;/td&gt;
+&lt;td align=&#34;left&#34;&gt;Martin Maechler&lt;/td&gt;
+&lt;td align=&#34;left&#34;&gt;TRUE&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr class=&#34;odd&#34;&gt;
+&lt;td align=&#34;left&#34;&gt;Kendall&lt;/td&gt;
+&lt;td align=&#34;right&#34;&gt;1&lt;/td&gt;
+&lt;td align=&#34;left&#34;&gt;&lt;/td&gt;
+&lt;td align=&#34;left&#34;&gt;A.I. McLeod&lt;/td&gt;
+&lt;td align=&#34;left&#34;&gt;FALSE&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr class=&#34;even&#34;&gt;
+&lt;td align=&#34;left&#34;&gt;multcomp&lt;/td&gt;
+&lt;td align=&#34;right&#34;&gt;1&lt;/td&gt;
+&lt;td align=&#34;left&#34;&gt;&lt;/td&gt;
+&lt;td align=&#34;left&#34;&gt;Torsten Hothorn&lt;/td&gt;
+&lt;td align=&#34;left&#34;&gt;FALSE&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr class=&#34;odd&#34;&gt;
+&lt;td align=&#34;left&#34;&gt;pcaPP&lt;/td&gt;
+&lt;td align=&#34;right&#34;&gt;1&lt;/td&gt;
+&lt;td align=&#34;left&#34;&gt;&lt;/td&gt;
+&lt;td align=&#34;left&#34;&gt;Valentin Todorov&lt;/td&gt;
+&lt;td align=&#34;left&#34;&gt;FALSE&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr class=&#34;even&#34;&gt;
+&lt;td align=&#34;left&#34;&gt;pspearman&lt;/td&gt;
+&lt;td align=&#34;right&#34;&gt;1&lt;/td&gt;
+&lt;td align=&#34;left&#34;&gt;&lt;/td&gt;
+&lt;td align=&#34;left&#34;&gt;Petr Savicky&lt;/td&gt;
+&lt;td align=&#34;left&#34;&gt;FALSE&lt;/td&gt;
+&lt;/tr&gt;
+&lt;/tbody&gt;
+&lt;/table&gt;
+&lt;p&gt;We can see that some packages linked from base R are from the recommended packages and many from the R core members or maintained by the whole R core group.
+Some other links include popular packages, while others are not so popular.&lt;/p&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;div id=&#34;cran-packages&#34; class=&#34;section level1&#34;&gt;
+&lt;h1&gt;CRAN packages&lt;/h1&gt;
+&lt;p&gt;Now that we explored base R packages we can also explore CRAN’s help pages.&lt;/p&gt;
+&lt;p&gt;1## Aliases&lt;/p&gt;
+&lt;p&gt;As before we start exploring CRAN aliases.
+Which are the packages that have more aliases?&lt;/p&gt;
+&lt;table&gt;
+&lt;caption&gt;&lt;span id=&#34;tab:cran-count-aliases&#34;&gt;Table 7: &lt;/span&gt;&lt;strong&gt;Help pages per CRAN package&lt;/strong&gt;. Top 10 packages with more help pages.&lt;/caption&gt;
+&lt;thead&gt;
+&lt;tr class=&#34;header&#34;&gt;
+&lt;th align=&#34;left&#34;&gt;Package&lt;/th&gt;
+&lt;th align=&#34;right&#34;&gt;Help page&lt;/th&gt;
+&lt;/tr&gt;
+&lt;/thead&gt;
+&lt;tbody&gt;
+&lt;tr class=&#34;odd&#34;&gt;
+&lt;td align=&#34;left&#34;&gt;aroma.affymetrix&lt;/td&gt;
+&lt;td align=&#34;right&#34;&gt;2158&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr class=&#34;even&#34;&gt;
+&lt;td align=&#34;left&#34;&gt;Matrix&lt;/td&gt;
+&lt;td align=&#34;right&#34;&gt;1997&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr class=&#34;odd&#34;&gt;
+&lt;td align=&#34;left&#34;&gt;VGAM&lt;/td&gt;
+&lt;td align=&#34;right&#34;&gt;1948&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr class=&#34;even&#34;&gt;
+&lt;td align=&#34;left&#34;&gt;CVXR&lt;/td&gt;
+&lt;td align=&#34;right&#34;&gt;1723&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr class=&#34;odd&#34;&gt;
+&lt;td align=&#34;left&#34;&gt;paws.management&lt;/td&gt;
+&lt;td align=&#34;right&#34;&gt;1580&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr class=&#34;even&#34;&gt;
+&lt;td align=&#34;left&#34;&gt;paws.security.identity&lt;/td&gt;
+&lt;td align=&#34;right&#34;&gt;1580&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr class=&#34;odd&#34;&gt;
+&lt;td align=&#34;left&#34;&gt;aroma.core&lt;/td&gt;
+&lt;td align=&#34;right&#34;&gt;1566&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr class=&#34;even&#34;&gt;
+&lt;td align=&#34;left&#34;&gt;paws.compute&lt;/td&gt;
+&lt;td align=&#34;right&#34;&gt;1429&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr class=&#34;odd&#34;&gt;
+&lt;td align=&#34;left&#34;&gt;paws.analytics&lt;/td&gt;
+&lt;td align=&#34;right&#34;&gt;1349&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr class=&#34;even&#34;&gt;
+&lt;td align=&#34;left&#34;&gt;photobiology&lt;/td&gt;
+&lt;td align=&#34;right&#34;&gt;1319&lt;/td&gt;
+&lt;/tr&gt;
+&lt;/tbody&gt;
+&lt;/table&gt;
+&lt;p&gt;The top packages with more help pages have more than 2000!
+On the other side there are more than 800 packages (835) with only one alias.&lt;/p&gt;
+&lt;div class=&#34;figure&#34;&gt;&lt;span style=&#34;display:block;&#34; id=&#34;fig:plot-cran-alias-hist&#34;&gt;&lt;/span&gt;
+&lt;img src=&#34;https://llrs.dev/post/2024/12/23/cran-files-3/index.en_files/figure-html/plot-cran-alias-hist-1.png&#34; alt=&#34;**Most CRAN packages have 14 aliases.** Aliases distribution on CRAN.&#34; width=&#34;672&#34; /&gt;
+&lt;p class=&#34;caption&#34;&gt;
+Figure 5: &lt;strong&gt;Most CRAN packages have 14 aliases.&lt;/strong&gt; Aliases distribution on CRAN.
+&lt;/p&gt;
+&lt;/div&gt;
+&lt;p&gt;I’m surprised to see so many packages with just one alias.
+This might indicates packages that only try to do just one thing, while more complex packages will have more aliases and maybe also more help pages.&lt;/p&gt;
+&lt;p&gt;We can also find those targets that are duplicated on CRAN:&lt;/p&gt;
+&lt;div class=&#34;figure&#34;&gt;&lt;span style=&#34;display:block;&#34; id=&#34;fig:plot-cran-dup-targets&#34;&gt;&lt;/span&gt;
+&lt;img src=&#34;https://llrs.dev/post/2024/12/23/cran-files-3/index.en_files/figure-html/plot-cran-dup-targets-1.png&#34; alt=&#34;**Top 25 duplicated topics on CRAN.** Common methods and the magrittr pipe dominate the most frequent topics.&#34; width=&#34;672&#34; /&gt;
+&lt;p class=&#34;caption&#34;&gt;
+Figure 6: &lt;strong&gt;Top 25 duplicated topics on CRAN.&lt;/strong&gt; Common methods and the magrittr pipe dominate the most frequent topics.
+&lt;/p&gt;
+&lt;/div&gt;
+&lt;p&gt;The most repeated topic is the magrittr pipe &lt;code&gt;%&amp;gt;%&lt;/code&gt; followed by reexports (curious as usually the pipe is also re-exported).
+We can see some common methods like &lt;code&gt;plot&lt;/code&gt;, &lt;code&gt;print&lt;/code&gt;, &lt;code&gt;show&lt;/code&gt; and some that are related to the dplyr and shiny, mixed between some methods used for statistics.&lt;/p&gt;
+&lt;div id=&#34;help-pages&#34; class=&#34;section level2&#34;&gt;
+&lt;h2&gt;Help pages&lt;/h2&gt;
+&lt;p&gt;Similar to the alias on CRAN we can check what happens with help pages:&lt;/p&gt;
+&lt;table&gt;
+&lt;caption&gt;&lt;span id=&#34;tab:cran-help-counts&#34;&gt;Table 8: &lt;/span&gt;&lt;strong&gt;Number of help pages of top 10 packages.&lt;/strong&gt; Some packages have many help pages.&lt;/caption&gt;
+&lt;thead&gt;
+&lt;tr class=&#34;header&#34;&gt;
+&lt;th align=&#34;right&#34;&gt;Help page&lt;/th&gt;
+&lt;/tr&gt;
+&lt;/thead&gt;
+&lt;tbody&gt;
+&lt;tr class=&#34;odd&#34;&gt;
+&lt;td align=&#34;right&#34;&gt;1573&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr class=&#34;even&#34;&gt;
+&lt;td align=&#34;right&#34;&gt;1573&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr class=&#34;odd&#34;&gt;
+&lt;td align=&#34;right&#34;&gt;1422&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr class=&#34;even&#34;&gt;
+&lt;td align=&#34;right&#34;&gt;1342&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr class=&#34;odd&#34;&gt;
+&lt;td align=&#34;right&#34;&gt;1283&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr class=&#34;even&#34;&gt;
+&lt;td align=&#34;right&#34;&gt;1091&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr class=&#34;odd&#34;&gt;
+&lt;td align=&#34;right&#34;&gt;970&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr class=&#34;even&#34;&gt;
+&lt;td align=&#34;right&#34;&gt;911&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr class=&#34;odd&#34;&gt;
+&lt;td align=&#34;right&#34;&gt;901&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr class=&#34;even&#34;&gt;
+&lt;td align=&#34;right&#34;&gt;874&lt;/td&gt;
+&lt;/tr&gt;
+&lt;/tbody&gt;
+&lt;/table&gt;
+&lt;p&gt;The top packages with more help pages have more than 800!
+On the other side there are more than 1000 packages (1086) with only one help page.&lt;/p&gt;
+&lt;p&gt;Overall doesn’t seem like there is a distribution pattern.
+Packages end up with as many aliases as maintainers see fit.&lt;/p&gt;
+&lt;div class=&#34;figure&#34;&gt;&lt;span style=&#34;display:block;&#34; id=&#34;fig:plot-cran-help-pages-hist&#34;&gt;&lt;/span&gt;
+&lt;img src=&#34;https://llrs.dev/post/2024/12/23/cran-files-3/index.en_files/figure-html/plot-cran-help-pages-hist-1.png&#34; alt=&#34;**Most CRAN packages have 11 help pages.** Help page distribution.&#34; width=&#34;672&#34; /&gt;
+&lt;p class=&#34;caption&#34;&gt;
+Figure 7: &lt;strong&gt;Most CRAN packages have 11 help pages.&lt;/strong&gt; Help page distribution.
+&lt;/p&gt;
+&lt;/div&gt;
+&lt;p&gt;We can check the ratio of alias per help page and number of help pages by package:&lt;/p&gt;
+&lt;div class=&#34;figure&#34;&gt;&lt;span style=&#34;display:block;&#34; id=&#34;fig:plot-cran-help-topics&#34;&gt;&lt;/span&gt;
+&lt;img src=&#34;https://llrs.dev/post/2024/12/23/cran-files-3/index.en_files/figure-html/plot-cran-help-topics-1.png&#34; alt=&#34;**Some packages have many alias per help pages.** Packages with high number of alias per help page are colored in green while packages with high number of help pages and alias are in black. The dashed line correspond to a perfect match between help pages and alias.&#34; width=&#34;672&#34; /&gt;
+&lt;p class=&#34;caption&#34;&gt;
+Figure 8: &lt;strong&gt;Some packages have many alias per help pages.&lt;/strong&gt; Packages with high number of alias per help page are colored in green while packages with high number of help pages and alias are in black. The dashed line correspond to a perfect match between help pages and alias.
+&lt;/p&gt;
+&lt;/div&gt;
+&lt;p&gt;It is clear that more help pages might lead to more topic pages but there are some packages with low number of help pages but high number of alias (those in green on the plot above).
+These packages tend to have 5 alias per help page or more.&lt;/p&gt;
+&lt;p&gt;However this is not normal, the median number of help pages is 11 and the median number of topics is 14.
+So usually CRAN packages tend to be much smaller.&lt;/p&gt;
+&lt;/div&gt;
+&lt;div id=&#34;cross-references-1&#34; class=&#34;section level2&#34;&gt;
+&lt;h2&gt;Cross references&lt;/h2&gt;
+&lt;p&gt;So far we analyzed CRAN help pages by the number of alias and help pages they have.
+While this is interesting I think it can be more revealing checking what they are linking to.&lt;/p&gt;
+&lt;p&gt;Similar to what we did with R cross-references we first start finding links to base packages and then we’ll search for links across CRAN packages.&lt;/p&gt;
+&lt;p&gt;Now that I have corrected many issues I’ll check if it matches CRAN’s output.&lt;/p&gt;
+&lt;/div&gt;
+&lt;div id=&#34;comparing-links-with-crans-checks&#34; class=&#34;section level2&#34;&gt;
+&lt;h2&gt;Comparing links with CRAN’s checks&lt;/h2&gt;
+&lt;p&gt;We can compare the data with CRAN’s package details of issues found related to cross-references.&lt;/p&gt;
+&lt;p&gt;There are 1876 packages with issues in “Rd cross-references” across all flavors.
+These can be found online too, for example for &lt;a href=&#34;https://cran.r-project.org/web/checks/check_details_r-devel-linux-x86_64-debian-clang.html&#34;&gt;r-devel in debian&lt;/a&gt;, (pick your &lt;a href=&#34;https://cran.r-project.org/web/checks/check_summary.html&#34;&gt;flavor&lt;/a&gt;).&lt;/p&gt;
+&lt;!-- To compare with CRAN we need to prepare the data collected.  --&gt;
+&lt;!-- First thing, CRAN packages can depend on packages in Bioconductor and other additional repositories for which we don&#39;t have the data.  --&gt;
+&lt;!-- Identifying those packages will help to avoid any false positive.  --&gt;
+&lt;!-- To further check what is happening we can compare directly with what CRAN reports. --&gt;
+&lt;p&gt;There are 176 packages currently with cross references notes that could be improved by using topics on the cross-references (instead of file names).
+There are 1159 that are currently not detected by CRAN that could be improved the same way, by instead of using file names of other CRAN packages use their topic.&lt;/p&gt;
+&lt;!-- Now that we found that they mostly agree let&#39;s analyse the data. --&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;div id=&#34;further-analysis&#34; class=&#34;section level1&#34;&gt;
+&lt;h1&gt;Further analysis&lt;/h1&gt;
+&lt;div id=&#34;pages-with-links&#34; class=&#34;section level2&#34;&gt;
+&lt;h2&gt;Pages with links&lt;/h2&gt;
+&lt;table&gt;
+&lt;caption&gt;&lt;span id=&#34;tab:cran-pages-links&#34;&gt;Table 9: &lt;/span&gt;&lt;strong&gt;More than half of CRAN’s help pages do not have links to other help pages&lt;/strong&gt;.&lt;/caption&gt;
+&lt;thead&gt;
+&lt;tr class=&#34;header&#34;&gt;
+&lt;th align=&#34;left&#34;&gt;Link from&lt;/th&gt;
+&lt;th align=&#34;left&#34;&gt;References to&lt;/th&gt;
+&lt;th align=&#34;right&#34;&gt;Help pages&lt;/th&gt;
+&lt;th align=&#34;left&#34;&gt;perc&lt;/th&gt;
+&lt;/tr&gt;
+&lt;/thead&gt;
+&lt;tbody&gt;
+&lt;tr class=&#34;odd&#34;&gt;
+&lt;td align=&#34;left&#34;&gt;FALSE&lt;/td&gt;
+&lt;td align=&#34;left&#34;&gt;FALSE&lt;/td&gt;
+&lt;td align=&#34;right&#34;&gt;220340&lt;/td&gt;
+&lt;td align=&#34;left&#34;&gt;47.5%&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr class=&#34;even&#34;&gt;
+&lt;td align=&#34;left&#34;&gt;TRUE&lt;/td&gt;
+&lt;td align=&#34;left&#34;&gt;TRUE&lt;/td&gt;
+&lt;td align=&#34;right&#34;&gt;136230&lt;/td&gt;
+&lt;td align=&#34;left&#34;&gt;29.4%&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr class=&#34;odd&#34;&gt;
+&lt;td align=&#34;left&#34;&gt;TRUE&lt;/td&gt;
+&lt;td align=&#34;left&#34;&gt;FALSE&lt;/td&gt;
+&lt;td align=&#34;right&#34;&gt;73727&lt;/td&gt;
+&lt;td align=&#34;left&#34;&gt;15.9%&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr class=&#34;even&#34;&gt;
+&lt;td align=&#34;left&#34;&gt;FALSE&lt;/td&gt;
+&lt;td align=&#34;left&#34;&gt;TRUE&lt;/td&gt;
+&lt;td align=&#34;right&#34;&gt;33351&lt;/td&gt;
+&lt;td align=&#34;left&#34;&gt;7.2%&lt;/td&gt;
+&lt;/tr&gt;
+&lt;/tbody&gt;
+&lt;/table&gt;
+&lt;p&gt;CRAN help pages by contrast with base help pages have many less references to other help pages (See &lt;a href=&#34;#tab:cran-pages-links&#34;&gt;9&lt;/a&gt;).
+Almost 50% receive no reference or links to other help pages, but the next biggest group is those that have links and receive references.
+Surprising there are some help pages that receive reference that do not link to other help pages.&lt;/p&gt;
+&lt;div class=&#34;figure&#34;&gt;&lt;span style=&#34;display:block;&#34; id=&#34;fig:cran-pages-links2&#34;&gt;&lt;/span&gt;
+&lt;img src=&#34;https://llrs.dev/post/2024/12/23/cran-files-3/index.en_files/figure-html/cran-pages-links2-1.png&#34; alt=&#34;**Links on CRAN&#39;s help pages.** Many pages are either linked a lot or link a lot. Dashed line represents pages recevigin same number of links than those they have.&#34; width=&#34;672&#34; /&gt;
+&lt;p class=&#34;caption&#34;&gt;
+Figure 9: &lt;strong&gt;Links on CRAN’s help pages.&lt;/strong&gt; Many pages are either linked a lot or link a lot. Dashed line represents pages recevigin same number of links than those they have.
+&lt;/p&gt;
+&lt;/div&gt;
+&lt;p&gt;Most CRAN’s help pages are not linked , not even by their own package, or have links.
+Followed by those with links to and from the help page, then by those that are linked but do not have a link.
+Last, those that have a link but are not linked elsewhere.&lt;/p&gt;
+&lt;/div&gt;
+&lt;div id=&#34;links-to-base&#34; class=&#34;section level2&#34;&gt;
+&lt;h2&gt;Links to base&lt;/h2&gt;
+&lt;p&gt;First we can check the number of links to base R:&lt;/p&gt;
+&lt;div class=&#34;figure&#34;&gt;&lt;span style=&#34;display:block;&#34; id=&#34;fig:plot-base-links&#34;&gt;&lt;/span&gt;
+&lt;img src=&#34;https://llrs.dev/post/2024/12/23/cran-files-3/index.en_files/figure-html/plot-base-links-1.png&#34; alt=&#34;**Base is the most linked package.** Packages sorted by number of links they receive from CRAN&#39;s packages.&#34; width=&#34;672&#34; /&gt;
+&lt;p class=&#34;caption&#34;&gt;
+Figure 10: &lt;strong&gt;Base is the most linked package.&lt;/strong&gt; Packages sorted by number of links they receive from CRAN’s packages.
+&lt;/p&gt;
+&lt;/div&gt;
+&lt;p&gt;There are many packages that link a lot base R, but most of them link them fairly few.&lt;/p&gt;
+&lt;div class=&#34;figure&#34;&gt;&lt;span style=&#34;display:block;&#34; id=&#34;fig:plot-base-links2&#34;&gt;&lt;/span&gt;
+&lt;img src=&#34;https://llrs.dev/post/2024/12/23/cran-files-3/index.en_files/figure-html/plot-base-links2-1.png&#34; alt=&#34;**Base is the most linked package.** Packages sorted by number of links they receive from CRAN&#39;s packages.&#34; width=&#34;672&#34; /&gt;
+&lt;p class=&#34;caption&#34;&gt;
+Figure 11: &lt;strong&gt;Base is the most linked package.&lt;/strong&gt; Packages sorted by number of links they receive from CRAN’s packages.
+&lt;/p&gt;
+&lt;/div&gt;
+&lt;p&gt;From the above plot I find surprising there are these few links to the utils package.
+Perhaps looking at which files are linked could help.&lt;/p&gt;
+&lt;div class=&#34;figure&#34;&gt;&lt;span style=&#34;display:block;&#34; id=&#34;fig:base-links-packages&#34;&gt;&lt;/span&gt;
+&lt;img src=&#34;https://llrs.dev/post/2024/12/23/cran-files-3/index.en_files/figure-html/base-links-packages-1.png&#34; alt=&#34;**Links to base from different pacakges**&#34; width=&#34;672&#34; /&gt;
+&lt;p class=&#34;caption&#34;&gt;
+Figure 12: &lt;strong&gt;Links to base from different pacakges&lt;/strong&gt;
+&lt;/p&gt;
+&lt;/div&gt;
+&lt;p&gt;As previously reported there are many links to different help pages across packages.
+Many of the most popular pages are linked from different many different packages too.
+Surprisingly all links to the compiler package are to a single page: &lt;code&gt;help(&#34;compile&#34;, package = &#34;compiler&#34;)&lt;/code&gt;&lt;/p&gt;
+&lt;div class=&#34;figure&#34;&gt;&lt;span style=&#34;display:block;&#34; id=&#34;fig:base-links-sources&#34;&gt;&lt;/span&gt;
+&lt;img src=&#34;https://llrs.dev/post/2024/12/23/cran-files-3/index.en_files/figure-html/base-links-sources-1.png&#34; alt=&#34;**Most linked pages by packages.** Some data types are the most linked as well as some plot parameters and methods for model fitting or representation.&#34; width=&#34;672&#34; /&gt;
+&lt;p class=&#34;caption&#34;&gt;
+Figure 13: &lt;strong&gt;Most linked pages by packages.&lt;/strong&gt; Some data types are the most linked as well as some plot parameters and methods for model fitting or representation.
+&lt;/p&gt;
+&lt;/div&gt;
+&lt;div class=&#34;figure&#34;&gt;&lt;span style=&#34;display:block;&#34; id=&#34;fig:missing-anchors&#34;&gt;&lt;/span&gt;
+&lt;img src=&#34;https://llrs.dev/post/2024/12/23/cran-files-3/index.en_files/figure-html/missing-anchors-1.png&#34; alt=&#34;**Usually there are slightly more topics per help page.** &#34; width=&#34;672&#34; /&gt;
+&lt;p class=&#34;caption&#34;&gt;
+Figure 14: &lt;strong&gt;Usually there are slightly more topics per help page.&lt;/strong&gt;
+&lt;/p&gt;
+&lt;/div&gt;
+&lt;!-- Surprisingly there are more than 7000 packages with no links to other documentation pages, while the median is to link to ` median(pt$diff_target)` different help pages, from ` median(pt$diff_source)` different help pages. --&gt;
+&lt;!-- We can see some packages that have many help pages but only link to the same help page and some other packages that have few help pages that link to several pages. --&gt;
+&lt;/div&gt;
+&lt;div id=&#34;cran-packages-1&#34; class=&#34;section level2&#34;&gt;
+&lt;h2&gt;CRAN packages&lt;/h2&gt;
+&lt;p&gt;Now it is time to check for CRAN packages.&lt;/p&gt;
+&lt;p&gt;There are 1387 packages that lack destination of the R document.
+There are also 11684 that miss anchors, the majority of these are to their own R documentation help pages.
+There are 695 packages that link to a packages that is not on the dependency, while these could be packages using “LinkingTo” this could also be packages linking to archived packages.
+There are 1335 packages that link to a file instead of a topic. While this is not forbidden (yet)&lt;/p&gt;
+&lt;p&gt;We can look at packages are CRAN packages linking to (excluding themselves):&lt;/p&gt;
+&lt;div class=&#34;figure&#34;&gt;&lt;span style=&#34;display:block;&#34; id=&#34;fig:cran-linksto&#34;&gt;&lt;/span&gt;
+&lt;img src=&#34;https://llrs.dev/post/2024/12/23/cran-files-3/index.en_files/figure-html/cran-linksto-1.png&#34; alt=&#34;**Links to other packages** Most packages receive links  from few packages, but there are some that receive links from few packages and many help pages&#34; width=&#34;672&#34; /&gt;
+&lt;p class=&#34;caption&#34;&gt;
+Figure 15: &lt;strong&gt;Links to other packages&lt;/strong&gt; Most packages receive links from few packages, but there are some that receive links from few packages and many help pages
+&lt;/p&gt;
+&lt;/div&gt;
+&lt;p&gt;There are few packages thightly linked together (those that start with &lt;code&gt;paws.*&lt;/code&gt;) and then there are the base packages linked by many different packages.&lt;/p&gt;
+&lt;p&gt;If we focus more on the most common packages we might find some other common practices:&lt;/p&gt;
+&lt;div class=&#34;figure&#34;&gt;&lt;span style=&#34;display:block;&#34; id=&#34;fig:cran-linksto-zoom&#34;&gt;&lt;/span&gt;
+&lt;img src=&#34;https://llrs.dev/post/2024/12/23/cran-files-3/index.en_files/figure-html/cran-linksto-zoom-1.png&#34; alt=&#34;**Zooming to links to other packages** Focusing on packages with less than 400 help pages linked and less than 1000 packages being referenced.&#34; width=&#34;672&#34; /&gt;
+&lt;p class=&#34;caption&#34;&gt;
+Figure 16: &lt;strong&gt;Zooming to links to other packages&lt;/strong&gt; Focusing on packages with less than 400 help pages linked and less than 1000 packages being referenced.
+&lt;/p&gt;
+&lt;/div&gt;
+&lt;p&gt;But who is linking to these packages?&lt;/p&gt;
+&lt;div class=&#34;figure&#34;&gt;&lt;span style=&#34;display:block;&#34; id=&#34;fig:cran-linksto2&#34;&gt;&lt;/span&gt;
+&lt;img src=&#34;https://llrs.dev/post/2024/12/23/cran-files-3/index.en_files/figure-html/cran-linksto2-1.png&#34; alt=&#34;**Links to other packages** Most packages receive links  from few packages, but there are some that receive links from &#34; width=&#34;672&#34; /&gt;
+&lt;p class=&#34;caption&#34;&gt;
+Figure 17: &lt;strong&gt;Links to other packages&lt;/strong&gt; Most packages receive links from few packages, but there are some that receive links from
+&lt;/p&gt;
+&lt;/div&gt;
+&lt;p&gt;There are many packages that link to few packages but from many help pages.
+There are some that link to many packages from relatively few help pages.
+There is broom that links to many distinct packages from many help pages.&lt;/p&gt;
+&lt;p&gt;Putting this together we can explore which packages are more connected, those that provide links, those that recieve and those that do both or neither.&lt;/p&gt;
+&lt;table&gt;
+&lt;caption&gt;&lt;span id=&#34;tab:cran-packages-links&#34;&gt;Table 10: &lt;/span&gt;&lt;strong&gt;Table describing packages cross reference status.&lt;/strong&gt; Most packages are not linked, most provides link and few receive links but do not link to other packages.&lt;/caption&gt;
+&lt;thead&gt;
+&lt;tr class=&#34;header&#34;&gt;
+&lt;th align=&#34;left&#34;&gt;Receives_links&lt;/th&gt;
+&lt;th align=&#34;left&#34;&gt;Provides_links&lt;/th&gt;
+&lt;th align=&#34;right&#34;&gt;Packages&lt;/th&gt;
+&lt;/tr&gt;
+&lt;/thead&gt;
+&lt;tbody&gt;
+&lt;tr class=&#34;odd&#34;&gt;
+&lt;td align=&#34;left&#34;&gt;FALSE&lt;/td&gt;
+&lt;td align=&#34;left&#34;&gt;FALSE&lt;/td&gt;
+&lt;td align=&#34;right&#34;&gt;11056&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr class=&#34;even&#34;&gt;
+&lt;td align=&#34;left&#34;&gt;FALSE&lt;/td&gt;
+&lt;td align=&#34;left&#34;&gt;TRUE&lt;/td&gt;
+&lt;td align=&#34;right&#34;&gt;7466&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr class=&#34;odd&#34;&gt;
+&lt;td align=&#34;left&#34;&gt;TRUE&lt;/td&gt;
+&lt;td align=&#34;left&#34;&gt;TRUE&lt;/td&gt;
+&lt;td align=&#34;right&#34;&gt;2578&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr class=&#34;even&#34;&gt;
+&lt;td align=&#34;left&#34;&gt;TRUE&lt;/td&gt;
+&lt;td align=&#34;left&#34;&gt;FALSE&lt;/td&gt;
+&lt;td align=&#34;right&#34;&gt;743&lt;/td&gt;
+&lt;/tr&gt;
+&lt;/tbody&gt;
+&lt;/table&gt;
+&lt;p&gt;Most packages do not provide links to external packages or receive them.
+Next come those that link to other packages but are not linked back, followed by those that are linked to and are linked back.
+Last there are those package that receives links but do not link to other resources.&lt;/p&gt;
+&lt;div class=&#34;figure&#34;&gt;&lt;span style=&#34;display:block;&#34; id=&#34;fig:cran-links&#34;&gt;&lt;/span&gt;
+&lt;img src=&#34;https://llrs.dev/post/2024/12/23/cran-files-3/index.en_files/figure-html/cran-links-1.png&#34; alt=&#34;**Packages receiveing and giving links.** Very few packages link to many others. While some other packages are linked by many.&#34; width=&#34;672&#34; /&gt;
+&lt;p class=&#34;caption&#34;&gt;
+Figure 18: &lt;strong&gt;Packages receiveing and giving links.&lt;/strong&gt; Very few packages link to many others. While some other packages are linked by many.
+&lt;/p&gt;
+&lt;/div&gt;
+&lt;p&gt;broom is a package that receives few links from packages but link to multiple packages.&lt;/p&gt;
+&lt;div class=&#34;figure&#34;&gt;&lt;span style=&#34;display:block;&#34; id=&#34;fig:links-distribution&#34;&gt;&lt;/span&gt;
+&lt;img src=&#34;https://llrs.dev/post/2024/12/23/cran-files-3/index.en_files/figure-html/links-distribution-1.png&#34; alt=&#34;**Distribution of links on help pages with links.** CRAN packages have more links than base packages.&#34; width=&#34;672&#34; /&gt;
+&lt;p class=&#34;caption&#34;&gt;
+Figure 19: &lt;strong&gt;Distribution of links on help pages with links.&lt;/strong&gt; CRAN packages have more links than base packages.
+&lt;/p&gt;
+&lt;/div&gt;
+&lt;p&gt;CRAN’s packages tend to have more links to other packages than base R.&lt;/p&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;div id=&#34;conclusions&#34; class=&#34;section level1&#34;&gt;
+&lt;h1&gt;Conclusions&lt;/h1&gt;
+&lt;p&gt;As a summary of the analysis of the links and alias.
+About base:&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;Help page more linked to from base: options.Rd&lt;/li&gt;
+&lt;li&gt;Help page more linked to from CRAN: character.Rd&lt;/li&gt;
+&lt;li&gt;Help page with more links: par.Rd&lt;/li&gt;
+&lt;li&gt;Package more linked to from CRAN: base&lt;/li&gt;
+&lt;li&gt;Page more linked from different packages: par.Rd&lt;/li&gt;
+&lt;li&gt;Package with more links: base&lt;/li&gt;
+&lt;li&gt;Package with less links: compiler&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;About CRAN packages:&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;Package with more help pages: paws.management&lt;/li&gt;
+&lt;li&gt;Package more linked by other packages: ggplot2&lt;/li&gt;
+&lt;li&gt;Package help with more links: spatstat-package.Rd&lt;/li&gt;
+&lt;li&gt;Help page more repeated: reexports&lt;/li&gt;
+&lt;li&gt;Package help with linked to: R6Class.Rd&lt;/li&gt;
+&lt;li&gt;Package with more links to other packages: paws&lt;/li&gt;
+&lt;li&gt;Package with more links : keras3&lt;/li&gt;
+&lt;li&gt;Topic more repeated: &lt;code&gt;%&amp;gt;%&lt;/code&gt;&lt;/li&gt;
+&lt;li&gt;Links I couldn’t resolve: 5358&lt;/li&gt;
+&lt;li&gt;Packages with link related problems:&lt;/li&gt;
+&lt;li&gt;Packages linking to Bioconductor:&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;Wrong assumptions I had about cross-references:&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;All packages will have one link to other help pages.&lt;/li&gt;
+&lt;li&gt;One cannot link to a file.&lt;/li&gt;
+&lt;li&gt;Base packages wouldn’t link to CRAN packages.&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;I don’t think I was ever aware of the compiler package.&lt;/p&gt;
+&lt;div id=&#34;reproducibility&#34; class=&#34;section level3&#34;&gt;
+&lt;h3&gt;Reproducibility&lt;/h3&gt;
+&lt;details&gt;
+&lt;summary&gt;
+Session info
+&lt;/summary&gt;
+&lt;pre&gt;&lt;code&gt;## - Session info -------------------------------------------------------------------------------------------------------
+##  setting  value
+##  version  R Under development (unstable) (2024-12-20 r87452)
+##  os       Ubuntu 24.04.1 LTS
+##  system   x86_64, linux-gnu
+##  ui       X11
+##  language en
+##  collate  C
+##  ctype    C
+##  tz       Europe/Madrid
+##  date     2025-01-01
+##  pandoc   3.2 @ /usr/lib/rstudio/resources/app/bin/quarto/bin/tools/x86_64/ (via rmarkdown)
+##  quarto   1.4.553 @ /usr/local/bin/quarto
+## 
+## - Packages -----------------------------------------------------------------------------------------------------------
+##  package      * version    date (UTC) lib source
+##  BiocManager    1.30.25    2024-08-28 [1] CRAN (R 4.5.0)
+##  blogdown       1.19       2024-02-01 [1] CRAN (R 4.5.0)
+##  bookdown       0.41       2024-10-16 [1] CRAN (R 4.5.0)
+##  bslib          0.8.0      2024-07-29 [1] CRAN (R 4.5.0)
+##  cachem         1.1.0      2024-05-16 [1] CRAN (R 4.5.0)
+##  cli            3.6.3      2024-06-21 [1] CRAN (R 4.5.0)
+##  codetools      0.2-20     2024-03-31 [2] CRAN (R 4.5.0)
+##  colorspace     2.1-1      2024-07-26 [1] CRAN (R 4.5.0)
+##  digest         0.6.37     2024-08-19 [1] CRAN (R 4.5.0)
+##  dplyr        * 1.1.4      2023-11-17 [1] CRAN (R 4.5.0)
+##  evaluate       1.0.1      2024-10-10 [1] CRAN (R 4.5.0)
+##  fansi          1.0.6      2023-12-08 [1] CRAN (R 4.5.0)
+##  farver         2.1.2      2024-05-13 [1] CRAN (R 4.5.0)
+##  fastmap        1.2.0      2024-05-15 [1] CRAN (R 4.5.0)
+##  forcats      * 1.0.0      2023-01-29 [1] CRAN (R 4.5.0)
+##  generics       0.1.3      2022-07-05 [1] CRAN (R 4.5.0)
+##  ggforce        0.4.2      2024-02-19 [1] CRAN (R 4.5.0)
+##  ggplot2      * 3.5.1      2024-04-23 [1] CRAN (R 4.5.0)
+##  ggraph       * 2.2.1      2024-03-07 [1] CRAN (R 4.5.0)
+##  ggrepel      * 0.9.6      2024-09-07 [1] CRAN (R 4.5.0)
+##  glue           1.8.0      2024-09-30 [1] CRAN (R 4.5.0)
+##  graphlayouts   1.2.1      2024-11-18 [1] CRAN (R 4.5.0)
+##  gridExtra      2.3        2017-09-09 [1] CRAN (R 4.5.0)
+##  gtable         0.3.6      2024-10-25 [1] CRAN (R 4.5.0)
+##  htmltools      0.5.8.1    2024-04-04 [1] CRAN (R 4.5.0)
+##  igraph         2.1.1      2024-10-19 [1] CRAN (R 4.5.0)
+##  jquerylib      0.1.4      2021-04-26 [1] CRAN (R 4.5.0)
+##  jsonlite       1.8.9      2024-09-20 [1] CRAN (R 4.5.0)
+##  knitr        * 1.49       2024-11-08 [1] CRAN (R 4.5.0)
+##  labeling       0.4.3      2023-08-29 [1] CRAN (R 4.5.0)
+##  lifecycle      1.0.4      2023-11-07 [1] CRAN (R 4.5.0)
+##  magrittr       2.0.3      2022-03-30 [1] CRAN (R 4.5.0)
+##  MASS           7.3-61     2024-06-13 [2] CRAN (R 4.5.0)
+##  memoise        2.0.1      2021-11-26 [1] CRAN (R 4.5.0)
+##  munsell        0.5.1      2024-04-01 [1] CRAN (R 4.5.0)
+##  pillar         1.9.0      2023-03-22 [1] CRAN (R 4.5.0)
+##  pkgconfig      2.0.3      2019-09-22 [1] CRAN (R 4.5.0)
+##  polyclip       1.10-7     2024-07-23 [1] CRAN (R 4.5.0)
+##  purrr          1.0.2      2023-08-10 [1] CRAN (R 4.5.0)
+##  R6             2.5.1      2021-08-19 [1] CRAN (R 4.5.0)
+##  Rcpp           1.0.13-1   2024-11-02 [1] CRAN (R 4.5.0)
+##  rlang          1.1.4      2024-06-04 [1] CRAN (R 4.5.0)
+##  rmarkdown      2.29       2024-11-04 [1] CRAN (R 4.5.0)
+##  rstudioapi     0.17.1     2024-10-22 [1] CRAN (R 4.5.0)
+##  sass           0.4.9      2024-03-15 [1] CRAN (R 4.5.0)
+##  scales         1.3.0      2023-11-28 [1] CRAN (R 4.5.0)
+##  sessioninfo    1.2.2.9000 2024-09-15 [1] Github (r-lib/sessioninfo@442a686)
+##  tibble         3.2.1      2023-03-20 [1] CRAN (R 4.5.0)
+##  tidygraph    * 1.3.1      2024-01-30 [1] CRAN (R 4.5.0)
+##  tidyr          1.3.1      2024-01-24 [1] CRAN (R 4.5.0)
+##  tidyselect     1.2.1      2024-03-11 [1] CRAN (R 4.5.0)
+##  tweenr         2.0.3      2024-02-26 [1] CRAN (R 4.5.0)
+##  utf8           1.2.4      2023-10-22 [1] CRAN (R 4.5.0)
+##  vctrs          0.6.5      2023-12-01 [1] CRAN (R 4.5.0)
+##  viridis        0.6.5      2024-01-29 [1] CRAN (R 4.5.0)
+##  viridisLite    0.4.2      2023-05-02 [1] CRAN (R 4.5.0)
+##  withr          3.0.2      2024-10-28 [1] CRAN (R 4.5.0)
+##  xfun           0.49       2024-10-31 [1] CRAN (R 4.5.0)
+##  yaml           2.3.10     2024-07-26 [1] CRAN (R 4.5.0)
+## 
+##  [1] /home/lluis/bin/R/4.5
+##  [2] /opt/R/devel/lib/R/library
+##  * -- Packages attached to the search path.
+## 
+## ----------------------------------------------------------------------------------------------------------------------&lt;/code&gt;&lt;/pre&gt;
+&lt;/details&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;div class=&#34;footnotes footnotes-end-of-document&#34;&gt;
+&lt;hr /&gt;
+&lt;ol&gt;
+&lt;li id=&#34;fn1&#34;&gt;&lt;p&gt;By setting &lt;code&gt;_R_CHECK_XREFS_NOTE_MISSING_PACKAGE_ANCHORS_=true&lt;/code&gt; as environmental variable.&lt;a href=&#34;#fnref1&#34; class=&#34;footnote-back&#34;&gt;↩︎&lt;/a&gt;&lt;/p&gt;&lt;/li&gt;
+&lt;li id=&#34;fn2&#34;&gt;&lt;p&gt;But using links to files is still fine.&lt;a href=&#34;#fnref2&#34; class=&#34;footnote-back&#34;&gt;↩︎&lt;/a&gt;&lt;/p&gt;&lt;/li&gt;
+&lt;li id=&#34;fn3&#34;&gt;&lt;p&gt;There is also the &lt;code&gt;\linkS4class{abc}&lt;/code&gt; that expands to &lt;code&gt;\link[=abc-class]{abc}&lt;/code&gt; for S4 classes.&lt;a href=&#34;#fnref3&#34; class=&#34;footnote-back&#34;&gt;↩︎&lt;/a&gt;&lt;/p&gt;&lt;/li&gt;
+&lt;li id=&#34;fn4&#34;&gt;&lt;p&gt;So there are three names for (almost) the same thing: topic, alias and anchor. Anchors do not need to start with &lt;code&gt;=&lt;/code&gt; but should be resolvable.&lt;a href=&#34;#fnref4&#34; class=&#34;footnote-back&#34;&gt;↩︎&lt;/a&gt;&lt;/p&gt;&lt;/li&gt;
+&lt;li id=&#34;fn5&#34;&gt;&lt;p&gt;Yes, even though the documentation makes it clear that this shouldn’t be done the help system works around this issue.&lt;a href=&#34;#fnref5&#34; class=&#34;footnote-back&#34;&gt;↩︎&lt;/a&gt;&lt;/p&gt;&lt;/li&gt;
+&lt;/ol&gt;
+&lt;/div&gt;
+</description>
+    </item>
+    
+    <item>
+      <title>The missing R generation</title>
+      <link>https://llrs.dev/post/2024/07/28/the-missing-r-generation/</link>
+      <pubDate>Sun, 28 Jul 2024 00:00:00 +0000</pubDate>
+      <guid>https://llrs.dev/post/2024/07/28/the-missing-r-generation/</guid>
+      <description>
+
+
+&lt;div id=&#34;sunday&#34; class=&#34;section level2&#34;&gt;
+&lt;h2&gt;Sunday&lt;/h2&gt;
+&lt;p&gt;I was a bit down before going to Salzburg, as I was considering if spending my monthly salary in a week for useR!2
+024 was worth it.
+While I was looking to some talks and content I was mainly interested in meeting people.&lt;/p&gt;
+&lt;p&gt;I cherished soon, as I met with Emilio López Cano on my flight to Salzburg&lt;a href=&#34;#fn1&#34; class=&#34;footnote-ref&#34; id=&#34;fnref1&#34;&gt;&lt;sup&gt;1&lt;/sup&gt;&lt;/a&gt;.
+Once on the flight, we met with more people going to the conference from Appsilon, a sponsor of the conference.&lt;/p&gt;
+&lt;p&gt;The day before the conference was great already: I had registered to the guided tour.
+Despite the light rain, we were like 30 people in the park to visit the city with other useRs!
+Lucky for me, there were people I already interacted online there too.
+Shannon Pileggi and Yann Féat were in my group, which Robert Müller from Roche (another sponsor of the conference), guided as an expert through the city.
+I particularly liked that he had made some notes to provide details of what he was explaining to us.
+We finished the tour in a bribery drinking and eating in a relaxed environment.
+Which lead to meeting Max and Fonti Kar, where their enthusiasm and their experience with R was very different from mine.&lt;/p&gt;
+&lt;div class=&#34;float&#34;&gt;
+&lt;img src=&#34;images/Salzburg_river.jpg&#34; alt=&#34;Picture of the river of Salzburg&#34; /&gt;
+&lt;div class=&#34;figcaption&#34;&gt;Picture of the river of Salzburg&lt;/div&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;div id=&#34;monday&#34; class=&#34;section level2&#34;&gt;
+&lt;h2&gt;Monday&lt;/h2&gt;
+&lt;p&gt;The next day, the conference started officially.
+I won’t talk much about the content of the conference, as I have posted it live during the conference&lt;a href=&#34;#fn2&#34; class=&#34;footnote-ref&#34; id=&#34;fnref2&#34;&gt;&lt;sup&gt;2&lt;/sup&gt;&lt;/a&gt;.
+But I want to write about the people I met (and those that I missed) and the environment I saw.&lt;/p&gt;
+&lt;p&gt;In the morning I saw several R core members there, as they took the opportunity to have a long day meeting to discuss things.&lt;/p&gt;
+&lt;p&gt;I had registered to two tutorials: The one on the morning from Shannon about debugging R.
+There I met with Maëlle Salmon for the second time, after meeting her in the previous Spanish R conference, as she was helping in the workshop.&lt;/p&gt;
+&lt;p&gt;On the afternoon I went to Gabe Becker’s workshop about contributing to R, who I had meet at the R contributor working group a couple of years ago.
+After it, while I was talking with him I could greet Michael Lawrence which supervised my work on the &lt;a href=&#34;https://contributor.r-project.org/rdevguide/&#34;&gt;R dev guide&lt;/a&gt;.&lt;/p&gt;
+&lt;p&gt;On the evening, some of us went to have dinner at the center of the city, and we end up 5 at a beer garden.&lt;/p&gt;
+&lt;div class=&#34;float&#34;&gt;
+&lt;img src=&#34;images/Salzburg_09.jpeg&#34; alt=&#34;Roche explaining why they sponsor useR! conference&#34; /&gt;
+&lt;div class=&#34;figcaption&#34;&gt;Roche explaining why they sponsor useR! conference&lt;/div&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;div id=&#34;tuesday&#34; class=&#34;section level2&#34;&gt;
+&lt;h2&gt;Tuesday&lt;/h2&gt;
+&lt;p&gt;On Tuesday the keynotes and the conference itself started in full swig.
+We finally got our badges around our necks and prepared for the only keynote of a R core member.
+Before the proper keynote there was a brief summary of the major contributions of Friedch Leisch to R and the programming world.
+I knew his name was in the &lt;a href=&#34;https://www.r-project.org/contributors.html&#34;&gt;Contributors’ page&lt;/a&gt;, but didn’t know much about his contributions.&lt;/p&gt;
+&lt;p&gt;After his talk I could talk with Kurt about some ongoing collaboration we have and about the data presented.
+Similarly I also take the opportunity to talk with Uwe Liegges, another CRAN member, to talk about the submission process.
+It struck to me the admiration he spoke of Brian Ripley’s contributions to R and code in general&lt;a href=&#34;#fn3&#34; class=&#34;footnote-ref&#34; id=&#34;fnref3&#34;&gt;&lt;sup&gt;3&lt;/sup&gt;&lt;/a&gt;.&lt;/p&gt;
+&lt;p&gt;During the talks, I could meet Hugo Gruson, and ask him a couple of questions.
+I also could greet Martin Morgan, a former R core member and ex-leader of the &lt;a href=&#34;https://bioconductor.org&#34;&gt;Bioconductor project&lt;/a&gt; &lt;a href=&#34;#fn4&#34; class=&#34;footnote-ref&#34; id=&#34;fnref4&#34;&gt;&lt;sup&gt;4&lt;/sup&gt;&lt;/a&gt;.
+For those that don’t know Bioconductor is also an “official” R repository focused on biology related packages &lt;a href=&#34;#fn5&#34; class=&#34;footnote-ref&#34; id=&#34;fnref5&#34;&gt;&lt;sup&gt;5&lt;/sup&gt;&lt;/a&gt;.&lt;/p&gt;
+&lt;p&gt;During lunch with Heather Turner, which is behind the &lt;a href=&#34;https://contributor.r-project.org/&#34;&gt;R contributor working group&lt;/a&gt; and the R dev days (continue reading), we talked about the different background of useRs.&lt;/p&gt;
+&lt;p&gt;In one of the previous talks I could exchange some sticker with Kelly Bodwin the last keynote of the day.
+In her keynote Kelly explained how weird R is and how her parents, both computational scientists don’t like it.
+But beyond weird, R is funny and more than a programming language but about a community.&lt;/p&gt;
+&lt;p&gt;During the day I saw several R core members talking between them.
+From time to time I saw some senior attendees talking with them but rarely someone young.&lt;/p&gt;
+&lt;p&gt;That night I had dinner with other people from the conference, and I end up meeting Hilary Parker.&lt;/p&gt;
+&lt;div class=&#34;float&#34;&gt;
+&lt;img src=&#34;images/Salzburg_10.jpg&#34; alt=&#34;The gardens of Mirabell (where the guided tour started on Sunday)&#34; /&gt;
+&lt;div class=&#34;figcaption&#34;&gt;The gardens of Mirabell (where the guided tour started on Sunday)&lt;/div&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;div id=&#34;wednesday&#34; class=&#34;section level2&#34;&gt;
+&lt;h2&gt;Wednesday&lt;/h2&gt;
+&lt;p&gt;On Wednesday we started with Maëlle Salmon keynote, a great talk with many references about code maintenance.
+During the conference you could find her with reading a book; she reads a lot!&lt;/p&gt;
+&lt;p&gt;After the provocative talk titled “I’m only Giving This Talk Because I’m a Woman”, I had the opportunity to explain to another attendee how a Code of Conduct committee works &lt;a href=&#34;#fn6&#34; class=&#34;footnote-ref&#34; id=&#34;fnref6&#34;&gt;&lt;sup&gt;6&lt;/sup&gt;&lt;/a&gt;.&lt;/p&gt;
+&lt;p&gt;During dinner I was sitting with Henrik Bengtsson and Charlie Gao when Martin Mächler and Luke Tierney came to sit with us.
+I took the opportunity to ask how Luke ended up writing about the pipe operator, while his background and work is statistics, which lead to funny stories shared by Martin Mächler.&lt;/p&gt;
+&lt;p&gt;On the afternoon there was also the poster session.
+As I had a poster about &lt;a href=&#34;https://cranhaven.org&#34;&gt;CRANHaven&lt;/a&gt; I couldn’t go around much, but I got to talk to lots of people that came to learn what was this about (protecting users from installing packages that. Among them came Sebastian Meyer, who I was surprised to find out that he doesn’t have a permanent position as professor.&lt;/p&gt;
+&lt;p&gt;The afternoons keynote talk from Torsten Hothorn was also inspiring about a life of work related to his package mvtnorm and how it has shaped his work, friends, family.&lt;/p&gt;
+&lt;div class=&#34;float&#34;&gt;
+&lt;img src=&#34;images/Salzburg_11.jpg&#34; alt=&#34;Views from the hills of the Salzburg towards the center of the old city with the castle on the top of another hill&#34; /&gt;
+&lt;div class=&#34;figcaption&#34;&gt;Views from the hills of the Salzburg towards the center of the old city with the castle on the top of another hill&lt;/div&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;div id=&#34;thursday&#34; class=&#34;section level2&#34;&gt;
+&lt;h2&gt;Thursday&lt;/h2&gt;
+&lt;p&gt;We started with a refreshingly direct and honest talk from one of the sponsors Raiffesen, about why they support R.&lt;/p&gt;
+&lt;p&gt;Then we heard about the the effort to convert R journal articles to html webpages from Abhishek Ulayil who I had met earlier.
+His direct demo of how pdfs were converted back to dynamic html pages was funny and energizing.&lt;/p&gt;
+&lt;p&gt;This day there were many short talks and I couldn’t talk much with the presenters or many people as I was running from one site to another.&lt;/p&gt;
+&lt;p&gt;I think there were fewer R core members as many had to go back to their jobs and families.&lt;/p&gt;
+&lt;p&gt;The last keynote of the conference was a provocative talk about Large Language Models from Hilary Parker.&lt;/p&gt;
+&lt;p&gt;The conference ended requesting participation of users to organize the next in-person conference.&lt;/p&gt;
+&lt;div class=&#34;float&#34;&gt;
+&lt;img src=&#34;images/Salzburg_10c.jpg&#34; style=&#34;height:40.0%&#34; alt=&#34;Notes on the conference venue&#34; /&gt;
+&lt;div class=&#34;figcaption&#34;&gt;Notes on the conference venue&lt;/div&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;div id=&#34;friday&#34; class=&#34;section level2&#34;&gt;
+&lt;h2&gt;Friday&lt;/h2&gt;
+&lt;p&gt;This day was booked by the R-Dev event, this is an event where R core members hang out with interested people to fix some pending issues on R (not packages!).&lt;/p&gt;
+&lt;p&gt;It was great to see R core members sitting in the row behind me: Martin Mächler, Michael Lawrence, Tomas Kalibera, Paul Murrell, Peter Dalgaard, Luke Tierney, and Sebastian Meyer (apologies if I mix names I didn’t talk to all of them, and I don’t know their faces well).
+Together with a mix of R users and developers like Edzer Pebesma, Paola Corrales, Fonti Kar, Mitchell O’Hara-Wild or Audrey Yeo.&lt;/p&gt;
+&lt;p&gt;There were lots of young people in the R dev and new people contributing for the first time to R.
+Some of them were a bit intimidated by submitting patches and interacting with R core members.
+However, the event ended very successfully with many patches and improvements. At the end we&lt;/p&gt;
+&lt;div class=&#34;float&#34;&gt;
+&lt;img src=&#34;images/Salzburg_12.jpg&#34; alt=&#34;The R dev contributors after getting back to it after lunch&#34; /&gt;
+&lt;div class=&#34;figcaption&#34;&gt;The R dev contributors after getting back to it after lunch&lt;/div&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;div id=&#34;summary&#34; class=&#34;section level1&#34;&gt;
+&lt;h1&gt;Summary&lt;/h1&gt;
+&lt;p&gt;The conference environment was fantastic, and I had the chance to meet many people attending their first useR conference, like myself.
+There were also many seasoned useRs who had attended multiple conferences.
+I can’t speak to how they found this conference compared to previous ones, but for me, it was a valuable opportunity to connect with people I had previously only met online and to make new connections.&lt;/p&gt;
+&lt;p&gt;Although I didn’t take many photos with people, I noticed others taking photos with their groups, such as R Ladies, company teams, or selfies with fellow attendees and online friends (including Hadley Wickham).
+Interestingly, not many people approached the R core members, without whom this event wouldn’t be possible.
+I must admit, I wasn’t sure how to approach them myself.
+I see two possible approaches: either go up to them like a fan asking for a selfie or engage them with questions or requests about R.
+Neither extreme seemed ideal to me.
+Instead, there might be more value in understanding their perspectives on R and finding ways to collaborate with them.&lt;/p&gt;
+&lt;p&gt;One useR mentioned to me that the R core can’t continue operating as it has, especially now that companies are investing money and relying on it.
+While this poses challenges for businesses, I also see it as an opportunity for positive changes within the R core.
+I believe that through increased collaboration, we can overcome upcoming challenges.
+I hope that experienced R developers who already have a rapport with the R core will take the lead.&lt;/p&gt;
+&lt;p&gt;What was your experience at useR!2024? Do you agree on supporting and collaborating more the R core? We can continue the conversation at &lt;a href=&#34;https://fosstodon.org/@Lluis_Revilla&#34;&gt;&lt;span class=&#34;citation&#34;&gt;@Lluis_Revilla&lt;/span&gt;&lt;span class=&#34;citation&#34;&gt;@fosstodon.org&lt;/span&gt;&lt;/a&gt;&lt;/p&gt;
+&lt;/div&gt;
+&lt;div class=&#34;footnotes footnotes-end-of-document&#34;&gt;
+&lt;hr /&gt;
+&lt;ol&gt;
+&lt;li id=&#34;fn1&#34;&gt;&lt;p&gt;He is the president of the Spanish association of R.&lt;a href=&#34;#fnref1&#34; class=&#34;footnote-back&#34;&gt;↩︎&lt;/a&gt;&lt;/p&gt;&lt;/li&gt;
+&lt;li id=&#34;fn2&#34;&gt;&lt;p&gt;I posted it on Fosstodon: &lt;a href=&#34;https://fosstodon.org/search&#34;&gt;search&lt;/a&gt; for &lt;code&gt;from:@Lluis_Revilla@fosstodon.org #useR2024&lt;/code&gt;.&lt;a href=&#34;#fnref2&#34; class=&#34;footnote-back&#34;&gt;↩︎&lt;/a&gt;&lt;/p&gt;&lt;/li&gt;
+&lt;li id=&#34;fn3&#34;&gt;&lt;p&gt;But at the same time making it clear that his decisions are only his.&lt;a href=&#34;#fnref3&#34; class=&#34;footnote-back&#34;&gt;↩︎&lt;/a&gt;&lt;/p&gt;&lt;/li&gt;
+&lt;li id=&#34;fn4&#34;&gt;&lt;p&gt;I was surprised he was the only Bioconductor member I found at the conference.
+I expected that more people of the Bioconductor project would come here, and I saw some posters using packages shared there but no mention to the project in any talk I went.&lt;a href=&#34;#fnref4&#34; class=&#34;footnote-back&#34;&gt;↩︎&lt;/a&gt;&lt;/p&gt;&lt;/li&gt;
+&lt;li id=&#34;fn5&#34;&gt;&lt;p&gt;Official in the sense that packages in CRAN cannot have the same name as in packages in Bioconductor and &lt;em&gt;vice-versa&lt;/em&gt;, and its repository can be set from R via &lt;code&gt;setRepositories()&lt;/code&gt; and with environmental variable &lt;code&gt;R_BIOC_VERSION&lt;/code&gt;.&lt;a href=&#34;#fnref5&#34; class=&#34;footnote-back&#34;&gt;↩︎&lt;/a&gt;&lt;/p&gt;&lt;/li&gt;
+&lt;li id=&#34;fn6&#34;&gt;&lt;p&gt;My term at &lt;a href=&#34;https://bioconductor.github.io/bioc_coc_multilingual/&#34;&gt;Bioconductor’s code of conduct committee&lt;/a&gt; is about to finish, but I served for close to 2 years.&lt;a href=&#34;#fnref6&#34; class=&#34;footnote-back&#34;&gt;↩︎&lt;/a&gt;&lt;/p&gt;&lt;/li&gt;
+&lt;/ol&gt;
+&lt;/div&gt;
+</description>
+    </item>
+    
+    <item>
+      <title>Packaging R: getting in repositories</title>
+      <link>https://llrs.dev/post/2024/05/05/packaging-r-getting-in/</link>
+      <pubDate>Sun, 05 May 2024 00:00:00 +0000</pubDate>
+      <guid>https://llrs.dev/post/2024/05/05/packaging-r-getting-in/</guid>
+      <description>
+
+
+&lt;p&gt;After the previous post collecting information about repositories I want to collect here my thoughts on adding a package in a repository and how repositories are recognized.
+As in the previous post this is built on the assumption that one already has a package or more and wants to distribute it.&lt;/p&gt;
+&lt;p&gt;This is meant as a reflection of what is an R repository and not intended for R package developers.
+However, their feedback is appreciated to consider how an ideal repository would be.&lt;/p&gt;
+&lt;div id=&#34;package-submission&#34; class=&#34;section level2&#34;&gt;
+&lt;h2&gt;Package submission&lt;/h2&gt;
+&lt;p&gt;An R repository will have a way to incorporate a package.
+CRAN submission process starts with &lt;a href=&#34;https://cran.r-project.org/submit.html&#34;&gt;a form&lt;/a&gt;, while Bioconductor is done through a &lt;a href=&#34;https://github.com/Bioconductor/Contributions/issues/new&#34;&gt;Github issue&lt;/a&gt;.&lt;/p&gt;
+&lt;p&gt;The process will usually then start with an automated process.
+Until the automated process check hasn’t passed probably no one will look into the package submission.
+This reduce the hours a human must dedicate to manage submissions.
+If a man is kept in the loop one could appeal the automatic process contacting them, or if it is a random failing re-submitting the package again.&lt;/p&gt;
+&lt;div class=&#34;float&#34;&gt;
+&lt;img src=&#34;images/submissions.png&#34; alt=&#34;Package submission checks: first a check of the package, if it is not new a dependency check from the repository if all checks pass the package is added to the repository.&#34; /&gt;
+&lt;div class=&#34;figcaption&#34;&gt;&lt;strong&gt;Package submission checks&lt;/strong&gt;: first a check of the package, if it is not new a dependency check from the repository if all checks pass the package is added to the repository.&lt;/div&gt;
+&lt;/div&gt;
+&lt;p&gt;Generally a package must first pass a package quality check before it is considered for further integration test.
+This integration test is usually checking the new version of a package with packages that depend on it, also known as reverse dependencies.&lt;/p&gt;
+&lt;/div&gt;
+&lt;div id=&#34;package-maintenance&#34; class=&#34;section level2&#34;&gt;
+&lt;h2&gt;Package maintenance&lt;/h2&gt;
+&lt;p&gt;Once a package is included in a repository it usually needs to be maintained.&lt;/p&gt;
+&lt;p&gt;There are many moving pieces, chips architecture, OS, R, other packages.
+This all lead that authors need to maintain the packages in good shape if they want it to remain useful to users.
+Of course, if one doesn’t want to do that they do not need to create a repository to share their package.&lt;/p&gt;
+&lt;div class=&#34;float&#34;&gt;
+&lt;img src=&#34;images/checks.png&#34; alt=&#34;Graphic showing time and different R versions and checks. Repositories check the packages on them on multiple levels.&#34; /&gt;
+&lt;div class=&#34;figcaption&#34;&gt;&lt;strong&gt;Graphic showing time and different R versions and checks.&lt;/strong&gt; Repositories check the packages on them on multiple levels.&lt;/div&gt;
+&lt;/div&gt;
+&lt;p&gt;This leads that at any given time point there must be some tests for any given package under different conditions as shown in image 2.
+This leads to the possibility of having a package archived from the repository for failing the checks in place.&lt;/p&gt;
+&lt;p&gt;Repositories provide these checks as a service to the users.
+They guarantee that R packages in the repository work well together and pass the same set of packages (mostly).
+This is what leads to their reputation and usage among users (this is true beyond R, DEBIAN, Ubuntu, …).&lt;/p&gt;
+&lt;/div&gt;
+&lt;div id=&#34;closing-remarks&#34; class=&#34;section level2&#34;&gt;
+&lt;h2&gt;Closing remarks&lt;/h2&gt;
+&lt;p&gt;There are several official repositories how the package submission works when a package is submitted to one but it is related, via dependencies to other repositories is a matter of another post.&lt;/p&gt;
+&lt;p&gt;There are some discussion on what is an R repository.
+The importance of CRAN and Bioconductor has lead to some confusion.
+There are generally two meanings of what a cran-like repository is:&lt;/p&gt;
+&lt;ol style=&#34;list-style-type: decimal&#34;&gt;
+&lt;li&gt;&lt;p&gt;One where &lt;code&gt;install.packages()&lt;/code&gt; works (This is defined by how the files and binaries are organized and will be a theme for another time).&lt;/p&gt;&lt;/li&gt;
+&lt;li&gt;&lt;p&gt;One were all the checks described here are in place and &lt;code&gt;install.packages()&lt;/code&gt; works too.&lt;/p&gt;&lt;/li&gt;
+&lt;/ol&gt;
+&lt;p&gt;r-universe is using the first definition but could be used to generate repositories with checks that comply with the second definition.
+Other repositories that use that are the &lt;a href=&#34;https://packagemanager.posit.co/client/#/&#34;&gt;&lt;em&gt;Posit&lt;/em&gt; Public &lt;em&gt;Package Manager&lt;/em&gt;&lt;/a&gt;, or the &lt;a href=&#34;https://r4pi.org/&#34;&gt;R4Pi repository&lt;/a&gt; (which provides binaries for Raspberry Pi OS).&lt;/p&gt;
+&lt;p&gt;As the second definition is more strict I’ll focus on it as this post has explained.&lt;/p&gt;
+&lt;p&gt;PS: This post might be edited as it has been siting in my computer for several months.
+I prefer to post it and be improved with feedback, so let me know if you have any addition.&lt;/p&gt;
+&lt;/div&gt;
+</description>
+    </item>
+    
+    <item>
+      <title>useR madrid: rtweet</title>
+      <link>https://llrs.dev/talk/user-madrid-rtweet/</link>
+      <pubDate>Thu, 29 Feb 2024 19:00:00 +0200</pubDate>
+      <guid>https://llrs.dev/talk/user-madrid-rtweet/</guid>
+      <description>
+
+
+&lt;p&gt;This presentation was in Spanish. I shared the history of my involvement with rtweet and what is happening with the package and Twitter API.&lt;/p&gt;
+</description>
+    </item>
+    
+    <item>
+      <title>Packaging R: repositories</title>
+      <link>https://llrs.dev/post/2023/12/09/packaging-r-repositories/</link>
+      <pubDate>Sat, 09 Dec 2023 00:00:00 +0000</pubDate>
+      <guid>https://llrs.dev/post/2023/12/09/packaging-r-repositories/</guid>
+      <description>
+
+
+&lt;p&gt;In this post I want to collect some thoughts about R repositories.
+In R we have multiple repositories that store packages for users.
+In this post I want to write about the purpose, functionality, benefits and drawbacks of R repositories and how packages are managed.
+The goal is to summarize what I’ve learnt these last years about them.
+I’ll also collect some information about them from various sources to make it easier for myself to find it later on.&lt;/p&gt;
+&lt;p&gt;I am writing this because I am worried about the future of CRAN and R.
+Due to multiple circumstances, the current position is not sustainable as is.
+I hope that this post, will help me to understand the past, present and create some concrete steps to do.&lt;/p&gt;
+&lt;div id=&#34;history&#34; class=&#34;section level1&#34;&gt;
+&lt;h1&gt;History&lt;/h1&gt;
+&lt;p&gt;I was not there, but the first repository started around April 1997.
+This repository is CRAN: the Comprehensive R Archive Network.
+The &lt;a href=&#34;https://stat.ethz.ch/pipermail/r-devel/1997-April/017026.html&#34;&gt;first mention&lt;/a&gt; I found is already about changes in it, but it was not until the end of the month when &lt;a href=&#34;https://stat.ethz.ch/pipermail/r-announce/1997/000001.html&#34;&gt;it was announced&lt;/a&gt;.&lt;/p&gt;
+&lt;p&gt;CRAN was created by a few volunteers, some of which are still mainting it 25 years later.
+The current team is listed on &lt;a href=&#34;https://cran.r-project.org/CRAN_team.htm&#34;&gt;their website&lt;/a&gt;.
+From the beginning it was “a collection of sites which carry identical material, consisting of the R&amp;amp;R R distribution(s), the contributed extensions, documentation for R, and binaries.”&lt;/p&gt;
+&lt;p&gt;Omegahat was another repository created &lt;a href=&#34;https://omegahat.net/&#34;&gt;shortly after CRAN&lt;/a&gt;:&lt;/p&gt;
+&lt;blockquote&gt;
+&lt;p&gt;The Omega project began in July, 1998, with discussions among designers responsible for three current statistical languages (S, R, and Lisp-Stat), with the idea of working together on new directions with special emphasis on web-based software, Java, the Java virtual machine, and distributed computing.&lt;/p&gt;
+&lt;/blockquote&gt;
+&lt;p&gt;Many developers of Omegahat were in the R Core or CRAN team.
+It was available as a repository from the R source code but was removed definitely in version R 4.1, in 2021&lt;a href=&#34;#fn1&#34; class=&#34;footnote-ref&#34; id=&#34;fnref1&#34;&gt;&lt;sup&gt;1&lt;/sup&gt;&lt;/a&gt;.&lt;/p&gt;
+&lt;p&gt;Bioconductor, was the next major repository that appeared.
+It was funded by Robert Gentleman and others in 2004 (it started the mailing list).
+A paper describing it &lt;a href=&#34;https://doi.org/10.1186/gb-2004-5-10-r80&#34;&gt;appeared in late 2004&lt;/a&gt;:&lt;/p&gt;
+&lt;blockquote&gt;
+&lt;p&gt;an initiative for the collaborative creation of extensible software for computational biology and bioinformatics.&lt;/p&gt;
+&lt;/blockquote&gt;
+&lt;p&gt;Through its history repositories have evolved with R and R with them.
+For example: R was released twice a year at the beginning, and Bioconductor did too.
+But when R moved to be released once per year (in 2013 with version 3.0) Bioconductor kept using two releases a year.
+This introduced some problems when installing packages from Bioconductor, when a single R release can be compatible with two Bioconductor releases&lt;a href=&#34;#fn2&#34; class=&#34;footnote-ref&#34; id=&#34;fnref2&#34;&gt;&lt;sup&gt;2&lt;/sup&gt;&lt;/a&gt;.&lt;/p&gt;
+&lt;p&gt;In other cases, checks have evolved.
+For instance &lt;a href=&#34;https://en.wikipedia.org/wiki/Oracle_Solaris&#34;&gt;Solaris&lt;/a&gt; was used to test packages in CRAN until 2021, if I recall correctly, because it allowed to test in a proprietary C or C++ compiler.
+This lead to discover bugs but also to more distress in R-package developers which had difficulties checking their packages in that environment.&lt;/p&gt;
+&lt;p&gt;Other checks evolve with R, becoming more strict with time: In the early versions of R the use of NAMESPACE was not regulated.
+But since R version 2.15, 2012 it was compulsory even for data-only packages&lt;a href=&#34;#fn3&#34; class=&#34;footnote-ref&#34; id=&#34;fnref3&#34;&gt;&lt;sup&gt;3&lt;/sup&gt;&lt;/a&gt;.
+This was synchronized with repositories checks.&lt;/p&gt;
+&lt;p&gt;Last, some goals/desires of CRAN are not fulfilled (or where abandoned).
+For example, from the start CRAN aimed to have packages authenticated (see the bottom of &lt;a href=&#34;https://stat.ethz.ch/pipermail/r-announce/1997/000001.html&#34;&gt;the announcement&lt;/a&gt;).
+This might be due to lack of time, resources or that the plans are in progress but require (volunteer) time.&lt;/p&gt;
+&lt;p&gt;With time, different repositories arose:&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;p&gt;MRAN, which was available since September 17th, 2014 to July 1st, 2022.&lt;/p&gt;&lt;/li&gt;
+&lt;li&gt;&lt;p&gt;The Rstudio Public Package Manager later renamed &lt;a href=&#34;https://packagemanager.posit.co/&#34;&gt;Posit Public Package Manager&lt;/a&gt; has &lt;a href=&#34;https://posit.co/blog/the-road-to-building-ten-million-binaries/&#34;&gt;binaries for several OS&lt;/a&gt; since 2019.&lt;/p&gt;&lt;/li&gt;
+&lt;li&gt;&lt;p&gt;There is the &lt;a href=&#34;https://pkgs.r4pi.org/&#34;&gt;R4pi repository&lt;/a&gt; with binaries for Raspberry Pi.&lt;/p&gt;&lt;/li&gt;
+&lt;li&gt;&lt;p&gt;I remember a proteomics repository available.&lt;/p&gt;&lt;/li&gt;
+&lt;li&gt;&lt;p&gt;rOpenSci started its own repository which later evolved into the &lt;a href=&#34;https://r-universe.org&#34;&gt;r-universe&lt;/a&gt;.
+The r-universe currently can provide binaries of packages that are hosted in a git repository.&lt;/p&gt;&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/div&gt;
+&lt;div id=&#34;literature&#34; class=&#34;section level1&#34;&gt;
+&lt;h1&gt;Literature&lt;/h1&gt;
+&lt;p&gt;The role and prominence of the repositories has lead to many articles being written about it.
+I wanted to link and collect some of them for easier retrieval.&lt;/p&gt;
+&lt;p&gt;I was wondering how CRAN is described by the volunteers that built it.
+From the announcing email:&lt;/p&gt;
+&lt;blockquote&gt;
+&lt;p&gt;CRAN is a collection of sites which carry identical material, consisting of the R&amp;amp;R R distribution(s), the contributed extensions, documentation for R, and binaries.&lt;/p&gt;
+&lt;/blockquote&gt;
+&lt;p&gt;From the &lt;a href=&#34;https://cran.r-project.org&#34;&gt;website&lt;/a&gt; (at 2023/12/09):&lt;/p&gt;
+&lt;blockquote&gt;
+&lt;p&gt;CRAN is a network of ftp and web servers around the world that store identical, up-to-date, versions of code and documentation for R.&lt;/p&gt;
+&lt;/blockquote&gt;
+&lt;p&gt;Initially there was R NEWS, with an article dedicated to CRAN and one to Omegahat too.
+These articles usually describe new package additions but sometimes they also provide information about changes:&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;p&gt;&lt;a href=&#34;https://journal.r-project.org/news/RN-2001-1-cran&#34;&gt;CRAN-2001-1&lt;/a&gt;: It list new packages, &lt;a href=&#34;https://journal.r-project.org/news/RN-2001-2-cran&#34;&gt;CRAN-2001-2&lt;/a&gt;, &lt;a href=&#34;https://journal.r-project.org/news/RN-2001-3-cran&#34;&gt;CRAN-2001-3&lt;/a&gt;, &lt;a href=&#34;https://journal.r-project.org/articles/RN-2001-008/&#34;&gt;Omegahat-2001-3&lt;/a&gt;&lt;/p&gt;&lt;/li&gt;
+&lt;li&gt;&lt;p&gt;&lt;a href=&#34;https://journal.r-project.org/news/RN-2002-1-cran&#34;&gt;CRAN-2002-1&lt;/a&gt;, &lt;a href=&#34;https://journal.r-project.org/news/RN-2002-2-cran/&#34;&gt;CRAN-2002-2&lt;/a&gt;, &lt;a href=&#34;https://journal.r-project.org/news/RN-2002-3-cran/&#34;&gt;CRAN-2002-3&lt;/a&gt;&lt;/p&gt;&lt;/li&gt;
+&lt;li&gt;&lt;p&gt;&lt;a href=&#34;https://journal.r-project.org/news/RN-2003-1-cran/&#34;&gt;CRAN-2003-1&lt;/a&gt;, &lt;a href=&#34;https://journal.r-project.org/news/RN-2003-2-cran/&#34;&gt;CRAN-2003-2&lt;/a&gt;, &lt;a href=&#34;https://journal.r-project.org/news/RN-2003-3-cran/&#34;&gt;CRAN-2003-3&lt;/a&gt;&lt;/p&gt;&lt;/li&gt;
+&lt;li&gt;&lt;p&gt;&lt;a href=&#34;https://journal.r-project.org/news/RN-2004-1-cran/&#34;&gt;CRAN-2004-1&lt;/a&gt;, &lt;a href=&#34;https://journal.r-project.org/news/RN-2004-2-cran/&#34;&gt;CRAN-2004-2&lt;/a&gt;&lt;/p&gt;&lt;/li&gt;
+&lt;li&gt;&lt;p&gt;&lt;a href=&#34;https://journal.r-project.org/news/RN-2005-1-cran/&#34;&gt;CRAN-2005-1&lt;/a&gt;, &lt;a href=&#34;https://journal.r-project.org/news/RN-2005-2-cran/&#34;&gt;CRAN-2005-2&lt;/a&gt;&lt;/p&gt;
+&lt;p&gt;Since 2006 there is also an article about Bioconductor.&lt;/p&gt;&lt;/li&gt;
+&lt;li&gt;&lt;p&gt;&lt;a href=&#34;https://journal.r-project.org/news/RN-2006-2-cran/&#34;&gt;CRAN-2006-2&lt;/a&gt;, &lt;a href=&#34;https://journal.r-project.org/news/RN-2006-2-bioc&#34;&gt;Bioc-2006-2&lt;/a&gt;&lt;/p&gt;&lt;/li&gt;
+&lt;li&gt;&lt;p&gt;&lt;a href=&#34;https://journal.r-project.org/news/RN-2007-1-cran/&#34;&gt;CRAN-2007-1&lt;/a&gt;, &lt;a href=&#34;https://journal.r-project.org/news/RN-2007-2-cran/&#34;&gt;CRAN-2007-2&lt;/a&gt;, &lt;a href=&#34;https://journal.r-project.org/news/RN-2007-2-bioc&#34;&gt;Bioc-2007-2&lt;/a&gt;, &lt;a href=&#34;https://journal.r-project.org/news/RN-2007-3-cran/&#34;&gt;CRAN-2007-3&lt;/a&gt;&lt;/p&gt;&lt;/li&gt;
+&lt;li&gt;&lt;p&gt;&lt;a href=&#34;https://journal.r-project.org/news/RN-2008-1-cran/&#34;&gt;CRAN-2008-1&lt;/a&gt;, &lt;a href=&#34;https://journal.r-project.org/news/RN-2008-1-bioc&#34;&gt;Bioc-2008-1&lt;/a&gt; &lt;a href=&#34;https://journal.r-project.org/news/RN-2008-2-cran/&#34;&gt;CRAN-2008-2&lt;/a&gt;, &lt;a href=&#34;https://journal.r-project.org/news/RN-2008-2-bioc&#34;&gt;Bioc-2008-2&lt;/a&gt;&lt;/p&gt;&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;Later it became the &lt;a href=&#34;https://journal.r-project.org/&#34;&gt;R Journal&lt;/a&gt;:&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;p&gt;&lt;a href=&#34;https://journal.r-project.org/issues/2009-1/RJ-2009-1.pdf&#34;&gt;CRAN-2009-1&lt;/a&gt;, &lt;a href=&#34;https://journal.r-project.org/issues/2009-2/RJ-2009-2.pdf&#34;&gt;CRAN-2009-2&lt;/a&gt;&lt;/p&gt;&lt;/li&gt;
+&lt;li&gt;&lt;p&gt;&lt;a href=&#34;https://journal.r-project.org/issues/2010-1/RJ-2010-1.pdf&#34;&gt;CRAN-2010-1&lt;/a&gt;, &lt;a href=&#34;https://journal.r-project.org/issues/2010-2/RJ-2010-2.pdf&#34;&gt;CRAN-2010-2&lt;/a&gt;&lt;/p&gt;&lt;/li&gt;
+&lt;li&gt;&lt;p&gt;&lt;a href=&#34;https://journal.r-project.org/issues/2011-1/RJ-2011-1.pdf&#34;&gt;CRAN-2011-1&lt;/a&gt;, &lt;a href=&#34;https://journal.r-project.org/issues/2011-2/RJ-2011-2.pdf&#34;&gt;CRAN and Bioconductor 2011-2&lt;/a&gt;.
+In the bioconductor section it mentions conference, and important directions for the Bioconductor core.&lt;/p&gt;&lt;/li&gt;
+&lt;li&gt;&lt;p&gt;&lt;a href=&#34;https://journal.r-project.org/issues/2012-1/RJ-2012-1.pdf&#34;&gt;CRAN-2012-1&lt;/a&gt;, &lt;a href=&#34;https://journal.r-project.org/issues/2012-2/RJ-2012-2.pdf&#34;&gt;CRAN and Bioconductor 2012-2&lt;/a&gt;: Mentions &lt;code&gt;biocLite()&lt;/code&gt; to install packages.&lt;/p&gt;&lt;/li&gt;
+&lt;li&gt;&lt;p&gt;&lt;a href=&#34;https://journal.r-project.org/news/RJ-2013-1-cran&#34;&gt;CRAN-2013-1&lt;/a&gt; &lt;a href=&#34;https://journal.r-project.org/news/RJ-2013-1-bioconductor/&#34;&gt;Bioc-2013-1&lt;/a&gt;: mentions better integration of parallel evaluation.&lt;br /&gt;
+&lt;a href=&#34;https://journal.r-project.org/news/RJ-2013-2-cran/&#34;&gt;CRAN-2013-2&lt;/a&gt;, &lt;a href=&#34;https://journal.r-project.org/news/RJ-2013-2-bioconductor/&#34;&gt;Bioc-2013-2&lt;/a&gt;: Mentions again AnnotationHub&lt;/p&gt;&lt;/li&gt;
+&lt;li&gt;&lt;p&gt;&lt;a href=&#34;https://journal.r-project.org/news/RJ-2014-1-cran/&#34;&gt;CRAN-2014-1&lt;/a&gt;, &lt;a href=&#34;https://journal.r-project.org/news/RJ-2014-1-bioconductor/&#34;&gt;Bioc-2014-1&lt;/a&gt;: Mentions the git-svn bridge to synchronize git and svn repository.&lt;br /&gt;
+&lt;a href=&#34;https://journal.r-project.org/news/RJ-2014-2-cran/&#34;&gt;CRAN-2014-2&lt;/a&gt;, &lt;a href=&#34;https://journal.r-project.org/news/RJ-2014-2-bioconductor/&#34;&gt;Bioc-2014-2&lt;/a&gt;: Bioconductor 3.0 release, besides some packages Amazon Machine Image are offered as well as docker images.
+Packages are required to pass BiocCheck, checks in a different package specific for Bioconductor.&lt;/p&gt;&lt;/li&gt;
+&lt;li&gt;&lt;p&gt;&lt;a href=&#34;https://journal.r-project.org/news/RJ-2015-1-cran/&#34;&gt;CRAN-2015-1&lt;/a&gt;, &lt;a href=&#34;https://journal.r-project.org/news/RJ-2015-1-bioconductor/&#34;&gt;Bioc-2015-1&lt;/a&gt;: Same mentions as the previous and encouragement to guidelines an package submission.&lt;br /&gt;
+&lt;a href=&#34;https://journal.r-project.org/news/RJ-2015-2-cran/&#34;&gt;CRAN-2015-2&lt;/a&gt;, &lt;a href=&#34;https://journal.r-project.org/news/RJ-2015-2-bioconductor/&#34;&gt;Bioc-2015-2&lt;/a&gt;&lt;/p&gt;&lt;/li&gt;
+&lt;li&gt;&lt;p&gt;&lt;a href=&#34;https://journal.r-project.org/news/RJ-2016-1-cran/&#34;&gt;CRAN-2016-1&lt;/a&gt;: on this article there is a plot of the number of CRAN packages and time, and doesn’t list all packages listed.
+It explicitly mentions that the CRAN team asked for help processing package submissions and some people stepped up.
+&lt;a href=&#34;https://journal.r-project.org/news/RJ-2016-1-bioconductor/&#34;&gt;Bioc-2016-1&lt;/a&gt;&lt;/p&gt;
+&lt;p&gt;&lt;a href=&#34;https://journal.r-project.org/news/RJ-2016-2-cran/&#34;&gt;CRAN-2016-2&lt;/a&gt;, &lt;a href=&#34;https://journal.r-project.org/news/RJ-2016-2-bioc/&#34;&gt;Bioc-2016-2&lt;/a&gt;&lt;/p&gt;&lt;/li&gt;
+&lt;li&gt;&lt;p&gt;&lt;a href=&#34;https://journal.r-project.org/news/RJ-2017-1-cran/&#34;&gt;CRAN-2017-1&lt;/a&gt;: mentions changes in CRAN checks, adding new memory access and static code analysis checks.
+It mentions that the submission has moved to a more automated one.
+It also mentions changes in the CRAN Repository Policy.
+&lt;a href=&#34;https://journal.r-project.org/news/RJ-2017-1-bioc/&#34;&gt;Bioc-2017-1&lt;/a&gt;&lt;/p&gt;&lt;/li&gt;
+&lt;li&gt;&lt;p&gt;&lt;a href=&#34;https://journal.r-project.org/news/RJ-2018-1-cran/&#34;&gt;CRAN-2018-1&lt;/a&gt;: checks in alternative BLAS/LAPACK implementations, the submission pipeline is defined.
+First time the amount of action taken by CRAN reviewers is listed in two categories automatic and manual.
+Changes in repository policy are listed.
+Changes in location of package repository archive , &lt;a href=&#34;https://journal.r-project.org/news/RJ-2018-1-bioc/&#34;&gt;Bioc-2018-1&lt;/a&gt;&lt;br /&gt;
+&lt;a href=&#34;https://journal.r-project.org/news/RJ-2018-2-cran/&#34;&gt;CRAN-2018-2&lt;/a&gt;: Changes in policy; packages should not give a check warning nor error.
+&lt;a href=&#34;https://journal.r-project.org/news/RJ-2018-2-bioc/&#34;&gt;Bioc-2018-2&lt;/a&gt;: Moved to BiocManager to install packages.&lt;/p&gt;&lt;/li&gt;
+&lt;li&gt;&lt;p&gt;&lt;a href=&#34;https://journal.r-project.org/news/RJ-2019-1-cran/&#34;&gt;CRAN-2019-1&lt;/a&gt;: More mentions to CRAN mirror security.&lt;/p&gt;
+&lt;p&gt;&lt;a href=&#34;https://journal.r-project.org/news/RJ-2019-2-cran/&#34;&gt;CRAN-2019-2&lt;/a&gt;: Updates in checklist for CRAN submissions, &lt;a href=&#34;https://journal.r-project.org/news/RJ-2019-2-bioc/&#34;&gt;Bioc-2019-2&lt;/a&gt;&lt;/p&gt;&lt;/li&gt;
+&lt;li&gt;&lt;p&gt;&lt;a href=&#34;https://journal.r-project.org/news/RJ-2020-1-cran/&#34;&gt;CRAN-2020-1&lt;/a&gt;: Many changes in CRAN policies.
+&lt;a href=&#34;https://journal.r-project.org/news/RJ-2020-2-cran/&#34;&gt;CRAN-2020-2&lt;/a&gt;: Many changes to CRAN policies.
+&lt;a href=&#34;https://journal.r-project.org/news/RJ-2020-2-bioc/&#34;&gt;Bioc-2020-2&lt;/a&gt;: Announces the Technical and Community advisory boards (as well as the project-wide Code of Conduct).&lt;/p&gt;&lt;/li&gt;
+&lt;li&gt;&lt;p&gt;&lt;a href=&#34;https://journal.r-project.org/news/RJ-2021-1-cran/&#34;&gt;CRAN-2021-1&lt;/a&gt;, &lt;a href=&#34;https://journal.r-project.org/news/RJ-2021-1-bioc/&#34;&gt;Bioc-2021-1&lt;/a&gt;: Mentions conferences that will be virtual.&lt;br /&gt;
+&lt;a href=&#34;https://journal.r-project.org/news/RJ-2021-2-cran/&#34;&gt;CRAN-2021-2&lt;/a&gt;: Shows an &lt;a href=&#34;https://cran.r-project.org/incoming/&#34;&gt;incomig&lt;/a&gt; path [See &lt;a href=&#34;https://r-hub.github.io/cransays/articles/dashboard.html&#34;&gt;this friendly viewer&lt;/a&gt;, &lt;a href=&#34;https://journal.r-project.org/news/RJ-2021-2-bioc/&#34;&gt;Bioc-2021-2&lt;/a&gt;: Mentions AnVIL and two online workshops to develop workflows.&lt;/p&gt;&lt;/li&gt;
+&lt;li&gt;&lt;p&gt;&lt;a href=&#34;https://journal.r-project.org/news/RJ-2022-1-cran/&#34;&gt;CRAN-2022-1&lt;/a&gt;: List a change in CRAN policy and the CRAN Task View Initiative.&lt;br /&gt;
+&lt;a href=&#34;https://journal.r-project.org/news/RJ-2022-2-cran/&#34;&gt;CRAN-2022-2&lt;/a&gt;: List some more repository policies.
+&lt;a href=&#34;https://journal.r-project.org/news/RJ-2022-2-bioconductor/&#34;&gt;Bioc-2022-2&lt;/a&gt;: Lists infrastructure updates (and its funding), changes in the core team and new initiatives.&lt;br /&gt;
+&lt;a href=&#34;https://journal.r-project.org/news/RJ-2022-3-cran/&#34;&gt;CRAN-2022-3&lt;/a&gt;, &lt;a href=&#34;https://journal.r-project.org/news/RJ-2022-3-bioconductor/&#34;&gt;Bioc-2022-3&lt;/a&gt;&lt;br /&gt;
+&lt;a href=&#34;https://journal.r-project.org/news/RJ-2022-4-cran/&#34;&gt;CRAN-2022-4&lt;/a&gt;, &lt;a href=&#34;https://journal.r-project.org/news/RJ-2022-4-bioconductor/&#34;&gt;Bioc-2022-4&lt;/a&gt;: default branch renaming, partnership with Outreachy and blog are featured.
+Several working groups provide updates&lt;/p&gt;&lt;/li&gt;
+&lt;li&gt;&lt;p&gt;&lt;a href=&#34;https://journal.r-project.org/news/RJ-2023-1-cran/&#34;&gt;CRAN-2023-1&lt;/a&gt;&lt;/p&gt;&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;In addition, several articles and blog posts have appeared.
+From those I found it is worth mentioning the following:&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;p&gt;&lt;a href=&#34;https://doi.org/10.17713/ajs.v41i1.188&#34;&gt;Are There Too Many R Packages?&lt;/a&gt; and &lt;a href=&#34;https://www.r-bloggers.com/2014/04/does-r-have-too-many-packages/&#34;&gt;derived posts&lt;/a&gt;&lt;/p&gt;&lt;/li&gt;
+&lt;li&gt;&lt;p&gt;&lt;a href=&#34;https://www.jumpingrivers.com/blog/security-r-hacking-bioconductor/&#34;&gt;Hacking Bioconductor&lt;/a&gt;&lt;/p&gt;&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;And my own posts:&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;p&gt;&lt;a href=&#34;https://llrs.dev/post/2021/12/07/reasons-cran-archivals/&#34;&gt;Reasons CRAN packages are archived&lt;/a&gt;&lt;/p&gt;&lt;/li&gt;
+&lt;li&gt;&lt;p&gt;&lt;a href=&#34;https://llrs.dev/post/2022/07/23/cran-files-1/&#34;&gt;CRAN files part 1&lt;/a&gt;&lt;/p&gt;&lt;/li&gt;
+&lt;li&gt;&lt;p&gt;&lt;a href=&#34;https://llrs.dev/post/2022/07/28/cran-files-2/&#34;&gt;CRAN files part 2&lt;/a&gt;&lt;/p&gt;&lt;/li&gt;
+&lt;li&gt;&lt;p&gt;&lt;a href=&#34;https://llrs.dev/post/2023/05/03/cran-maintained-packages/&#34;&gt;CRAN maintained packages&lt;/a&gt;&lt;/p&gt;&lt;/li&gt;
+&lt;li&gt;&lt;p&gt;&lt;a href=&#34;https://llrs.dev/post/2021/01/31/cran-review/&#34;&gt;CRAN review&lt;/a&gt; (and the &lt;a href=&#34;https://llrs.dev/talk/user-2021/&#34;&gt;talk at useRs 2021&lt;/a&gt;)&lt;/p&gt;&lt;/li&gt;
+&lt;li&gt;&lt;p&gt;&lt;a href=&#34;https://llrs.dev/post/2020/07/31/bioconductor-submissions-reviews/&#34;&gt;Bioconductor review&lt;/a&gt;&lt;/p&gt;&lt;/li&gt;
+&lt;li&gt;&lt;p&gt;&lt;a href=&#34;https://llrs.dev/post/2020/09/02/ropensci-submissions/&#34;&gt;rOpenSci&lt;/a&gt; reviews&lt;/p&gt;&lt;/li&gt;
+&lt;li&gt;&lt;p&gt;&lt;a href=&#34;https://llrs.dev/2020/07/bioconductor-submissions-reviews/&#34;&gt;Bioconductor reviews&lt;/a&gt;&lt;/p&gt;&lt;/li&gt;
+&lt;li&gt;&lt;p&gt;The article &lt;a href=&#34;https://journal.r-project.org/articles/RJ-2009-014/&#34;&gt;“Aspects of the Social Organization and Trajectory of the R Project”&lt;/a&gt;, from the R Journal 2009, also has a section about CRAN, noting that it “is challenged by its own success”.&lt;/p&gt;&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/div&gt;
+&lt;div id=&#34;characteristics&#34; class=&#34;section level1&#34;&gt;
+&lt;h1&gt;Characteristics&lt;/h1&gt;
+&lt;p&gt;The predominance of CRAN and its role as primary and default R repository has lead to some special treatment of the repository.&lt;/p&gt;
+&lt;p&gt;CRAN checks are in the R source code itself.
+While other repositories have their own checks in different tools.
+In addition, the CRAN environmental variables used are documented in the &lt;a href=&#34;https://cran.r-project.org/doc/manuals/r-release/R-ints.html&#34;&gt;R-internals&lt;/a&gt; (they are more or less accessible in the &lt;a href=&#34;https://svn.r-project.org/R-dev-web/trunk/CRAN/&#34;&gt;svn repository&lt;/a&gt; too).&lt;/p&gt;
+&lt;p&gt;Others who know more have stated the benefits of CRAN too: This text is copied from Henrik Bengstsson in &lt;a href=&#34;https://community-bioc.slack.com/archives/CLF37V6C8/p1698869264884649?thread_ts=1698804037.467439&amp;amp;cid=CLF37V6C8&#34; title=&#34;Link to the thread&#34;&gt;Bioconductor Slack&lt;/a&gt;:&lt;/p&gt;
+&lt;blockquote&gt;
+&lt;p&gt;FOREVER ARCHIVE:&lt;/p&gt;
+&lt;p&gt;The first one is that it publishes packages and versions of them until the end of time.
+When a package has been published on CRAN, it takes a lot for it to be removed from there.
+I don’t know if it ever happened, but I can imagine a package can be fully removed if it was illegally published in the first place (e.g. copyright, illegal content, ...) or malicious.&lt;/p&gt;
+&lt;p&gt;INSTALLATION SERVICE:&lt;/p&gt;
+&lt;p&gt;Then CRAN also provides a R package repository service for installing packages on CRAN using built-in R functions.
+The set of packages in the package repo is a subset of all packages on CRAN.
+The CRAN package repo makes a promise that all packages listed in PACKAGES can be installed.
+If they cannot make that promise, they’ll archive the package (=remove it from PACKAGES).
+I should also say, install.packages(url) can be used to install from the set of packages that are archived.
+Technically, old package versions are always archived.&lt;/p&gt;
+&lt;p&gt;CHECK SERVICE:&lt;/p&gt;
+&lt;p&gt;The content of the R package repository is guided by the CRAN package checks that run on R-oldrel, R-release, and R-devel across multiple platforms.
+The minimal requirement is that no package should remain in the package repository if the checks detects ERRORs (and those errors are not due to recently introduced bugs in R-devel).
+WARNINGs can also cause a package to be archived, but that process often takes longer.
+AFAIK, NOTEs are not a cause for a package being archived (but I could be wrong).
+The CRAN incoming checks, which you have to pass when you submit a new package, or an updated version, will make sure that the published package pass with all OKs.
+(It’s possible to argue for NOTEs being false positives, or for them not to be fixed, but that requires a manual approval by the CRAN Team).&lt;/p&gt;
+&lt;/blockquote&gt;
+&lt;p&gt;I think there are many more resources discussing R repositories.
+If you know more I’ll be happy to update this post.&lt;/p&gt;
+&lt;p&gt;I think before I drag too much on the steps I’ll post this and collect some more articles I might have missed.&lt;/p&gt;
+&lt;p&gt;Last, Uwe Liegges presented about &lt;a href=&#34;https://www.youtube.com/watch?v=-vX-CDiiZKI&#34;&gt;CRAN in useR!2017&lt;/a&gt;, thanks Tim Taylor for &lt;a href=&#34;https://fosstodon.org/@_TimTaylor/111612010185631808&#34;&gt;sharing it&lt;/a&gt;. In this video there is an explanation of why the solaris OS was used.&lt;/p&gt;
+&lt;p&gt;It has come to my attention that there is an article, by G. Brooke Anderson and Dirk Eddelbuette, about the R package repositories structure (among other things): &lt;a href=&#34;https://journal.r-project.org/archive/2017/RJ-2017-026/RJ-2017-026.pdf&#34;&gt;Hosting Data Packages via drat: A Case Study with Hurricane Exposure Data&lt;/a&gt;&lt;/p&gt;
+&lt;div id=&#34;reproducibility&#34; class=&#34;section level3&#34;&gt;
+&lt;h3&gt;Reproducibility&lt;/h3&gt;
+&lt;details&gt;
+&lt;pre&gt;&lt;code&gt;## ─ Session info ───────────────────────────────────────────────────────────────────────────────────────────────────────
+##  setting  value
+##  version  R version 4.3.1 (2023-06-16)
+##  os       Ubuntu 22.04.3 LTS
+##  system   x86_64, linux-gnu
+##  ui       X11
+##  language (EN)
+##  collate  en_US.UTF-8
+##  ctype    en_US.UTF-8
+##  tz       Europe/Madrid
+##  date     2024-01-15
+##  pandoc   3.1.1 @ /usr/lib/rstudio/resources/app/bin/quarto/bin/tools/ (via rmarkdown)
+## 
+## ─ Packages ───────────────────────────────────────────────────────────────────────────────────────────────────────────
+##  package     * version date (UTC) lib source
+##  blogdown      1.18    2023-06-19 [1] CRAN (R 4.3.1)
+##  bookdown      0.37    2023-12-01 [1] CRAN (R 4.3.1)
+##  bslib         0.6.1   2023-11-28 [1] CRAN (R 4.3.1)
+##  cachem        1.0.8   2023-05-01 [1] CRAN (R 4.3.1)
+##  cli           3.6.2   2023-12-11 [1] CRAN (R 4.3.1)
+##  digest        0.6.33  2023-07-07 [1] CRAN (R 4.3.1)
+##  evaluate      0.23    2023-11-01 [1] CRAN (R 4.3.2)
+##  fastmap       1.1.1   2023-02-24 [1] CRAN (R 4.3.1)
+##  htmltools     0.5.7   2023-11-03 [1] CRAN (R 4.3.2)
+##  jquerylib     0.1.4   2021-04-26 [1] CRAN (R 4.3.1)
+##  jsonlite      1.8.8   2023-12-04 [1] CRAN (R 4.3.1)
+##  knitr         1.45    2023-10-30 [1] CRAN (R 4.3.2)
+##  lifecycle     1.0.4   2023-11-07 [1] CRAN (R 4.3.2)
+##  R6            2.5.1   2021-08-19 [1] CRAN (R 4.3.1)
+##  rlang         1.1.3   2024-01-10 [1] CRAN (R 4.3.1)
+##  rmarkdown     2.25    2023-09-18 [1] CRAN (R 4.3.1)
+##  rstudioapi    0.15.0  2023-07-07 [1] CRAN (R 4.3.1)
+##  sass          0.4.8   2023-12-06 [1] CRAN (R 4.3.1)
+##  sessioninfo   1.2.2   2021-12-06 [1] CRAN (R 4.3.1)
+##  xfun          0.41    2023-11-01 [1] CRAN (R 4.3.2)
+##  yaml          2.3.8   2023-12-11 [1] CRAN (R 4.3.1)
+## 
+##  [1] /home/lluis/bin/R/4.3.1
+##  [2] /opt/R/4.3.1/lib/R/library
+## 
+## ──────────────────────────────────────────────────────────────────────────────────────────────────────────────────────&lt;/code&gt;&lt;/pre&gt;
+&lt;/details&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;div class=&#34;footnotes footnotes-end-of-document&#34;&gt;
+&lt;hr /&gt;
+&lt;ol&gt;
+&lt;li id=&#34;fn1&#34;&gt;&lt;p&gt;In version 3.1.2 &lt;a href=&#34;https://cran.r-project.org/doc/manuals/NEWS.3&#34;&gt;Omegahat didn’t provide&lt;/a&gt; Windows binaries and in 4.1 from the default repositories (See 4.1 in &lt;a href=&#34;https://cran.r-project.org/doc/manuals/r-release/NEWS.html&#34;&gt;NEWS(.4)&lt;/a&gt;).&lt;a href=&#34;#fnref1&#34; class=&#34;footnote-back&#34;&gt;↩︎&lt;/a&gt;&lt;/p&gt;&lt;/li&gt;
+&lt;li id=&#34;fn2&#34;&gt;&lt;p&gt;This lead to the need of having a special function to install packages from Bioconductor.
+Initially a function &lt;code&gt;biocLite&lt;/code&gt; and later with the &lt;a href=&#34;https://cran.r-project.org/package=BiocManager&#34;&gt;BiocManager package&lt;/a&gt;.&lt;a href=&#34;#fnref2&#34; class=&#34;footnote-back&#34;&gt;↩︎&lt;/a&gt;&lt;/p&gt;&lt;/li&gt;
+&lt;li id=&#34;fn3&#34;&gt;&lt;p&gt;&lt;a href=&#34;https://cran.r-project.org/doc/manuals/NEWS.2&#34;&gt;NEWS in 2.15 section&lt;/a&gt;&lt;a href=&#34;#fnref3&#34; class=&#34;footnote-back&#34;&gt;↩︎&lt;/a&gt;&lt;/p&gt;&lt;/li&gt;
+&lt;/ol&gt;
+&lt;/div&gt;
+</description>
+    </item>
+    
+    <item>
+      <title>BaseSet 0.9.0</title>
+      <link>https://llrs.dev/post/2023/08/23/baseset-0-9-0/</link>
+      <pubDate>Wed, 23 Aug 2023 00:00:00 +0000</pubDate>
+      <guid>https://llrs.dev/post/2023/08/23/baseset-0-9-0/</guid>
+      <description>
+
+
+&lt;p&gt;I’m excited to provide a new release of &lt;a href=&#34;https://cran.r-project.org/package=BaseSet&#34;&gt;BaseSet&lt;/a&gt;, the package implementing a a class and methods to work with (fuzzy) sets.&lt;/p&gt;
+&lt;p&gt;This release was focused on making it easier to work with it.&lt;/p&gt;
+&lt;p&gt;From the beginning it was engineered towards the tidyverse and this time I focused on general R methods like &lt;code&gt;$&lt;/code&gt;, &lt;code&gt;[&lt;/code&gt;, &lt;code&gt;c&lt;/code&gt;:&lt;/p&gt;
+&lt;div id=&#34;new-methods&#34; class=&#34;section level2&#34;&gt;
+&lt;h2&gt;New methods&lt;/h2&gt;
+&lt;p&gt;First we can create a TidySet or TS for short:&lt;/p&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;library(&amp;quot;BaseSet&amp;quot;, warn.conflicts = FALSE)
+packageVersion(&amp;quot;BaseSet&amp;quot;)
+## [1] &amp;#39;0.9.0&amp;#39;
+l &amp;lt;- list(A = &amp;quot;1&amp;quot;,
+     B = c(&amp;quot;1&amp;quot;, &amp;quot;2&amp;quot;),
+     C = c(&amp;quot;2&amp;quot;, &amp;quot;3&amp;quot;, &amp;quot;4&amp;quot;),
+     D = c(&amp;quot;1&amp;quot;, &amp;quot;2&amp;quot;, &amp;quot;3&amp;quot;, &amp;quot;4&amp;quot;)
+)
+TS &amp;lt;- tidySet(l)&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;Up till now there was no compatibility with the base R methods but there was with the tidyverse.&lt;/p&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;TSa &amp;lt;- TS[[&amp;quot;A&amp;quot;]]
+TSb &amp;lt;- TS[[&amp;quot;B&amp;quot;]]&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;Maybe this doesn’t look much but previously it wasn’t possible to subset the class.
+Initially I thought that working with a single class per session would be enough.
+Later I realized that maybe people would have good reasons to split or combine multiple objects:&lt;/p&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;TSab &amp;lt;- c(TSa, TSb)
+TSab
+##   elements sets fuzzy
+## 1        1    A     1
+## 2        1    B     1
+## 3        2    B     1&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;Note that subsetting by sets does not produce the same object as elements are kept:&lt;/p&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;dim(TSab)
+##  Elements Relations      Sets 
+##         2         3         2
+dim(TS[1:2, &amp;quot;sets&amp;quot;])
+##  Elements Relations      Sets 
+##         4         3         2&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;You’ll need to drop the elements:&lt;/p&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;dim(droplevels(TS[1:2, &amp;quot;sets&amp;quot;]))
+##  Elements Relations      Sets 
+##         2         3         2&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;We can include more information like this:&lt;/p&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;TSab[1:2, &amp;quot;relations&amp;quot;, &amp;quot;type&amp;quot;] &amp;lt;- c(&amp;quot;new&amp;quot;, &amp;quot;addition&amp;quot;)
+TSab[1:2, &amp;quot;sets&amp;quot;, &amp;quot;origin&amp;quot;] &amp;lt;- c(&amp;quot;fake&amp;quot;, &amp;quot;real&amp;quot;)
+TSab
+##   elements sets fuzzy     type origin
+## 1        1    A     1      new   fake
+## 2        1    B     1 addition   real
+## 3        2    B     1     &amp;lt;NA&amp;gt;   real&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;With this release is easier to access the columns of the TidySet:&lt;/p&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;TSab$type
+## [1] &amp;quot;new&amp;quot;      &amp;quot;addition&amp;quot; NA
+TSab$origin
+## [1] &amp;quot;fake&amp;quot; &amp;quot;real&amp;quot;
+TS$sets
+##  [1] &amp;quot;A&amp;quot; &amp;quot;B&amp;quot; &amp;quot;B&amp;quot; &amp;quot;C&amp;quot; &amp;quot;C&amp;quot; &amp;quot;C&amp;quot; &amp;quot;D&amp;quot; &amp;quot;D&amp;quot; &amp;quot;D&amp;quot; &amp;quot;D&amp;quot;&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;If you pay attention you’ll realize that it will look at the minimum information required.
+But if the column is present in the relations and elements or sets slots it will pick the first.&lt;/p&gt;
+&lt;p&gt;You can use:&lt;/p&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;TS[, &amp;quot;sets&amp;quot;, &amp;quot;new&amp;quot;] &amp;lt;- &amp;quot;a&amp;quot;
+TS[, &amp;quot;sets&amp;quot;, &amp;quot;new&amp;quot;]&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;I recommend reading carefully the help page of &lt;code&gt;?`extract-TidySet`&lt;/code&gt; and make some tests based on the examples.
+I might have created some bugs or friction points with the extraction operations, let me know and I’ll address them (That’s the reason why I kept it below a 1.0 release).&lt;/p&gt;
+&lt;/div&gt;
+&lt;div id=&#34;more-usable&#34; class=&#34;section level1&#34;&gt;
+&lt;h1&gt;More usable&lt;/h1&gt;
+&lt;p&gt;Another usability addition to the class is the possibility to autocomplete.&lt;/p&gt;
+&lt;p&gt;Now if you tab &lt;code&gt;TS$ty&lt;/code&gt; and press TAB it should complete to &lt;code&gt;TS$type&lt;/code&gt; because there is a column called type. This will make it easier to use the &lt;code&gt;$&lt;/code&gt;.&lt;/p&gt;
+&lt;p&gt;With this release, we can now check the number of sets and the number of relations each set has:&lt;/p&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;length(TS)
+## [1] 4
+lengths(TS)
+## A B C D 
+## 1 2 3 4&lt;/code&gt;&lt;/pre&gt;
+&lt;div id=&#34;new-function&#34; class=&#34;section level2&#34;&gt;
+&lt;h2&gt;New function&lt;/h2&gt;
+&lt;p&gt;The new function &lt;code&gt;union_closed&lt;/code&gt; checks if the combinations of sets produce already existing sets.&lt;/p&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;union_closed(TS, sets = c(&amp;quot;A&amp;quot;, &amp;quot;B&amp;quot;, &amp;quot;C&amp;quot;))
+## [1] FALSE
+union_closed(TS)
+## [1] TRUE&lt;/code&gt;&lt;/pre&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;div id=&#34;next-steps&#34; class=&#34;section level1&#34;&gt;
+&lt;h1&gt;Next steps&lt;/h1&gt;
+&lt;p&gt;I hope this makes it even easier to work with the class.
+Combine different objects, and manipulate it more intuitively.&lt;/p&gt;
+&lt;p&gt;While creating this document I realized it has some friction points.&lt;br /&gt;
+In next release it will be possible to:&lt;/p&gt;
+&lt;ol style=&#34;list-style-type: decimal&#34;&gt;
+&lt;li&gt;Subset the object by element or set name, if only querying elements and sets slots.
+For example &lt;code&gt;TS[c(&#34;3&#34;, &#34;4&#34;), &#34;elements&#34;, &#34;NEWS&#34;] &amp;lt;- TRUE&lt;/code&gt;&lt;/li&gt;
+&lt;li&gt;Use &lt;code&gt;names&lt;/code&gt; and &lt;code&gt;dimnames&lt;/code&gt; to discover which data is in the object.&lt;/li&gt;
+&lt;li&gt;Some bug fixes about these methods.&lt;/li&gt;
+&lt;/ol&gt;
+&lt;p&gt;Enjoy!&lt;/p&gt;
+&lt;p&gt;I would also apreciate to hear some feedback about how you are using the package.
+It will help me to direct the development/maintenance of the package wherever it is more useful.&lt;/p&gt;
+&lt;div id=&#34;reproducibility&#34; class=&#34;section level3&#34;&gt;
+&lt;h3&gt;Reproducibility&lt;/h3&gt;
+&lt;details&gt;
+&lt;pre&gt;&lt;code&gt;## ─ Session info ───────────────────────────────────────────────────────────────────────────────────────────────────────
+##  setting  value
+##  version  R version 4.3.1 (2023-06-16)
+##  os       Ubuntu 22.04.3 LTS
+##  system   x86_64, linux-gnu
+##  ui       X11
+##  language (EN)
+##  collate  en_US.UTF-8
+##  ctype    en_US.UTF-8
+##  tz       Europe/Madrid
+##  date     2023-12-18
+##  pandoc   3.1.1 @ /usr/lib/rstudio/resources/app/bin/quarto/bin/tools/ (via rmarkdown)
+## 
+## ─ Packages ───────────────────────────────────────────────────────────────────────────────────────────────────────────
+##  package     * version date (UTC) lib source
+##  BaseSet     * 0.9.0   2023-08-23 [1] local
+##  blogdown      1.18    2023-06-19 [1] CRAN (R 4.3.1)
+##  bookdown      0.37    2023-12-01 [1] CRAN (R 4.3.1)
+##  bslib         0.6.1   2023-11-28 [1] CRAN (R 4.3.1)
+##  cachem        1.0.8   2023-05-01 [1] CRAN (R 4.3.1)
+##  cli           3.6.2   2023-12-11 [1] CRAN (R 4.3.1)
+##  digest        0.6.33  2023-07-07 [1] CRAN (R 4.3.1)
+##  dplyr         1.1.4   2023-11-17 [1] CRAN (R 4.3.1)
+##  evaluate      0.23    2023-11-01 [1] CRAN (R 4.3.2)
+##  fansi         1.0.6   2023-12-08 [1] CRAN (R 4.3.1)
+##  fastmap       1.1.1   2023-02-24 [1] CRAN (R 4.3.1)
+##  generics      0.1.3   2022-07-05 [1] CRAN (R 4.3.1)
+##  glue          1.6.2   2022-02-24 [1] CRAN (R 4.3.1)
+##  htmltools     0.5.7   2023-11-03 [1] CRAN (R 4.3.2)
+##  jquerylib     0.1.4   2021-04-26 [1] CRAN (R 4.3.1)
+##  jsonlite      1.8.8   2023-12-04 [1] CRAN (R 4.3.1)
+##  knitr         1.45    2023-10-30 [1] CRAN (R 4.3.2)
+##  lifecycle     1.0.4   2023-11-07 [1] CRAN (R 4.3.2)
+##  magrittr      2.0.3   2022-03-30 [1] CRAN (R 4.3.1)
+##  pillar        1.9.0   2023-03-22 [1] CRAN (R 4.3.1)
+##  pkgconfig     2.0.3   2019-09-22 [1] CRAN (R 4.3.1)
+##  R6            2.5.1   2021-08-19 [1] CRAN (R 4.3.1)
+##  rlang         1.1.2   2023-11-04 [1] CRAN (R 4.3.1)
+##  rmarkdown     2.25    2023-09-18 [1] CRAN (R 4.3.1)
+##  rstudioapi    0.15.0  2023-07-07 [1] CRAN (R 4.3.1)
+##  sass          0.4.8   2023-12-06 [1] CRAN (R 4.3.1)
+##  sessioninfo   1.2.2   2021-12-06 [1] CRAN (R 4.3.1)
+##  tibble        3.2.1   2023-03-20 [1] CRAN (R 4.3.1)
+##  tidyselect    1.2.0   2022-10-10 [1] CRAN (R 4.3.1)
+##  utf8          1.2.4   2023-10-22 [1] CRAN (R 4.3.2)
+##  vctrs         0.6.5   2023-12-01 [1] CRAN (R 4.3.1)
+##  xfun          0.41    2023-11-01 [1] CRAN (R 4.3.2)
+##  yaml          2.3.8   2023-12-11 [1] CRAN (R 4.3.1)
+## 
+##  [1] /home/lluis/bin/R/4.3.1
+##  [2] /opt/R/4.3.1/lib/R/library
+## 
+## ──────────────────────────────────────────────────────────────────────────────────────────────────────────────────────&lt;/code&gt;&lt;/pre&gt;
+&lt;/details&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+</description>
+    </item>
+    
+    <item>
+      <title>experDesign: follow up</title>
+      <link>https://llrs.dev/post/2023/04/09/experdesign-follow-up/</link>
+      <pubDate>Sun, 09 Apr 2023 00:00:00 +0000</pubDate>
+      <guid>https://llrs.dev/post/2023/04/09/experdesign-follow-up/</guid>
+      <description>
+
+
+&lt;p&gt;I am happy to announce a new release of experDesign.
+Install it from CRAN with:&lt;/p&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;install.packages(&amp;quot;experDesign&amp;quot;)
+library(&amp;quot;experDesign&amp;quot;)&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;This new release has focused in more tricky aspects when designing an experiment:&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;Checking the samples of your experiment.&lt;/li&gt;
+&lt;li&gt;How to continue stratifying your conditions after some initial batch.&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;These functions should be used before carrying out anything once you have your samples collected.
+You can use these functions and make an informed decision of what might happen with your experiment.&lt;/p&gt;
+&lt;div id=&#34;checking-your-samples&#34; class=&#34;section level1&#34;&gt;
+&lt;h1&gt;Checking your samples&lt;/h1&gt;
+&lt;p&gt;The new function &lt;code&gt;check_data()&lt;/code&gt; will warn you if it finds some known issues with your data.&lt;/p&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;library(&amp;quot;experDesign&amp;quot;)
+library(&amp;quot;MASS&amp;quot;)&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;If we take the survey dataset from the MASS package we can see that it has some issues:&lt;/p&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;data(survey, package = &amp;quot;MASS&amp;quot;)
+check_data(survey)
+## Warning: Two categorical variables don&amp;#39;t have all combinations.
+## Warning: Some values are missing.
+## Warning: There is a combination of categories with no replicates; i.e. just one
+## sample.
+## [1] FALSE&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;While if we fabricate our own dataset we might realize we have a problem&lt;/p&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;rdata &amp;lt;- expand.grid(sex = c(&amp;quot;M&amp;quot;, &amp;quot;F&amp;quot;), class = c(&amp;quot;lower&amp;quot;, &amp;quot;median&amp;quot;, &amp;quot;high&amp;quot;))
+stopifnot(&amp;quot;Same samples/rows as combinations of classes&amp;quot; = nrow(rdata) == 2*3)
+check_data(rdata)
+## Warning: There is a combination of categories with no replicates; i.e. just one
+## sample.
+## [1] FALSE
+# We create some new samples with the same conditions
+rdata2 &amp;lt;- rbind(rdata, rdata)
+check_data(rdata2)
+## [1] TRUE&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;One might decide to go ahead with what is available or use only some of those samples or wait to collect more samples for the experiment&lt;/p&gt;
+&lt;/div&gt;
+&lt;div id=&#34;follow-up&#34; class=&#34;section level1&#34;&gt;
+&lt;h1&gt;Follow up&lt;/h1&gt;
+&lt;p&gt;Imagine you have 100 samples that you distribute in 4 batches of 25 samples each.
+Later, you collect 80 more samples to analyze.
+You want these new samples to be analyzed together with those previous 100 samples.
+Will it be possible? How should you distribute your new samples in groups of 25?&lt;/p&gt;
+&lt;p&gt;Using the same dataset from &lt;code&gt;MASS&lt;/code&gt; imagine if we first collected 118 observations and later 119 more:&lt;/p&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;survey1 &amp;lt;- survey[1:118, ]
+survey2 &amp;lt;- survey[119:nrow(survey), ]
+# Using low number of iterations to speed the process 
+# you should even use higher number than the default
+fu &amp;lt;- follow_up(survey1, survey2, size_subset = 50, iterations = 10)
+## Warning: There are some problems with the data.
+## Warning: There are some problems with the new samples and the batches.
+## Warning: There are some problems with the new data.
+## Warning: There are some problems with the old data.&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;Following the previous new function it reports if there are problems with the observations.
+One can check each collection with &lt;code&gt;check_data&lt;/code&gt; to know more about the problems found.&lt;/p&gt;
+&lt;p&gt;If you have already performed the experiment on your observations you can also check the distribution:&lt;/p&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;# Create the first batch
+variables &amp;lt;- c(&amp;quot;Sex&amp;quot;, &amp;quot;Smoke&amp;quot;, &amp;quot;Age&amp;quot;)
+survey1 &amp;lt;- survey1[, variables]
+index1 &amp;lt;- design(survey1, size_subset = 50, iterations = 10)
+## Warning: There might be some problems with the data use check_data().
+r_survey &amp;lt;- inspect(index1, survey1)
+# Create the second batch with &amp;quot;new&amp;quot; students
+survey2 &amp;lt;- survey2[, variables]
+survey2$batch &amp;lt;- NA
+# Prepare the follow up
+all_classroom &amp;lt;- rbind(r_survey, survey2)
+fu2 &amp;lt;- follow_up2(all_classroom, size_subset = 50, iterations = 10)
+## Warning: There are some problems with the data.
+## Warning: There are some problems with the new samples and the batches.
+## Warning: There are some problems with the new data.
+## Warning: There are some problems with the old data.
+tail(fu2)
+## [1] &amp;quot;NewSubset2&amp;quot; &amp;quot;NewSubset2&amp;quot; &amp;quot;NewSubset2&amp;quot; &amp;quot;NewSubset2&amp;quot; &amp;quot;NewSubset2&amp;quot;
+## [6] &amp;quot;NewSubset3&amp;quot;&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;Using this function will help to decide which new observations go to which new batches.&lt;/p&gt;
+&lt;/div&gt;
+&lt;div id=&#34;closing-remarks&#34; class=&#34;section level1&#34;&gt;
+&lt;h1&gt;Closing remarks&lt;/h1&gt;
+&lt;p&gt;The famous quote from Fisher goes:&lt;/p&gt;
+&lt;blockquote&gt;
+&lt;p&gt;“To consult the statistician after an experiment is finished is often merely to ask him to conduct a &lt;em&gt;post mortem&lt;/em&gt; examination. He can perhaps say what the experiment died of.”&lt;/p&gt;
+&lt;/blockquote&gt;
+&lt;p&gt;This emphasizes the importance of involving a statistician early on in the experimental design process.&lt;br /&gt;
+Unfortunately, in some cases, it may be too late to involve a statistician in the experimental design process or the reality of unforeseen circumstances messed the design of your carefully planned experiment.&lt;/p&gt;
+&lt;p&gt;My aim with this package is to provide practical tools for statisticians, bioinformaticians, and anyone who works with data.
+These tools are designed to be easy to use and can be used to analyze data in a variety of contexts.
+Let me know if it is helpful in your case.&lt;/p&gt;
+&lt;div id=&#34;reproducibility&#34; class=&#34;section level3&#34;&gt;
+&lt;h3&gt;Reproducibility&lt;/h3&gt;
+&lt;details&gt;
+&lt;pre&gt;&lt;code&gt;## ─ Session info ───────────────────────────────────────────────────────────────────────────────────────────────────────
+##  setting  value
+##  version  R version 4.2.2 (2022-10-31)
+##  os       Ubuntu 22.04.2 LTS
+##  system   x86_64, linux-gnu
+##  ui       X11
+##  language en_US
+##  collate  en_US.UTF-8
+##  ctype    en_US.UTF-8
+##  tz       Europe/Madrid
+##  date     2023-04-09
+##  pandoc   2.19.2 @ /usr/lib/rstudio/resources/app/bin/quarto/bin/tools/ (via rmarkdown)
+## 
+## ─ Packages ───────────────────────────────────────────────────────────────────────────────────────────────────────────
+##  package     * version  date (UTC) lib source
+##  blogdown      1.16     2022-12-13 [1] CRAN (R 4.2.2)
+##  bookdown      0.33     2023-03-06 [1] CRAN (R 4.2.2)
+##  bslib         0.4.2    2022-12-16 [1] CRAN (R 4.2.2)
+##  cachem        1.0.7    2023-02-24 [1] CRAN (R 4.2.2)
+##  cli           3.6.1    2023-03-23 [1] CRAN (R 4.2.2)
+##  digest        0.6.31   2022-12-11 [1] CRAN (R 4.2.2)
+##  evaluate      0.20     2023-01-17 [1] CRAN (R 4.2.2)
+##  experDesign * 0.2.0    2023-04-05 [1] CRAN (R 4.2.2)
+##  fastmap       1.1.1    2023-02-24 [1] CRAN (R 4.2.2)
+##  htmltools     0.5.4    2022-12-07 [1] CRAN (R 4.2.2)
+##  jquerylib     0.1.4    2021-04-26 [1] CRAN (R 4.2.2)
+##  jsonlite      1.8.4    2022-12-06 [1] CRAN (R 4.2.2)
+##  knitr         1.42     2023-01-25 [1] CRAN (R 4.2.2)
+##  MASS        * 7.3-58.1 2022-08-03 [2] CRAN (R 4.2.2)
+##  R6            2.5.1    2021-08-19 [1] CRAN (R 4.2.2)
+##  rlang         1.1.0    2023-03-14 [1] CRAN (R 4.2.2)
+##  rmarkdown     2.20     2023-01-19 [1] CRAN (R 4.2.2)
+##  rstudioapi    0.14     2022-08-22 [1] CRAN (R 4.2.2)
+##  sass          0.4.5    2023-01-24 [1] CRAN (R 4.2.2)
+##  sessioninfo   1.2.2    2021-12-06 [1] CRAN (R 4.2.2)
+##  xfun          0.37     2023-01-31 [1] CRAN (R 4.2.2)
+##  yaml          2.3.7    2023-01-23 [1] CRAN (R 4.2.2)
+## 
+##  [1] /home/lluis/bin/R/4.2.2
+##  [2] /opt/R/4.2.2/lib/R/library
+## 
+## ──────────────────────────────────────────────────────────────────────────────────────────────────────────────────────&lt;/code&gt;&lt;/pre&gt;
+&lt;/details&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+</description>
+    </item>
+    
+    <item>
+      <title>Accessing REDCap from R</title>
+      <link>https://llrs.dev/post/2023/02/08/accessing-redcap-from-r/</link>
+      <pubDate>Wed, 08 Feb 2023 00:00:00 +0000</pubDate>
+      <guid>https://llrs.dev/post/2023/02/08/accessing-redcap-from-r/</guid>
+      <description>
+
+
+&lt;p&gt;In this post, I want to summarize some of the packages to connect to &lt;a href=&#34;https://www.project-redcap.org/&#34;&gt;REDCap&lt;/a&gt;.
+For those who don’t know, REDCap is a database designed for clinical usage, which allows easy data collection of patients’ responses by clinicians and interactions with the patients via surveys.&lt;/p&gt;
+&lt;p&gt;It has specific features such as scheduling surveys sent to patients, compatibility with tablets and mobile phones for data entry while visiting patients, grouping data in instruments (for repeating the same questions multiple times), multiple choice and check buttons, and different arms (like paths for patients).
+Most importantly is relatively easy to manage by clinical administrators.&lt;/p&gt;
+&lt;p&gt;In CRAN there are ~11 &lt;a href=&#34;https://search.r-project.org/?P=REDCap&amp;amp;SORT=&amp;amp;HITSPERPAGE=10&amp;amp;DB=cran-info&amp;amp;DEFAULTOP=and&amp;amp;FMT=query&amp;amp;xDB=all&amp;amp;xFILTERS=.%7E%7E&#34;&gt;packages mentioning it&lt;/a&gt; at the time of writing it.
+The purpose of this post is to help decide which packages can be helpful in which situations.
+This post won’t be a deep analysis or comparison of capabilities, it describes some of the best and worse features of each package.&lt;/p&gt;
+&lt;div id=&#34;redcapr&#34; class=&#34;section level2&#34;&gt;
+&lt;h2&gt;REDCapR&lt;/h2&gt;
+&lt;p&gt;&lt;a href=&#34;https://cran.r-project.org/package=REDCapR&#34;&gt;REDCapR&lt;/a&gt; is the official package to connect to the database.
+It allows you to read, write and filter the requests.
+It has some security-related functions.&lt;/p&gt;
+&lt;/div&gt;
+&lt;div id=&#34;redcaptidier&#34; class=&#34;section level2&#34;&gt;
+&lt;h2&gt;REDCapTidieR&lt;/h2&gt;
+&lt;p&gt;&lt;a href=&#34;https://cran.r-project.org/package=REDCapTidieR&#34;&gt;REDCapTidieR&lt;/a&gt; is a package that provides summaries of tables and helps with nested tibbles data by arm.
+It depends on REDCapR.&lt;/p&gt;
+&lt;/div&gt;
+&lt;div id=&#34;tidyredcap&#34; class=&#34;section level2&#34;&gt;
+&lt;h2&gt;tidyREDCap&lt;/h2&gt;
+&lt;p&gt;&lt;a href=&#34;https://cran.r-project.org/package=tidyREDCap&#34;&gt;tidyREDCap&lt;/a&gt; is a package that simplifies the tables for instruments and choose-all or choose-one question types.
+It is easy to make tables and it depends on REDCapR.
+It requires the first and last columns to make instruments.&lt;/p&gt;
+&lt;div class=&#34;figure&#34;&gt;
+&lt;img src=&#34;images/redcap_design.jpg&#34; alt=&#34;&#34; /&gt;
+&lt;p class=&#34;caption&#34;&gt;Screenshot of a design with several instruments in a single arm (from &lt;a href=&#34;https://www.project-redcap.org/&#34; class=&#34;uri&#34;&gt;https://www.project-redcap.org/&lt;/a&gt;)&lt;/p&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;div id=&#34;redcapexporter&#34; class=&#34;section level2&#34;&gt;
+&lt;h2&gt;REDCapExporter&lt;/h2&gt;
+&lt;p&gt;&lt;a href=&#34;https://cran.r-project.org/package=REDCapExporter&#34;&gt;REDCapExporter&lt;/a&gt; is a package to build a data package from a database for redistribution.
+It does not depend on REDCapR.&lt;/p&gt;
+&lt;/div&gt;
+&lt;div id=&#34;redcapapi&#34; class=&#34;section level2&#34;&gt;
+&lt;h2&gt;redcapAPI&lt;/h2&gt;
+&lt;p&gt;&lt;a href=&#34;https://cran.r-project.org/package=redcapAPI&#34;&gt;redcapAPI&lt;/a&gt; is a package for making data accessible and analysis-ready as quickly as possible with huge documentation in a wiki but has no vignette or examples and it does not depend on REDCapR.&lt;/p&gt;
+&lt;/div&gt;
+&lt;div id=&#34;redcapdm&#34; class=&#34;section level2&#34;&gt;
+&lt;h2&gt;REDCapDM&lt;/h2&gt;
+&lt;p&gt;&lt;a href=&#34;https://cran.r-project.org/package=REDCapDM&#34;&gt;REDCapDM&lt;/a&gt; is a package that provides functions to read and manage REDCap data and identify missing or extreme values as well as transform the data provided by the API.
+It depends on REDCapR.&lt;/p&gt;
+&lt;/div&gt;
+&lt;div id=&#34;reviewr&#34; class=&#34;section level2&#34;&gt;
+&lt;h2&gt;ReviewR&lt;/h2&gt;
+&lt;p&gt;&lt;a href=&#34;https://cran.r-project.org/package=ReviewR&#34;&gt;ReviewR&lt;/a&gt; is a package that creates a shiny website with data from the database to explore it.
+It uses the REDCapR to connect to your instance.&lt;/p&gt;
+&lt;/div&gt;
+&lt;div id=&#34;rccola&#34; class=&#34;section level2&#34;&gt;
+&lt;h2&gt;rccola&lt;/h2&gt;
+&lt;p&gt;&lt;a href=&#34;https://cran.r-project.org/package=rccola&#34;&gt;rccola&lt;/a&gt; is a package to provide a secure connection to the database but it doesn’t provide any handling of the data.
+It uses redcapAPI to connect to the database.&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;https://llrs.dev/post/2023/02/08/accessing-redcap-from-r/index.en_files/figure-html/unnamed-chunk-1-1.png&#34; alt=&#34;Barplot with the dependencies: from less to more: REDCapExporter, rccola, redcapAPI, REDCapR, tidyREDCap, REDCapDM, REDCapTidieR, ReviewR&#34; width=&#34;672&#34; /&gt;&lt;/p&gt;
+&lt;/div&gt;
+&lt;div id=&#34;other-packages&#34; class=&#34;section level2&#34;&gt;
+&lt;h2&gt;Other packages&lt;/h2&gt;
+&lt;p&gt;Other packages mention REDCap:&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;a href=&#34;https://cran.r-project.org/package=nmadb&#34;&gt;nmadb&lt;/a&gt;: which implements its own connection procedure for a specific REDCap database of network meta-analyses.&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;https://cran.r-project.org/package=distcomp&#34;&gt;distcomp&lt;/a&gt;: Allows to do computation on a distributed data also in REDCap.&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;https://cran.r-project.org/package=cgmanalysis&#34;&gt;cgmanalysis&lt;/a&gt;: which mentions that data produced is compatible with REDCap.&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/div&gt;
+&lt;div id=&#34;conclusion&#34; class=&#34;section level1&#34;&gt;
+&lt;h1&gt;Conclusion&lt;/h1&gt;
+&lt;p&gt;I’m sure that many packages briefly described here can do much more than what I understood from a glance at their documentation and DESCRIPTION.&lt;/p&gt;
+&lt;p&gt;Most packages provide some data for the examples (and probably tests), while others do not.
+This is a technical problem that might impact users if there are no examples in the functions.&lt;/p&gt;
+&lt;p&gt;REDCapR is used by most packages to access the database, but most of the packages focus on transforming the data provided by the API (or data exported) or the exported data.
+It highlights that the data exported is useful but that depending on the preferences of the users it needs to be transformed for easy usage.&lt;/p&gt;
+&lt;/div&gt;
+</description>
+    </item>
+    
+    <item>
+      <title>Exploring CRAN&#39;s files: part 2</title>
+      <link>https://llrs.dev/post/2022/07/28/cran-files-2/</link>
+      <pubDate>Thu, 28 Jul 2022 00:00:00 +0000</pubDate>
+      <guid>https://llrs.dev/post/2022/07/28/cran-files-2/</guid>
+      <description>
+
+
+&lt;div id=&#34;introduction&#34; class=&#34;section level2&#34;&gt;
+&lt;h2&gt;Introduction&lt;/h2&gt;
+&lt;p&gt;In the &lt;a href=&#34;https://llrs.dev/post/2022/07/23/cran-files-1/&#34;&gt;first post&lt;/a&gt; of the series we briefly explored packages available on CRAN.
+Now I’ll focus on history of the packages and its size using the following files:&lt;/p&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;packages &amp;lt;- tools::CRAN_package_db()
+current &amp;lt;- tools:::CRAN_current_db()
+archive &amp;lt;- tools:::CRAN_archive_db()&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;In this part we will use two files: The &lt;code&gt;current&lt;/code&gt; and the &lt;code&gt;archive&lt;/code&gt;, let’s see why.&lt;/p&gt;
+&lt;div id=&#34;current-file&#34; class=&#34;section level3&#34;&gt;
+&lt;h3&gt;current file&lt;/h3&gt;
+&lt;p&gt;The current database has has the package size, dates of modification, which I assume is date added to CRAN and user name of who last modified it.
+This is the same information returned by &lt;a href=&#34;https://search.r-project.org/R/refmans/base/html/file.info.html&#34;&gt;&lt;code&gt;file.info&lt;/code&gt;&lt;/a&gt;&lt;/p&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;current[1, 1:10]
+##     size isdir mode               mtime               ctime               atime
+## A3 42810 FALSE  664 2015-08-16 23:05:54 2022-09-03 12:02:27 2022-09-03 14:00:19
+##     uid  gid  uname    grname
+## A3 1001 1001 hornik cranadmin&lt;/code&gt;&lt;/pre&gt;
+&lt;/div&gt;
+&lt;div id=&#34;archive-file&#34; class=&#34;section level3&#34;&gt;
+&lt;h3&gt;archive file&lt;/h3&gt;
+&lt;p&gt;The archive database returns the same information, but as you might guess by the name it doesn’t provide information about current packages but for packages in the archive and no longer available by default.&lt;/p&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;archive[[1]]
+##                     size isdir mode               mtime               ctime
+## A3/A3_0.9.1.tar.gz 45252 FALSE  664 2013-02-07 10:00:29 2022-08-22 18:14:53
+## A3/A3_0.9.2.tar.gz 45907 FALSE  664 2013-03-26 19:58:40 2022-08-22 18:14:53
+##                                  atime  uid  gid  uname    grname
+## A3/A3_0.9.1.tar.gz 2022-08-22 17:39:50 1001 1001 hornik cranadmin
+## A3/A3_0.9.2.tar.gz 2022-08-22 17:39:50 1010 1001 ligges cranadmin&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;The date matches that available on the &lt;a href=&#34;https://cran.r-project.org/src/contrib/Archive/A3/&#34;&gt;web’s old sources&lt;/a&gt;, so we can be confident of it’s meaning.&lt;/p&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;div id=&#34;cran-history&#34; class=&#34;section level2&#34;&gt;
+&lt;h2&gt;CRAN history&lt;/h2&gt;
+&lt;p&gt;As we have seen there are some files about the archives of CRAN.
+These include information about date of modification (moving/editing) and user who did it and of course name and sometimes version of the package.
+These archives are the great treasure of CRAN because they help to make reproducible long time ago run experiments or analysis.&lt;/p&gt;
+&lt;p&gt;Note that I’m not totally sure that this archive contains the full record of packages, some initial packages might be missing.
+I’m also aware of some packages removed by CRAN which do not longer appear on this records.&lt;/p&gt;
+&lt;p&gt;Nevertheless, this should provide an accurate picture of packages available through time.
+Also as there is no information when a package is archived (here, &lt;a href=&#34;https://llrs.dev/post/2021/12/07/reasons-cran-archivals/&#34;&gt;there is on PACKAGES.in&lt;/a&gt;) so I might overestimate the packages available at any given moment.&lt;/p&gt;
+&lt;p&gt;Remember the plot about &lt;a href=&#34;#accepted&#34;&gt;acceptance of packages on CRAN?&lt;/a&gt;
+That plot only looked at current packages available, let’s check it with all the archive:&lt;/p&gt;
+&lt;div class=&#34;figure&#34;&gt;&lt;span style=&#34;display:block;&#34; id=&#34;fig:accumulative-packages&#34;&gt;&lt;/span&gt;
+&lt;img src=&#34;https://llrs.dev/post/2022/07/28/cran-files-2/index.en_files/figure-html/accumulative-packages-1.png&#34; alt=&#34;*Packages on CRAN archive by their addition to it.* There are over 125000 archives on CRAN.&#34; width=&#34;672&#34; /&gt;
+&lt;p class=&#34;caption&#34;&gt;
+Figure 1: &lt;em&gt;Packages on CRAN archive by their addition to it.&lt;/em&gt; There are over 125000 archives on CRAN.
+&lt;/p&gt;
+&lt;/div&gt;
+&lt;p&gt;All these packages come from packages with few releases and packages with many releases.
+If we look at which packages had the most releases:&lt;/p&gt;
+&lt;template id=&#34;41fb6fac-ce02-4889-ac51-217e365f4058&#34;&gt;&lt;style&gt;
+.tabwid table{
+  border-spacing:0px !important;
+  border-collapse:collapse;
+  line-height:1;
+  margin-left:auto;
+  margin-right:auto;
+  border-width: 0;
+  display: table;
+  margin-top: 1.275em;
+  margin-bottom: 1.275em;
+  border-color: transparent;
+}
+.tabwid_left table{
+  margin-left:0;
+}
+.tabwid_right table{
+  margin-right:0;
+}
+.tabwid td {
+    padding: 0;
+}
+.tabwid a {
+  text-decoration: none;
+}
+.tabwid thead {
+    background-color: transparent;
+}
+.tabwid tfoot {
+    background-color: transparent;
+}
+.tabwid table tr {
+background-color: transparent;
+}
+.katex-display {
+    margin: 0 0 !important;
+}
+&lt;/style&gt;&lt;div class=&#34;tabwid&#34;&gt;&lt;style&gt;.cl-e305f260{}.cl-e2fc13c6{font-family:&#39;DejaVu Sans&#39;;font-size:11pt;font-weight:normal;font-style:normal;text-decoration:none;color:rgba(0, 0, 0, 1.00);background-color:transparent;}.cl-e2fc2fdc{margin:0;text-align:left;border-bottom: 0 solid rgba(0, 0, 0, 1.00);border-top: 0 solid rgba(0, 0, 0, 1.00);border-left: 0 solid rgba(0, 0, 0, 1.00);border-right: 0 solid rgba(0, 0, 0, 1.00);padding-bottom:5pt;padding-top:5pt;padding-left:5pt;padding-right:5pt;line-height: 1;background-color:transparent;}.cl-e2fc2fe6{margin:0;text-align:right;border-bottom: 0 solid rgba(0, 0, 0, 1.00);border-top: 0 solid rgba(0, 0, 0, 1.00);border-left: 0 solid rgba(0, 0, 0, 1.00);border-right: 0 solid rgba(0, 0, 0, 1.00);padding-bottom:5pt;padding-top:5pt;padding-left:5pt;padding-right:5pt;line-height: 1;background-color:transparent;}.cl-e2fc7a46{width:69.7pt;background-color:transparent;vertical-align: middle;border-bottom: 0 solid rgba(0, 0, 0, 1.00);border-top: 0 solid rgba(0, 0, 0, 1.00);border-left: 0 solid rgba(0, 0, 0, 1.00);border-right: 0 solid rgba(0, 0, 0, 1.00);margin-bottom:0;margin-top:0;margin-left:0;margin-right:0;}.cl-e2fc7a5a{width:100.6pt;background-color:transparent;vertical-align: middle;border-bottom: 0 solid rgba(0, 0, 0, 1.00);border-top: 0 solid rgba(0, 0, 0, 1.00);border-left: 0 solid rgba(0, 0, 0, 1.00);border-right: 0 solid rgba(0, 0, 0, 1.00);margin-bottom:0;margin-top:0;margin-left:0;margin-right:0;}.cl-e2fc7a64{width:100.6pt;background-color:transparent;vertical-align: middle;border-bottom: 0 solid rgba(0, 0, 0, 1.00);border-top: 0 solid rgba(0, 0, 0, 1.00);border-left: 0 solid rgba(0, 0, 0, 1.00);border-right: 0 solid rgba(0, 0, 0, 1.00);margin-bottom:0;margin-top:0;margin-left:0;margin-right:0;}.cl-e2fc7a6e{width:69.7pt;background-color:transparent;vertical-align: middle;border-bottom: 0 solid rgba(0, 0, 0, 1.00);border-top: 0 solid rgba(0, 0, 0, 1.00);border-left: 0 solid rgba(0, 0, 0, 1.00);border-right: 0 solid rgba(0, 0, 0, 1.00);margin-bottom:0;margin-top:0;margin-left:0;margin-right:0;}.cl-e2fc7a6f{width:100.6pt;background-color:transparent;vertical-align: middle;border-bottom: 0 solid rgba(0, 0, 0, 1.00);border-top: 0 solid rgba(0, 0, 0, 1.00);border-left: 0 solid rgba(0, 0, 0, 1.00);border-right: 0 solid rgba(0, 0, 0, 1.00);margin-bottom:0;margin-top:0;margin-left:0;margin-right:0;}.cl-e2fc7a82{width:69.7pt;background-color:transparent;vertical-align: middle;border-bottom: 0 solid rgba(0, 0, 0, 1.00);border-top: 0 solid rgba(0, 0, 0, 1.00);border-left: 0 solid rgba(0, 0, 0, 1.00);border-right: 0 solid rgba(0, 0, 0, 1.00);margin-bottom:0;margin-top:0;margin-left:0;margin-right:0;}.cl-e2fc7a8c{width:100.6pt;background-color:transparent;vertical-align: middle;border-bottom: 0 solid rgba(0, 0, 0, 1.00);border-top: 0 solid rgba(0, 0, 0, 1.00);border-left: 0 solid rgba(0, 0, 0, 1.00);border-right: 0 solid rgba(0, 0, 0, 1.00);margin-bottom:0;margin-top:0;margin-left:0;margin-right:0;}.cl-e2fc7a96{width:69.7pt;background-color:transparent;vertical-align: middle;border-bottom: 0 solid rgba(0, 0, 0, 1.00);border-top: 0 solid rgba(0, 0, 0, 1.00);border-left: 0 solid rgba(0, 0, 0, 1.00);border-right: 0 solid rgba(0, 0, 0, 1.00);margin-bottom:0;margin-top:0;margin-left:0;margin-right:0;}.cl-e2fc7a97{width:100.6pt;background-color:transparent;vertical-align: middle;border-bottom: 0 solid rgba(0, 0, 0, 1.00);border-top: 0 solid rgba(0, 0, 0, 1.00);border-left: 0 solid rgba(0, 0, 0, 1.00);border-right: 0 solid rgba(0, 0, 0, 1.00);margin-bottom:0;margin-top:0;margin-left:0;margin-right:0;}.cl-e2fc7aa0{width:69.7pt;background-color:transparent;vertical-align: middle;border-bottom: 0 solid rgba(0, 0, 0, 1.00);border-top: 0 solid rgba(0, 0, 0, 1.00);border-left: 0 solid rgba(0, 0, 0, 1.00);border-right: 0 solid rgba(0, 0, 0, 1.00);margin-bottom:0;margin-top:0;margin-left:0;margin-right:0;}.cl-e2fc7aa1{width:100.6pt;background-color:transparent;vertical-align: middle;border-bottom: 2pt solid rgba(102, 102, 102, 1.00);border-top: 0 solid rgba(0, 0, 0, 1.00);border-left: 0 solid rgba(0, 0, 0, 1.00);border-right: 0 solid rgba(0, 0, 0, 1.00);margin-bottom:0;margin-top:0;margin-left:0;margin-right:0;}.cl-e2fc7aaa{width:69.7pt;background-color:transparent;vertical-align: middle;border-bottom: 2pt solid rgba(102, 102, 102, 1.00);border-top: 0 solid rgba(0, 0, 0, 1.00);border-left: 0 solid rgba(0, 0, 0, 1.00);border-right: 0 solid rgba(0, 0, 0, 1.00);margin-bottom:0;margin-top:0;margin-left:0;margin-right:0;}.cl-e2fc7aab{width:100.6pt;background-color:transparent;vertical-align: middle;border-bottom: 2pt solid rgba(102, 102, 102, 1.00);border-top: 2pt solid rgba(102, 102, 102, 1.00);border-left: 0 solid rgba(0, 0, 0, 1.00);border-right: 0 solid rgba(0, 0, 0, 1.00);margin-bottom:0;margin-top:0;margin-left:0;margin-right:0;}.cl-e2fc7ab4{width:69.7pt;background-color:transparent;vertical-align: middle;border-bottom: 2pt solid rgba(102, 102, 102, 1.00);border-top: 2pt solid rgba(102, 102, 102, 1.00);border-left: 0 solid rgba(0, 0, 0, 1.00);border-right: 0 solid rgba(0, 0, 0, 1.00);margin-bottom:0;margin-top:0;margin-left:0;margin-right:0;}&lt;/style&gt;&lt;table class=&#39;cl-e305f260&#39;&gt;
+&lt;thead&gt;&lt;tr style=&#34;overflow-wrap:break-word;&#34;&gt;&lt;td class=&#34;cl-e2fc7aab&#34;&gt;&lt;p class=&#34;cl-e2fc2fdc&#34;&gt;&lt;span class=&#34;cl-e2fc13c6&#34;&gt;package&lt;/span&gt;&lt;/p&gt;&lt;/td&gt;&lt;td class=&#34;cl-e2fc7ab4&#34;&gt;&lt;p class=&#34;cl-e2fc2fe6&#34;&gt;&lt;span class=&#34;cl-e2fc13c6&#34;&gt;Releases&lt;/span&gt;&lt;/p&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/thead&gt;&lt;tbody&gt;&lt;tr style=&#34;overflow-wrap:break-word;&#34;&gt;&lt;td class=&#34;cl-e2fc7a5a&#34;&gt;&lt;p class=&#34;cl-e2fc2fdc&#34;&gt;&lt;span class=&#34;cl-e2fc13c6&#34;&gt;spatstat&lt;/span&gt;&lt;/p&gt;&lt;/td&gt;&lt;td class=&#34;cl-e2fc7a46&#34;&gt;&lt;p class=&#34;cl-e2fc2fe6&#34;&gt;&lt;span class=&#34;cl-e2fc13c6&#34;&gt;206&lt;/span&gt;&lt;/p&gt;&lt;/td&gt;&lt;/tr&gt;&lt;tr style=&#34;overflow-wrap:break-word;&#34;&gt;&lt;td class=&#34;cl-e2fc7a97&#34;&gt;&lt;p class=&#34;cl-e2fc2fdc&#34;&gt;&lt;span class=&#34;cl-e2fc13c6&#34;&gt;Matrix&lt;/span&gt;&lt;/p&gt;&lt;/td&gt;&lt;td class=&#34;cl-e2fc7aa0&#34;&gt;&lt;p class=&#34;cl-e2fc2fe6&#34;&gt;&lt;span class=&#34;cl-e2fc13c6&#34;&gt;204&lt;/span&gt;&lt;/p&gt;&lt;/td&gt;&lt;/tr&gt;&lt;tr style=&#34;overflow-wrap:break-word;&#34;&gt;&lt;td class=&#34;cl-e2fc7a6f&#34;&gt;&lt;p class=&#34;cl-e2fc2fdc&#34;&gt;&lt;span class=&#34;cl-e2fc13c6&#34;&gt;mgcv&lt;/span&gt;&lt;/p&gt;&lt;/td&gt;&lt;td class=&#34;cl-e2fc7a82&#34;&gt;&lt;p class=&#34;cl-e2fc2fe6&#34;&gt;&lt;span class=&#34;cl-e2fc13c6&#34;&gt;162&lt;/span&gt;&lt;/p&gt;&lt;/td&gt;&lt;/tr&gt;&lt;tr style=&#34;overflow-wrap:break-word;&#34;&gt;&lt;td class=&#34;cl-e2fc7a64&#34;&gt;&lt;p class=&#34;cl-e2fc2fdc&#34;&gt;&lt;span class=&#34;cl-e2fc13c6&#34;&gt;RcppArmadillo&lt;/span&gt;&lt;/p&gt;&lt;/td&gt;&lt;td class=&#34;cl-e2fc7a6e&#34;&gt;&lt;p class=&#34;cl-e2fc2fe6&#34;&gt;&lt;span class=&#34;cl-e2fc13c6&#34;&gt;150&lt;/span&gt;&lt;/p&gt;&lt;/td&gt;&lt;/tr&gt;&lt;tr style=&#34;overflow-wrap:break-word;&#34;&gt;&lt;td class=&#34;cl-e2fc7a64&#34;&gt;&lt;p class=&#34;cl-e2fc2fdc&#34;&gt;&lt;span class=&#34;cl-e2fc13c6&#34;&gt;rgdal&lt;/span&gt;&lt;/p&gt;&lt;/td&gt;&lt;td class=&#34;cl-e2fc7a6e&#34;&gt;&lt;p class=&#34;cl-e2fc2fe6&#34;&gt;&lt;span class=&#34;cl-e2fc13c6&#34;&gt;146&lt;/span&gt;&lt;/p&gt;&lt;/td&gt;&lt;/tr&gt;&lt;tr style=&#34;overflow-wrap:break-word;&#34;&gt;&lt;td class=&#34;cl-e2fc7a97&#34;&gt;&lt;p class=&#34;cl-e2fc2fdc&#34;&gt;&lt;span class=&#34;cl-e2fc13c6&#34;&gt;nlme&lt;/span&gt;&lt;/p&gt;&lt;/td&gt;&lt;td class=&#34;cl-e2fc7aa0&#34;&gt;&lt;p class=&#34;cl-e2fc2fe6&#34;&gt;&lt;span class=&#34;cl-e2fc13c6&#34;&gt;143&lt;/span&gt;&lt;/p&gt;&lt;/td&gt;&lt;/tr&gt;&lt;tr style=&#34;overflow-wrap:break-word;&#34;&gt;&lt;td class=&#34;cl-e2fc7a8c&#34;&gt;&lt;p class=&#34;cl-e2fc2fdc&#34;&gt;&lt;span class=&#34;cl-e2fc13c6&#34;&gt;caret&lt;/span&gt;&lt;/p&gt;&lt;/td&gt;&lt;td class=&#34;cl-e2fc7a96&#34;&gt;&lt;p class=&#34;cl-e2fc2fe6&#34;&gt;&lt;span class=&#34;cl-e2fc13c6&#34;&gt;139&lt;/span&gt;&lt;/p&gt;&lt;/td&gt;&lt;/tr&gt;&lt;tr style=&#34;overflow-wrap:break-word;&#34;&gt;&lt;td class=&#34;cl-e2fc7a64&#34;&gt;&lt;p class=&#34;cl-e2fc2fdc&#34;&gt;&lt;span class=&#34;cl-e2fc13c6&#34;&gt;spdep&lt;/span&gt;&lt;/p&gt;&lt;/td&gt;&lt;td class=&#34;cl-e2fc7a6e&#34;&gt;&lt;p class=&#34;cl-e2fc2fe6&#34;&gt;&lt;span class=&#34;cl-e2fc13c6&#34;&gt;139&lt;/span&gt;&lt;/p&gt;&lt;/td&gt;&lt;/tr&gt;&lt;tr style=&#34;overflow-wrap:break-word;&#34;&gt;&lt;td class=&#34;cl-e2fc7a97&#34;&gt;&lt;p class=&#34;cl-e2fc2fdc&#34;&gt;&lt;span class=&#34;cl-e2fc13c6&#34;&gt;lattice&lt;/span&gt;&lt;/p&gt;&lt;/td&gt;&lt;td class=&#34;cl-e2fc7aa0&#34;&gt;&lt;p class=&#34;cl-e2fc2fe6&#34;&gt;&lt;span class=&#34;cl-e2fc13c6&#34;&gt;137&lt;/span&gt;&lt;/p&gt;&lt;/td&gt;&lt;/tr&gt;&lt;tr style=&#34;overflow-wrap:break-word;&#34;&gt;&lt;td class=&#34;cl-e2fc7a64&#34;&gt;&lt;p class=&#34;cl-e2fc2fdc&#34;&gt;&lt;span class=&#34;cl-e2fc13c6&#34;&gt;plotrix&lt;/span&gt;&lt;/p&gt;&lt;/td&gt;&lt;td class=&#34;cl-e2fc7a6e&#34;&gt;&lt;p class=&#34;cl-e2fc2fe6&#34;&gt;&lt;span class=&#34;cl-e2fc13c6&#34;&gt;131&lt;/span&gt;&lt;/p&gt;&lt;/td&gt;&lt;/tr&gt;&lt;tr style=&#34;overflow-wrap:break-word;&#34;&gt;&lt;td class=&#34;cl-e2fc7a6f&#34;&gt;&lt;p class=&#34;cl-e2fc2fdc&#34;&gt;&lt;span class=&#34;cl-e2fc13c6&#34;&gt;sp&lt;/span&gt;&lt;/p&gt;&lt;/td&gt;&lt;td class=&#34;cl-e2fc7a82&#34;&gt;&lt;p class=&#34;cl-e2fc2fe6&#34;&gt;&lt;span class=&#34;cl-e2fc13c6&#34;&gt;128&lt;/span&gt;&lt;/p&gt;&lt;/td&gt;&lt;/tr&gt;&lt;tr style=&#34;overflow-wrap:break-word;&#34;&gt;&lt;td class=&#34;cl-e2fc7a8c&#34;&gt;&lt;p class=&#34;cl-e2fc2fdc&#34;&gt;&lt;span class=&#34;cl-e2fc13c6&#34;&gt;XML&lt;/span&gt;&lt;/p&gt;&lt;/td&gt;&lt;td class=&#34;cl-e2fc7a96&#34;&gt;&lt;p class=&#34;cl-e2fc2fe6&#34;&gt;&lt;span class=&#34;cl-e2fc13c6&#34;&gt;126&lt;/span&gt;&lt;/p&gt;&lt;/td&gt;&lt;/tr&gt;&lt;tr style=&#34;overflow-wrap:break-word;&#34;&gt;&lt;td class=&#34;cl-e2fc7a97&#34;&gt;&lt;p class=&#34;cl-e2fc2fdc&#34;&gt;&lt;span class=&#34;cl-e2fc13c6&#34;&gt;Rcmdr&lt;/span&gt;&lt;/p&gt;&lt;/td&gt;&lt;td class=&#34;cl-e2fc7aa0&#34;&gt;&lt;p class=&#34;cl-e2fc2fe6&#34;&gt;&lt;span class=&#34;cl-e2fc13c6&#34;&gt;123&lt;/span&gt;&lt;/p&gt;&lt;/td&gt;&lt;/tr&gt;&lt;tr style=&#34;overflow-wrap:break-word;&#34;&gt;&lt;td class=&#34;cl-e2fc7a97&#34;&gt;&lt;p class=&#34;cl-e2fc2fdc&#34;&gt;&lt;span class=&#34;cl-e2fc13c6&#34;&gt;lme4&lt;/span&gt;&lt;/p&gt;&lt;/td&gt;&lt;td class=&#34;cl-e2fc7aa0&#34;&gt;&lt;p class=&#34;cl-e2fc2fe6&#34;&gt;&lt;span class=&#34;cl-e2fc13c6&#34;&gt;122&lt;/span&gt;&lt;/p&gt;&lt;/td&gt;&lt;/tr&gt;&lt;tr style=&#34;overflow-wrap:break-word;&#34;&gt;&lt;td class=&#34;cl-e2fc7a5a&#34;&gt;&lt;p class=&#34;cl-e2fc2fdc&#34;&gt;&lt;span class=&#34;cl-e2fc13c6&#34;&gt;gstat&lt;/span&gt;&lt;/p&gt;&lt;/td&gt;&lt;td class=&#34;cl-e2fc7a46&#34;&gt;&lt;p class=&#34;cl-e2fc2fe6&#34;&gt;&lt;span class=&#34;cl-e2fc13c6&#34;&gt;121&lt;/span&gt;&lt;/p&gt;&lt;/td&gt;&lt;/tr&gt;&lt;tr style=&#34;overflow-wrap:break-word;&#34;&gt;&lt;td class=&#34;cl-e2fc7a8c&#34;&gt;&lt;p class=&#34;cl-e2fc2fdc&#34;&gt;&lt;span class=&#34;cl-e2fc13c6&#34;&gt;arm&lt;/span&gt;&lt;/p&gt;&lt;/td&gt;&lt;td class=&#34;cl-e2fc7a96&#34;&gt;&lt;p class=&#34;cl-e2fc2fe6&#34;&gt;&lt;span class=&#34;cl-e2fc13c6&#34;&gt;119&lt;/span&gt;&lt;/p&gt;&lt;/td&gt;&lt;/tr&gt;&lt;tr style=&#34;overflow-wrap:break-word;&#34;&gt;&lt;td class=&#34;cl-e2fc7a64&#34;&gt;&lt;p class=&#34;cl-e2fc2fdc&#34;&gt;&lt;span class=&#34;cl-e2fc13c6&#34;&gt;foreign&lt;/span&gt;&lt;/p&gt;&lt;/td&gt;&lt;td class=&#34;cl-e2fc7a6e&#34;&gt;&lt;p class=&#34;cl-e2fc2fe6&#34;&gt;&lt;span class=&#34;cl-e2fc13c6&#34;&gt;117&lt;/span&gt;&lt;/p&gt;&lt;/td&gt;&lt;/tr&gt;&lt;tr style=&#34;overflow-wrap:break-word;&#34;&gt;&lt;td class=&#34;cl-e2fc7a5a&#34;&gt;&lt;p class=&#34;cl-e2fc2fdc&#34;&gt;&lt;span class=&#34;cl-e2fc13c6&#34;&gt;party&lt;/span&gt;&lt;/p&gt;&lt;/td&gt;&lt;td class=&#34;cl-e2fc7a46&#34;&gt;&lt;p class=&#34;cl-e2fc2fe6&#34;&gt;&lt;span class=&#34;cl-e2fc13c6&#34;&gt;117&lt;/span&gt;&lt;/p&gt;&lt;/td&gt;&lt;/tr&gt;&lt;tr style=&#34;overflow-wrap:break-word;&#34;&gt;&lt;td class=&#34;cl-e2fc7a64&#34;&gt;&lt;p class=&#34;cl-e2fc2fdc&#34;&gt;&lt;span class=&#34;cl-e2fc13c6&#34;&gt;maptools&lt;/span&gt;&lt;/p&gt;&lt;/td&gt;&lt;td class=&#34;cl-e2fc7a6e&#34;&gt;&lt;p class=&#34;cl-e2fc2fe6&#34;&gt;&lt;span class=&#34;cl-e2fc13c6&#34;&gt;113&lt;/span&gt;&lt;/p&gt;&lt;/td&gt;&lt;/tr&gt;&lt;tr style=&#34;overflow-wrap:break-word;&#34;&gt;&lt;td class=&#34;cl-e2fc7aa1&#34;&gt;&lt;p class=&#34;cl-e2fc2fdc&#34;&gt;&lt;span class=&#34;cl-e2fc13c6&#34;&gt;raster&lt;/span&gt;&lt;/p&gt;&lt;/td&gt;&lt;td class=&#34;cl-e2fc7aaa&#34;&gt;&lt;p class=&#34;cl-e2fc2fe6&#34;&gt;&lt;span class=&#34;cl-e2fc13c6&#34;&gt;108&lt;/span&gt;&lt;/p&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/tbody&gt;&lt;/table&gt;&lt;/div&gt;&lt;/template&gt;
+&lt;div class=&#34;flextable-shadow-host&#34; id=&#34;c207439a-5643-4e95-950e-721182ef54dd&#34;&gt;&lt;/div&gt;
+&lt;script&gt;
+var dest = document.getElementById(&#34;c207439a-5643-4e95-950e-721182ef54dd&#34;);
+var template = document.getElementById(&#34;41fb6fac-ce02-4889-ac51-217e365f4058&#34;);
+var caption = template.content.querySelector(&#34;caption&#34;);
+if(caption) {
+  caption.style.cssText = &#34;display:block;text-align:center;&#34;;
+  var newcapt = document.createElement(&#34;p&#34;);
+  newcapt.appendChild(caption)
+  dest.parentNode.insertBefore(newcapt, dest.previousSibling);
+}
+var fantome = dest.attachShadow({mode: &#39;open&#39;});
+var templateContent = template.content;
+fantome.appendChild(templateContent);
+&lt;/script&gt;
+
+&lt;p&gt;Surprisingly there are packages with more than 200 versions on CRAN!&lt;/p&gt;
+&lt;div class=&#34;figure&#34;&gt;&lt;span style=&#34;display:block;&#34; id=&#34;fig:release-distribution&#34;&gt;&lt;/span&gt;
+&lt;img src=&#34;https://llrs.dev/post/2022/07/28/cran-files-2/index.en_files/figure-html/release-distribution-1.png&#34; alt=&#34;*Releases distirbution*. Packages and number of releases&#34; width=&#34;672&#34; /&gt;
+&lt;p class=&#34;caption&#34;&gt;
+Figure 2: &lt;em&gt;Releases distirbution&lt;/em&gt;. Packages and number of releases
+&lt;/p&gt;
+&lt;/div&gt;
+&lt;p&gt;Most packages have 1 release, usually packages have 3, but the mean is around 6.&lt;/p&gt;
+&lt;p&gt;Given all this different versions of packages how big are all the packages on CRAN?&lt;/p&gt;
+&lt;div id=&#34;cran-size&#34; class=&#34;section level3&#34;&gt;
+&lt;h3&gt;CRAN size&lt;/h3&gt;
+&lt;p&gt;Have you ever wondered how big is CRAN? According to the memory size of the source packages all CRAN source packages are approximately 96.8 Gb.&lt;/p&gt;
+&lt;p&gt;This doesn’t include binaries for multiple architectures and OS.
+The package size might indicate whether the package has considerable amount of data.&lt;/p&gt;
+&lt;p&gt;Looking back to the size of the packages along time we can see this pattern:&lt;/p&gt;
+&lt;div class=&#34;figure&#34;&gt;&lt;span style=&#34;display:block;&#34; id=&#34;fig:packages-size&#34;&gt;&lt;/span&gt;
+&lt;img src=&#34;https://llrs.dev/post/2022/07/28/cran-files-2/index.en_files/figure-html/packages-size-1.png&#34; alt=&#34;*Package and their median size.* Archived packages have become bigger since 2014. Packages on CRAN have been getting bigger since 2017.&#34; width=&#34;672&#34; /&gt;
+&lt;p class=&#34;caption&#34;&gt;
+Figure 3: &lt;em&gt;Package and their median size.&lt;/em&gt; Archived packages have become bigger since 2014. Packages on CRAN have been getting bigger since 2017.
+&lt;/p&gt;
+&lt;/div&gt;
+&lt;p&gt;Packages available on CRAN are smaller than those no longer on CRAN.
+But versions of packages on CRAN that got archived are usually bigger than current versions.
+Packages no longer on CRAN are usually bigger.
+Median size of packages is increasing (quickly).&lt;/p&gt;
+&lt;div class=&#34;figure&#34;&gt;&lt;span style=&#34;display:block;&#34; id=&#34;fig:release-size&#34;&gt;&lt;/span&gt;
+&lt;img src=&#34;https://llrs.dev/post/2022/07/28/cran-files-2/index.en_files/figure-html/release-size-1.png&#34; alt=&#34;*Size of package with releases.* Package are usually small but seem to gain weight when updating.&#34; width=&#34;672&#34; /&gt;
+&lt;p class=&#34;caption&#34;&gt;
+Figure 4: &lt;em&gt;Size of package with releases.&lt;/em&gt; Package are usually small but seem to gain weight when updating.
+&lt;/p&gt;
+&lt;/div&gt;
+&lt;p&gt;Typically packages increase their size with each new release up to when they reach 50 releases.
+For higher releases this plot depends on very few packages and might not be representative.&lt;/p&gt;
+&lt;div class=&#34;figure&#34;&gt;&lt;span style=&#34;display:block;&#34; id=&#34;fig:release-size2&#34;&gt;&lt;/span&gt;
+&lt;img src=&#34;https://llrs.dev/post/2022/07/28/cran-files-2/index.en_files/figure-html/release-size2-1.png&#34; alt=&#34;*Size of package with releases by availability.* Packages no longer in CRAN are usually smaller than those in it. The continous black line is CRAN&#39;s current threshold, while the discontinous black line is current median size.&#34; width=&#34;672&#34; /&gt;
+&lt;p class=&#34;caption&#34;&gt;
+Figure 5: &lt;em&gt;Size of package with releases by availability.&lt;/em&gt; Packages no longer in CRAN are usually smaller than those in it. The continous black line is CRAN’s current threshold, while the discontinous black line is current median size.
+&lt;/p&gt;
+&lt;/div&gt;
+&lt;p&gt;Here we can appreciate better how packages tend to be below the CRAN threshold.
+There isn’t much of a difference between packages available on CRAN and those archived.&lt;/p&gt;
+&lt;p&gt;If we look at the size of package of the first release over time we’ll see a representative view:&lt;/p&gt;
+&lt;div class=&#34;figure&#34;&gt;&lt;span style=&#34;display:block;&#34; id=&#34;fig:size-time&#34;&gt;&lt;/span&gt;
+&lt;img src=&#34;https://llrs.dev/post/2022/07/28/cran-files-2/index.en_files/figure-html/size-time-1.png&#34; alt=&#34;*Size of the first release by time*. Package size increases with time with a peak around 2010 and increasing again since 2014 but still hasn&#39;t surprased the previous record.&#34; width=&#34;672&#34; /&gt;
+&lt;p class=&#34;caption&#34;&gt;
+Figure 6: &lt;em&gt;Size of the first release by time&lt;/em&gt;. Package size increases with time with a peak around 2010 and increasing again since 2014 but still hasn’t surprased the previous record.
+&lt;/p&gt;
+&lt;/div&gt;
+&lt;p&gt;Package size tends to increase except for the brief period 2010-2014.
+Currently it increases less than before that period but is close to its maximum.&lt;/p&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;div id=&#34;conclusions&#34; class=&#34;section level2&#34;&gt;
+&lt;h2&gt;Conclusions&lt;/h2&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;p&gt;Most packages are not updated too much, between 1 and 3 times.
+But there are packages that are updated quite a lot, this might mean they are data packages and not software packages or that they have frequent minor and major updates.&lt;/p&gt;&lt;/li&gt;
+&lt;li&gt;&lt;p&gt;Most current packages have smaller size than those archived.
+Packages no longer available usually had bigger size than those packages still on CRAN.&lt;/p&gt;&lt;/li&gt;
+&lt;li&gt;&lt;p&gt;Surprisingly packages increase their size a lot till the 25 release.
+But also with time except for a period in 2010 and 2014.
+This decreasing period might be due to a change in CRAN policy.&lt;/p&gt;&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/div&gt;
+&lt;div id=&#34;future-parts&#34; class=&#34;section level2&#34;&gt;
+&lt;h2&gt;Future parts&lt;/h2&gt;
+&lt;p&gt;On future posts I’ll explore:&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;p&gt;patterns accepting packages and updates in packages.&lt;/p&gt;&lt;/li&gt;
+&lt;li&gt;&lt;p&gt;the relation between dependencies, initial release and updates.&lt;/p&gt;&lt;/li&gt;
+&lt;li&gt;&lt;p&gt;who handled the packages.&lt;/p&gt;&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/div&gt;
+</description>
+    </item>
+    
+  </channel>
+</rss>

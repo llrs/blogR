@@ -1,0 +1,1548 @@
+<!DOCTYPE html>
+<html lang="en-us">
+
+<head>
+
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="generator" content="Source Themes Academic 4.8.0">
+
+  
+
+  
+  
+  
+  
+  
+    
+    
+    
+  
+  
+
+  <meta name="author" content="Lluís Revilla Sancho">
+
+  
+  
+  
+    
+  
+  <meta name="description" content="First time successful submissions">
+
+  
+  <link rel="alternate" hreflang="en-us" href="https://llrs.dev/post/2024/01/10/submission-cran-first-try/">
+
+  
+
+
+  
+  
+  
+  <meta name="theme-color" content="#2962ff">
+  
+
+  
+  
+
+  
+  
+  
+  
+    
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/academicons/1.8.6/css/academicons.min.css" integrity="sha256-uFVgMKfistnJAfoCUQigIl+JfUaP47GrRKjf6CTPVmw=" crossorigin="anonymous">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.12.0-1/css/all.min.css" integrity="sha256-4w9DunooKSr3MFXHXWyFER38WmPdm361bQS/2KUWZbU=" crossorigin="anonymous">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/fancybox/3.5.7/jquery.fancybox.min.css" integrity="sha256-Vzbj7sDDS/woiFS3uNKo8eIuni59rjyNGtXfstRzStA=" crossorigin="anonymous">
+
+    
+    
+    
+      
+    
+    
+      
+      
+        
+          <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.18.1/styles/github.min.css" crossorigin="anonymous" title="hl-light">
+          <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.18.1/styles/dracula.min.css" crossorigin="anonymous" title="hl-dark" disabled>
+        
+      
+    
+
+    
+
+    
+
+    
+    
+      
+
+      
+      
+
+      
+    
+      
+
+      
+      
+
+      
+    
+      
+
+      
+      
+
+      
+    
+      
+
+      
+      
+
+      
+    
+      
+
+      
+      
+
+      
+    
+      
+
+      
+      
+
+      
+    
+      
+
+      
+      
+
+      
+    
+      
+
+      
+      
+
+      
+    
+      
+
+      
+      
+
+      
+    
+      
+
+      
+      
+
+      
+    
+      
+
+      
+      
+
+      
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/lazysizes/5.1.2/lazysizes.min.js" integrity="sha256-Md1qLToewPeKjfAHU1zyPwOutccPAm5tahnaw7Osw0A=" crossorigin="anonymous" async></script>
+      
+    
+      
+
+      
+      
+
+      
+    
+      
+
+      
+      
+
+      
+    
+      
+
+      
+      
+        
+      
+
+      
+    
+      
+
+      
+      
+
+      
+    
+
+  
+
+  
+  
+  
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Montserrat:400,700%7CRoboto:400,400italic,700%7CRoboto+Mono&display=swap">
+  
+
+  
+  
+  
+  
+  <link rel="stylesheet" href="/css/academic.css">
+
+  
+
+
+
+
+  
+
+
+  
+
+  <link rel="manifest" href="/index.webmanifest">
+  <link rel="icon" type="image/png" href="/images/icon_hud03320d081f55857e6179906aee3769c_2658_32x32_fill_lanczos_center_3.png">
+  <link rel="apple-touch-icon" type="image/png" href="/images/icon_hud03320d081f55857e6179906aee3769c_2658_192x192_fill_lanczos_center_3.png">
+
+  <link rel="canonical" href="https://llrs.dev/post/2024/01/10/submission-cran-first-try/">
+
+  
+  
+  
+  
+  
+    
+    
+  
+  
+  <meta property="twitter:card" content="summary">
+  
+  <meta property="og:site_name" content="B101nfo">
+  <meta property="og:url" content="https://llrs.dev/post/2024/01/10/submission-cran-first-try/">
+  <meta property="og:title" content="Submissions accepted on the first try | B101nfo">
+  <meta property="og:description" content="First time successful submissions"><meta property="og:image" content="img/map[gravatar:%!s(bool=false) shape:circle]">
+  <meta property="twitter:image" content="img/map[gravatar:%!s(bool=false) shape:circle]"><meta property="og:locale" content="en-us">
+  
+    
+      <meta property="article:published_time" content="2024-01-10T00:00:00&#43;00:00">
+    
+    <meta property="article:modified_time" content="2024-01-10T00:00:00&#43;00:00">
+  
+
+  
+
+
+    
+
+
+
+
+
+
+  
+
+
+
+
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "BlogPosting",
+  "mainEntityOfPage": {
+    "@type": "WebPage",
+    "@id": "https://llrs.dev/post/2024/01/10/submission-cran-first-try/"
+  },
+  "headline": "Submissions accepted on the first try",
+  
+  "datePublished": "2024-01-10T00:00:00Z",
+  "dateModified": "2024-01-10T00:00:00Z",
+  
+  "author": {
+    "@type": "Person",
+    "name": "Lluís Revilla Sancho"
+  },
+  
+  "publisher": {
+    "@type": "Organization",
+    "name": "B101nfo",
+    "logo": {
+      "@type": "ImageObject",
+      "url": "https://llrs.dev/images/icon_hud03320d081f55857e6179906aee3769c_2658_192x192_fill_lanczos_center_3.png"
+    }
+  },
+  "description": "First time successful submissions"
+}
+</script>
+
+  
+
+  
+
+
+  
+
+
+  
+
+
+
+
+
+  <title>Submissions accepted on the first try | B101nfo</title>
+
+</head>
+
+<body id="top" data-spy="scroll" data-offset="70" data-target="#TableOfContents" >
+
+  <aside class="search-results" id="search">
+  <div class="container">
+    <section class="search-header">
+
+      <div class="row no-gutters justify-content-between mb-3">
+        <div class="col-6">
+          <h1>Search</h1>
+        </div>
+        <div class="col-6 col-search-close">
+          <a class="js-search" href="#"><i class="fas fa-times-circle text-muted" aria-hidden="true"></i></a>
+        </div>
+      </div>
+
+      <div id="search-box">
+        
+        <input name="q" id="search-query" placeholder="Search..." autocapitalize="off"
+        autocomplete="off" autocorrect="off" spellcheck="false" type="search">
+        
+      </div>
+
+    </section>
+    <section class="section-search-results">
+
+      <div id="search-hits">
+        
+      </div>
+
+    </section>
+  </div>
+</aside>
+
+
+  
+
+
+
+
+
+
+
+<nav class="navbar navbar-expand-lg navbar-light compensate-for-scrollbar" id="navbar-main">
+  <div class="container">
+
+    
+    <div class="d-none d-lg-inline-flex">
+      <a class="navbar-brand" href="/">B101nfo</a>
+    </div>
+    
+
+    
+    <button type="button" class="navbar-toggler" data-toggle="collapse"
+            data-target="#navbar-content" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
+    <span><i class="fas fa-bars"></i></span>
+    </button>
+    
+
+    
+    <div class="navbar-brand-mobile-wrapper d-inline-flex d-lg-none">
+      <a class="navbar-brand" href="/">B101nfo</a>
+    </div>
+    
+
+    
+    
+    <div class="navbar-collapse main-menu-item collapse justify-content-start" id="navbar-content">
+
+      
+      <ul class="navbar-nav d-md-inline-flex">
+        
+
+        
+
+        
+        
+        
+          
+        
+
+        
+        
+        
+        
+        
+        
+          
+          
+          
+            
+          
+          
+        
+
+        <li class="nav-item">
+          <a class="nav-link " href="/#about"><span>Home</span></a>
+        </li>
+
+        
+        
+
+        
+
+        
+        
+        
+
+        
+        
+        
+        
+        
+        
+
+        <li class="nav-item">
+          <a class="nav-link  active" href="/post"><span>Blog</span></a>
+        </li>
+
+        
+        
+
+        
+
+        
+        
+        
+
+        
+        
+        
+        
+        
+        
+
+        <li class="nav-item">
+          <a class="nav-link " href="/talk"><span>Talks</span></a>
+        </li>
+
+        
+        
+
+      
+
+        
+      </ul>
+    </div>
+
+    <ul class="nav-icons navbar-nav flex-row ml-auto d-flex pl-md-2">
+      
+      <li class="nav-item">
+        <a class="nav-link js-search" href="#"><i class="fas fa-search" aria-hidden="true"></i></a>
+      </li>
+      
+
+      
+      <li class="nav-item">
+        <a class="nav-link js-dark-toggle" href="#"><i class="fas fa-moon" aria-hidden="true"></i></a>
+      </li>
+      
+
+      
+
+    </ul>
+
+  </div>
+</nav>
+
+
+  <article class="article">
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+  
+  
+  
+<div class="article-container pt-3">
+  <h1>Submissions accepted on the first try</h1>
+
+  
+
+  
+    
+
+
+<div class="article-metadata">
+
+  
+  
+  
+  
+  <div>
+    
+
+  
+  <span><a href="/authors/admin/">Lluís Revilla Sancho</a></span>
+  </div>
+  
+  
+
+  
+  <span class="article-date">
+    
+    
+      
+    
+    Jan 10, 2024
+  </span>
+  
+
+  
+
+  
+  <span class="middot-divider"></span>
+  <span class="article-reading-time">
+    12 min read
+  </span>
+  
+
+  
+  
+  
+
+  
+  
+  <span class="middot-divider"></span>
+  <span class="article-categories">
+    <i class="fas fa-folder mr-1"></i><a href="/categories/cran/">CRAN</a></span>
+  
+
+</div>
+
+    
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+</div>
+
+
+
+  <div class="article-container">
+
+    <div class="article-style">
+      
+
+
+<p>Recently someone in social media was saying that they do not succeed on submissions to CRAN on the first try.
+In this post I’ll try to answer this question.</p>
+<p>First we need to know the submissions to CRAN.
+We can download the last 3 years of CRAN submissions thanks to <a href="https://r-hub.github.io/cransays/articles/dashboard.html">cransays</a>.</p>
+<pre class="r"><code>cdh &lt;- cransays::download_history()</code></pre>
+<p>Here is the bulk of the analysis of the history of package submissions.
+This is explained in different posts, but basically I keep only one package per snapshot, try to identify new submissions instead of changes in the same submission and calculate some date-related variables.</p>
+<pre class="r"><code>library(&quot;dplyr&quot;, warn.conflicts	 = FALSE)
+library(&quot;lubridate&quot;, warn.conflicts	 = FALSE)
+library(&quot;tidyr&quot;, warn.conflicts	 = FALSE)
+diff0 &lt;- structure(0, class = &quot;difftime&quot;, units = &quot;hours&quot;)
+cran &lt;- cdh |&gt; 
+  filter(!is.na(version)) |&gt; 
+  distinct() |&gt; 
+  arrange(package, snapshot_time) |&gt; 
+  group_by(package, snapshot_time) |&gt; 
+  # Remove some duplicated packages in different folders
+  mutate(n = seq_len(n())) |&gt; 
+  filter(n == n()) |&gt; 
+  ungroup() |&gt; 
+  select(-n) |&gt; 
+  arrange(package, snapshot_time, version) |&gt; 
+  # Packages last seen in queue less than 24 ago are considered same submission 
+  # (even if their version number differs)
+  mutate(diff_time = difftime(snapshot_time, lag(snapshot_time), units = &quot;hour&quot;),
+         diff_time = if_else(is.na(diff_time), diff0, diff_time), # Fill NAs
+         diff_v = version != lag(version),
+         diff_v = if_else(is.na(diff_v), TRUE, diff_v), # Fill NAs
+         near_t = abs(diff_time) &lt;= 24,
+         resubmission = !near_t | diff_v, 
+         resubmission = if_else(resubmission == FALSE &amp; diff_time == 0, 
+                               TRUE, resubmission),
+         resubmission_n = cumsum(as.numeric(resubmission)),
+         new_version = !near(diff_time, 1, tol = 24) &amp; diff_v, 
+         new_version = if_else(new_version == FALSE &amp; diff_time == 0, 
+                               TRUE, new_version),
+         submission_n = cumsum(as.numeric(new_version)), .by = package) |&gt; 
+  select(-diff_time, -diff_v, -new_version, -new_version, -near_t) |&gt; 
+  mutate(version = package_version(version, strict = FALSE),
+         date = as_date(snapshot_time))</code></pre>
+<p>Now we need to compare with the CRAN archive to know if the submission were accepted.</p>
+<p>First we need to retrieve the data:</p>
+<pre class="r"><code>cran_archive &lt;- tools:::CRAN_archive_db()
+# When row binding the data.frames that have only one row lose they row name:
+# handle those cases to keep the version number:
+archived &lt;- vapply(cran_archive, NROW, numeric(1L))
+names(cran_archive)[archived == 1L] &lt;- vapply(cran_archive[archived == 1L], rownames, character(1L))
+# Merge current and archive data
+cran_dates &lt;- do.call(rbind, cran_archive)
+cran_dates$type &lt;- &quot;archived&quot;
+current &lt;- tools:::CRAN_current_db()
+current$type &lt;- &quot;available&quot;
+cran_h &lt;- rbind(current, cran_dates)
+# Keep minimal CRAN data archive
+cran_h$pkg_v &lt;- basename(rownames(cran_h))
+rownames(cran_h) &lt;- NULL
+cda &lt;- cran_h |&gt; 
+  mutate(strcapture(x = pkg_v, &quot;^(.+)_([0-9]*.+).tar.gz$&quot;, 
+                    proto = data.frame(package = character(), version = character())),
+         package = if_else(is.na(package), pkg_v, package)) |&gt; 
+  arrange(package, mtime) |&gt; 
+  mutate(acceptance_n = seq_len(n()), .by = package) |&gt; 
+  select(package, pkg_v, version, acceptance_n, date = mtime, uname, type) |&gt; 
+  mutate(date = as_date(date))</code></pre>
+<p>We use <code>tools:::CRAN_current_db</code>, because <code>package.available</code> will filter packages based on OS and other options (see the <code>filter</code> argument).</p>
+<p>We can make a quick detour to plot the number of accepted articles and when were they first published:</p>
+<pre class="r"><code>library(&quot;ggplot2&quot;)
+cdas &lt;- cda |&gt; 
+  summarize(available = if_else(any(type == &quot;available&quot;), &quot;available&quot;, &quot;archived&quot;),
+            published = min(date),
+            n_published = max(acceptance_n),
+            .by = package)
+
+ggplot(cdas) + 
+  geom_point(aes(published, n_published, col = available, shape = available)) +
+  theme_minimal() +
+  theme(legend.position = c(0.7, 0.8), legend.background = element_rect()) +
+  labs(x = element_blank(), y = &quot;Versions&quot;, col = &quot;Status&quot;, shape = &quot;Status&quot;,
+       title = &quot;First publication of packages and versions published&quot;) +
+  scale_x_date(expand = expansion(), date_breaks = &quot;2 years&quot;, date_labels = &quot;%Y&quot;)</code></pre>
+<p><img src="https://llrs.dev/post/2024/01/10/submission-cran-first-try/index.en_files/figure-html/cran-published-1.png" width="672" /></p>
+<p>In summary, there are 6291 packages archived, and 20304 available.
+We can observe that there is a package that had more than 150 versions that was later archived.</p>
+<p>Now we can really compare the submission process with the CRAN archive:</p>
+<pre class="r"><code>cran_subm &lt;- cran |&gt; 
+  summarise(
+    resubmission_n = max(resubmission_n, na.rm = TRUE),
+    submission_n = max(submission_n, na.rm = TRUE),
+    # The number of submissions 
+    submissions = resubmission_n - submission_n + 1,
+    date = min(date),
+    .by = c(&quot;package&quot;, &quot;version&quot;)) |&gt; 
+  arrange(package, version)
+# Filter to those packages submitted in the period we have data
+cda_acc &lt;- cda |&gt; 
+  filter(date &gt;= min(cran_subm$date)) |&gt; 
+  select(-pkg_v) |&gt; 
+  mutate(version = package_version(version, FALSE))
+
+accepted_subm &lt;- merge(cda_acc, cran_subm, by = c(&quot;package&quot;, &quot;version&quot;),
+             suffixes = c(&quot;.cran&quot;, &quot;.subm&quot;), all = TRUE, sort = FALSE) |&gt; 
+  arrange(package, version, date.cran, date.subm) |&gt; 
+  mutate(submissions = if_else(is.na(submissions), 1, submissions),
+         acceptance_n = if_else(is.na(acceptance_n), 0, acceptance_n))</code></pre>
+<p>We can explore a little bit this data:</p>
+<pre class="r"><code>lp &lt;- scales::label_percent(accuracy = 0.1)
+accepted_subm |&gt; 
+  summarize(cransays = sum(!is.na(date.subm)),
+            cran = sum(!is.na(date.cran)),
+            missed_submissions = cran - cransays,
+            percentaged_missed = lp(missed_submissions/cran))</code></pre>
+<table>
+<thead>
+<tr class="header">
+<th align="center">cransays</th>
+<th align="center">cran</th>
+<th align="center">missed_submissions</th>
+<th align="center">percentaged_missed</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td align="center">46525</td>
+<td align="center">50413</td>
+<td align="center">3888</td>
+<td align="center">7.7%</td>
+</tr>
+</tbody>
+</table>
+<p>This means that <a href="https://r-hub.github.io/cransays/articles/dashboard.html">cransays</a>, the package used to archive this data, misses ~8% of submissions, probably because they are handled in less than an hour!!
+Another explanation might be because for some periods cransays bot didn’t work well…</p>
+<p>On the other hand we can look how long does it take for a version to be published on CRAN:</p>
+<pre class="r"><code>accepted_subm |&gt; 
+  filter(!is.na(date.cran)) |&gt; 
+  mutate(time_diff = difftime(date.cran, date.subm, units = &quot;weeks&quot;)) |&gt;
+  # Calculate the number of accepted packages sine the recording of submissions
+  mutate(accepted_n = acceptance_n - min(acceptance_n[acceptance_n != 0L], na.rm = TRUE) + 1, .by = package) |&gt; 
+  filter(time_diff &gt;= 0) |&gt; 
+  ggplot() + 
+  geom_point(aes(date.cran, time_diff, col = accepted_n)) +
+  theme_minimal() +
+  theme(legend.position = c(0.2, 0.8), legend.background = element_rect()) +
+  labs(x = &quot;Published on CRAN&quot;, title = &quot;Time since submitted to CRAN&quot;, 
+       y = &quot;Weeks&quot;, col = &quot;Accepted&quot;)
+## Don&#39;t know how to automatically pick scale for object of type &lt;difftime&gt;.
+## Defaulting to continuous.</code></pre>
+<p><img src="https://llrs.dev/post/2024/01/10/submission-cran-first-try/index.en_files/figure-html/accepted_subm-1.png" width="672" /></p>
+<p>I explored some of those outliers and there is a package that was submitted in 2021 and two years later it was submitted with the same version.
+In other cases the submission was done with more than 1 hour of tolerance (see the “new_version” variable creation in the second code chunk.)</p>
+<p>This means that the path to CRAN might be long and that developers do not change the version number on each submission.</p>
+<p><strong>Note:</strong> This section is new after detecting problems with the way it was initially published.</p>
+<p>In the following function I calculate the number of submissions and similar information for each package:</p>
+<pre class="r"><code>count_submissions &lt;- function(x) {
+  x |&gt; 
+    mutate(submission_in_period = seq_len(n()),
+           date.mix = pmin(date.cran, date.subm, na.rm = TRUE),
+           .by = package, .after = acceptance_n) |&gt; 
+    summarise(
+      # Number of accepted packages on CRAN
+      total_accepted = sum(!is.na(date.cran), 0, na.rm = TRUE),
+      # At minimum 0 through {cransays}
+      through_cransays = sum(!is.na(date.subm), 0, na.rm = TRUE), 
+      # In case same version number is submitted at different timepoints
+      resubmissions = ifelse(any(!is.na(resubmission_n)), 
+                              max(resubmission_n, na.rm = TRUE) - min(resubmission_n, na.rm = TRUE) - through_cransays, 0),
+      resubmissions = if_else(resubmissions &lt; 0L, 0L, resubmissions),
+      # All submission + those that were duplicated on the submission system
+      total_submissions = max(submission_in_period, na.rm = TRUE) + resubmissions,
+      # The submissions that were not successful
+      total_attempts = total_submissions - total_accepted,
+      percentage_failed_submissions = lp(total_attempts/total_accepted), 
+      .by = package)
+}</code></pre>
+<p>I created a function to apply the same logic in whatever group I want to analyse.</p>
+<p><strong>Note:</strong> Another relevant edit was that the selection criteria changed as I missed some packages in some analysis and included other that shouldn’t be.
+Now we are ready to apply to those that got the first version of the package on CRAN:</p>
+<pre class="r"><code>first_submissions &lt;- accepted_subm |&gt; 
+  group_by(package) |&gt; 
+  # Keep submission that where eventually accepted
+  filter(length(acceptance_n != 0L) &gt; 1L &amp;&amp; any(acceptance_n[acceptance_n != 0L] == 1)) |&gt; 
+  # Keep submissions until the first acceptance but not after
+  filter(cumsum(acceptance_n) &lt;= 1L &amp; seq_len(n()) &lt;= which(acceptance_n == 1L)) |&gt; 
+  ungroup()
+ffs &lt;- first_submissions |&gt;   
+  count_submissions() |&gt; 
+  count(total_attempts, sort = TRUE,  name = &quot;packages&quot;) |&gt; 
+  mutate(percentage = lp(packages/sum(packages, na.rm = TRUE)))
+ffs</code></pre>
+<table>
+<thead>
+<tr class="header">
+<th align="center">total_attempts</th>
+<th align="center">packages</th>
+<th align="center">percentage</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td align="center">0</td>
+<td align="center">3390</td>
+<td align="center">65.0%</td>
+</tr>
+<tr class="even">
+<td align="center">1</td>
+<td align="center">1141</td>
+<td align="center">21.9%</td>
+</tr>
+<tr class="odd">
+<td align="center">2</td>
+<td align="center">425</td>
+<td align="center">8.2%</td>
+</tr>
+<tr class="even">
+<td align="center">3</td>
+<td align="center">138</td>
+<td align="center">2.6%</td>
+</tr>
+<tr class="odd">
+<td align="center">4</td>
+<td align="center">72</td>
+<td align="center">1.4%</td>
+</tr>
+<tr class="even">
+<td align="center">5</td>
+<td align="center">23</td>
+<td align="center">0.4%</td>
+</tr>
+<tr class="odd">
+<td align="center">6</td>
+<td align="center">12</td>
+<td align="center">0.2%</td>
+</tr>
+<tr class="even">
+<td align="center">7</td>
+<td align="center">4</td>
+<td align="center">0.1%</td>
+</tr>
+<tr class="odd">
+<td align="center">8</td>
+<td align="center">3</td>
+<td align="center">0.1%</td>
+</tr>
+<tr class="even">
+<td align="center">9</td>
+<td align="center">2</td>
+<td align="center">0.0%</td>
+</tr>
+<tr class="odd">
+<td align="center">12</td>
+<td align="center">1</td>
+<td align="center">0.0%</td>
+</tr>
+<tr class="even">
+<td align="center">16</td>
+<td align="center">1</td>
+<td align="center">0.0%</td>
+</tr>
+</tbody>
+</table>
+<p>This means that close to 35.0% first time submissions are rejected.
+Including those that are not yet (never?) included on CRAN (~1000).</p>
+<p>This points out a problem:</p>
+<ul>
+<li>the developers need to resubmit their packages and fix it more.</li>
+<li>the reviewers need to spend more time (approximately 50% of submissions are at one point or another handled by a human).</li>
+</ul>
+<p>After this exercise we might wonder whether this is just for new packages?<br />
+If we look up those submissions that are not the first version of a package, we find the following:</p>
+<pre class="r"><code>submissions_with_accepted &lt;- accepted_subm |&gt; 
+  # Filter those that were included on CRAN (not all submission rejected)
+  filter(any(acceptance_n &gt;= 1), .by = package) |&gt; 
+  mutate(date.mix = pmin(date.cran, date.subm, na.rm = TRUE)) |&gt; 
+  group_by(package) |&gt; 
+  arrange(date.mix) |&gt; 
+  filter(
+    # Those that start by 0 but next acceptance is 1 or higher
+     cumsum(acceptance_n) &gt;= 1L | 
+       min(acceptance_n[acceptance_n != 0L], na.rm = TRUE) &gt;= 2) |&gt; 
+  ungroup() 
+fs_exp &lt;- count_submissions(submissions_with_accepted)
+fs_exp |&gt; 
+  count(more_failed = total_accepted &gt; total_attempts, 
+            sort = TRUE, name = &quot;packages&quot;) |&gt; 
+  mutate(percentage = lp(packages/sum(packages)))</code></pre>
+<table>
+<thead>
+<tr class="header">
+<th align="center">more_failed</th>
+<th align="center">packages</th>
+<th align="center">percentage</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td align="center">TRUE</td>
+<td align="center">15337</td>
+<td align="center">96.2%</td>
+</tr>
+<tr class="even">
+<td align="center">FALSE</td>
+<td align="center">600</td>
+<td align="center">3.8%</td>
+</tr>
+</tbody>
+</table>
+<p>Still the majority of packages have more attempts than versions released in the period analysed.
+Failing the checks on CRAN is normal, but how many more attempts are to CRAN?</p>
+<pre class="r"><code>library(&quot;ggrepel&quot;)
+ggplot(fs_exp) +
+  geom_abline(slope = 1, intercept = 0, linetype = 2) +
+  geom_count(aes(total_accepted, total_attempts)) +
+  geom_label_repel(aes(total_accepted, total_attempts, label = package), data = . %&gt;% filter(total_attempts &gt;= 10)) +
+  labs(x = &quot;CRAN versions&quot;, y = &quot;Rejected submissions&quot;,  size = &quot;Packages&quot;,
+       title = &quot;Packages after the first version&quot;, subtitle = &quot;for the period analyzed&quot;) +
+  scale_size(trans = &quot;log10&quot;) +
+  theme_minimal() +
+  theme(legend.position = c(0.8, 0.7), legend.background = element_rect())</code></pre>
+<p><img src="https://llrs.dev/post/2024/01/10/submission-cran-first-try/index.en_files/figure-html/failed-exp-1.png" width="672" /></p>
+<p>We can see that there are packages with more than 30 versions on CRAN in these 3 years which never had a rejected submission.
+Congratulations!!</p>
+<p>Others have a high number of submissions rejected, and very few versions:</p>
+<pre class="r"><code>fs_exp |&gt; 
+  count(total_attempts &gt; total_accepted, name = &quot;packages&quot;) |&gt; 
+  mutate(percentage = lp(packages/sum(packages)))</code></pre>
+<table>
+<thead>
+<tr class="header">
+<th align="center">total_attempts &gt; total_accepted</th>
+<th align="center">packages</th>
+<th align="center">percentage</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td align="center">FALSE</td>
+<td align="center">15792</td>
+<td align="center">99.1%</td>
+</tr>
+<tr class="even">
+<td align="center">TRUE</td>
+<td align="center">145</td>
+<td align="center">0.9%</td>
+</tr>
+</tbody>
+</table>
+<p>Close to 1% require more than double submissions per version.</p>
+<p>Last we can see the overall experience for developers:</p>
+<pre class="r"><code>fs &lt;- count_submissions(accepted_subm)
+
+ggplot(fs) +
+  geom_abline(slope = 1, intercept = 0, linetype = 2) +
+  geom_count(aes(total_accepted, total_attempts)) +
+  geom_label_repel(aes(total_accepted, total_attempts, label = package), 
+                   data = . %&gt;% filter(total_attempts &gt;= 12)) +
+  labs(x = &quot;CRAN versions&quot;, y = &quot;Rejected submissions&quot;,  size = &quot;Packages&quot;,
+       title = &quot;All packages submissions&quot;, subtitle = &quot;for the period analyzed ~174 weeks&quot;) +
+  theme_minimal() +
+  scale_size(trans = &quot;log10&quot;) +
+  theme(legend.position = c(0.8, 0.7), legend.background = element_rect())</code></pre>
+<p><img src="https://llrs.dev/post/2024/01/10/submission-cran-first-try/index.en_files/figure-html/plot-failed-submissions-1.png" width="672" /></p>
+<p>It doesn’t change much between the experienced.
+Note that this only add the packages that were not approved ever and the submissions done to be first accepted.
+So the changes should only be observable on the bottom left corner of the plot.</p>
+<p>Overall, 14.5% of the attempts end up being rejected.</p>
+<div id="main-take-away" class="section level2">
+<h2>Main take away</h2>
+<p>Submitting to CRAN is not easy on the first try, and it usually requires 2 submissions for each accepted version.<br />
+While <a href="https://cran.r-project.org/doc/manuals/r-devel/R-exts.html">Writing R extensions</a> document is clear, it might be too extensive for many cases.<br />
+The <a href="https://cran.r-project.org/web/packages/policies.html">CRAN policy</a> is short but might not be clear enough for new maintainers.<br />
+A document in the middle might be <a href="https://r-pkgs.org/">R packages</a> but it is still extensive and focused on only a small opionated set of packages.<br />
+A CRAN Task View or some training might be a good solution to reduce the overall problem.<br />
+For those maintainers struggling, maybe clearer technical or editorial decisions might be a good solution.</p>
+<p>In addition, it seems that packages having more problems with the submissions are not new: experienced maintainers have troubles getting their package accepted when submitting them.<br />
+This might hint to troubles replicating the CRAN checks or environments or the scale of the checks (dependency checks).<br />
+Maybe focusing on helping those packages’ maintainer might provide a good way to help CRAN maintainers reduce their load.</p>
+<p>I also want to comment that this analysis could be improved if we knew, whether the rejection was automatic or manual.<br />
+This would allow to see the burden on CRAN volunteers and perhaps define better the problem and propose better solutions.<br />
+It could be attempted by looking the last folder of a package in the submission process, but it would still not be clear what the most frequent problem is.</p>
+</div>
+<div id="bonus" class="section level2">
+<h2>Bonus</h2>
+<p>From all the new packages more than half are already archived (with either newer versions or totally):</p>
+<pre class="r"><code>accepted_subm |&gt; 
+  filter(acceptance_n == 1L) |&gt; 
+  count(status = type, name = &quot;packages&quot;) |&gt; 
+  mutate(percentage = lp(packages/sum(packages)))</code></pre>
+<table>
+<thead>
+<tr class="header">
+<th align="center">status</th>
+<th align="center">packages</th>
+<th align="center">percentage</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td align="center">archived</td>
+<td align="center">4763</td>
+<td align="center">65.4%</td>
+</tr>
+<tr class="even">
+<td align="center">available</td>
+<td align="center">2517</td>
+<td align="center">34.6%</td>
+</tr>
+</tbody>
+</table>
+<p>Of them:</p>
+<pre class="r"><code>fully_archived &lt;- accepted_subm |&gt;
+  filter(acceptance_n != 0L) |&gt; 
+  filter(any(acceptance_n == 1L), .by = package) |&gt; 
+  summarize(archived = all(type == &quot;archived&quot;), .by = package) |&gt; 
+  count(archived, name = &quot;packages&quot;) |&gt; 
+  mutate(percentage = lp(packages/sum(packages)))
+fully_archived</code></pre>
+<table>
+<thead>
+<tr class="header">
+<th align="center">archived</th>
+<th align="center">packages</th>
+<th align="center">percentage</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td align="center">FALSE</td>
+<td align="center">6783</td>
+<td align="center">93.2%</td>
+</tr>
+<tr class="even">
+<td align="center">TRUE</td>
+<td align="center">497</td>
+<td align="center">6.8%</td>
+</tr>
+</tbody>
+</table>
+<p>Only 6.8% of packages were fully archived at the end of this period 2020-09-12, 2024-01-20.</p>
+<div id="reproducibility" class="section level3">
+<h3>Reproducibility</h3>
+<details>
+<pre><code>## ─ Session info ───────────────────────────────────────────────────────────────────────────────────────────────────────
+##  setting  value
+##  version  R version 4.3.1 (2023-06-16)
+##  os       Ubuntu 22.04.3 LTS
+##  system   x86_64, linux-gnu
+##  ui       X11
+##  language (EN)
+##  collate  en_US.UTF-8
+##  ctype    en_US.UTF-8
+##  tz       Europe/Madrid
+##  date     2024-01-20
+##  pandoc   3.1.1 @ /usr/lib/rstudio/resources/app/bin/quarto/bin/tools/ (via rmarkdown)
+## 
+## ─ Packages ───────────────────────────────────────────────────────────────────────────────────────────────────────────
+##  package     * version date (UTC) lib source
+##  blogdown      1.18    2023-06-19 [1] CRAN (R 4.3.1)
+##  bookdown      0.37    2023-12-01 [1] CRAN (R 4.3.1)
+##  bslib         0.6.1   2023-11-28 [1] CRAN (R 4.3.1)
+##  cachem        1.0.8   2023-05-01 [1] CRAN (R 4.3.1)
+##  cli           3.6.2   2023-12-11 [1] CRAN (R 4.3.1)
+##  colorspace    2.1-0   2023-01-23 [1] CRAN (R 4.3.1)
+##  digest        0.6.33  2023-07-07 [1] CRAN (R 4.3.1)
+##  dplyr       * 1.1.4   2023-11-17 [1] CRAN (R 4.3.1)
+##  evaluate      0.23    2023-11-01 [1] CRAN (R 4.3.2)
+##  fansi         1.0.6   2023-12-08 [1] CRAN (R 4.3.1)
+##  farver        2.1.1   2022-07-06 [1] CRAN (R 4.3.1)
+##  fastmap       1.1.1   2023-02-24 [1] CRAN (R 4.3.1)
+##  generics      0.1.3   2022-07-05 [1] CRAN (R 4.3.1)
+##  ggplot2     * 3.4.4   2023-10-12 [1] CRAN (R 4.3.1)
+##  ggrepel     * 0.9.5   2024-01-10 [1] CRAN (R 4.3.1)
+##  glue          1.7.0   2024-01-09 [1] CRAN (R 4.3.1)
+##  gtable        0.3.4   2023-08-21 [1] CRAN (R 4.3.1)
+##  highr         0.10    2022-12-22 [1] CRAN (R 4.3.1)
+##  htmltools     0.5.7   2023-11-03 [1] CRAN (R 4.3.2)
+##  jquerylib     0.1.4   2021-04-26 [1] CRAN (R 4.3.1)
+##  jsonlite      1.8.8   2023-12-04 [1] CRAN (R 4.3.1)
+##  knitr       * 1.45    2023-10-30 [1] CRAN (R 4.3.2)
+##  labeling      0.4.3   2023-08-29 [1] CRAN (R 4.3.2)
+##  lifecycle     1.0.4   2023-11-07 [1] CRAN (R 4.3.2)
+##  lubridate   * 1.9.3   2023-09-27 [1] CRAN (R 4.3.1)
+##  magrittr      2.0.3   2022-03-30 [1] CRAN (R 4.3.1)
+##  munsell       0.5.0   2018-06-12 [1] CRAN (R 4.3.1)
+##  pillar        1.9.0   2023-03-22 [1] CRAN (R 4.3.1)
+##  pkgconfig     2.0.3   2019-09-22 [1] CRAN (R 4.3.1)
+##  purrr         1.0.2   2023-08-10 [1] CRAN (R 4.3.1)
+##  R6            2.5.1   2021-08-19 [1] CRAN (R 4.3.1)
+##  Rcpp          1.0.12  2024-01-09 [1] CRAN (R 4.3.1)
+##  rlang         1.1.3   2024-01-10 [1] CRAN (R 4.3.1)
+##  rmarkdown     2.25    2023-09-18 [1] CRAN (R 4.3.1)
+##  rstudioapi    0.15.0  2023-07-07 [1] CRAN (R 4.3.1)
+##  sass          0.4.8   2023-12-06 [1] CRAN (R 4.3.1)
+##  scales        1.3.0   2023-11-28 [1] CRAN (R 4.3.1)
+##  sessioninfo   1.2.2   2021-12-06 [1] CRAN (R 4.3.1)
+##  tibble        3.2.1   2023-03-20 [1] CRAN (R 4.3.1)
+##  tidyr       * 1.3.0   2023-01-24 [1] CRAN (R 4.3.1)
+##  tidyselect    1.2.0   2022-10-10 [1] CRAN (R 4.3.1)
+##  timechange    0.2.0   2023-01-11 [1] CRAN (R 4.3.1)
+##  utf8          1.2.4   2023-10-22 [1] CRAN (R 4.3.2)
+##  vctrs         0.6.5   2023-12-01 [1] CRAN (R 4.3.1)
+##  withr         2.5.2   2023-10-30 [1] CRAN (R 4.3.2)
+##  xfun          0.41    2023-11-01 [1] CRAN (R 4.3.2)
+##  yaml          2.3.8   2023-12-11 [1] CRAN (R 4.3.1)
+## 
+##  [1] /home/lluis/bin/R/4.3.1
+##  [2] /opt/R/4.3.1/lib/R/library
+## 
+## ──────────────────────────────────────────────────────────────────────────────────────────────────────────────────────</code></pre>
+</details>
+</div>
+</div>
+
+    </div>
+
+    
+
+
+
+
+
+  
+  
+
+<p class="edit-page">
+  <a href="https://github.com/llrs/blogR/edit/master/content/post/2024-01-10-submission-cran-first-try/index.en.html">
+    <i class="fas fa-pen pr-2"></i>Edit this page
+  </a>
+</p>
+
+
+
+
+
+<div class="article-tags">
+  
+  <a class="badge badge-light" href="/tags/cran/">CRAN</a>
+  
+</div>
+
+
+
+<div class="share-box" aria-hidden="true">
+  <ul class="share">
+    
+      
+      
+      
+        
+      
+      
+      
+      <li>
+        <a href="https://twitter.com/intent/tweet?url=https://llrs.dev/post/2024/01/10/submission-cran-first-try/&amp;text=Submissions%20accepted%20on%20the%20first%20try" target="_blank" rel="noopener" class="share-btn-twitter">
+          <i class="fab fa-twitter"></i>
+        </a>
+      </li>
+    
+      
+      
+      
+        
+      
+      
+      
+      <li>
+        <a href="https://www.facebook.com/sharer.php?u=https://llrs.dev/post/2024/01/10/submission-cran-first-try/&amp;t=Submissions%20accepted%20on%20the%20first%20try" target="_blank" rel="noopener" class="share-btn-facebook">
+          <i class="fab fa-facebook"></i>
+        </a>
+      </li>
+    
+      
+      
+      
+        
+      
+      
+      
+      <li>
+        <a href="mailto:?subject=Submissions%20accepted%20on%20the%20first%20try&amp;body=https://llrs.dev/post/2024/01/10/submission-cran-first-try/" target="_blank" rel="noopener" class="share-btn-email">
+          <i class="fas fa-envelope"></i>
+        </a>
+      </li>
+    
+      
+      
+      
+        
+      
+      
+      
+      <li>
+        <a href="https://www.linkedin.com/shareArticle?url=https://llrs.dev/post/2024/01/10/submission-cran-first-try/&amp;title=Submissions%20accepted%20on%20the%20first%20try" target="_blank" rel="noopener" class="share-btn-linkedin">
+          <i class="fab fa-linkedin-in"></i>
+        </a>
+      </li>
+    
+      
+      
+      
+        
+      
+      
+      
+      <li>
+        <a href="https://web.whatsapp.com/send?text=Submissions%20accepted%20on%20the%20first%20try%20https://llrs.dev/post/2024/01/10/submission-cran-first-try/" target="_blank" rel="noopener" class="share-btn-whatsapp">
+          <i class="fab fa-whatsapp"></i>
+        </a>
+      </li>
+    
+  </ul>
+</div>
+
+
+
+
+
+
+
+
+
+
+
+
+  
+    
+    
+
+
+
+
+
+  
+  
+  
+    
+  
+  
+  
+  <div class="media author-card content-widget-hr">
+    
+      
+      <img class="avatar mr-3 avatar-circle" src="/authors/admin/avatar_hu41a1d1cb0c2270d3fd463263214d3794_229497_270x270_fill_lanczos_center_3.png" alt="Avatar">
+    
+
+    <div class="media-body">
+      <h5 class="card-title"><a href="https://llrs.dev/">Lluís Revilla Sancho</a></h5>
+      <h6 class="card-subtitle">Data scientist</h6>
+      <p class="card-text">Data scientist with interests in software quality, mostly R.</p>
+      <ul class="network-icon" aria-hidden="true">
+  
+    
+    
+    
+      
+    
+    
+    
+    
+    
+    <li>
+      <a href="mailto:lluis.revilla&#43;blog@gmail.com" >
+        <i class="fas fa-envelope"></i>
+      </a>
+    </li>
+  
+    
+    
+    
+      
+    
+    
+    
+    
+    
+      
+    
+    <li>
+      <a href="https://linkedin.com/in/lluisrevilla/" target="_blank" rel="noopener">
+        <i class="fab fa-linkedin-in"></i>
+      </a>
+    </li>
+  
+    
+    
+    
+      
+    
+    
+    
+    
+    
+      
+    
+    <li>
+      <a href="https://fosstodon.org/@Lluis_Revilla" target="_blank" rel="noopener">
+        <i class="fab fa-mastodon"></i>
+      </a>
+    </li>
+  
+    
+    
+    
+      
+    
+    
+    
+    
+    
+      
+    
+    <li>
+      <a href="https://github.com/llrs" target="_blank" rel="noopener">
+        <i class="fab fa-github"></i>
+      </a>
+    </li>
+  
+    
+    
+    
+    
+    
+    
+    
+      
+    
+    <li>
+      <a href="https://scholar.google.es/citations?user=Hin4p3MAAAAJ&amp;hl" target="_blank" rel="noopener">
+        <i class="ai ai-google-scholar"></i>
+      </a>
+    </li>
+  
+    
+    
+    
+    
+    
+    
+    
+      
+    
+    <li>
+      <a href="https://orcid.org/0000-0001-9747-2570" target="_blank" rel="noopener">
+        <i class="ai ai-orcid"></i>
+      </a>
+    </li>
+  
+    
+    
+    
+      
+    
+    
+    
+    
+    
+      
+    
+    <li>
+      <a href="https://www.buymeacoffee.com/llrs" target="_blank" rel="noopener">
+        <i class="fas fa-pizza-slice"></i>
+      </a>
+    </li>
+  
+</ul>
+
+    </div>
+  </div>
+
+
+  
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <div class="article-widget content-widget-hr">
+    <h3>Related</h3>
+    <ul>
+      
+      <li><a href="/post/2023/05/03/cran-maintained-packages/">CRAN maintained packages</a></li>
+      
+      <li><a href="/post/2021/12/07/reasons-cran-archivals/">Reasons why packages are archived on CRAN</a></li>
+      
+      <li><a href="/talk/user-2021/">Packages submission and reviews; how does it work?</a></li>
+      
+      <li><a href="/post/2021/01/31/cran-review/">CRAN review</a></li>
+      
+      <li><a href="/post/2020/01/25/cran-dependencies/">CRAN dependencies</a></li>
+      
+    </ul>
+  </div>
+  
+
+
+
+  </div>
+</article>
+
+      
+
+    
+    
+    
+      <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.4.1/jquery.min.js" integrity="sha256-CSXorXvZcTkaix6Yvo6HppcZGetbYMGWSFlBw8HfCJo=" crossorigin="anonymous"></script>
+      <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery.imagesloaded/4.1.4/imagesloaded.pkgd.min.js" integrity="sha256-lqvxZrPLtfffUl2G/e7szqSvPBILGbwmsGE1MKlOi0Q=" crossorigin="anonymous"></script>
+      <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery.isotope/3.0.6/isotope.pkgd.min.js" integrity="sha256-CBrpuqrMhXwcLLUd5tvQ4euBHCdh7wGlDfNz8vbu/iI=" crossorigin="anonymous"></script>
+      <script src="https://cdnjs.cloudflare.com/ajax/libs/fancybox/3.5.7/jquery.fancybox.min.js" integrity="sha256-yt2kYMy0w8AbtF89WXb2P1rfjcP/HTHLT7097U8Y5b8=" crossorigin="anonymous"></script>
+
+      
+
+      
+        
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.18.1/highlight.min.js" integrity="sha256-eOgo0OtLL4cdq7RdwRUiGKLX9XsIJ7nGhWEKbohmVAQ=" crossorigin="anonymous"></script>
+        
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.18.1/languages/r.min.js"></script>
+        
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.18.1/languages/phython.min.js"></script>
+        
+      
+
+    
+
+    
+    
+
+    
+    
+    <script>const code_highlighting = true;</script>
+    
+
+    
+    
+    <script>const isSiteThemeDark = false;</script>
+    
+
+    
+    
+    
+    
+    
+    
+    <script>
+      const search_config = {"indexURI":"/index.json","minLength":1,"threshold":0.3};
+      const i18n = {"no_results":"No results found","placeholder":"Search...","results":"results found"};
+      const content_type = {
+        'post': "Posts",
+        'project': "Projects",
+        'publication' : "Publications",
+        'talk' : "Talks"
+        };
+    </script>
+    
+
+    
+    
+
+    
+    
+    <script id="search-hit-fuse-template" type="text/x-template">
+      <div class="search-hit" id="summary-{{key}}">
+      <div class="search-hit-content">
+        <div class="search-hit-name">
+          <a href="{{relpermalink}}">{{title}}</a>
+          <div class="article-metadata search-hit-type">{{type}}</div>
+          <p class="search-hit-description">{{snippet}}</p>
+        </div>
+      </div>
+      </div>
+    </script>
+    
+
+    
+    
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/fuse.js/3.2.1/fuse.min.js" integrity="sha256-VzgmKYmhsGNNN4Ph1kMW+BjoYJM2jV5i4IlFoeZA9XI=" crossorigin="anonymous"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/mark.js/8.11.1/jquery.mark.min.js" integrity="sha256-4HLtjeVgH0eIB3aZ9mLYF6E8oU5chNdjU6p6rrXpl9U=" crossorigin="anonymous"></script>
+    
+
+    
+    
+
+    
+    
+
+    
+    
+    
+    
+    
+    
+    
+    
+    
+      
+    
+    
+    
+    
+    <script src="/js/academic.min.6f1005d1a84220e2f466ff3d8e712f31.js"></script>
+
+    
+
+
+
+
+
+
+  
+  
+  <div class="container">
+    <footer class="site-footer">
+  
+  <p class="powered-by">
+    
+      <a href="/privacy/">Privacy Policy</a>
+    
+    
+  </p>
+  
+
+  <p class="powered-by">
+    If it is code you can copy and reuse (MIT) if it is text, please cite and reuse CC-BY 2026. &middot; 
+
+    Powered by the
+    <a href="https://sourcethemes.com/academic/" target="_blank" rel="noopener">Academic theme</a> for
+    <a href="https://gohugo.io" target="_blank" rel="noopener">Hugo</a>.
+
+    
+    <span class="float-right" aria-hidden="true">
+      <a href="#" class="back-to-top">
+        <span class="button_icon">
+          <i class="fas fa-chevron-up fa-2x"></i>
+        </span>
+      </a>
+    </span>
+    
+  </p>
+</footer>
+
+  </div>
+  
+
+  
+<div id="modal" class="modal fade" role="dialog">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title">Cite</h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+        <pre><code class="tex hljs"></code></pre>
+      </div>
+      <div class="modal-footer">
+        <a class="btn btn-outline-primary my-1 js-copy-cite" href="#" target="_blank">
+          <i class="fas fa-copy"></i> Copy
+        </a>
+        <a class="btn btn-outline-primary my-1 js-download-cite" href="#" target="_blank">
+          <i class="fas fa-download"></i> Download
+        </a>
+        <div id="modal-error"></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+</body>
+</html>

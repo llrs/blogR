@@ -1,0 +1,665 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes" ?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>GitHub | B101nfo</title>
+    <link>https://llrs.dev/tags/github/</link>
+      <atom:link href="https://llrs.dev/tags/github/index.xml" rel="self" type="application/rss+xml" />
+    <description>GitHub</description>
+    <generator>Source Themes Academic (https://sourcethemes.com/academic/)</generator><language>en-us</language><copyright>If it is code you can copy and reuse (MIT) if it is text, please cite and reuse CC-BY 2026.</copyright><lastBuildDate>Wed, 02 Sep 2020 00:00:00 +0000</lastBuildDate>
+    <image>
+      <url>img/map[gravatar:%!s(bool=false) shape:circle]</url>
+      <title>GitHub</title>
+      <link>https://llrs.dev/tags/github/</link>
+    </image>
+    
+    <item>
+      <title>rOpenSci submissions</title>
+      <link>https://llrs.dev/post/2020/09/02/ropensci-submissions/</link>
+      <pubDate>Wed, 02 Sep 2020 00:00:00 +0000</pubDate>
+      <guid>https://llrs.dev/post/2020/09/02/ropensci-submissions/</guid>
+      <description>
+&lt;script src=&#34;index_files/header-attrs/header-attrs.js&#34;&gt;&lt;/script&gt;
+&lt;link href=&#34;index_files/anchor-sections/anchor-sections.css&#34; rel=&#34;stylesheet&#34; /&gt;
+&lt;script src=&#34;index_files/anchor-sections/anchor-sections.js&#34;&gt;&lt;/script&gt;
+
+
+&lt;p&gt;Following &lt;a href=&#34;https://llrs.dev/2020/07/bioconductor-submissions-reviews/&#34;&gt;last post on Bioconductor&lt;/a&gt; I wanted to analyze another venue where code reviews are made: &lt;a href=&#34;https://rOpenSci.org&#34;&gt;rOpenSci&lt;/a&gt;.
+There are some &lt;a href=&#34;https://ropensci.org/blog/2018/04/26/a-satrday-ct-series/&#34;&gt;other analysis&lt;/a&gt; of the the reviews made by rOpenSci themselves:&lt;/p&gt;
+&lt;blockquote&gt;
+&lt;p&gt;The &lt;a href=&#34;https://ropensci.org/blog/2018/04/26/rectangling-onboarding/&#34;&gt;first post&lt;/a&gt; in the series will explain how I rectangled onboarding. The &lt;a href=&#34;https://ropensci.org/blog/2018/05/03/onboarding-is-work/&#34;&gt;second post&lt;/a&gt; will give some clues as to how to quantify the work represented by rOpenSci onboarding. The &lt;a href=&#34;https://ropensci.org/blog/2018/05/10/onboarding-social-weather/&#34;&gt;third and last post&lt;/a&gt; will use tidy text analysis of onboarding threads to characterize the social weather of onboarding.&lt;/p&gt;
+&lt;/blockquote&gt;
+&lt;p&gt;rOpenSci review process has some of the differences:&lt;/p&gt;
+&lt;p&gt;One can ask before hand if the package submitted fits the scope of rOpenSci.
+In addition the review is done by two volunteers usually not affiliated with rOpenSci but with an editor that has the final decision
+Also there is an encouragement on a dialog and iteration to improve the package.
+Lastly, the build process is perform by third parties (Github actions, travis, appveyor …) and the results are not reported on the issue.&lt;/p&gt;
+&lt;p&gt;Despite all these differences following the same methods I downloaded the data on 2020/09/02 to analyze similarly the submissions.&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;index_files/figure-html/first-plot-1.png&#34; width=&#34;672&#34; /&gt;&lt;/p&gt;
+&lt;p&gt;We can see that there are fewer issues opened on rOpenSci but also the timeline is shorter.
+One difference is that there seems to be more events after the initial activity on the issues.&lt;/p&gt;
+&lt;p&gt;If we look at the editors involved on the issues we can see who has commented more and in more issues&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;index_files/figure-html/by-users-1.png&#34; width=&#34;672&#34; /&gt;&lt;/p&gt;
+&lt;p&gt;It seems like there are 10 comments per each issue an editor is involved with.
+Of course, this will change for people submitting software:&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;index_files/figure-html/by-user2-1.png&#34; width=&#34;672&#34; /&gt;&lt;/p&gt;
+&lt;p&gt;Here I kept the same threshold to show the names of users.
+There are more names, indicating more people commenting and involved on the issues.
+I’m surprised to appear on this graph because I haven’t been much involved with rOpenSci.
+Stefanie Butland as the community manager of rOpenSci comments more and is involved in more issues than regular users.&lt;/p&gt;
+&lt;p&gt;Now that we know who is involved comenting, what about the other events?&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;index_files/figure-html/events-view-1.png&#34; width=&#34;672&#34; /&gt;&lt;/p&gt;
+&lt;p&gt;First thing, more people are mentioned between them than on Bioconductor.
+Also there seems to be a lot more of cross-references than on Bioconductor.&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;index_files/figure-html/second-plot-1.png&#34; width=&#34;672&#34; /&gt;&lt;/p&gt;
+&lt;p&gt;The issues do have a highly social component with lots of mentions, subscriptions and comments.
+It is generally rare to unsubscribe from an issue or to have the issue added to a project.&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;index_files/figure-html/events-time-1.png&#34; width=&#34;672&#34; /&gt;&lt;/p&gt;
+&lt;p&gt;Here we don’t see a clear pattern on the events, but most issues have few events (median events of 61).&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;index_files/figure-html/events-time2-1.png&#34; width=&#34;672&#34; /&gt;&lt;/p&gt;
+&lt;p&gt;It is fairly similar to Bioconductor.
+We can see that issues have fewer events than on Bioconductor.
+This is because there isn’t any bot replying with each update to the repository neither a report of the build with every version increment.&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;index_files/figure-html/events-time3-1.png&#34; width=&#34;672&#34; /&gt;&lt;/p&gt;
+&lt;p&gt;Most issues have all the events on the first weeks.&lt;/p&gt;
+&lt;div id=&#34;editor&#34; class=&#34;section level1&#34;&gt;
+&lt;h1&gt;Editor&lt;/h1&gt;
+&lt;p&gt;As mentioned the editor is assigned to find the reviewers and have the final decision on the package.&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;index_files/figure-html/assignments-1.png&#34; width=&#34;672&#34; /&gt;&lt;/p&gt;
+&lt;p&gt;There seem to be few assigned users, and in some cases there are like two users assigned.
+This might be because the reviewers are also assigned that issue or something else.&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;index_files/figure-html/submission-acceptance-1.png&#34; width=&#34;672&#34; /&gt;&lt;/p&gt;
+&lt;p&gt;Editors are fairly more involved on the issues commenting around 11 times.&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;index_files/figure-html/events-days-1.png&#34; width=&#34;672&#34; /&gt;&lt;/p&gt;
+&lt;p&gt;We can see that one presubmission issue took longer to decide than most of the submissions!
+In general submissions show the same behavior as in Bioconductor:
+Most of them have lots of events on a relatively short period of time.
+Some submissions take longer to close and remain without events for long periods of time.&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;index_files/figure-html/events-user-distribution-1.png&#34; width=&#34;672&#34; /&gt;&lt;/p&gt;
+&lt;p&gt;Here are some differences on the number of different events per issue and different users involved.
+There are more users and events involved with issues on rOpenSci than on Bioconductor.
+This is partially expected as the review are done by more people but I expected a similar pattern of events per issue.&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;index_files/figure-html/actor-event-types-1.png&#34; width=&#34;672&#34; /&gt;&lt;/p&gt;
+&lt;p&gt;We can see that users and events are more distributed.&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;index_files/figure-html/actors-events-1.png&#34; width=&#34;672&#34; /&gt;&lt;/p&gt;
+&lt;p&gt;As in Bioconductor the more people involved more events per issue.&lt;/p&gt;
+&lt;/div&gt;
+&lt;div id=&#34;who-does-each-action&#34; class=&#34;section level1&#34;&gt;
+&lt;h1&gt;Who does each action ?&lt;/h1&gt;
+&lt;p&gt;We can look now at who performs what, we know there are 522 participants:&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;index_files/figure-html/who-1.png&#34; width=&#34;672&#34; /&gt;&lt;/p&gt;
+&lt;p&gt;The top 35 people involved is dominated by editors.
+Surprisingly editors do also cross-reference other issues.&lt;/p&gt;
+&lt;p&gt;If we look at how many comments there are on each issue per author and editor we can get a sense of how much work it takes for editors:&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;index_files/figure-html/comments-plot-1.png&#34; width=&#34;672&#34; /&gt;&lt;/p&gt;
+&lt;p&gt;Here we can see that there are more comments from authors and editors.&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;index_files/figure-html/closing-1.png&#34; width=&#34;672&#34; /&gt;&lt;/p&gt;
+&lt;p&gt;Some issues have fairly large number of comments after being closed.
+Perhaps discussing other alternatives or comparing to other existing software.&lt;/p&gt;
+&lt;/div&gt;
+&lt;div id=&#34;mentions&#34; class=&#34;section level1&#34;&gt;
+&lt;h1&gt;Mentions&lt;/h1&gt;
+&lt;p&gt;There are many more mentions than on Bioconductor.
+So what do these people do when added to the conversation ?&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;index_files/figure-html/mentions-1.png&#34; width=&#34;672&#34; /&gt;&lt;/p&gt;
+&lt;p&gt;People mentioned bring their experience by commenting, and cross-referencing some other issues.&lt;/p&gt;
+&lt;/div&gt;
+&lt;div id=&#34;labels&#34; class=&#34;section level1&#34;&gt;
+&lt;h1&gt;Labels&lt;/h1&gt;
+&lt;p&gt;rOpenSci uses labels much more than Bioconductor, with a total of 65 different labels.
+It also uses them to mark on which step of the review process each issue is.
+We can see that it got expanded with time, from initially just three labels to the current 6-7 labels:&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;index_files/figure-html/labels_plot_overview-1.png&#34; width=&#34;672&#34; /&gt;&lt;/p&gt;
+&lt;p&gt;But labels are also used to indicate to which is the topic of each package:&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;index_files/figure-html/labels_topic-1.png&#34; width=&#34;672&#34; /&gt;&lt;/p&gt;
+&lt;p&gt;Surprisingly the focus seems to be on data-access followed by geospatial and data-extraction:&lt;/p&gt;
+&lt;table&gt;
+&lt;thead&gt;
+&lt;tr class=&#34;header&#34;&gt;
+&lt;th align=&#34;left&#34;&gt;Topic&lt;/th&gt;
+&lt;th align=&#34;right&#34;&gt;n&lt;/th&gt;
+&lt;/tr&gt;
+&lt;/thead&gt;
+&lt;tbody&gt;
+&lt;tr class=&#34;odd&#34;&gt;
+&lt;td align=&#34;left&#34;&gt;data-access&lt;/td&gt;
+&lt;td align=&#34;right&#34;&gt;83&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr class=&#34;even&#34;&gt;
+&lt;td align=&#34;left&#34;&gt;geospatial&lt;/td&gt;
+&lt;td align=&#34;right&#34;&gt;30&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr class=&#34;odd&#34;&gt;
+&lt;td align=&#34;left&#34;&gt;data-extraction&lt;/td&gt;
+&lt;td align=&#34;right&#34;&gt;26&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr class=&#34;even&#34;&gt;
+&lt;td align=&#34;left&#34;&gt;reproducibility&lt;/td&gt;
+&lt;td align=&#34;right&#34;&gt;25&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr class=&#34;odd&#34;&gt;
+&lt;td align=&#34;left&#34;&gt;data-munging&lt;/td&gt;
+&lt;td align=&#34;right&#34;&gt;17&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr class=&#34;even&#34;&gt;
+&lt;td align=&#34;left&#34;&gt;text-mining&lt;/td&gt;
+&lt;td align=&#34;right&#34;&gt;17&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr class=&#34;odd&#34;&gt;
+&lt;td align=&#34;left&#34;&gt;data-retrieval&lt;/td&gt;
+&lt;td align=&#34;right&#34;&gt;13&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr class=&#34;even&#34;&gt;
+&lt;td align=&#34;left&#34;&gt;earth-science&lt;/td&gt;
+&lt;td align=&#34;right&#34;&gt;13&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr class=&#34;odd&#34;&gt;
+&lt;td align=&#34;left&#34;&gt;climate-data&lt;/td&gt;
+&lt;td align=&#34;right&#34;&gt;11&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr class=&#34;even&#34;&gt;
+&lt;td align=&#34;left&#34;&gt;literature&lt;/td&gt;
+&lt;td align=&#34;right&#34;&gt;11&lt;/td&gt;
+&lt;/tr&gt;
+&lt;/tbody&gt;
+&lt;/table&gt;
+&lt;p&gt;Labels are also used to classify topics (and initially if it had an editor assigned)&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;index_files/figure-html/labels-other-1.png&#34; width=&#34;672&#34; /&gt;&lt;/p&gt;
+&lt;p&gt;Other labels assigned, seem to be for packages or some other related to the process.
+Surprisingly there have been few submissions to MEE and JOSS according to the “pub:” labels.&lt;/p&gt;
+&lt;p&gt;Looking at the labels for each step can compute the median time required to get them:&lt;/p&gt;
+&lt;table&gt;
+&lt;thead&gt;
+&lt;tr class=&#34;header&#34;&gt;
+&lt;th align=&#34;left&#34;&gt;Step&lt;/th&gt;
+&lt;th align=&#34;right&#34;&gt;Median days&lt;/th&gt;
+&lt;th align=&#34;right&#34;&gt;Total days&lt;/th&gt;
+&lt;/tr&gt;
+&lt;/thead&gt;
+&lt;tbody&gt;
+&lt;tr class=&#34;odd&#34;&gt;
+&lt;td align=&#34;left&#34;&gt;1/editor-checks&lt;/td&gt;
+&lt;td align=&#34;right&#34;&gt;2.1&lt;/td&gt;
+&lt;td align=&#34;right&#34;&gt;2.1&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr class=&#34;even&#34;&gt;
+&lt;td align=&#34;left&#34;&gt;2/seeking-reviewer(s)&lt;/td&gt;
+&lt;td align=&#34;right&#34;&gt;2.5&lt;/td&gt;
+&lt;td align=&#34;right&#34;&gt;4.6&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr class=&#34;odd&#34;&gt;
+&lt;td align=&#34;left&#34;&gt;3/reviewer(s)-assigned&lt;/td&gt;
+&lt;td align=&#34;right&#34;&gt;10.8&lt;/td&gt;
+&lt;td align=&#34;right&#34;&gt;15.4&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr class=&#34;even&#34;&gt;
+&lt;td align=&#34;left&#34;&gt;4/review(s)-in-awaiting-changes&lt;/td&gt;
+&lt;td align=&#34;right&#34;&gt;26.0&lt;/td&gt;
+&lt;td align=&#34;right&#34;&gt;41.4&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr class=&#34;odd&#34;&gt;
+&lt;td align=&#34;left&#34;&gt;5/awaiting-reviewer(s)-response&lt;/td&gt;
+&lt;td align=&#34;right&#34;&gt;30.5&lt;/td&gt;
+&lt;td align=&#34;right&#34;&gt;71.9&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr class=&#34;even&#34;&gt;
+&lt;td align=&#34;left&#34;&gt;6/approved&lt;/td&gt;
+&lt;td align=&#34;right&#34;&gt;17.0&lt;/td&gt;
+&lt;td align=&#34;right&#34;&gt;88.9&lt;/td&gt;
+&lt;/tr&gt;
+&lt;/tbody&gt;
+&lt;/table&gt;
+&lt;p&gt;We see that the slowest step is awaiting reviewers response, right after awaiting changes from the authors.
+According to this the review process is long and it takes around 3 months to get a package approved.
+However, if we look for each issue how much time does it take to get the next label we see another picture:&lt;/p&gt;
+&lt;table&gt;
+&lt;thead&gt;
+&lt;tr class=&#34;header&#34;&gt;
+&lt;th align=&#34;left&#34;&gt;name&lt;/th&gt;
+&lt;th align=&#34;right&#34;&gt;Median days&lt;/th&gt;
+&lt;th align=&#34;right&#34;&gt;Total days&lt;/th&gt;
+&lt;/tr&gt;
+&lt;/thead&gt;
+&lt;tbody&gt;
+&lt;tr class=&#34;odd&#34;&gt;
+&lt;td align=&#34;left&#34;&gt;1/editor-checks&lt;/td&gt;
+&lt;td align=&#34;right&#34;&gt;2.1&lt;/td&gt;
+&lt;td align=&#34;right&#34;&gt;2.1&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr class=&#34;even&#34;&gt;
+&lt;td align=&#34;left&#34;&gt;2/seeking-reviewer(s)&lt;/td&gt;
+&lt;td align=&#34;right&#34;&gt;1.9&lt;/td&gt;
+&lt;td align=&#34;right&#34;&gt;4.0&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr class=&#34;odd&#34;&gt;
+&lt;td align=&#34;left&#34;&gt;3/reviewer(s)-assigned&lt;/td&gt;
+&lt;td align=&#34;right&#34;&gt;6.4&lt;/td&gt;
+&lt;td align=&#34;right&#34;&gt;10.4&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr class=&#34;even&#34;&gt;
+&lt;td align=&#34;left&#34;&gt;4/review(s)-in-awaiting-changes&lt;/td&gt;
+&lt;td align=&#34;right&#34;&gt;25.0&lt;/td&gt;
+&lt;td align=&#34;right&#34;&gt;35.4&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr class=&#34;odd&#34;&gt;
+&lt;td align=&#34;left&#34;&gt;5/awaiting-reviewer(s)-response&lt;/td&gt;
+&lt;td align=&#34;right&#34;&gt;17.1&lt;/td&gt;
+&lt;td align=&#34;right&#34;&gt;52.5&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr class=&#34;even&#34;&gt;
+&lt;td align=&#34;left&#34;&gt;6/approved&lt;/td&gt;
+&lt;td align=&#34;right&#34;&gt;12.2&lt;/td&gt;
+&lt;td align=&#34;right&#34;&gt;64.7&lt;/td&gt;
+&lt;/tr&gt;
+&lt;/tbody&gt;
+&lt;/table&gt;
+&lt;p&gt;Now the longest step is changing the packages with the feedback from the reviewers, followed by awaiting the reviewers comments but that is almost half of the time it was.
+The other times do not change much.
+The total time is still around 2 months, which is the double of what it takes to get a package accepted in Bioconductor.&lt;/p&gt;
+&lt;/div&gt;
+&lt;div id=&#34;conclusions&#34; class=&#34;section level1&#34;&gt;
+&lt;h1&gt;Conclusions&lt;/h1&gt;
+&lt;p&gt;Following the steps/labels the review process is similar enough to be able to compare the review process of &lt;a href=&#34;https://bioconductor.org&#34;&gt;Bioconductor&lt;/a&gt; and &lt;a href=&#34;https://ropensci.org&#34;&gt;rOpenSci&lt;/a&gt;.
+Not having information about the build and check status of packages makes harder to compare some steps and the stage of the package upon submission.
+On some early submissions it was editor’s duties to review the packages like in Bioconductor.
+It was later abandoned in favor of two external reviewers.
+The reviews on the rOpenSci are handled by more people which makes submission to take longer (probably also because usually there are two reviewers) and
+because there might be a clarification of changes and a dialog after the first review.&lt;/p&gt;
+&lt;p&gt;In general it takes longer to get the packages approved than on Bioconductor.&lt;/p&gt;
+&lt;div id=&#34;reproducibility&#34; class=&#34;section level3&#34;&gt;
+&lt;h3&gt;Reproducibility&lt;/h3&gt;
+&lt;details&gt;
+&lt;pre&gt;&lt;code&gt;## ─ Session info ───────────────────────────────────────────────────────────────────────────────────────────────────────
+##  setting  value                       
+##  version  R version 4.0.1 (2020-06-06)
+##  os       Ubuntu 20.04.1 LTS          
+##  system   x86_64, linux-gnu           
+##  ui       X11                         
+##  language (EN)                        
+##  collate  en_US.UTF-8                 
+##  ctype    en_US.UTF-8                 
+##  tz       Europe/Madrid               
+##  date     2020-10-26                  
+## 
+## ─ Packages ───────────────────────────────────────────────────────────────────────────────────────────────────────────
+##  package      * version    date       lib source                             
+##  assertthat     0.2.1      2019-03-21 [1] CRAN (R 4.0.1)                     
+##  backports      1.1.10     2020-09-15 [1] CRAN (R 4.0.1)                     
+##  blob           1.2.1      2020-01-20 [1] CRAN (R 4.0.1)                     
+##  blogdown       0.21       2020-10-11 [1] CRAN (R 4.0.1)                     
+##  bookdown       0.21       2020-10-13 [1] CRAN (R 4.0.1)                     
+##  broom          0.7.2      2020-10-20 [1] CRAN (R 4.0.1)                     
+##  cellranger     1.1.0      2016-07-27 [1] CRAN (R 4.0.1)                     
+##  cli            2.1.0      2020-10-12 [1] CRAN (R 4.0.1)                     
+##  colorspace     1.4-1      2019-03-18 [1] CRAN (R 4.0.1)                     
+##  crayon         1.3.4      2017-09-16 [1] CRAN (R 4.0.1)                     
+##  DBI            1.1.0      2019-12-15 [1] CRAN (R 4.0.1)                     
+##  dbplyr         1.4.4      2020-05-27 [1] CRAN (R 4.0.1)                     
+##  digest         0.6.26     2020-10-17 [1] CRAN (R 4.0.1)                     
+##  dplyr        * 1.0.2      2020-08-18 [1] CRAN (R 4.0.1)                     
+##  ellipsis       0.3.1      2020-05-15 [1] CRAN (R 4.0.1)                     
+##  evaluate       0.14       2019-05-28 [1] CRAN (R 4.0.1)                     
+##  fansi          0.4.1      2020-01-08 [1] CRAN (R 4.0.1)                     
+##  farver         2.0.3      2020-01-16 [1] CRAN (R 4.0.1)                     
+##  forcats      * 0.5.0      2020-03-01 [1] CRAN (R 4.0.1)                     
+##  fs             1.5.0      2020-07-31 [1] CRAN (R 4.0.1)                     
+##  generics       0.0.2      2018-11-29 [1] CRAN (R 4.0.1)                     
+##  ggplot2      * 3.3.2      2020-06-19 [1] CRAN (R 4.0.1)                     
+##  ggrepel      * 0.8.2      2020-03-08 [1] CRAN (R 4.0.1)                     
+##  glue           1.4.2      2020-08-27 [1] CRAN (R 4.0.1)                     
+##  gtable         0.3.0      2019-03-25 [1] CRAN (R 4.0.1)                     
+##  haven          2.3.1      2020-06-01 [1] CRAN (R 4.0.1)                     
+##  here           0.1        2017-05-28 [1] CRAN (R 4.0.1)                     
+##  highr          0.8        2019-03-20 [1] CRAN (R 4.0.1)                     
+##  hms            0.5.3      2020-01-08 [1] CRAN (R 4.0.1)                     
+##  htmltools      0.5.0      2020-06-16 [1] CRAN (R 4.0.1)                     
+##  httr           1.4.2      2020-07-20 [1] CRAN (R 4.0.1)                     
+##  jsonlite       1.7.1      2020-09-07 [1] CRAN (R 4.0.1)                     
+##  knitr          1.30       2020-09-22 [1] CRAN (R 4.0.1)                     
+##  labeling       0.4.2      2020-10-20 [1] CRAN (R 4.0.1)                     
+##  lifecycle      0.2.0      2020-03-06 [1] CRAN (R 4.0.1)                     
+##  lubridate      1.7.9      2020-06-08 [1] CRAN (R 4.0.1)                     
+##  magrittr       1.5.0.9000 2020-08-21 [1] Github (tidyverse/magrittr@1d0559d)
+##  modelr         0.1.8      2020-05-19 [1] CRAN (R 4.0.1)                     
+##  munsell        0.5.0      2018-06-12 [1] CRAN (R 4.0.1)                     
+##  patchwork    * 1.0.1      2020-06-22 [1] CRAN (R 4.0.1)                     
+##  pillar         1.4.6      2020-07-10 [1] CRAN (R 4.0.1)                     
+##  pkgconfig      2.0.3      2019-09-22 [1] CRAN (R 4.0.1)                     
+##  purrr        * 0.3.4      2020-04-17 [1] CRAN (R 4.0.1)                     
+##  R6             2.4.1      2019-11-12 [1] CRAN (R 4.0.1)                     
+##  RColorBrewer   1.1-2      2014-12-07 [1] CRAN (R 4.0.1)                     
+##  Rcpp           1.0.5      2020-07-06 [1] CRAN (R 4.0.1)                     
+##  readr        * 1.4.0      2020-10-05 [1] CRAN (R 4.0.1)                     
+##  readxl         1.3.1      2019-03-13 [1] CRAN (R 4.0.1)                     
+##  reprex         0.3.0      2019-05-16 [1] CRAN (R 4.0.1)                     
+##  rlang          0.4.8      2020-10-08 [1] CRAN (R 4.0.1)                     
+##  rmarkdown      2.5        2020-10-21 [1] CRAN (R 4.0.1)                     
+##  rprojroot      1.3-2      2018-01-03 [1] CRAN (R 4.0.1)                     
+##  rstudioapi     0.11       2020-02-07 [1] CRAN (R 4.0.1)                     
+##  rvest          0.3.6      2020-07-25 [1] CRAN (R 4.0.1)                     
+##  scales         1.1.1      2020-05-11 [1] CRAN (R 4.0.1)                     
+##  sessioninfo    1.1.1      2018-11-05 [1] CRAN (R 4.0.1)                     
+##  stringi        1.5.3      2020-09-09 [1] CRAN (R 4.0.1)                     
+##  stringr      * 1.4.0      2019-02-10 [1] CRAN (R 4.0.1)                     
+##  tibble       * 3.0.4      2020-10-12 [1] CRAN (R 4.0.1)                     
+##  tidyr        * 1.1.2      2020-08-27 [1] CRAN (R 4.0.1)                     
+##  tidyselect     1.1.0      2020-05-11 [1] CRAN (R 4.0.1)                     
+##  tidyverse    * 1.3.0      2019-11-21 [1] CRAN (R 4.0.1)                     
+##  vctrs          0.3.4      2020-08-29 [1] CRAN (R 4.0.1)                     
+##  viridisLite    0.3.0      2018-02-01 [1] CRAN (R 4.0.1)                     
+##  withr          2.3.0      2020-09-22 [1] CRAN (R 4.0.1)                     
+##  xfun           0.18       2020-09-29 [1] CRAN (R 4.0.1)                     
+##  xml2           1.3.2      2020-04-23 [1] CRAN (R 4.0.1)                     
+##  yaml           2.2.1      2020-02-01 [1] CRAN (R 4.0.1)                     
+## 
+## [1] /home/lluis/bin/R/4.0.1/lib/R/library&lt;/code&gt;&lt;/pre&gt;
+&lt;/details&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+</description>
+    </item>
+    
+    <item>
+      <title>Social activities on GitHub</title>
+      <link>https://llrs.dev/post/2020/06/21/social-github/</link>
+      <pubDate>Sun, 21 Jun 2020 00:00:00 +0000</pubDate>
+      <guid>https://llrs.dev/post/2020/06/21/social-github/</guid>
+      <description>
+&lt;script src=&#34;https://llrs.dev/post/2020/06/21/social-github/index_files/header-attrs/header-attrs.js&#34;&gt;&lt;/script&gt;
+
+
+&lt;p&gt;On my &lt;a href=&#34;http://llrs.dev/post/2020/06/bioconductor-submission.html&#34;&gt;last post&lt;/a&gt; I explored the Bioconductor submissions using &lt;a href=&#34;https://cran.r-project.org/package=gh&#34;&gt;&lt;code&gt;{gh}&lt;/code&gt;&lt;/a&gt; to retrieve some data.
+After some feedback from the Bioconductor community I realized I should download other kind of data to improve my analysis on the reviews.&lt;/p&gt;
+&lt;p&gt;To make this I developed a new package to retrieve information from GitHub.&lt;/p&gt;
+&lt;div id=&#34;socialgh&#34; class=&#34;section level2&#34;&gt;
+&lt;h2&gt;socialGH&lt;/h2&gt;
+&lt;p&gt;&lt;a href=&#34;https://github.com/llrs/socialGH&#34;&gt;This package&lt;/a&gt; based on &lt;a href=&#34;https://cran.r-project.org/package=gh&#34;&gt;&lt;code&gt;{gh}&lt;/code&gt;&lt;/a&gt;, allows to retrieve, data from Github.&lt;/p&gt;
+&lt;p&gt;You can install it with&lt;/p&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;remotes::install_github(&amp;quot;llrs/socialGH&amp;quot;)&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;Basically pulls the data in list format and transforms it into a data.frame in order to be able to do analysis, filter it or analyze it.&lt;/p&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;library(&amp;quot;socialGH&amp;quot;)
+library(&amp;quot;tidyverse&amp;quot;)
+## ── Attaching packages ─────────────────────────────────────── tidyverse 1.3.0 ──
+## ✓ ggplot2 3.3.3     ✓ purrr   0.3.4
+## ✓ tibble  3.0.4     ✓ dplyr   1.0.2
+## ✓ tidyr   1.1.2     ✓ stringr 1.4.0
+## ✓ readr   1.4.0     ✓ forcats 0.5.0
+## ── Conflicts ────────────────────────────────────────── tidyverse_conflicts() ──
+## x dplyr::filter() masks stats::filter()
+## x dplyr::lag()    masks stats::lag()&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;It allows to selective download comments, pull requests, issues, events, labels and the timeline of an issue.&lt;/p&gt;
+&lt;p&gt;With the issues we can see the labels, how many coments and many information:&lt;/p&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;issues_blog &amp;lt;- get_issues(&amp;quot;llrs/blogR&amp;quot;)
+dim(issues_blog)
+## [1] 46 15
+colnames(issues_blog)
+##  [1] &amp;quot;assignees&amp;quot;   &amp;quot;assignee&amp;quot;    &amp;quot;label&amp;quot;       &amp;quot;state&amp;quot;       &amp;quot;locked&amp;quot;     
+##  [6] &amp;quot;milestone&amp;quot;   &amp;quot;n_comments&amp;quot;  &amp;quot;title&amp;quot;       &amp;quot;created&amp;quot;     &amp;quot;updated&amp;quot;    
+## [11] &amp;quot;association&amp;quot; &amp;quot;text&amp;quot;        &amp;quot;id&amp;quot;          &amp;quot;closer&amp;quot;      &amp;quot;poster&amp;quot;
+# Labels used
+issues_blog %&amp;gt;% 
+  pull(label) %&amp;gt;% 
+  unlist(FALSE, FALSE) %&amp;gt;% 
+  table()
+## .
+##  b101nfo.blogspot.com          Bioconductor                config 
+##                     1                     4                     1 
+##                  CRAN             goverment           help wanted 
+##                     3                     1                     1 
+##               invalid               package                  Post 
+##                     1                     2                    27 
+##              question              rOpenSci todo 🗒 
+##                     2                     1                     4 
+##               website 
+##                     1
+count(issues_blog, state)
+##    state  n
+## 1 closed 27
+## 2   open 19
+count(issues_blog, n_comments)
+##   n_comments  n
+## 1          0 24
+## 2          1 15
+## 3          2  2
+## 4          3  4
+## 5          5  1&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;However, it doesn’t retrieve each comment of an issue.&lt;/p&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;# Issues with comments
+issues_blog %&amp;gt;% 
+  filter(n_comments &amp;gt; 0) %&amp;gt;% 
+  pull(id)
+##  [1] 46 42 40 39 36 34 33 29 28 26 25 23 16 10  9  8  7  6  5  4  3  2
+
+comments &amp;lt;- get_comments(&amp;quot;llrs/blogR&amp;quot;)
+dim(comments)
+## [1] 36  6
+colnames(comments)
+## [1] &amp;quot;text&amp;quot;        &amp;quot;created&amp;quot;     &amp;quot;updated&amp;quot;     &amp;quot;association&amp;quot; &amp;quot;id&amp;quot;         
+## [6] &amp;quot;commenter&amp;quot;
+count(comments, association)
+##   association  n
+## 1       OWNER 36&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;We can see that I was the only one writing on the issues and we already retrieved the text of the comments.&lt;/p&gt;
+&lt;p&gt;We can also look for events on issues:&lt;/p&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;events &amp;lt;- get_events(&amp;quot;llrs/blogR&amp;quot;, 23)
+count(events, event)
+##     event n
+## 1 labeled 1
+## 2  closed 1&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;On all the functions you can provide a number of the issue and you’ll retrieve the information just for that issue. If you don’t provide an issue it will search the whole repository:&lt;/p&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;events &amp;lt;- get_events(&amp;quot;llrs/blogR&amp;quot;)
+count(events, event)
+##                 event  n
+## 1             labeled 50
+## 2              closed 27
+## 3             renamed  4
+## 4 marked_as_duplicate  1
+## 5            assigned  6
+## 6          subscribed  3
+## 7           mentioned  3
+## 8           unlabeled  1&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;However it is better if we look to the timeline of an issue:, which downloads each comment of the issues.&lt;/p&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;gt &amp;lt;- get_timelines(&amp;quot;llrs/blogR&amp;quot;, 23)
+## Warning: This is under preview and may fail.
+gt[, c(&amp;quot;label&amp;quot;, &amp;quot;event&amp;quot;, &amp;quot;created&amp;quot;, &amp;quot;association&amp;quot;, &amp;quot;actor&amp;quot;)]
+##   label     event             created association             actor
+## 1    NA commented 2020-02-14 00:39:47       OWNER llrs, User, FALSE
+## 2    NA commented 2020-02-14 09:44:26       OWNER llrs, User, FALSE
+## 3  Post   labeled 2020-02-18 10:10:35        &amp;lt;NA&amp;gt; llrs, User, FALSE
+## 4    NA commented 2020-02-29 17:58:51       OWNER llrs, User, FALSE
+## 5    NA    closed 2020-02-29 17:58:51        &amp;lt;NA&amp;gt; llrs, User, FALSE&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;With timeline we don’t get the initial information of when the issue was created and we’ll need to call &lt;code&gt;get_issue(&#34;llrs/blogR&#34;, 23)&lt;/code&gt; to know that.
+Here I did omit the text of the comment to make it readable, but we can see what has been happening and by who or who is affecting.&lt;/p&gt;
+&lt;/div&gt;
+&lt;div id=&#34;learning&#34; class=&#34;section level2&#34;&gt;
+&lt;h2&gt;Learning&lt;/h2&gt;
+&lt;p&gt;Developing this package I learned more about the &lt;code&gt;{gh}&lt;/code&gt; package (In the previous blog I wrote manually the calls to different pages, which later on I discovered it is automatically handled by &lt;code&gt;{gh}&lt;/code&gt;).
+And learned that the different accept headers have influenced on the total information returned (and that you cannot pass several accept headers at the same time).&lt;br /&gt;
+Hope to learn more about the R community that is using Github as a way to help each other, improve packages and process.&lt;/p&gt;
+&lt;div id=&#34;reproducibility&#34; class=&#34;section level3&#34;&gt;
+&lt;h3&gt;Reproducibility&lt;/h3&gt;
+&lt;details&gt;
+&lt;pre&gt;&lt;code&gt;## ─ Session info ───────────────────────────────────────────────────────────────────────────────────────────────────────
+##  setting  value                       
+##  version  R version 4.0.1 (2020-06-06)
+##  os       Ubuntu 20.04.1 LTS          
+##  system   x86_64, linux-gnu           
+##  ui       X11                         
+##  language (EN)                        
+##  collate  en_US.UTF-8                 
+##  ctype    en_US.UTF-8                 
+##  tz       Europe/Madrid               
+##  date     2021-01-08                  
+## 
+## ─ Packages ───────────────────────────────────────────────────────────────────────────────────────────────────────────
+##  package     * version date       lib source                           
+##  assertthat    0.2.1   2019-03-21 [1] CRAN (R 4.0.1)                   
+##  backports     1.2.1   2020-12-09 [1] CRAN (R 4.0.1)                   
+##  blogdown      0.21.84 2021-01-07 [1] Github (rstudio/blogdown@c4fbb58)
+##  bookdown      0.21    2020-10-13 [1] CRAN (R 4.0.1)                   
+##  broom         0.7.3   2020-12-16 [1] CRAN (R 4.0.1)                   
+##  cellranger    1.1.0   2016-07-27 [1] CRAN (R 4.0.1)                   
+##  cli           2.2.0   2020-11-20 [1] CRAN (R 4.0.1)                   
+##  colorspace    2.0-0   2020-11-11 [1] CRAN (R 4.0.1)                   
+##  crayon        1.3.4   2017-09-16 [1] CRAN (R 4.0.1)                   
+##  curl          4.3     2019-12-02 [1] CRAN (R 4.0.1)                   
+##  DBI           1.1.0   2019-12-15 [1] CRAN (R 4.0.1)                   
+##  dbplyr        2.0.0   2020-11-03 [1] CRAN (R 4.0.1)                   
+##  digest        0.6.27  2020-10-24 [1] CRAN (R 4.0.1)                   
+##  dplyr       * 1.0.2   2020-08-18 [1] CRAN (R 4.0.1)                   
+##  ellipsis      0.3.1   2020-05-15 [1] CRAN (R 4.0.1)                   
+##  evaluate      0.14    2019-05-28 [1] CRAN (R 4.0.1)                   
+##  fansi         0.4.1   2020-01-08 [1] CRAN (R 4.0.1)                   
+##  forcats     * 0.5.0   2020-03-01 [1] CRAN (R 4.0.1)                   
+##  fs            1.5.0   2020-07-31 [1] CRAN (R 4.0.1)                   
+##  generics      0.1.0   2020-10-31 [1] CRAN (R 4.0.1)                   
+##  ggplot2     * 3.3.3   2020-12-30 [1] CRAN (R 4.0.1)                   
+##  gh            1.2.0   2020-11-27 [1] CRAN (R 4.0.1)                   
+##  gitcreds      0.1.1   2020-12-04 [1] CRAN (R 4.0.1)                   
+##  glue          1.4.2   2020-08-27 [1] CRAN (R 4.0.1)                   
+##  gtable        0.3.0   2019-03-25 [1] CRAN (R 4.0.1)                   
+##  haven         2.3.1   2020-06-01 [1] CRAN (R 4.0.1)                   
+##  hms           0.5.3   2020-01-08 [1] CRAN (R 4.0.1)                   
+##  htmltools     0.5.0   2020-06-16 [1] CRAN (R 4.0.1)                   
+##  httr          1.4.2   2020-07-20 [1] CRAN (R 4.0.1)                   
+##  jsonlite      1.7.2   2020-12-09 [1] CRAN (R 4.0.1)                   
+##  knitr         1.30    2020-09-22 [1] CRAN (R 4.0.1)                   
+##  lifecycle     0.2.0   2020-03-06 [1] CRAN (R 4.0.1)                   
+##  lubridate     1.7.9.2 2020-11-13 [1] CRAN (R 4.0.1)                   
+##  magrittr      2.0.1   2020-11-17 [1] CRAN (R 4.0.1)                   
+##  modelr        0.1.8   2020-05-19 [1] CRAN (R 4.0.1)                   
+##  munsell       0.5.0   2018-06-12 [1] CRAN (R 4.0.1)                   
+##  pillar        1.4.7   2020-11-20 [1] CRAN (R 4.0.1)                   
+##  pkgconfig     2.0.3   2019-09-22 [1] CRAN (R 4.0.1)                   
+##  purrr       * 0.3.4   2020-04-17 [1] CRAN (R 4.0.1)                   
+##  R6            2.5.0   2020-10-28 [1] CRAN (R 4.0.1)                   
+##  Rcpp          1.0.5   2020-07-06 [1] CRAN (R 4.0.1)                   
+##  readr       * 1.4.0   2020-10-05 [1] CRAN (R 4.0.1)                   
+##  readxl        1.3.1   2019-03-13 [1] CRAN (R 4.0.1)                   
+##  reprex        0.3.0   2019-05-16 [1] CRAN (R 4.0.1)                   
+##  rlang         0.4.10  2020-12-30 [1] CRAN (R 4.0.1)                   
+##  rmarkdown     2.6     2020-12-14 [1] CRAN (R 4.0.1)                   
+##  rstudioapi    0.13    2020-11-12 [1] CRAN (R 4.0.1)                   
+##  rvest         0.3.6   2020-07-25 [1] CRAN (R 4.0.1)                   
+##  scales        1.1.1   2020-05-11 [1] CRAN (R 4.0.1)                   
+##  sessioninfo   1.1.1   2018-11-05 [1] CRAN (R 4.0.1)                   
+##  socialGH    * 0.0.3   2020-08-17 [1] local                            
+##  stringi       1.5.3   2020-09-09 [1] CRAN (R 4.0.1)                   
+##  stringr     * 1.4.0   2019-02-10 [1] CRAN (R 4.0.1)                   
+##  tibble      * 3.0.4   2020-10-12 [1] CRAN (R 4.0.1)                   
+##  tidyr       * 1.1.2   2020-08-27 [1] CRAN (R 4.0.1)                   
+##  tidyselect    1.1.0   2020-05-11 [1] CRAN (R 4.0.1)                   
+##  tidyverse   * 1.3.0   2019-11-21 [1] CRAN (R 4.0.1)                   
+##  vctrs         0.3.6   2020-12-17 [1] CRAN (R 4.0.1)                   
+##  withr         2.3.0   2020-09-22 [1] CRAN (R 4.0.1)                   
+##  xfun          0.20    2021-01-06 [1] CRAN (R 4.0.1)                   
+##  xml2          1.3.2   2020-04-23 [1] CRAN (R 4.0.1)                   
+##  yaml          2.2.1   2020-02-01 [1] CRAN (R 4.0.1)                   
+## 
+## [1] /home/lluis/bin/R/4.0.1/lib/R/library&lt;/code&gt;&lt;/pre&gt;
+&lt;/details&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+</description>
+    </item>
+    
+    <item>
+      <title>R weekly new editor</title>
+      <link>https://llrs.dev/post/2020/02/13/r-weekly-new-editor/</link>
+      <pubDate>Thu, 13 Feb 2020 00:00:00 +0000</pubDate>
+      <guid>https://llrs.dev/post/2020/02/13/r-weekly-new-editor/</guid>
+      <description>
+&lt;script src=&#34;https://llrs.dev/post/2020/02/13/r-weekly-new-editor/index_files/header-attrs/header-attrs.js&#34;&gt;&lt;/script&gt;
+
+
+&lt;p&gt;&lt;a href=&#34;https://rweekly.org&#34;&gt;Rweekly&lt;/a&gt; is looking for &lt;a href=&#34;https://docs.google.com/forms/d/e/1FAIpQLSet2Tq_mWWOVsKWxGOSoUg8DzCPlW2-nxIFOSkkRvlUFxQFLw/viewform&#34;&gt;new editors&lt;/a&gt;. But they need to have submitted “at least 6 PRs on R Weekly”. If you submitted something through &lt;a href=&#34;https://rweekly.org/submit&#34;&gt;the webpage&lt;/a&gt; you also can apply. But I’ll look at how many people has submitted pull requests (PR) through GitHub at the repo rweekly/rewekly.&lt;/p&gt;
+&lt;div id=&#34;gh&#34; class=&#34;section level1&#34;&gt;
+&lt;h1&gt;GH&lt;/h1&gt;
+&lt;p&gt;So the GH package is good for this, but we need to know the API of Github. After a quick search I found the end point of the API:&lt;/p&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;library(&amp;quot;gh&amp;quot;)
+PR &amp;lt;- gh(&amp;quot;GET /search/issues?q=repo:rweekly/rweekly.org+is:pr+is:merged&amp;amp;per_page=100&amp;quot;) # Copied from https://developer.github.com/v3/pulls/
+PR$total_count
+## [1] 706&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;We know that there have been 552, we’ll need 8 calls to the appy, because it returns 100 values on each call.&lt;/p&gt;
+&lt;p&gt;This time we’ll use copy and paste for a quick solution:&lt;/p&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;PR2 &amp;lt;- gh(&amp;quot;GET /search/issues?q=repo:rweekly/rweekly.org+is:pr+is:merged&amp;amp;per_page=100&amp;amp;page=2&amp;quot;)
+PR3 &amp;lt;- gh(&amp;quot;GET /search/issues?q=repo:rweekly/rweekly.org+is:pr+is:merged&amp;amp;per_page=100&amp;amp;page=3&amp;quot;)
+PR4 &amp;lt;- gh(&amp;quot;GET /search/issues?q=repo:rweekly/rweekly.org+is:pr+is:merged&amp;amp;per_page=100&amp;amp;page=4&amp;quot;)
+PR5 &amp;lt;- gh(&amp;quot;GET /search/issues?q=repo:rweekly/rweekly.org+is:pr+is:merged&amp;amp;per_page=100&amp;amp;page=5&amp;quot;)
+PR6 &amp;lt;- gh(&amp;quot;GET /search/issues?q=repo:rweekly/rweekly.org+is:pr+is:merged&amp;amp;per_page=100&amp;amp;page=6&amp;quot;)&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;Now that we have the data we need to retrive the user names:&lt;/p&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;data &amp;lt;- list(PR, PR2, PR3, PR4, PR5, PR6)
+
+users &amp;lt;- lapply(data, function(x) {
+  vapply(x$items, function(y) {y$user$login}, character(1L))
+})
+users &amp;lt;- sort(unlist(users))&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;We know now that 171 has contributed through PR.
+Which of them are done by at the same people?&lt;/p&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;ts &amp;lt;- sort(table(users), decreasing = TRUE)
+par(mar = c(8,3,3,0))
+barplot(ts, las = 2, border = &amp;quot;gray&amp;quot;, main = &amp;quot;Contributors to Rweekly.org&amp;quot;)&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;&lt;img src=&#34;https://llrs.dev/post/2020/02/13/r-weekly-new-editor/index_files/figure-html/barplot-1.png&#34; width=&#34;672&#34; /&gt;&lt;/p&gt;
+&lt;p&gt;So we have 34 contributors which are ellegible, less if we remove the current editors:&lt;/p&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;names(ts)[ts &amp;gt;= 6]
+##  [1] &amp;quot;Ryo-N7&amp;quot;          &amp;quot;HenrikBengtsson&amp;quot; &amp;quot;martinctc&amp;quot;       &amp;quot;maelle&amp;quot;         
+##  [5] &amp;quot;amrrs&amp;quot;           &amp;quot;jwijffels&amp;quot;       &amp;quot;lgellis&amp;quot;         &amp;quot;mcdussault&amp;quot;     
+##  [9] &amp;quot;malcolmbarrett&amp;quot;  &amp;quot;moldach&amp;quot;         &amp;quot;dA505819&amp;quot;        &amp;quot;echasnovski&amp;quot;    
+## [13] &amp;quot;jonmcalder&amp;quot;      &amp;quot;jonocarroll&amp;quot;     &amp;quot;mailund&amp;quot;         &amp;quot;suzanbaert&amp;quot;     
+## [17] &amp;quot;seabbs&amp;quot;          &amp;quot;feddelegrand7&amp;quot;   &amp;quot;hfshr&amp;quot;           &amp;quot;lorenzwalthert&amp;quot; 
+## [21] &amp;quot;MilesMcBain&amp;quot;     &amp;quot;RaoOfPhysics&amp;quot;    &amp;quot;tomroh&amp;quot;          &amp;quot;EmilHvitfeldt&amp;quot;  
+## [25] &amp;quot;katiejolly&amp;quot;      &amp;quot;privefl&amp;quot;         &amp;quot;rCarto&amp;quot;          &amp;quot;deanmarchiori&amp;quot;  
+## [29] &amp;quot;DougVegas&amp;quot;       &amp;quot;eokodie&amp;quot;         &amp;quot;jdblischak&amp;quot;      &amp;quot;mkmiecik14&amp;quot;     
+## [33] &amp;quot;noamross&amp;quot;        &amp;quot;rstub&amp;quot;&lt;/code&gt;&lt;/pre&gt;
+&lt;div id=&#34;reproducibility&#34; class=&#34;section level3&#34;&gt;
+&lt;h3&gt;Reproducibility&lt;/h3&gt;
+&lt;details&gt;
+&lt;pre&gt;&lt;code&gt;## ─ Session info ───────────────────────────────────────────────────────────────────────────────────────────────────────
+##  setting  value                       
+##  version  R version 4.0.1 (2020-06-06)
+##  os       Ubuntu 20.04.1 LTS          
+##  system   x86_64, linux-gnu           
+##  ui       X11                         
+##  language (EN)                        
+##  collate  en_US.UTF-8                 
+##  ctype    en_US.UTF-8                 
+##  tz       Europe/Madrid               
+##  date     2021-01-08                  
+## 
+## ─ Packages ───────────────────────────────────────────────────────────────────────────────────────────────────────────
+##  package     * version date       lib source                           
+##  assertthat    0.2.1   2019-03-21 [1] CRAN (R 4.0.1)                   
+##  blogdown      0.21.84 2021-01-07 [1] Github (rstudio/blogdown@c4fbb58)
+##  bookdown      0.21    2020-10-13 [1] CRAN (R 4.0.1)                   
+##  cli           2.2.0   2020-11-20 [1] CRAN (R 4.0.1)                   
+##  crayon        1.3.4   2017-09-16 [1] CRAN (R 4.0.1)                   
+##  curl          4.3     2019-12-02 [1] CRAN (R 4.0.1)                   
+##  digest        0.6.27  2020-10-24 [1] CRAN (R 4.0.1)                   
+##  evaluate      0.14    2019-05-28 [1] CRAN (R 4.0.1)                   
+##  fansi         0.4.1   2020-01-08 [1] CRAN (R 4.0.1)                   
+##  gh          * 1.2.0   2020-11-27 [1] CRAN (R 4.0.1)                   
+##  gitcreds      0.1.1   2020-12-04 [1] CRAN (R 4.0.1)                   
+##  glue          1.4.2   2020-08-27 [1] CRAN (R 4.0.1)                   
+##  htmltools     0.5.0   2020-06-16 [1] CRAN (R 4.0.1)                   
+##  httr          1.4.2   2020-07-20 [1] CRAN (R 4.0.1)                   
+##  jsonlite      1.7.2   2020-12-09 [1] CRAN (R 4.0.1)                   
+##  knitr         1.30    2020-09-22 [1] CRAN (R 4.0.1)                   
+##  magrittr      2.0.1   2020-11-17 [1] CRAN (R 4.0.1)                   
+##  R6            2.5.0   2020-10-28 [1] CRAN (R 4.0.1)                   
+##  rlang         0.4.10  2020-12-30 [1] CRAN (R 4.0.1)                   
+##  rmarkdown     2.6     2020-12-14 [1] CRAN (R 4.0.1)                   
+##  sessioninfo   1.1.1   2018-11-05 [1] CRAN (R 4.0.1)                   
+##  stringi       1.5.3   2020-09-09 [1] CRAN (R 4.0.1)                   
+##  stringr       1.4.0   2019-02-10 [1] CRAN (R 4.0.1)                   
+##  withr         2.3.0   2020-09-22 [1] CRAN (R 4.0.1)                   
+##  xfun          0.20    2021-01-06 [1] CRAN (R 4.0.1)                   
+##  yaml          2.2.1   2020-02-01 [1] CRAN (R 4.0.1)                   
+## 
+## [1] /home/lluis/bin/R/4.0.1/lib/R/library&lt;/code&gt;&lt;/pre&gt;
+&lt;/details&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+</description>
+    </item>
+    
+  </channel>
+</rss>

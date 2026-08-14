@@ -1,0 +1,181 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes" ?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>BaseSet | B101nfo</title>
+    <link>https://llrs.dev/tags/baseset/</link>
+      <atom:link href="https://llrs.dev/tags/baseset/index.xml" rel="self" type="application/rss+xml" />
+    <description>BaseSet</description>
+    <generator>Source Themes Academic (https://sourcethemes.com/academic/)</generator><language>en-us</language><copyright>If it is code you can copy and reuse (MIT) if it is text, please cite and reuse CC-BY 2026.</copyright><lastBuildDate>Wed, 23 Aug 2023 00:00:00 +0000</lastBuildDate>
+    <image>
+      <url>img/map[gravatar:%!s(bool=false) shape:circle]</url>
+      <title>BaseSet</title>
+      <link>https://llrs.dev/tags/baseset/</link>
+    </image>
+    
+    <item>
+      <title>BaseSet 0.9.0</title>
+      <link>https://llrs.dev/post/2023/08/23/baseset-0-9-0/</link>
+      <pubDate>Wed, 23 Aug 2023 00:00:00 +0000</pubDate>
+      <guid>https://llrs.dev/post/2023/08/23/baseset-0-9-0/</guid>
+      <description>
+
+
+&lt;p&gt;I’m excited to provide a new release of &lt;a href=&#34;https://cran.r-project.org/package=BaseSet&#34;&gt;BaseSet&lt;/a&gt;, the package implementing a a class and methods to work with (fuzzy) sets.&lt;/p&gt;
+&lt;p&gt;This release was focused on making it easier to work with it.&lt;/p&gt;
+&lt;p&gt;From the beginning it was engineered towards the tidyverse and this time I focused on general R methods like &lt;code&gt;$&lt;/code&gt;, &lt;code&gt;[&lt;/code&gt;, &lt;code&gt;c&lt;/code&gt;:&lt;/p&gt;
+&lt;div id=&#34;new-methods&#34; class=&#34;section level2&#34;&gt;
+&lt;h2&gt;New methods&lt;/h2&gt;
+&lt;p&gt;First we can create a TidySet or TS for short:&lt;/p&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;library(&amp;quot;BaseSet&amp;quot;, warn.conflicts = FALSE)
+packageVersion(&amp;quot;BaseSet&amp;quot;)
+## [1] &amp;#39;0.9.0&amp;#39;
+l &amp;lt;- list(A = &amp;quot;1&amp;quot;,
+     B = c(&amp;quot;1&amp;quot;, &amp;quot;2&amp;quot;),
+     C = c(&amp;quot;2&amp;quot;, &amp;quot;3&amp;quot;, &amp;quot;4&amp;quot;),
+     D = c(&amp;quot;1&amp;quot;, &amp;quot;2&amp;quot;, &amp;quot;3&amp;quot;, &amp;quot;4&amp;quot;)
+)
+TS &amp;lt;- tidySet(l)&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;Up till now there was no compatibility with the base R methods but there was with the tidyverse.&lt;/p&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;TSa &amp;lt;- TS[[&amp;quot;A&amp;quot;]]
+TSb &amp;lt;- TS[[&amp;quot;B&amp;quot;]]&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;Maybe this doesn’t look much but previously it wasn’t possible to subset the class.
+Initially I thought that working with a single class per session would be enough.
+Later I realized that maybe people would have good reasons to split or combine multiple objects:&lt;/p&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;TSab &amp;lt;- c(TSa, TSb)
+TSab
+##   elements sets fuzzy
+## 1        1    A     1
+## 2        1    B     1
+## 3        2    B     1&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;Note that subsetting by sets does not produce the same object as elements are kept:&lt;/p&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;dim(TSab)
+##  Elements Relations      Sets 
+##         2         3         2
+dim(TS[1:2, &amp;quot;sets&amp;quot;])
+##  Elements Relations      Sets 
+##         4         3         2&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;You’ll need to drop the elements:&lt;/p&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;dim(droplevels(TS[1:2, &amp;quot;sets&amp;quot;]))
+##  Elements Relations      Sets 
+##         2         3         2&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;We can include more information like this:&lt;/p&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;TSab[1:2, &amp;quot;relations&amp;quot;, &amp;quot;type&amp;quot;] &amp;lt;- c(&amp;quot;new&amp;quot;, &amp;quot;addition&amp;quot;)
+TSab[1:2, &amp;quot;sets&amp;quot;, &amp;quot;origin&amp;quot;] &amp;lt;- c(&amp;quot;fake&amp;quot;, &amp;quot;real&amp;quot;)
+TSab
+##   elements sets fuzzy     type origin
+## 1        1    A     1      new   fake
+## 2        1    B     1 addition   real
+## 3        2    B     1     &amp;lt;NA&amp;gt;   real&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;With this release is easier to access the columns of the TidySet:&lt;/p&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;TSab$type
+## [1] &amp;quot;new&amp;quot;      &amp;quot;addition&amp;quot; NA
+TSab$origin
+## [1] &amp;quot;fake&amp;quot; &amp;quot;real&amp;quot;
+TS$sets
+##  [1] &amp;quot;A&amp;quot; &amp;quot;B&amp;quot; &amp;quot;B&amp;quot; &amp;quot;C&amp;quot; &amp;quot;C&amp;quot; &amp;quot;C&amp;quot; &amp;quot;D&amp;quot; &amp;quot;D&amp;quot; &amp;quot;D&amp;quot; &amp;quot;D&amp;quot;&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;If you pay attention you’ll realize that it will look at the minimum information required.
+But if the column is present in the relations and elements or sets slots it will pick the first.&lt;/p&gt;
+&lt;p&gt;You can use:&lt;/p&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;TS[, &amp;quot;sets&amp;quot;, &amp;quot;new&amp;quot;] &amp;lt;- &amp;quot;a&amp;quot;
+TS[, &amp;quot;sets&amp;quot;, &amp;quot;new&amp;quot;]&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;I recommend reading carefully the help page of &lt;code&gt;?`extract-TidySet`&lt;/code&gt; and make some tests based on the examples.
+I might have created some bugs or friction points with the extraction operations, let me know and I’ll address them (That’s the reason why I kept it below a 1.0 release).&lt;/p&gt;
+&lt;/div&gt;
+&lt;div id=&#34;more-usable&#34; class=&#34;section level1&#34;&gt;
+&lt;h1&gt;More usable&lt;/h1&gt;
+&lt;p&gt;Another usability addition to the class is the possibility to autocomplete.&lt;/p&gt;
+&lt;p&gt;Now if you tab &lt;code&gt;TS$ty&lt;/code&gt; and press TAB it should complete to &lt;code&gt;TS$type&lt;/code&gt; because there is a column called type. This will make it easier to use the &lt;code&gt;$&lt;/code&gt;.&lt;/p&gt;
+&lt;p&gt;With this release, we can now check the number of sets and the number of relations each set has:&lt;/p&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;length(TS)
+## [1] 4
+lengths(TS)
+## A B C D 
+## 1 2 3 4&lt;/code&gt;&lt;/pre&gt;
+&lt;div id=&#34;new-function&#34; class=&#34;section level2&#34;&gt;
+&lt;h2&gt;New function&lt;/h2&gt;
+&lt;p&gt;The new function &lt;code&gt;union_closed&lt;/code&gt; checks if the combinations of sets produce already existing sets.&lt;/p&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;union_closed(TS, sets = c(&amp;quot;A&amp;quot;, &amp;quot;B&amp;quot;, &amp;quot;C&amp;quot;))
+## [1] FALSE
+union_closed(TS)
+## [1] TRUE&lt;/code&gt;&lt;/pre&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;div id=&#34;next-steps&#34; class=&#34;section level1&#34;&gt;
+&lt;h1&gt;Next steps&lt;/h1&gt;
+&lt;p&gt;I hope this makes it even easier to work with the class.
+Combine different objects, and manipulate it more intuitively.&lt;/p&gt;
+&lt;p&gt;While creating this document I realized it has some friction points.&lt;br /&gt;
+In next release it will be possible to:&lt;/p&gt;
+&lt;ol style=&#34;list-style-type: decimal&#34;&gt;
+&lt;li&gt;Subset the object by element or set name, if only querying elements and sets slots.
+For example &lt;code&gt;TS[c(&#34;3&#34;, &#34;4&#34;), &#34;elements&#34;, &#34;NEWS&#34;] &amp;lt;- TRUE&lt;/code&gt;&lt;/li&gt;
+&lt;li&gt;Use &lt;code&gt;names&lt;/code&gt; and &lt;code&gt;dimnames&lt;/code&gt; to discover which data is in the object.&lt;/li&gt;
+&lt;li&gt;Some bug fixes about these methods.&lt;/li&gt;
+&lt;/ol&gt;
+&lt;p&gt;Enjoy!&lt;/p&gt;
+&lt;p&gt;I would also apreciate to hear some feedback about how you are using the package.
+It will help me to direct the development/maintenance of the package wherever it is more useful.&lt;/p&gt;
+&lt;div id=&#34;reproducibility&#34; class=&#34;section level3&#34;&gt;
+&lt;h3&gt;Reproducibility&lt;/h3&gt;
+&lt;details&gt;
+&lt;pre&gt;&lt;code&gt;## ─ Session info ───────────────────────────────────────────────────────────────────────────────────────────────────────
+##  setting  value
+##  version  R version 4.3.1 (2023-06-16)
+##  os       Ubuntu 22.04.3 LTS
+##  system   x86_64, linux-gnu
+##  ui       X11
+##  language (EN)
+##  collate  en_US.UTF-8
+##  ctype    en_US.UTF-8
+##  tz       Europe/Madrid
+##  date     2023-12-18
+##  pandoc   3.1.1 @ /usr/lib/rstudio/resources/app/bin/quarto/bin/tools/ (via rmarkdown)
+## 
+## ─ Packages ───────────────────────────────────────────────────────────────────────────────────────────────────────────
+##  package     * version date (UTC) lib source
+##  BaseSet     * 0.9.0   2023-08-23 [1] local
+##  blogdown      1.18    2023-06-19 [1] CRAN (R 4.3.1)
+##  bookdown      0.37    2023-12-01 [1] CRAN (R 4.3.1)
+##  bslib         0.6.1   2023-11-28 [1] CRAN (R 4.3.1)
+##  cachem        1.0.8   2023-05-01 [1] CRAN (R 4.3.1)
+##  cli           3.6.2   2023-12-11 [1] CRAN (R 4.3.1)
+##  digest        0.6.33  2023-07-07 [1] CRAN (R 4.3.1)
+##  dplyr         1.1.4   2023-11-17 [1] CRAN (R 4.3.1)
+##  evaluate      0.23    2023-11-01 [1] CRAN (R 4.3.2)
+##  fansi         1.0.6   2023-12-08 [1] CRAN (R 4.3.1)
+##  fastmap       1.1.1   2023-02-24 [1] CRAN (R 4.3.1)
+##  generics      0.1.3   2022-07-05 [1] CRAN (R 4.3.1)
+##  glue          1.6.2   2022-02-24 [1] CRAN (R 4.3.1)
+##  htmltools     0.5.7   2023-11-03 [1] CRAN (R 4.3.2)
+##  jquerylib     0.1.4   2021-04-26 [1] CRAN (R 4.3.1)
+##  jsonlite      1.8.8   2023-12-04 [1] CRAN (R 4.3.1)
+##  knitr         1.45    2023-10-30 [1] CRAN (R 4.3.2)
+##  lifecycle     1.0.4   2023-11-07 [1] CRAN (R 4.3.2)
+##  magrittr      2.0.3   2022-03-30 [1] CRAN (R 4.3.1)
+##  pillar        1.9.0   2023-03-22 [1] CRAN (R 4.3.1)
+##  pkgconfig     2.0.3   2019-09-22 [1] CRAN (R 4.3.1)
+##  R6            2.5.1   2021-08-19 [1] CRAN (R 4.3.1)
+##  rlang         1.1.2   2023-11-04 [1] CRAN (R 4.3.1)
+##  rmarkdown     2.25    2023-09-18 [1] CRAN (R 4.3.1)
+##  rstudioapi    0.15.0  2023-07-07 [1] CRAN (R 4.3.1)
+##  sass          0.4.8   2023-12-06 [1] CRAN (R 4.3.1)
+##  sessioninfo   1.2.2   2021-12-06 [1] CRAN (R 4.3.1)
+##  tibble        3.2.1   2023-03-20 [1] CRAN (R 4.3.1)
+##  tidyselect    1.2.0   2022-10-10 [1] CRAN (R 4.3.1)
+##  utf8          1.2.4   2023-10-22 [1] CRAN (R 4.3.2)
+##  vctrs         0.6.5   2023-12-01 [1] CRAN (R 4.3.1)
+##  xfun          0.41    2023-11-01 [1] CRAN (R 4.3.2)
+##  yaml          2.3.8   2023-12-11 [1] CRAN (R 4.3.1)
+## 
+##  [1] /home/lluis/bin/R/4.3.1
+##  [2] /opt/R/4.3.1/lib/R/library
+## 
+## ──────────────────────────────────────────────────────────────────────────────────────────────────────────────────────&lt;/code&gt;&lt;/pre&gt;
+&lt;/details&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+</description>
+    </item>
+    
+  </channel>
+</rss>

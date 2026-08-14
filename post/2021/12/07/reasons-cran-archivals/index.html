@@ -1,0 +1,1710 @@
+<!DOCTYPE html>
+<html lang="en-us">
+
+<head>
+
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="generator" content="Source Themes Academic 4.8.0">
+
+  
+
+  
+  
+  
+  
+  
+    
+    
+    
+  
+  
+
+  <meta name="author" content="Lluís Revilla Sancho">
+
+  
+  
+  
+    
+  
+  <meta name="description" content="Most frequent reason is due to the package not fixed on time, followed by depending on packages archived and policy violation.">
+
+  
+  <link rel="alternate" hreflang="en-us" href="https://llrs.dev/post/2021/12/07/reasons-cran-archivals/">
+
+  
+
+
+  
+  
+  
+  <meta name="theme-color" content="#2962ff">
+  
+
+  
+  
+
+  
+  
+  
+  
+    
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/academicons/1.8.6/css/academicons.min.css" integrity="sha256-uFVgMKfistnJAfoCUQigIl+JfUaP47GrRKjf6CTPVmw=" crossorigin="anonymous">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.12.0-1/css/all.min.css" integrity="sha256-4w9DunooKSr3MFXHXWyFER38WmPdm361bQS/2KUWZbU=" crossorigin="anonymous">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/fancybox/3.5.7/jquery.fancybox.min.css" integrity="sha256-Vzbj7sDDS/woiFS3uNKo8eIuni59rjyNGtXfstRzStA=" crossorigin="anonymous">
+
+    
+    
+    
+      
+    
+    
+      
+      
+        
+          <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.18.1/styles/github.min.css" crossorigin="anonymous" title="hl-light">
+          <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.18.1/styles/dracula.min.css" crossorigin="anonymous" title="hl-dark" disabled>
+        
+      
+    
+
+    
+
+    
+
+    
+    
+      
+
+      
+      
+
+      
+    
+      
+
+      
+      
+
+      
+    
+      
+
+      
+      
+
+      
+    
+      
+
+      
+      
+
+      
+    
+      
+
+      
+      
+
+      
+    
+      
+
+      
+      
+
+      
+    
+      
+
+      
+      
+
+      
+    
+      
+
+      
+      
+
+      
+    
+      
+
+      
+      
+
+      
+    
+      
+
+      
+      
+
+      
+    
+      
+
+      
+      
+
+      
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/lazysizes/5.1.2/lazysizes.min.js" integrity="sha256-Md1qLToewPeKjfAHU1zyPwOutccPAm5tahnaw7Osw0A=" crossorigin="anonymous" async></script>
+      
+    
+      
+
+      
+      
+
+      
+    
+      
+
+      
+      
+
+      
+    
+      
+
+      
+      
+        
+      
+
+      
+    
+      
+
+      
+      
+
+      
+    
+
+  
+
+  
+  
+  
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Montserrat:400,700%7CRoboto:400,400italic,700%7CRoboto+Mono&display=swap">
+  
+
+  
+  
+  
+  
+  <link rel="stylesheet" href="/css/academic.css">
+
+  
+
+
+
+
+  
+
+
+  
+
+  <link rel="manifest" href="/index.webmanifest">
+  <link rel="icon" type="image/png" href="/images/icon_hud03320d081f55857e6179906aee3769c_2658_32x32_fill_lanczos_center_3.png">
+  <link rel="apple-touch-icon" type="image/png" href="/images/icon_hud03320d081f55857e6179906aee3769c_2658_192x192_fill_lanczos_center_3.png">
+
+  <link rel="canonical" href="https://llrs.dev/post/2021/12/07/reasons-cran-archivals/">
+
+  
+  
+  
+  
+  
+    
+    
+  
+  
+  <meta property="twitter:card" content="summary">
+  
+  <meta property="og:site_name" content="B101nfo">
+  <meta property="og:url" content="https://llrs.dev/post/2021/12/07/reasons-cran-archivals/">
+  <meta property="og:title" content="Reasons why packages are archived on CRAN | B101nfo">
+  <meta property="og:description" content="Most frequent reason is due to the package not fixed on time, followed by depending on packages archived and policy violation."><meta property="og:image" content="img/map[gravatar:%!s(bool=false) shape:circle]">
+  <meta property="twitter:image" content="img/map[gravatar:%!s(bool=false) shape:circle]"><meta property="og:locale" content="en-us">
+  
+    
+      <meta property="article:published_time" content="2021-12-07T00:00:00&#43;00:00">
+    
+    <meta property="article:modified_time" content="2021-12-07T00:00:00&#43;00:00">
+  
+
+  
+
+
+    
+
+
+
+
+
+
+  
+
+
+
+
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "BlogPosting",
+  "mainEntityOfPage": {
+    "@type": "WebPage",
+    "@id": "https://llrs.dev/post/2021/12/07/reasons-cran-archivals/"
+  },
+  "headline": "Reasons why packages are archived on CRAN",
+  
+  "datePublished": "2021-12-07T00:00:00Z",
+  "dateModified": "2021-12-07T00:00:00Z",
+  
+  "author": {
+    "@type": "Person",
+    "name": "Lluís Revilla Sancho"
+  },
+  
+  "publisher": {
+    "@type": "Organization",
+    "name": "B101nfo",
+    "logo": {
+      "@type": "ImageObject",
+      "url": "https://llrs.dev/images/icon_hud03320d081f55857e6179906aee3769c_2658_192x192_fill_lanczos_center_3.png"
+    }
+  },
+  "description": "Most frequent reason is due to the package not fixed on time, followed by depending on packages archived and policy violation."
+}
+</script>
+
+  
+
+  
+
+
+  
+
+
+  
+
+
+
+
+
+  <title>Reasons why packages are archived on CRAN | B101nfo</title>
+
+</head>
+
+<body id="top" data-spy="scroll" data-offset="70" data-target="#TableOfContents" >
+
+  <aside class="search-results" id="search">
+  <div class="container">
+    <section class="search-header">
+
+      <div class="row no-gutters justify-content-between mb-3">
+        <div class="col-6">
+          <h1>Search</h1>
+        </div>
+        <div class="col-6 col-search-close">
+          <a class="js-search" href="#"><i class="fas fa-times-circle text-muted" aria-hidden="true"></i></a>
+        </div>
+      </div>
+
+      <div id="search-box">
+        
+        <input name="q" id="search-query" placeholder="Search..." autocapitalize="off"
+        autocomplete="off" autocorrect="off" spellcheck="false" type="search">
+        
+      </div>
+
+    </section>
+    <section class="section-search-results">
+
+      <div id="search-hits">
+        
+      </div>
+
+    </section>
+  </div>
+</aside>
+
+
+  
+
+
+
+
+
+
+
+<nav class="navbar navbar-expand-lg navbar-light compensate-for-scrollbar" id="navbar-main">
+  <div class="container">
+
+    
+    <div class="d-none d-lg-inline-flex">
+      <a class="navbar-brand" href="/">B101nfo</a>
+    </div>
+    
+
+    
+    <button type="button" class="navbar-toggler" data-toggle="collapse"
+            data-target="#navbar-content" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
+    <span><i class="fas fa-bars"></i></span>
+    </button>
+    
+
+    
+    <div class="navbar-brand-mobile-wrapper d-inline-flex d-lg-none">
+      <a class="navbar-brand" href="/">B101nfo</a>
+    </div>
+    
+
+    
+    
+    <div class="navbar-collapse main-menu-item collapse justify-content-start" id="navbar-content">
+
+      
+      <ul class="navbar-nav d-md-inline-flex">
+        
+
+        
+
+        
+        
+        
+          
+        
+
+        
+        
+        
+        
+        
+        
+          
+          
+          
+            
+          
+          
+        
+
+        <li class="nav-item">
+          <a class="nav-link " href="/#about"><span>Home</span></a>
+        </li>
+
+        
+        
+
+        
+
+        
+        
+        
+
+        
+        
+        
+        
+        
+        
+
+        <li class="nav-item">
+          <a class="nav-link  active" href="/post"><span>Blog</span></a>
+        </li>
+
+        
+        
+
+        
+
+        
+        
+        
+
+        
+        
+        
+        
+        
+        
+
+        <li class="nav-item">
+          <a class="nav-link " href="/talk"><span>Talks</span></a>
+        </li>
+
+        
+        
+
+      
+
+        
+      </ul>
+    </div>
+
+    <ul class="nav-icons navbar-nav flex-row ml-auto d-flex pl-md-2">
+      
+      <li class="nav-item">
+        <a class="nav-link js-search" href="#"><i class="fas fa-search" aria-hidden="true"></i></a>
+      </li>
+      
+
+      
+      <li class="nav-item">
+        <a class="nav-link js-dark-toggle" href="#"><i class="fas fa-moon" aria-hidden="true"></i></a>
+      </li>
+      
+
+      
+
+    </ul>
+
+  </div>
+</nav>
+
+
+  <article class="article">
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+  
+  
+  
+<div class="article-container pt-3">
+  <h1>Reasons why packages are archived on CRAN</h1>
+
+  
+
+  
+    
+
+
+<div class="article-metadata">
+
+  
+  
+
+  
+  <span class="article-date">
+    
+    
+      
+    
+    Dec 7, 2021
+  </span>
+  
+
+  
+
+  
+  <span class="middot-divider"></span>
+  <span class="article-reading-time">
+    11 min read
+  </span>
+  
+
+  
+  
+  
+
+  
+  
+  <span class="middot-divider"></span>
+  <span class="article-categories">
+    <i class="fas fa-folder mr-1"></i><a href="/categories/cran/">CRAN</a>, <a href="/categories/r/">r</a></span>
+  
+
+</div>
+
+    
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+</div>
+
+
+
+  <div class="article-container">
+
+    <div class="article-style">
+      
+
+
+<p>On the Repositories working group of the R Consortium Rich FitzJohn posted <a href="https://github.com/RConsortium/r-repositories-wg/issues/8#issuecomment-979486806">a comment</a> to <a href="https://cran.r-project.org/src/contrib/PACKAGES.in">a file</a> that seems to be were the CRAN team stores and uses to check the package history.</p>
+<p>The structure is not defined anywhere I could find (I haven’t looked much to be honest).</p>
+<pre><code>Package: &lt;package name&gt;
+X-CRAN-Comment: Archived on YYYY-MM-DD as &lt;reason&gt;.
+X-CRAN-History: Archived on YYYY-MM-DD as &lt;reason&gt;.
+  Unarchived on YYYY-MM-DD.
+  .
+  &lt;Optional clarification of archival reason&gt;
+&lt;Optional fields like License_restricts_use, Replaced_by, Maintainer: ORPHANED, OS_type: unix&gt;</code></pre>
+<p>I think the X-CRAN-Comment is what appears on the website of an archived package, like on <a href="https://cran.r-project.org/package=radix">radix package</a>. However, other comments on the website do not appear on that file.</p>
+<p>In addition, the file doesn’t have some records of archiving and unarchiving of some packages, but there are old records from 2013 or before to now. But we can use it to see understand what are the <em>reasons</em> of archiving packages, which seems to be the main purpose of the file.</p>
+<div id="the-data" class="section level1">
+<h1>The data</h1>
+<p>First step is read the record.
+As it seems that it has some <code>key: value</code> structure similar to DESCRIPTION file of packages it seems it is a DCF format: Debian Control File format which is easy to read with the <code>read.dcf</code> function.</p>
+<div id="exploring" class="section level2">
+<h2>Exploring</h2>
+<p>A brief exploration of the data:</p>
+<table>
+<thead>
+<tr>
+<th style="text-align:left;">
+comment
+</th>
+<th style="text-align:left;">
+history
+</th>
+<th style="text-align:right;">
+packages
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:left;">
+yes
+</td>
+<td style="text-align:left;">
+no
+</td>
+<td style="text-align:right;">
+3612
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+no
+</td>
+<td style="text-align:left;">
+yes
+</td>
+<td style="text-align:right;">
+2345
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+yes
+</td>
+<td style="text-align:left;">
+yes
+</td>
+<td style="text-align:right;">
+434
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+no
+</td>
+<td style="text-align:left;">
+no
+</td>
+<td style="text-align:right;">
+70
+</td>
+</tr>
+</tbody>
+</table>
+<p>Many packages have either comments or history but relatively few both.
+I’m not sure when either of them is used, as I would expect that all that have history would have a comment.</p>
+<table>
+<thead>
+<tr>
+<th style="text-align:left;">
+Replaced_by
+</th>
+<th style="text-align:right;">
+packages
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:left;">
+no
+</td>
+<td style="text-align:right;">
+6360
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+yes
+</td>
+<td style="text-align:right;">
+101
+</td>
+</tr>
+</tbody>
+</table>
+<p>Many packages are simply replaced by some other package.</p>
+<table>
+<thead>
+<tr>
+<th style="text-align:left;">
+Maintainer
+</th>
+<th style="text-align:right;">
+packages
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:left;">
+no
+</td>
+<td style="text-align:right;">
+6366
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+yes
+</td>
+<td style="text-align:right;">
+95
+</td>
+</tr>
+</tbody>
+</table>
+<p>Most of the packages that have a Maintainer field are orphaned/archived.
+Does it mean that all the others are not orphaned?</p>
+</div>
+<div id="extracting-reasons" class="section level2">
+<h2>Extracting reasons</h2>
+<p>Now that it is in R data structure, we can extract the relevant information, dates, type of action and reasons for each archivation event.
+I use <code>strcapture</code> for this task with a regex to extract the action, the date and the explanation it migh have.</p>
+<p>I don’t know how the file is written probably it is a mix of automated tools and manual editing so there isn’t a simple way to collect all the information in a structured way.
+Simply because the structure has been changing along the years as well as the details of what is stored has changed, or there are missing events.
+However, the extracted information should be enough for our purposes.</p>
+<table>
+<thead>
+<tr>
+<th style="text-align:left;">
+Action
+</th>
+<th style="text-align:right;">
+Events
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:left;">
+archived
+</td>
+<td style="text-align:right;">
+7096
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+orphaned
+</td>
+<td style="text-align:right;">
+341
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+removed
+</td>
+<td style="text-align:right;">
+113
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+renamed
+</td>
+<td style="text-align:right;">
+2
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+replaced
+</td>
+<td style="text-align:right;">
+4
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+unarchived
+</td>
+<td style="text-align:right;">
+2973
+</td>
+</tr>
+</tbody>
+</table>
+<p>As expected the most common recorded event are archivations, but there are some orphaned packages and even some removed packages.
+Also note the number of orphaned packages is greater than those with the Maintainer field, supporting my theory that the format has changed and that this shouldn’t be taken as an exhaustive and complete analysis of archivations.</p>
+<p>How are they along time?</p>
+<p><img src="https://llrs.dev/post/2021/12/07/reasons-cran-archivals/index.en_files/figure-html/plots_df-1.png" width="864" /></p>
+<p>Even if there are some events recorded from 2009 it seems that this file has been more used more recently (last commit related to <a href="https://github.com/wch/r-source/blame/trunk/src/library/tools/R/QC.R#L7778">this was on 2015</a>).
+I know that there are some old events not recorded on the file, because there are some packages currently present on CRAN that they had been archived but do not have an unarchived action, so conversely it could happen.
+So, this doesn’t necessarily mean that there are currently more packages archived from CRAN. But it is a clear indication that now at least there is a more accurate record of archived packages on this file.</p>
+<p>Another source of records of archived packages might be <a href="http://dirk.eddelbuettel.com/cranberries/cran/removed/">cranberries</a>. It would be nice to compare this file with the records on the database there.</p>
+<p>Now that most of the package events are collected and we have the reasons of the actions, we can explore and classify the reasons.
+Using some simple regex I explore for key words or sentences.</p>
+<p>We can look at the most frequent error reasons for archiving packages, patterns I found with more than 100 cases:</p>
+<p><img src="https://llrs.dev/post/2021/12/07/reasons-cran-archivals/index.en_files/figure-html/reasons_top-1.png" width="864" /></p>
+<p>The most frequent error is that errors are not corrected or checks, even when there are reminders.<br />
+Next are the packages archived because they depend on other packages already not on CRAN.<br />
+There are some packages that are replaced by others and some maintainers might not want to continue supporting the package when they receive a message from CRAN about fixing an error.</p>
+<p>Policy violation makes to the top 5 but with less than 500 events.
+Dependencies problems are the sixth cause, followed by email errors (bouncing, incorrect email…) and then come very sporadic problems about license, not fixing on updates of R, authorship problems or requests from authors.</p>
+<p>Some of these errors happen at the same time for each event, but grouping these reasons together we get a similar table:</p>
+<table>
+<thead>
+<tr>
+<th style="text-align:left;">
+package_not_corrected
+</th>
+<th style="text-align:left;">
+request_maintainer
+</th>
+<th style="text-align:left;">
+dependencies
+</th>
+<th style="text-align:left;">
+other
+</th>
+<th style="text-align:right;">
+events
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:left;">
+yes
+</td>
+<td style="text-align:left;">
+no
+</td>
+<td style="text-align:left;">
+no
+</td>
+<td style="text-align:left;">
+no
+</td>
+<td style="text-align:right;">
+4366
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+no
+</td>
+<td style="text-align:left;">
+no
+</td>
+<td style="text-align:left;">
+no
+</td>
+<td style="text-align:left;">
+no
+</td>
+<td style="text-align:right;">
+1530
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+no
+</td>
+<td style="text-align:left;">
+no
+</td>
+<td style="text-align:left;">
+yes
+</td>
+<td style="text-align:left;">
+no
+</td>
+<td style="text-align:right;">
+767
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+no
+</td>
+<td style="text-align:left;">
+no
+</td>
+<td style="text-align:left;">
+no
+</td>
+<td style="text-align:left;">
+yes
+</td>
+<td style="text-align:right;">
+374
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+yes
+</td>
+<td style="text-align:left;">
+no
+</td>
+<td style="text-align:left;">
+no
+</td>
+<td style="text-align:left;">
+yes
+</td>
+<td style="text-align:right;">
+15
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+yes
+</td>
+<td style="text-align:left;">
+no
+</td>
+<td style="text-align:left;">
+yes
+</td>
+<td style="text-align:left;">
+no
+</td>
+<td style="text-align:right;">
+13
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+no
+</td>
+<td style="text-align:left;">
+no
+</td>
+<td style="text-align:left;">
+yes
+</td>
+<td style="text-align:left;">
+yes
+</td>
+<td style="text-align:right;">
+2
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+yes
+</td>
+<td style="text-align:left;">
+no
+</td>
+<td style="text-align:left;">
+yes
+</td>
+<td style="text-align:left;">
+yes
+</td>
+<td style="text-align:right;">
+2
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+yes
+</td>
+<td style="text-align:left;">
+yes
+</td>
+<td style="text-align:left;">
+no
+</td>
+<td style="text-align:left;">
+no
+</td>
+<td style="text-align:right;">
+2
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+yes
+</td>
+<td style="text-align:left;">
+yes
+</td>
+<td style="text-align:left;">
+no
+</td>
+<td style="text-align:left;">
+yes
+</td>
+<td style="text-align:right;">
+1
+</td>
+</tr>
+</tbody>
+</table>
+<p>Surprisingly the second most frequent group of archiving actions are due to many different reasons.
+This is probably the <a href="https://en.wikipedia.org/wiki/Pareto_principle">Pareto’s principle</a> in action because they are around 15% of the archiving events but the causes are very diverse between them.</p>
+<p>However, if we look at the packages which were archived (not at the request of maintainers), most of them just happen once:</p>
+<table>
+<thead>
+<tr>
+<th style="text-align:right;">
+Events
+</th>
+<th style="text-align:right;">
+packages
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:right;">
+1
+</td>
+<td style="text-align:right;">
+5304
+</td>
+</tr>
+<tr>
+<td style="text-align:right;">
+2
+</td>
+<td style="text-align:right;">
+594
+</td>
+</tr>
+<tr>
+<td style="text-align:right;">
+3
+</td>
+<td style="text-align:right;">
+115
+</td>
+</tr>
+<tr>
+<td style="text-align:right;">
+4
+</td>
+<td style="text-align:right;">
+31
+</td>
+</tr>
+<tr>
+<td style="text-align:right;">
+5
+</td>
+<td style="text-align:right;">
+8
+</td>
+</tr>
+</tbody>
+</table>
+<p>This suggests that once a package is archived maintainers do not make the effort to put it back on CRAN except on very few cases were there are multiple attempts.
+To check we can see the current available packages and see how many of those are still present on CRAN:</p>
+<table>
+<thead>
+<tr>
+<th style="text-align:left;">
+CRAN
+</th>
+<th style="text-align:right;">
+Packages
+</th>
+<th style="text-align:left;">
+Proportion
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:left;">
+no
+</td>
+<td style="text-align:right;">
+3869
+</td>
+<td style="text-align:left;">
+64%
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+yes
+</td>
+<td style="text-align:right;">
+2183
+</td>
+<td style="text-align:left;">
+36%
+</td>
+</tr>
+</tbody>
+</table>
+<p>Many packages are currently on CRAN despite their past archivation but close to 64% are currently not on CRAN.</p>
+<p>Almost all that are on CRAN have now no <code>X-CRAN-Comment</code>, except for a few:</p>
+<table>
+<thead>
+<tr>
+<th style="text-align:left;">
+Package
+</th>
+<th style="text-align:left;">
+X-CRAN-Comment
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:left;">
+geiger
+</td>
+<td style="text-align:left;">
+<p>Orphaned and corrected on 2022-05-09.</p>
+Repeated notifications about USE_FC_LEN_T were ignored.
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+alphahull
+</td>
+<td style="text-align:left;">
+Versions up to 2.3 have been removed for mirepresentation of authorship.
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+udunits2
+</td>
+<td style="text-align:left;">
+Orphaned on 2022-01-06 as installation problems were not corrected.
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+bibtex
+</td>
+<td style="text-align:left;">
+Orphaned and corrected on 2020-09-19 as check problems were not corrected in time.
+</td>
+</tr>
+</tbody>
+</table>
+<p>CRAN team might have missed these few packages and didn’t move the comments to X-CRAN-history.</p>
+<p>There are some packages that are not archived that don’t have a CRAN-history happens too, but they usually have other fields changed.</p>
+</div>
+</div>
+<div id="discussion" class="section level1">
+<h1>Discussion</h1>
+<p>Most packages archived on CRAN are due to the maintainers not correcting errors found on the package by CRAN checks.
+It is clear that the checks that CRAN help packages to have a high quality but it has high cost on the maintainers and specially on CRAN team.
+Maintainers don’t seem to have enough time to fix the issues on time.
+And the CRAN team sends personalized reminders to maintainers and sometimes patches to the packages.</p>
+<p>Although the desire to have packages corrected and with no issues is the common goal there are few options on light of these:</p>
+<ul>
+<li><p>Be more restrictive</p>
+<p>Prevent a package to be accepted if it breaks dependencies or archive packages when they fail checks.
+This will make it harder to keep packages on CRAN but would lift some pressure on the CRAN team.
+This would go against the current on other languages repositories, which often they don’t check the packages/modules and even have less restrictions on dependencies (so it might be an unpopular decision).</p></li>
+<li><p>Be more permissive:</p>
+<p>One option would be to allow for more time for maintainers to fix issues. I haven’t find any report of how long does it take for a package since an error to a fix on CRAN but often it is quite long.
+I have seen packages with a warning for months if not years and they weren’t archived from CRAN.</p>
+<p>Maybe if users get a warning on installing packages that a package or one of its dependencies is not clear on all CRAN checks (without error or warnings).
+This might help to make users more conscious of their dependencies but this might add pressure to maintainers who already don’t have enough time to fix the problems of their packages.</p></li>
+<li><p>Provide more help or tools to maintainers</p>
+<p>Another option is to provide a mechanism for maintainers to receive help or fix the package.
+Currently CRAN requires that new packages that break dependencies to give enough notice in advance to other maintainers to fix their package.
+On <a href="https://stat.ethz.ch/mailman/listinfo/r-package-devel">R-pkg-devel mailing list</a> there are often requests for help on submitting and fixing some errors detected by CRAN checks which often result on other maintainers sharing their solutions for the same problem.</p></li>
+</ul>
+<p>There high percentage of packages that once archived do not come back to CRAN might be a good place to start helping maintainers and an opportunity for users to step in and help maintainers of packages they have been using.
+There is need for something else? How would that work?</p>
+<p>At the same time it is admirable that after so many years there are few errors on the data.
+However, the archival process might be a good process to automate, providing the reason on the webpage and add it to X-CRAN-Comment and moving the comments to X-CRAN-History once it is unarchived.
+Knowing more about how these actions are performed by the CRAN team and how the community could help on the process will be beneficial to all.</p>
+<p><strong>Note</strong>: This blog was updated on 2022/01/02 to improve the parsing of actions and dates on packages. Resulting on a change on the first plot to include unarchived which slightly modified the second plot of reasons why packages are archived. This overall only affected the numbers of the plots not the conclusions or discussion.</p>
+<div id="reproducibility" class="section level3">
+<h3>Reproducibility</h3>
+<details>
+<pre><code>## ─ Session info ───────────────────────────────────────────────────────────────────────────────────────────────────────
+##  setting  value
+##  version  R version 4.2.0 (2022-04-22)
+##  os       Ubuntu 20.04.4 LTS
+##  system   x86_64, linux-gnu
+##  ui       X11
+##  language (EN)
+##  collate  en_US.UTF-8
+##  ctype    en_US.UTF-8
+##  tz       Europe/Madrid
+##  date     2022-05-09
+##  pandoc   2.17.1.1 @ /usr/lib/rstudio/bin/quarto/bin/ (via rmarkdown)
+## 
+## ─ Packages ───────────────────────────────────────────────────────────────────────────────────────────────────────────
+##  package      * version date (UTC) lib source
+##  assertthat     0.2.1   2019-03-21 [1] CRAN (R 4.2.0)
+##  blogdown       1.9     2022-03-28 [1] CRAN (R 4.2.0)
+##  bookdown       0.26    2022-04-15 [1] CRAN (R 4.2.0)
+##  bslib          0.3.1   2021-10-06 [1] CRAN (R 4.2.0)
+##  cli            3.3.0   2022-04-25 [1] CRAN (R 4.2.0)
+##  colorspace     2.0-3   2022-02-21 [1] CRAN (R 4.2.0)
+##  ComplexUpset * 1.3.3   2021-12-11 [1] CRAN (R 4.2.0)
+##  crayon         1.5.1   2022-03-26 [1] CRAN (R 4.2.0)
+##  DBI            1.1.2   2021-12-20 [1] CRAN (R 4.2.0)
+##  digest         0.6.29  2021-12-01 [1] CRAN (R 4.2.0)
+##  dplyr        * 1.0.9   2022-04-28 [1] CRAN (R 4.2.0)
+##  ellipsis       0.3.2   2021-04-29 [1] CRAN (R 4.2.0)
+##  evaluate       0.15    2022-02-18 [1] CRAN (R 4.2.0)
+##  fansi          1.0.3   2022-03-24 [1] CRAN (R 4.2.0)
+##  farver         2.1.0   2021-02-28 [1] CRAN (R 4.2.0)
+##  fastmap        1.1.0   2021-01-25 [1] CRAN (R 4.2.0)
+##  generics       0.1.2   2022-01-31 [1] CRAN (R 4.2.0)
+##  ggplot2      * 3.3.6   2022-05-03 [1] CRAN (R 4.2.0)
+##  glue           1.6.2   2022-02-24 [1] CRAN (R 4.2.0)
+##  gtable         0.3.0   2019-03-25 [1] CRAN (R 4.2.0)
+##  highr          0.9     2021-04-16 [1] CRAN (R 4.2.0)
+##  htmltools      0.5.2   2021-08-25 [1] CRAN (R 4.2.0)
+##  jquerylib      0.1.4   2021-04-26 [1] CRAN (R 4.2.0)
+##  jsonlite       1.8.0   2022-02-22 [1] CRAN (R 4.2.0)
+##  knitr          1.39    2022-04-26 [1] CRAN (R 4.2.0)
+##  labeling       0.4.2   2020-10-20 [1] CRAN (R 4.2.0)
+##  lifecycle      1.0.1   2021-09-24 [1] CRAN (R 4.2.0)
+##  magrittr       2.0.3   2022-03-30 [1] CRAN (R 4.2.0)
+##  munsell        0.5.0   2018-06-12 [1] CRAN (R 4.2.0)
+##  patchwork      1.1.1   2020-12-17 [1] CRAN (R 4.2.0)
+##  pillar         1.7.0   2022-02-01 [1] CRAN (R 4.2.0)
+##  pkgconfig      2.0.3   2019-09-22 [1] CRAN (R 4.2.0)
+##  purrr          0.3.4   2020-04-17 [1] CRAN (R 4.2.0)
+##  R6             2.5.1   2021-08-19 [1] CRAN (R 4.2.0)
+##  rlang          1.0.2   2022-03-04 [1] CRAN (R 4.2.0)
+##  rmarkdown      2.14    2022-04-25 [1] CRAN (R 4.2.0)
+##  rstudioapi     0.13    2020-11-12 [1] CRAN (R 4.2.0)
+##  sass           0.4.1   2022-03-23 [1] CRAN (R 4.2.0)
+##  scales         1.2.0   2022-04-13 [1] CRAN (R 4.2.0)
+##  sessioninfo    1.2.2   2021-12-06 [1] CRAN (R 4.2.0)
+##  stringi        1.7.6   2021-11-29 [1] CRAN (R 4.2.0)
+##  stringr        1.4.0   2019-02-10 [1] CRAN (R 4.2.0)
+##  tibble         3.1.7   2022-05-03 [1] CRAN (R 4.2.0)
+##  tidyselect     1.1.2   2022-02-21 [1] CRAN (R 4.2.0)
+##  utf8           1.2.2   2021-07-24 [1] CRAN (R 4.2.0)
+##  vctrs          0.4.1   2022-04-13 [1] CRAN (R 4.2.0)
+##  withr          2.5.0   2022-03-03 [1] CRAN (R 4.2.0)
+##  xfun           0.30    2022-03-02 [1] CRAN (R 4.2.0)
+##  yaml           2.3.5   2022-02-21 [1] CRAN (R 4.2.0)
+## 
+##  [1] /home/lluis/bin/R/4.2.0/lib/R/library
+## 
+## ──────────────────────────────────────────────────────────────────────────────────────────────────────────────────────</code></pre>
+</details>
+</div>
+</div>
+
+    </div>
+
+    
+
+
+
+
+
+  
+  
+
+<p class="edit-page">
+  <a href="https://github.com/llrs/blogR/edit/master/content/post/2021-12-07-reasons-cran-archivals/index.en.html">
+    <i class="fas fa-pen pr-2"></i>Edit this page
+  </a>
+</p>
+
+
+
+
+
+<div class="article-tags">
+  
+  <a class="badge badge-light" href="/tags/cran/">CRAN</a>
+  
+  <a class="badge badge-light" href="/tags/packages/">packages</a>
+  
+  <a class="badge badge-light" href="/tags/archived/">archived</a>
+  
+  <a class="badge badge-light" href="/tags/r/">r</a>
+  
+</div>
+
+
+
+<div class="share-box" aria-hidden="true">
+  <ul class="share">
+    
+      
+      
+      
+        
+      
+      
+      
+      <li>
+        <a href="https://twitter.com/intent/tweet?url=https://llrs.dev/post/2021/12/07/reasons-cran-archivals/&amp;text=Reasons%20why%20packages%20are%20archived%20on%20CRAN" target="_blank" rel="noopener" class="share-btn-twitter">
+          <i class="fab fa-twitter"></i>
+        </a>
+      </li>
+    
+      
+      
+      
+        
+      
+      
+      
+      <li>
+        <a href="https://www.facebook.com/sharer.php?u=https://llrs.dev/post/2021/12/07/reasons-cran-archivals/&amp;t=Reasons%20why%20packages%20are%20archived%20on%20CRAN" target="_blank" rel="noopener" class="share-btn-facebook">
+          <i class="fab fa-facebook"></i>
+        </a>
+      </li>
+    
+      
+      
+      
+        
+      
+      
+      
+      <li>
+        <a href="mailto:?subject=Reasons%20why%20packages%20are%20archived%20on%20CRAN&amp;body=https://llrs.dev/post/2021/12/07/reasons-cran-archivals/" target="_blank" rel="noopener" class="share-btn-email">
+          <i class="fas fa-envelope"></i>
+        </a>
+      </li>
+    
+      
+      
+      
+        
+      
+      
+      
+      <li>
+        <a href="https://www.linkedin.com/shareArticle?url=https://llrs.dev/post/2021/12/07/reasons-cran-archivals/&amp;title=Reasons%20why%20packages%20are%20archived%20on%20CRAN" target="_blank" rel="noopener" class="share-btn-linkedin">
+          <i class="fab fa-linkedin-in"></i>
+        </a>
+      </li>
+    
+      
+      
+      
+        
+      
+      
+      
+      <li>
+        <a href="https://web.whatsapp.com/send?text=Reasons%20why%20packages%20are%20archived%20on%20CRAN%20https://llrs.dev/post/2021/12/07/reasons-cran-archivals/" target="_blank" rel="noopener" class="share-btn-whatsapp">
+          <i class="fab fa-whatsapp"></i>
+        </a>
+      </li>
+    
+  </ul>
+</div>
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+
+
+
+
+
+  
+  
+  
+    
+  
+  
+  
+  <div class="media author-card content-widget-hr">
+    
+      
+      <img class="avatar mr-3 avatar-circle" src="/authors/admin/avatar_hu41a1d1cb0c2270d3fd463263214d3794_229497_270x270_fill_lanczos_center_3.png" alt="Avatar">
+    
+
+    <div class="media-body">
+      <h5 class="card-title"><a href="https://llrs.dev/">Lluís Revilla Sancho</a></h5>
+      <h6 class="card-subtitle">Data scientist</h6>
+      <p class="card-text">Data scientist with interests in software quality, mostly R.</p>
+      <ul class="network-icon" aria-hidden="true">
+  
+    
+    
+    
+      
+    
+    
+    
+    
+    
+    <li>
+      <a href="mailto:lluis.revilla&#43;blog@gmail.com" >
+        <i class="fas fa-envelope"></i>
+      </a>
+    </li>
+  
+    
+    
+    
+      
+    
+    
+    
+    
+    
+      
+    
+    <li>
+      <a href="https://linkedin.com/in/lluisrevilla/" target="_blank" rel="noopener">
+        <i class="fab fa-linkedin-in"></i>
+      </a>
+    </li>
+  
+    
+    
+    
+      
+    
+    
+    
+    
+    
+      
+    
+    <li>
+      <a href="https://fosstodon.org/@Lluis_Revilla" target="_blank" rel="noopener">
+        <i class="fab fa-mastodon"></i>
+      </a>
+    </li>
+  
+    
+    
+    
+      
+    
+    
+    
+    
+    
+      
+    
+    <li>
+      <a href="https://github.com/llrs" target="_blank" rel="noopener">
+        <i class="fab fa-github"></i>
+      </a>
+    </li>
+  
+    
+    
+    
+    
+    
+    
+    
+      
+    
+    <li>
+      <a href="https://scholar.google.es/citations?user=Hin4p3MAAAAJ&amp;hl" target="_blank" rel="noopener">
+        <i class="ai ai-google-scholar"></i>
+      </a>
+    </li>
+  
+    
+    
+    
+    
+    
+    
+    
+      
+    
+    <li>
+      <a href="https://orcid.org/0000-0001-9747-2570" target="_blank" rel="noopener">
+        <i class="ai ai-orcid"></i>
+      </a>
+    </li>
+  
+    
+    
+    
+      
+    
+    
+    
+    
+    
+      
+    
+    <li>
+      <a href="https://www.buymeacoffee.com/llrs" target="_blank" rel="noopener">
+        <i class="fas fa-pizza-slice"></i>
+      </a>
+    </li>
+  
+</ul>
+
+    </div>
+  </div>
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <div class="article-widget content-widget-hr">
+    <h3>Related</h3>
+    <ul>
+      
+      <li><a href="/talk/user-2021/">Packages submission and reviews; how does it work?</a></li>
+      
+      <li><a href="/post/2020/01/25/cran-dependencies/">CRAN dependencies</a></li>
+      
+      <li><a href="/talk/workshop-creating-packages/">Workshop: Creating packages</a></li>
+      
+      <li><a href="/post/2021/01/31/cran-review/">CRAN review</a></li>
+      
+      <li><a href="/post/2020/09/02/ropensci-submissions/">rOpenSci submissions</a></li>
+      
+    </ul>
+  </div>
+  
+
+
+
+  </div>
+</article>
+
+      
+
+    
+    
+    
+      <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.4.1/jquery.min.js" integrity="sha256-CSXorXvZcTkaix6Yvo6HppcZGetbYMGWSFlBw8HfCJo=" crossorigin="anonymous"></script>
+      <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery.imagesloaded/4.1.4/imagesloaded.pkgd.min.js" integrity="sha256-lqvxZrPLtfffUl2G/e7szqSvPBILGbwmsGE1MKlOi0Q=" crossorigin="anonymous"></script>
+      <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery.isotope/3.0.6/isotope.pkgd.min.js" integrity="sha256-CBrpuqrMhXwcLLUd5tvQ4euBHCdh7wGlDfNz8vbu/iI=" crossorigin="anonymous"></script>
+      <script src="https://cdnjs.cloudflare.com/ajax/libs/fancybox/3.5.7/jquery.fancybox.min.js" integrity="sha256-yt2kYMy0w8AbtF89WXb2P1rfjcP/HTHLT7097U8Y5b8=" crossorigin="anonymous"></script>
+
+      
+
+      
+        
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.18.1/highlight.min.js" integrity="sha256-eOgo0OtLL4cdq7RdwRUiGKLX9XsIJ7nGhWEKbohmVAQ=" crossorigin="anonymous"></script>
+        
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.18.1/languages/r.min.js"></script>
+        
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.18.1/languages/phython.min.js"></script>
+        
+      
+
+    
+
+    
+    
+
+    
+    
+    <script>const code_highlighting = true;</script>
+    
+
+    
+    
+    <script>const isSiteThemeDark = false;</script>
+    
+
+    
+    
+    
+    
+    
+    
+    <script>
+      const search_config = {"indexURI":"/index.json","minLength":1,"threshold":0.3};
+      const i18n = {"no_results":"No results found","placeholder":"Search...","results":"results found"};
+      const content_type = {
+        'post': "Posts",
+        'project': "Projects",
+        'publication' : "Publications",
+        'talk' : "Talks"
+        };
+    </script>
+    
+
+    
+    
+
+    
+    
+    <script id="search-hit-fuse-template" type="text/x-template">
+      <div class="search-hit" id="summary-{{key}}">
+      <div class="search-hit-content">
+        <div class="search-hit-name">
+          <a href="{{relpermalink}}">{{title}}</a>
+          <div class="article-metadata search-hit-type">{{type}}</div>
+          <p class="search-hit-description">{{snippet}}</p>
+        </div>
+      </div>
+      </div>
+    </script>
+    
+
+    
+    
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/fuse.js/3.2.1/fuse.min.js" integrity="sha256-VzgmKYmhsGNNN4Ph1kMW+BjoYJM2jV5i4IlFoeZA9XI=" crossorigin="anonymous"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/mark.js/8.11.1/jquery.mark.min.js" integrity="sha256-4HLtjeVgH0eIB3aZ9mLYF6E8oU5chNdjU6p6rrXpl9U=" crossorigin="anonymous"></script>
+    
+
+    
+    
+
+    
+    
+
+    
+    
+    
+    
+    
+    
+    
+    
+    
+      
+    
+    
+    
+    
+    <script src="/js/academic.min.6f1005d1a84220e2f466ff3d8e712f31.js"></script>
+
+    
+
+
+
+
+
+
+  
+  
+  <div class="container">
+    <footer class="site-footer">
+  
+  <p class="powered-by">
+    
+      <a href="/privacy/">Privacy Policy</a>
+    
+    
+  </p>
+  
+
+  <p class="powered-by">
+    If it is code you can copy and reuse (MIT) if it is text, please cite and reuse CC-BY 2026. &middot; 
+
+    Powered by the
+    <a href="https://sourcethemes.com/academic/" target="_blank" rel="noopener">Academic theme</a> for
+    <a href="https://gohugo.io" target="_blank" rel="noopener">Hugo</a>.
+
+    
+    <span class="float-right" aria-hidden="true">
+      <a href="#" class="back-to-top">
+        <span class="button_icon">
+          <i class="fas fa-chevron-up fa-2x"></i>
+        </span>
+      </a>
+    </span>
+    
+  </p>
+</footer>
+
+  </div>
+  
+
+  
+<div id="modal" class="modal fade" role="dialog">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title">Cite</h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+        <pre><code class="tex hljs"></code></pre>
+      </div>
+      <div class="modal-footer">
+        <a class="btn btn-outline-primary my-1 js-copy-cite" href="#" target="_blank">
+          <i class="fas fa-copy"></i> Copy
+        </a>
+        <a class="btn btn-outline-primary my-1 js-download-cite" href="#" target="_blank">
+          <i class="fas fa-download"></i> Download
+        </a>
+        <div id="modal-error"></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+</body>
+</html>

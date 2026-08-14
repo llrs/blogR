@@ -1,0 +1,1194 @@
+<!DOCTYPE html>
+<html lang="en-us">
+
+<head>
+
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="generator" content="Source Themes Academic 4.8.0">
+
+  
+
+  
+  
+  
+  
+  
+    
+    
+    
+  
+  
+
+  <meta name="author" content="Lluís Revilla Sancho">
+
+  
+  
+  
+    
+  
+  <meta name="description" content="Explains the new updates of the experDesign 0.2.0 package">
+
+  
+  <link rel="alternate" hreflang="en-us" href="https://llrs.dev/post/2023/04/09/experdesign-follow-up/">
+
+  
+
+
+  
+  
+  
+  <meta name="theme-color" content="#2962ff">
+  
+
+  
+  
+
+  
+  
+  
+  
+    
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/academicons/1.8.6/css/academicons.min.css" integrity="sha256-uFVgMKfistnJAfoCUQigIl+JfUaP47GrRKjf6CTPVmw=" crossorigin="anonymous">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.12.0-1/css/all.min.css" integrity="sha256-4w9DunooKSr3MFXHXWyFER38WmPdm361bQS/2KUWZbU=" crossorigin="anonymous">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/fancybox/3.5.7/jquery.fancybox.min.css" integrity="sha256-Vzbj7sDDS/woiFS3uNKo8eIuni59rjyNGtXfstRzStA=" crossorigin="anonymous">
+
+    
+    
+    
+      
+    
+    
+      
+      
+        
+          <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.18.1/styles/github.min.css" crossorigin="anonymous" title="hl-light">
+          <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.18.1/styles/dracula.min.css" crossorigin="anonymous" title="hl-dark" disabled>
+        
+      
+    
+
+    
+
+    
+
+    
+    
+      
+
+      
+      
+
+      
+    
+      
+
+      
+      
+
+      
+    
+      
+
+      
+      
+
+      
+    
+      
+
+      
+      
+
+      
+    
+      
+
+      
+      
+
+      
+    
+      
+
+      
+      
+
+      
+    
+      
+
+      
+      
+
+      
+    
+      
+
+      
+      
+
+      
+    
+      
+
+      
+      
+
+      
+    
+      
+
+      
+      
+
+      
+    
+      
+
+      
+      
+
+      
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/lazysizes/5.1.2/lazysizes.min.js" integrity="sha256-Md1qLToewPeKjfAHU1zyPwOutccPAm5tahnaw7Osw0A=" crossorigin="anonymous" async></script>
+      
+    
+      
+
+      
+      
+
+      
+    
+      
+
+      
+      
+
+      
+    
+      
+
+      
+      
+        
+      
+
+      
+    
+      
+
+      
+      
+
+      
+    
+
+  
+
+  
+  
+  
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Montserrat:400,700%7CRoboto:400,400italic,700%7CRoboto+Mono&display=swap">
+  
+
+  
+  
+  
+  
+  <link rel="stylesheet" href="/css/academic.css">
+
+  
+
+
+
+
+  
+
+
+  
+
+  <link rel="manifest" href="/index.webmanifest">
+  <link rel="icon" type="image/png" href="/images/icon_hud03320d081f55857e6179906aee3769c_2658_32x32_fill_lanczos_center_3.png">
+  <link rel="apple-touch-icon" type="image/png" href="/images/icon_hud03320d081f55857e6179906aee3769c_2658_192x192_fill_lanczos_center_3.png">
+
+  <link rel="canonical" href="https://llrs.dev/post/2023/04/09/experdesign-follow-up/">
+
+  
+  
+  
+  
+  
+    
+  
+  
+  <meta property="twitter:card" content="summary_large_image">
+  
+  <meta property="og:site_name" content="B101nfo">
+  <meta property="og:url" content="https://llrs.dev/post/2023/04/09/experdesign-follow-up/">
+  <meta property="og:title" content="experDesign: follow up | B101nfo">
+  <meta property="og:description" content="Explains the new updates of the experDesign 0.2.0 package"><meta property="og:image" content="https://llrs.dev/post/2023/04/09/experdesign-follow-up/featured.png">
+  <meta property="twitter:image" content="https://llrs.dev/post/2023/04/09/experdesign-follow-up/featured.png"><meta property="og:locale" content="en-us">
+  
+    
+      <meta property="article:published_time" content="2023-04-09T00:00:00&#43;00:00">
+    
+    <meta property="article:modified_time" content="2023-04-09T00:00:00&#43;00:00">
+  
+
+  
+
+
+    
+
+
+
+
+
+
+  
+
+
+
+
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "BlogPosting",
+  "mainEntityOfPage": {
+    "@type": "WebPage",
+    "@id": "https://llrs.dev/post/2023/04/09/experdesign-follow-up/"
+  },
+  "headline": "experDesign: follow up",
+  
+  "image": [
+    "https://llrs.dev/post/2023/04/09/experdesign-follow-up/featured.png"
+  ],
+  
+  "datePublished": "2023-04-09T00:00:00Z",
+  "dateModified": "2023-04-09T00:00:00Z",
+  
+  "author": {
+    "@type": "Person",
+    "name": "Lluís Revilla Sancho"
+  },
+  
+  "publisher": {
+    "@type": "Organization",
+    "name": "B101nfo",
+    "logo": {
+      "@type": "ImageObject",
+      "url": "https://llrs.dev/images/icon_hud03320d081f55857e6179906aee3769c_2658_192x192_fill_lanczos_center_3.png"
+    }
+  },
+  "description": "Explains the new updates of the experDesign 0.2.0 package"
+}
+</script>
+
+  
+
+  
+
+
+  
+
+
+  
+
+
+
+
+
+  <title>experDesign: follow up | B101nfo</title>
+
+</head>
+
+<body id="top" data-spy="scroll" data-offset="70" data-target="#TableOfContents" >
+
+  <aside class="search-results" id="search">
+  <div class="container">
+    <section class="search-header">
+
+      <div class="row no-gutters justify-content-between mb-3">
+        <div class="col-6">
+          <h1>Search</h1>
+        </div>
+        <div class="col-6 col-search-close">
+          <a class="js-search" href="#"><i class="fas fa-times-circle text-muted" aria-hidden="true"></i></a>
+        </div>
+      </div>
+
+      <div id="search-box">
+        
+        <input name="q" id="search-query" placeholder="Search..." autocapitalize="off"
+        autocomplete="off" autocorrect="off" spellcheck="false" type="search">
+        
+      </div>
+
+    </section>
+    <section class="section-search-results">
+
+      <div id="search-hits">
+        
+      </div>
+
+    </section>
+  </div>
+</aside>
+
+
+  
+
+
+
+
+
+
+
+<nav class="navbar navbar-expand-lg navbar-light compensate-for-scrollbar" id="navbar-main">
+  <div class="container">
+
+    
+    <div class="d-none d-lg-inline-flex">
+      <a class="navbar-brand" href="/">B101nfo</a>
+    </div>
+    
+
+    
+    <button type="button" class="navbar-toggler" data-toggle="collapse"
+            data-target="#navbar-content" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
+    <span><i class="fas fa-bars"></i></span>
+    </button>
+    
+
+    
+    <div class="navbar-brand-mobile-wrapper d-inline-flex d-lg-none">
+      <a class="navbar-brand" href="/">B101nfo</a>
+    </div>
+    
+
+    
+    
+    <div class="navbar-collapse main-menu-item collapse justify-content-start" id="navbar-content">
+
+      
+      <ul class="navbar-nav d-md-inline-flex">
+        
+
+        
+
+        
+        
+        
+          
+        
+
+        
+        
+        
+        
+        
+        
+          
+          
+          
+            
+          
+          
+        
+
+        <li class="nav-item">
+          <a class="nav-link " href="/#about"><span>Home</span></a>
+        </li>
+
+        
+        
+
+        
+
+        
+        
+        
+
+        
+        
+        
+        
+        
+        
+
+        <li class="nav-item">
+          <a class="nav-link  active" href="/post"><span>Blog</span></a>
+        </li>
+
+        
+        
+
+        
+
+        
+        
+        
+
+        
+        
+        
+        
+        
+        
+
+        <li class="nav-item">
+          <a class="nav-link " href="/talk"><span>Talks</span></a>
+        </li>
+
+        
+        
+
+      
+
+        
+      </ul>
+    </div>
+
+    <ul class="nav-icons navbar-nav flex-row ml-auto d-flex pl-md-2">
+      
+      <li class="nav-item">
+        <a class="nav-link js-search" href="#"><i class="fas fa-search" aria-hidden="true"></i></a>
+      </li>
+      
+
+      
+      <li class="nav-item">
+        <a class="nav-link js-dark-toggle" href="#"><i class="fas fa-moon" aria-hidden="true"></i></a>
+      </li>
+      
+
+      
+
+    </ul>
+
+  </div>
+</nav>
+
+
+  <article class="article">
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+
+
+<div class="article-container pt-3">
+  <h1>experDesign: follow up</h1>
+
+  
+
+  
+
+
+<div class="article-metadata">
+
+  
+  
+  
+  
+  <div>
+    
+
+  
+  <span><a href="/authors/admin/">Lluís Revilla Sancho</a></span>
+  </div>
+  
+  
+
+  
+  <span class="article-date">
+    
+    
+      
+    
+    Apr 9, 2023
+  </span>
+  
+
+  
+
+  
+  <span class="middot-divider"></span>
+  <span class="article-reading-time">
+    5 min read
+  </span>
+  
+
+  
+  
+  
+
+  
+  
+  <span class="middot-divider"></span>
+  <span class="article-categories">
+    <i class="fas fa-folder mr-1"></i><a href="/categories/bioinformatics/">bioinformatics</a>, <a href="/categories/news/">news</a></span>
+  
+
+</div>
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+</div>
+
+
+<div class="article-header article-container featured-image-wrapper mt-4 mb-4" style="max-width: 498px; max-height: 377px;">
+  <div style="position: relative">
+    <img src="/post/2023/04/09/experdesign-follow-up/featured.png" alt="" class="featured-image">
+    
+  </div>
+</div>
+
+
+
+  <div class="article-container">
+
+    <div class="article-style">
+      
+
+
+<p>I am happy to announce a new release of experDesign.
+Install it from CRAN with:</p>
+<pre class="r"><code>install.packages(&quot;experDesign&quot;)
+library(&quot;experDesign&quot;)</code></pre>
+<p>This new release has focused in more tricky aspects when designing an experiment:</p>
+<ul>
+<li>Checking the samples of your experiment.</li>
+<li>How to continue stratifying your conditions after some initial batch.</li>
+</ul>
+<p>These functions should be used before carrying out anything once you have your samples collected.
+You can use these functions and make an informed decision of what might happen with your experiment.</p>
+<div id="checking-your-samples" class="section level1">
+<h1>Checking your samples</h1>
+<p>The new function <code>check_data()</code> will warn you if it finds some known issues with your data.</p>
+<pre class="r"><code>library(&quot;experDesign&quot;)
+library(&quot;MASS&quot;)</code></pre>
+<p>If we take the survey dataset from the MASS package we can see that it has some issues:</p>
+<pre class="r"><code>data(survey, package = &quot;MASS&quot;)
+check_data(survey)
+## Warning: Two categorical variables don&#39;t have all combinations.
+## Warning: Some values are missing.
+## Warning: There is a combination of categories with no replicates; i.e. just one
+## sample.
+## [1] FALSE</code></pre>
+<p>While if we fabricate our own dataset we might realize we have a problem</p>
+<pre class="r"><code>rdata &lt;- expand.grid(sex = c(&quot;M&quot;, &quot;F&quot;), class = c(&quot;lower&quot;, &quot;median&quot;, &quot;high&quot;))
+stopifnot(&quot;Same samples/rows as combinations of classes&quot; = nrow(rdata) == 2*3)
+check_data(rdata)
+## Warning: There is a combination of categories with no replicates; i.e. just one
+## sample.
+## [1] FALSE
+# We create some new samples with the same conditions
+rdata2 &lt;- rbind(rdata, rdata)
+check_data(rdata2)
+## [1] TRUE</code></pre>
+<p>One might decide to go ahead with what is available or use only some of those samples or wait to collect more samples for the experiment</p>
+</div>
+<div id="follow-up" class="section level1">
+<h1>Follow up</h1>
+<p>Imagine you have 100 samples that you distribute in 4 batches of 25 samples each.
+Later, you collect 80 more samples to analyze.
+You want these new samples to be analyzed together with those previous 100 samples.
+Will it be possible? How should you distribute your new samples in groups of 25?</p>
+<p>Using the same dataset from <code>MASS</code> imagine if we first collected 118 observations and later 119 more:</p>
+<pre class="r"><code>survey1 &lt;- survey[1:118, ]
+survey2 &lt;- survey[119:nrow(survey), ]
+# Using low number of iterations to speed the process 
+# you should even use higher number than the default
+fu &lt;- follow_up(survey1, survey2, size_subset = 50, iterations = 10)
+## Warning: There are some problems with the data.
+## Warning: There are some problems with the new samples and the batches.
+## Warning: There are some problems with the new data.
+## Warning: There are some problems with the old data.</code></pre>
+<p>Following the previous new function it reports if there are problems with the observations.
+One can check each collection with <code>check_data</code> to know more about the problems found.</p>
+<p>If you have already performed the experiment on your observations you can also check the distribution:</p>
+<pre class="r"><code># Create the first batch
+variables &lt;- c(&quot;Sex&quot;, &quot;Smoke&quot;, &quot;Age&quot;)
+survey1 &lt;- survey1[, variables]
+index1 &lt;- design(survey1, size_subset = 50, iterations = 10)
+## Warning: There might be some problems with the data use check_data().
+r_survey &lt;- inspect(index1, survey1)
+# Create the second batch with &quot;new&quot; students
+survey2 &lt;- survey2[, variables]
+survey2$batch &lt;- NA
+# Prepare the follow up
+all_classroom &lt;- rbind(r_survey, survey2)
+fu2 &lt;- follow_up2(all_classroom, size_subset = 50, iterations = 10)
+## Warning: There are some problems with the data.
+## Warning: There are some problems with the new samples and the batches.
+## Warning: There are some problems with the new data.
+## Warning: There are some problems with the old data.
+tail(fu2)
+## [1] &quot;NewSubset2&quot; &quot;NewSubset2&quot; &quot;NewSubset2&quot; &quot;NewSubset2&quot; &quot;NewSubset2&quot;
+## [6] &quot;NewSubset3&quot;</code></pre>
+<p>Using this function will help to decide which new observations go to which new batches.</p>
+</div>
+<div id="closing-remarks" class="section level1">
+<h1>Closing remarks</h1>
+<p>The famous quote from Fisher goes:</p>
+<blockquote>
+<p>“To consult the statistician after an experiment is finished is often merely to ask him to conduct a <em>post mortem</em> examination. He can perhaps say what the experiment died of.”</p>
+</blockquote>
+<p>This emphasizes the importance of involving a statistician early on in the experimental design process.<br />
+Unfortunately, in some cases, it may be too late to involve a statistician in the experimental design process or the reality of unforeseen circumstances messed the design of your carefully planned experiment.</p>
+<p>My aim with this package is to provide practical tools for statisticians, bioinformaticians, and anyone who works with data.
+These tools are designed to be easy to use and can be used to analyze data in a variety of contexts.
+Let me know if it is helpful in your case.</p>
+<div id="reproducibility" class="section level3">
+<h3>Reproducibility</h3>
+<details>
+<pre><code>## ─ Session info ───────────────────────────────────────────────────────────────────────────────────────────────────────
+##  setting  value
+##  version  R version 4.2.2 (2022-10-31)
+##  os       Ubuntu 22.04.2 LTS
+##  system   x86_64, linux-gnu
+##  ui       X11
+##  language en_US
+##  collate  en_US.UTF-8
+##  ctype    en_US.UTF-8
+##  tz       Europe/Madrid
+##  date     2023-04-09
+##  pandoc   2.19.2 @ /usr/lib/rstudio/resources/app/bin/quarto/bin/tools/ (via rmarkdown)
+## 
+## ─ Packages ───────────────────────────────────────────────────────────────────────────────────────────────────────────
+##  package     * version  date (UTC) lib source
+##  blogdown      1.16     2022-12-13 [1] CRAN (R 4.2.2)
+##  bookdown      0.33     2023-03-06 [1] CRAN (R 4.2.2)
+##  bslib         0.4.2    2022-12-16 [1] CRAN (R 4.2.2)
+##  cachem        1.0.7    2023-02-24 [1] CRAN (R 4.2.2)
+##  cli           3.6.1    2023-03-23 [1] CRAN (R 4.2.2)
+##  digest        0.6.31   2022-12-11 [1] CRAN (R 4.2.2)
+##  evaluate      0.20     2023-01-17 [1] CRAN (R 4.2.2)
+##  experDesign * 0.2.0    2023-04-05 [1] CRAN (R 4.2.2)
+##  fastmap       1.1.1    2023-02-24 [1] CRAN (R 4.2.2)
+##  htmltools     0.5.4    2022-12-07 [1] CRAN (R 4.2.2)
+##  jquerylib     0.1.4    2021-04-26 [1] CRAN (R 4.2.2)
+##  jsonlite      1.8.4    2022-12-06 [1] CRAN (R 4.2.2)
+##  knitr         1.42     2023-01-25 [1] CRAN (R 4.2.2)
+##  MASS        * 7.3-58.1 2022-08-03 [2] CRAN (R 4.2.2)
+##  R6            2.5.1    2021-08-19 [1] CRAN (R 4.2.2)
+##  rlang         1.1.0    2023-03-14 [1] CRAN (R 4.2.2)
+##  rmarkdown     2.20     2023-01-19 [1] CRAN (R 4.2.2)
+##  rstudioapi    0.14     2022-08-22 [1] CRAN (R 4.2.2)
+##  sass          0.4.5    2023-01-24 [1] CRAN (R 4.2.2)
+##  sessioninfo   1.2.2    2021-12-06 [1] CRAN (R 4.2.2)
+##  xfun          0.37     2023-01-31 [1] CRAN (R 4.2.2)
+##  yaml          2.3.7    2023-01-23 [1] CRAN (R 4.2.2)
+## 
+##  [1] /home/lluis/bin/R/4.2.2
+##  [2] /opt/R/4.2.2/lib/R/library
+## 
+## ──────────────────────────────────────────────────────────────────────────────────────────────────────────────────────</code></pre>
+</details>
+</div>
+</div>
+
+    </div>
+
+    
+
+
+
+
+
+  
+  
+
+<p class="edit-page">
+  <a href="https://github.com/llrs/blogR/edit/master/content/post/2023-04-09-experdesign-follow-up/index.en.html">
+    <i class="fas fa-pen pr-2"></i>Edit this page
+  </a>
+</p>
+
+
+
+
+
+<div class="article-tags">
+  
+  <a class="badge badge-light" href="/tags/r/">r</a>
+  
+  <a class="badge badge-light" href="/tags/packages/">packages</a>
+  
+  <a class="badge badge-light" href="/tags/experdesign/">experDesign</a>
+  
+</div>
+
+
+
+<div class="share-box" aria-hidden="true">
+  <ul class="share">
+    
+      
+      
+      
+        
+      
+      
+      
+      <li>
+        <a href="https://twitter.com/intent/tweet?url=https://llrs.dev/post/2023/04/09/experdesign-follow-up/&amp;text=experDesign:%20follow%20up" target="_blank" rel="noopener" class="share-btn-twitter">
+          <i class="fab fa-twitter"></i>
+        </a>
+      </li>
+    
+      
+      
+      
+        
+      
+      
+      
+      <li>
+        <a href="https://www.facebook.com/sharer.php?u=https://llrs.dev/post/2023/04/09/experdesign-follow-up/&amp;t=experDesign:%20follow%20up" target="_blank" rel="noopener" class="share-btn-facebook">
+          <i class="fab fa-facebook"></i>
+        </a>
+      </li>
+    
+      
+      
+      
+        
+      
+      
+      
+      <li>
+        <a href="mailto:?subject=experDesign:%20follow%20up&amp;body=https://llrs.dev/post/2023/04/09/experdesign-follow-up/" target="_blank" rel="noopener" class="share-btn-email">
+          <i class="fas fa-envelope"></i>
+        </a>
+      </li>
+    
+      
+      
+      
+        
+      
+      
+      
+      <li>
+        <a href="https://www.linkedin.com/shareArticle?url=https://llrs.dev/post/2023/04/09/experdesign-follow-up/&amp;title=experDesign:%20follow%20up" target="_blank" rel="noopener" class="share-btn-linkedin">
+          <i class="fab fa-linkedin-in"></i>
+        </a>
+      </li>
+    
+      
+      
+      
+        
+      
+      
+      
+      <li>
+        <a href="https://web.whatsapp.com/send?text=experDesign:%20follow%20up%20https://llrs.dev/post/2023/04/09/experdesign-follow-up/" target="_blank" rel="noopener" class="share-btn-whatsapp">
+          <i class="fab fa-whatsapp"></i>
+        </a>
+      </li>
+    
+  </ul>
+</div>
+
+
+
+
+
+
+
+
+
+
+
+
+  
+    
+    
+
+
+
+
+
+  
+  
+  
+    
+  
+  
+  
+  <div class="media author-card content-widget-hr">
+    
+      
+      <img class="avatar mr-3 avatar-circle" src="/authors/admin/avatar_hu41a1d1cb0c2270d3fd463263214d3794_229497_270x270_fill_lanczos_center_3.png" alt="Avatar">
+    
+
+    <div class="media-body">
+      <h5 class="card-title"><a href="https://llrs.dev/">Lluís Revilla Sancho</a></h5>
+      <h6 class="card-subtitle">Data scientist</h6>
+      <p class="card-text">Data scientist with interests in software quality, mostly R.</p>
+      <ul class="network-icon" aria-hidden="true">
+  
+    
+    
+    
+      
+    
+    
+    
+    
+    
+    <li>
+      <a href="mailto:lluis.revilla&#43;blog@gmail.com" >
+        <i class="fas fa-envelope"></i>
+      </a>
+    </li>
+  
+    
+    
+    
+      
+    
+    
+    
+    
+    
+      
+    
+    <li>
+      <a href="https://linkedin.com/in/lluisrevilla/" target="_blank" rel="noopener">
+        <i class="fab fa-linkedin-in"></i>
+      </a>
+    </li>
+  
+    
+    
+    
+      
+    
+    
+    
+    
+    
+      
+    
+    <li>
+      <a href="https://fosstodon.org/@Lluis_Revilla" target="_blank" rel="noopener">
+        <i class="fab fa-mastodon"></i>
+      </a>
+    </li>
+  
+    
+    
+    
+      
+    
+    
+    
+    
+    
+      
+    
+    <li>
+      <a href="https://github.com/llrs" target="_blank" rel="noopener">
+        <i class="fab fa-github"></i>
+      </a>
+    </li>
+  
+    
+    
+    
+    
+    
+    
+    
+      
+    
+    <li>
+      <a href="https://scholar.google.es/citations?user=Hin4p3MAAAAJ&amp;hl" target="_blank" rel="noopener">
+        <i class="ai ai-google-scholar"></i>
+      </a>
+    </li>
+  
+    
+    
+    
+    
+    
+    
+    
+      
+    
+    <li>
+      <a href="https://orcid.org/0000-0001-9747-2570" target="_blank" rel="noopener">
+        <i class="ai ai-orcid"></i>
+      </a>
+    </li>
+  
+    
+    
+    
+      
+    
+    
+    
+    
+    
+      
+    
+    <li>
+      <a href="https://www.buymeacoffee.com/llrs" target="_blank" rel="noopener">
+        <i class="fas fa-pizza-slice"></i>
+      </a>
+    </li>
+  
+</ul>
+
+    </div>
+  </div>
+
+
+  
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <div class="article-widget content-widget-hr">
+    <h3>Related</h3>
+    <ul>
+      
+      <li><a href="/post/2023/02/08/accessing-redcap-from-r/">Accessing REDCap from R</a></li>
+      
+      <li><a href="/post/2022/07/28/cran-files-2/">Exploring CRAN&#39;s files: part 2</a></li>
+      
+      <li><a href="/post/2022/07/23/cran-files-1/">Exploring CRAN&#39;s files: part 1</a></li>
+      
+      <li><a href="/post/2022/07/04/rtweet-1-0-0/">Upgrading rtweet to 1.0.2</a></li>
+      
+      <li><a href="/post/2021/12/07/reasons-cran-archivals/">Reasons why packages are archived on CRAN</a></li>
+      
+    </ul>
+  </div>
+  
+
+
+
+  </div>
+</article>
+
+      
+
+    
+    
+    
+      <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.4.1/jquery.min.js" integrity="sha256-CSXorXvZcTkaix6Yvo6HppcZGetbYMGWSFlBw8HfCJo=" crossorigin="anonymous"></script>
+      <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery.imagesloaded/4.1.4/imagesloaded.pkgd.min.js" integrity="sha256-lqvxZrPLtfffUl2G/e7szqSvPBILGbwmsGE1MKlOi0Q=" crossorigin="anonymous"></script>
+      <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery.isotope/3.0.6/isotope.pkgd.min.js" integrity="sha256-CBrpuqrMhXwcLLUd5tvQ4euBHCdh7wGlDfNz8vbu/iI=" crossorigin="anonymous"></script>
+      <script src="https://cdnjs.cloudflare.com/ajax/libs/fancybox/3.5.7/jquery.fancybox.min.js" integrity="sha256-yt2kYMy0w8AbtF89WXb2P1rfjcP/HTHLT7097U8Y5b8=" crossorigin="anonymous"></script>
+
+      
+
+      
+        
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.18.1/highlight.min.js" integrity="sha256-eOgo0OtLL4cdq7RdwRUiGKLX9XsIJ7nGhWEKbohmVAQ=" crossorigin="anonymous"></script>
+        
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.18.1/languages/r.min.js"></script>
+        
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.18.1/languages/phython.min.js"></script>
+        
+      
+
+    
+
+    
+    
+
+    
+    
+    <script>const code_highlighting = true;</script>
+    
+
+    
+    
+    <script>const isSiteThemeDark = false;</script>
+    
+
+    
+    
+    
+    
+    
+    
+    <script>
+      const search_config = {"indexURI":"/index.json","minLength":1,"threshold":0.3};
+      const i18n = {"no_results":"No results found","placeholder":"Search...","results":"results found"};
+      const content_type = {
+        'post': "Posts",
+        'project': "Projects",
+        'publication' : "Publications",
+        'talk' : "Talks"
+        };
+    </script>
+    
+
+    
+    
+
+    
+    
+    <script id="search-hit-fuse-template" type="text/x-template">
+      <div class="search-hit" id="summary-{{key}}">
+      <div class="search-hit-content">
+        <div class="search-hit-name">
+          <a href="{{relpermalink}}">{{title}}</a>
+          <div class="article-metadata search-hit-type">{{type}}</div>
+          <p class="search-hit-description">{{snippet}}</p>
+        </div>
+      </div>
+      </div>
+    </script>
+    
+
+    
+    
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/fuse.js/3.2.1/fuse.min.js" integrity="sha256-VzgmKYmhsGNNN4Ph1kMW+BjoYJM2jV5i4IlFoeZA9XI=" crossorigin="anonymous"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/mark.js/8.11.1/jquery.mark.min.js" integrity="sha256-4HLtjeVgH0eIB3aZ9mLYF6E8oU5chNdjU6p6rrXpl9U=" crossorigin="anonymous"></script>
+    
+
+    
+    
+
+    
+    
+
+    
+    
+    
+    
+    
+    
+    
+    
+    
+      
+    
+    
+    
+    
+    <script src="/js/academic.min.6f1005d1a84220e2f466ff3d8e712f31.js"></script>
+
+    
+
+
+
+
+
+
+  
+  
+  <div class="container">
+    <footer class="site-footer">
+  
+  <p class="powered-by">
+    
+      <a href="/privacy/">Privacy Policy</a>
+    
+    
+  </p>
+  
+
+  <p class="powered-by">
+    If it is code you can copy and reuse (MIT) if it is text, please cite and reuse CC-BY 2026. &middot; 
+
+    Powered by the
+    <a href="https://sourcethemes.com/academic/" target="_blank" rel="noopener">Academic theme</a> for
+    <a href="https://gohugo.io" target="_blank" rel="noopener">Hugo</a>.
+
+    
+    <span class="float-right" aria-hidden="true">
+      <a href="#" class="back-to-top">
+        <span class="button_icon">
+          <i class="fas fa-chevron-up fa-2x"></i>
+        </span>
+      </a>
+    </span>
+    
+  </p>
+</footer>
+
+  </div>
+  
+
+  
+<div id="modal" class="modal fade" role="dialog">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title">Cite</h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+        <pre><code class="tex hljs"></code></pre>
+      </div>
+      <div class="modal-footer">
+        <a class="btn btn-outline-primary my-1 js-copy-cite" href="#" target="_blank">
+          <i class="fas fa-copy"></i> Copy
+        </a>
+        <a class="btn btn-outline-primary my-1 js-download-cite" href="#" target="_blank">
+          <i class="fas fa-download"></i> Download
+        </a>
+        <div id="modal-error"></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+</body>
+</html>
