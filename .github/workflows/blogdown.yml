@@ -31,15 +31,7 @@ jobs:
         with:
           dependencies: 'FALSE'
           extra-packages: >
-            any::pkgdown,
-            llrs/bugRzilla=?ignore,
-            r-hub/cransays=?ignore,
-            hadley/emo=?ignore,
-            mariavica/miRcomb=?ignore,
-            diegovalle/mxmaps=?ignore,
-            cran/rtweet=?ignore,
-            cran/socialGH=?ignore,
-            cran/tweetbotornot=?ignore
+            any::blogdown
 
       - name: Install hugo
         run: blogdown::install_hugo(version = "0.91.2")
