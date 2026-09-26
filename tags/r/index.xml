@@ -5,12 +5,25 @@
     <link>https://llrs.dev/tags/r/</link>
       <atom:link href="https://llrs.dev/tags/r/index.xml" rel="self" type="application/rss+xml" />
     <description>r</description>
-    <generator>Source Themes Academic (https://sourcethemes.com/academic/)</generator><language>en-us</language><copyright>If it is code you can copy and reuse (MIT) if it is text, please cite and reuse CC-BY 2026.</copyright><lastBuildDate>Mon, 10 Feb 2025 00:00:00 +0000</lastBuildDate>
+    <generator>Source Themes Academic (https://sourcethemes.com/academic/)</generator><language>en-us</language><copyright>If it is code you can copy and reuse (MIT) if it is text, please cite and reuse CC-BY 2026.</copyright><lastBuildDate>Tue, 07 Jul 2026 10:30:00 +0200</lastBuildDate>
     <image>
       <url>img/map[gravatar:%!s(bool=false) shape:circle]</url>
       <title>r</title>
       <link>https://llrs.dev/tags/r/</link>
     </image>
+    
+    <item>
+      <title>Maintaining a package on CRAN</title>
+      <link>https://llrs.dev/talk/maintaining-a-package-on-cran/</link>
+      <pubDate>Tue, 07 Jul 2026 10:30:00 +0200</pubDate>
+      <guid>https://llrs.dev/talk/maintaining-a-package-on-cran/</guid>
+      <description>
+
+
+&lt;p&gt;This is a presentation of this &lt;a href=&#34;https://llrs.dev/post/2026/04/25/life-of-a-package/&#34;&gt;blog post&lt;/a&gt; with a bit more focus on new maintainers and to help maintainers how to keep the packages on CRAN. I used the analogy of a garden to explain the role and tasks that CRAN maintainers have regarding packages.&lt;/p&gt;
+&lt;p&gt;The session was hosted by Uwe Ligges who has reviewed many packages on CRAN.&lt;/p&gt;
+</description>
+    </item>
     
     <item>
       <title>A Code of Conduct committee</title>
@@ -2013,195 +2026,6 @@ It uses redcapAPI to connect to the database.&lt;/p&gt;
 This is a technical problem that might impact users if there are no examples in the functions.&lt;/p&gt;
 &lt;p&gt;REDCapR is used by most packages to access the database, but most of the packages focus on transforming the data provided by the API (or data exported) or the exported data.
 It highlights that the data exported is useful but that depending on the preferences of the users it needs to be transformed for easy usage.&lt;/p&gt;
-&lt;/div&gt;
-</description>
-    </item>
-    
-    <item>
-      <title>Exploring CRAN&#39;s files: part 2</title>
-      <link>https://llrs.dev/post/2022/07/28/cran-files-2/</link>
-      <pubDate>Thu, 28 Jul 2022 00:00:00 +0000</pubDate>
-      <guid>https://llrs.dev/post/2022/07/28/cran-files-2/</guid>
-      <description>
-
-
-&lt;div id=&#34;introduction&#34; class=&#34;section level2&#34;&gt;
-&lt;h2&gt;Introduction&lt;/h2&gt;
-&lt;p&gt;In the &lt;a href=&#34;https://llrs.dev/post/2022/07/23/cran-files-1/&#34;&gt;first post&lt;/a&gt; of the series we briefly explored packages available on CRAN.
-Now I’ll focus on history of the packages and its size using the following files:&lt;/p&gt;
-&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;packages &amp;lt;- tools::CRAN_package_db()
-current &amp;lt;- tools:::CRAN_current_db()
-archive &amp;lt;- tools:::CRAN_archive_db()&lt;/code&gt;&lt;/pre&gt;
-&lt;p&gt;In this part we will use two files: The &lt;code&gt;current&lt;/code&gt; and the &lt;code&gt;archive&lt;/code&gt;, let’s see why.&lt;/p&gt;
-&lt;div id=&#34;current-file&#34; class=&#34;section level3&#34;&gt;
-&lt;h3&gt;current file&lt;/h3&gt;
-&lt;p&gt;The current database has has the package size, dates of modification, which I assume is date added to CRAN and user name of who last modified it.
-This is the same information returned by &lt;a href=&#34;https://search.r-project.org/R/refmans/base/html/file.info.html&#34;&gt;&lt;code&gt;file.info&lt;/code&gt;&lt;/a&gt;&lt;/p&gt;
-&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;current[1, 1:10]
-##     size isdir mode               mtime               ctime               atime
-## A3 42810 FALSE  664 2015-08-16 23:05:54 2022-09-03 12:02:27 2022-09-03 14:00:19
-##     uid  gid  uname    grname
-## A3 1001 1001 hornik cranadmin&lt;/code&gt;&lt;/pre&gt;
-&lt;/div&gt;
-&lt;div id=&#34;archive-file&#34; class=&#34;section level3&#34;&gt;
-&lt;h3&gt;archive file&lt;/h3&gt;
-&lt;p&gt;The archive database returns the same information, but as you might guess by the name it doesn’t provide information about current packages but for packages in the archive and no longer available by default.&lt;/p&gt;
-&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;archive[[1]]
-##                     size isdir mode               mtime               ctime
-## A3/A3_0.9.1.tar.gz 45252 FALSE  664 2013-02-07 10:00:29 2022-08-22 18:14:53
-## A3/A3_0.9.2.tar.gz 45907 FALSE  664 2013-03-26 19:58:40 2022-08-22 18:14:53
-##                                  atime  uid  gid  uname    grname
-## A3/A3_0.9.1.tar.gz 2022-08-22 17:39:50 1001 1001 hornik cranadmin
-## A3/A3_0.9.2.tar.gz 2022-08-22 17:39:50 1010 1001 ligges cranadmin&lt;/code&gt;&lt;/pre&gt;
-&lt;p&gt;The date matches that available on the &lt;a href=&#34;https://cran.r-project.org/src/contrib/Archive/A3/&#34;&gt;web’s old sources&lt;/a&gt;, so we can be confident of it’s meaning.&lt;/p&gt;
-&lt;/div&gt;
-&lt;/div&gt;
-&lt;div id=&#34;cran-history&#34; class=&#34;section level2&#34;&gt;
-&lt;h2&gt;CRAN history&lt;/h2&gt;
-&lt;p&gt;As we have seen there are some files about the archives of CRAN.
-These include information about date of modification (moving/editing) and user who did it and of course name and sometimes version of the package.
-These archives are the great treasure of CRAN because they help to make reproducible long time ago run experiments or analysis.&lt;/p&gt;
-&lt;p&gt;Note that I’m not totally sure that this archive contains the full record of packages, some initial packages might be missing.
-I’m also aware of some packages removed by CRAN which do not longer appear on this records.&lt;/p&gt;
-&lt;p&gt;Nevertheless, this should provide an accurate picture of packages available through time.
-Also as there is no information when a package is archived (here, &lt;a href=&#34;https://llrs.dev/post/2021/12/07/reasons-cran-archivals/&#34;&gt;there is on PACKAGES.in&lt;/a&gt;) so I might overestimate the packages available at any given moment.&lt;/p&gt;
-&lt;p&gt;Remember the plot about &lt;a href=&#34;#accepted&#34;&gt;acceptance of packages on CRAN?&lt;/a&gt;
-That plot only looked at current packages available, let’s check it with all the archive:&lt;/p&gt;
-&lt;div class=&#34;figure&#34;&gt;&lt;span style=&#34;display:block;&#34; id=&#34;fig:accumulative-packages&#34;&gt;&lt;/span&gt;
-&lt;img src=&#34;https://llrs.dev/post/2022/07/28/cran-files-2/index.en_files/figure-html/accumulative-packages-1.png&#34; alt=&#34;*Packages on CRAN archive by their addition to it.* There are over 125000 archives on CRAN.&#34; width=&#34;672&#34; /&gt;
-&lt;p class=&#34;caption&#34;&gt;
-Figure 1: &lt;em&gt;Packages on CRAN archive by their addition to it.&lt;/em&gt; There are over 125000 archives on CRAN.
-&lt;/p&gt;
-&lt;/div&gt;
-&lt;p&gt;All these packages come from packages with few releases and packages with many releases.
-If we look at which packages had the most releases:&lt;/p&gt;
-&lt;template id=&#34;41fb6fac-ce02-4889-ac51-217e365f4058&#34;&gt;&lt;style&gt;
-.tabwid table{
-  border-spacing:0px !important;
-  border-collapse:collapse;
-  line-height:1;
-  margin-left:auto;
-  margin-right:auto;
-  border-width: 0;
-  display: table;
-  margin-top: 1.275em;
-  margin-bottom: 1.275em;
-  border-color: transparent;
-}
-.tabwid_left table{
-  margin-left:0;
-}
-.tabwid_right table{
-  margin-right:0;
-}
-.tabwid td {
-    padding: 0;
-}
-.tabwid a {
-  text-decoration: none;
-}
-.tabwid thead {
-    background-color: transparent;
-}
-.tabwid tfoot {
-    background-color: transparent;
-}
-.tabwid table tr {
-background-color: transparent;
-}
-.katex-display {
-    margin: 0 0 !important;
-}
-&lt;/style&gt;&lt;div class=&#34;tabwid&#34;&gt;&lt;style&gt;.cl-e305f260{}.cl-e2fc13c6{font-family:&#39;DejaVu Sans&#39;;font-size:11pt;font-weight:normal;font-style:normal;text-decoration:none;color:rgba(0, 0, 0, 1.00);background-color:transparent;}.cl-e2fc2fdc{margin:0;text-align:left;border-bottom: 0 solid rgba(0, 0, 0, 1.00);border-top: 0 solid rgba(0, 0, 0, 1.00);border-left: 0 solid rgba(0, 0, 0, 1.00);border-right: 0 solid rgba(0, 0, 0, 1.00);padding-bottom:5pt;padding-top:5pt;padding-left:5pt;padding-right:5pt;line-height: 1;background-color:transparent;}.cl-e2fc2fe6{margin:0;text-align:right;border-bottom: 0 solid rgba(0, 0, 0, 1.00);border-top: 0 solid rgba(0, 0, 0, 1.00);border-left: 0 solid rgba(0, 0, 0, 1.00);border-right: 0 solid rgba(0, 0, 0, 1.00);padding-bottom:5pt;padding-top:5pt;padding-left:5pt;padding-right:5pt;line-height: 1;background-color:transparent;}.cl-e2fc7a46{width:69.7pt;background-color:transparent;vertical-align: middle;border-bottom: 0 solid rgba(0, 0, 0, 1.00);border-top: 0 solid rgba(0, 0, 0, 1.00);border-left: 0 solid rgba(0, 0, 0, 1.00);border-right: 0 solid rgba(0, 0, 0, 1.00);margin-bottom:0;margin-top:0;margin-left:0;margin-right:0;}.cl-e2fc7a5a{width:100.6pt;background-color:transparent;vertical-align: middle;border-bottom: 0 solid rgba(0, 0, 0, 1.00);border-top: 0 solid rgba(0, 0, 0, 1.00);border-left: 0 solid rgba(0, 0, 0, 1.00);border-right: 0 solid rgba(0, 0, 0, 1.00);margin-bottom:0;margin-top:0;margin-left:0;margin-right:0;}.cl-e2fc7a64{width:100.6pt;background-color:transparent;vertical-align: middle;border-bottom: 0 solid rgba(0, 0, 0, 1.00);border-top: 0 solid rgba(0, 0, 0, 1.00);border-left: 0 solid rgba(0, 0, 0, 1.00);border-right: 0 solid rgba(0, 0, 0, 1.00);margin-bottom:0;margin-top:0;margin-left:0;margin-right:0;}.cl-e2fc7a6e{width:69.7pt;background-color:transparent;vertical-align: middle;border-bottom: 0 solid rgba(0, 0, 0, 1.00);border-top: 0 solid rgba(0, 0, 0, 1.00);border-left: 0 solid rgba(0, 0, 0, 1.00);border-right: 0 solid rgba(0, 0, 0, 1.00);margin-bottom:0;margin-top:0;margin-left:0;margin-right:0;}.cl-e2fc7a6f{width:100.6pt;background-color:transparent;vertical-align: middle;border-bottom: 0 solid rgba(0, 0, 0, 1.00);border-top: 0 solid rgba(0, 0, 0, 1.00);border-left: 0 solid rgba(0, 0, 0, 1.00);border-right: 0 solid rgba(0, 0, 0, 1.00);margin-bottom:0;margin-top:0;margin-left:0;margin-right:0;}.cl-e2fc7a82{width:69.7pt;background-color:transparent;vertical-align: middle;border-bottom: 0 solid rgba(0, 0, 0, 1.00);border-top: 0 solid rgba(0, 0, 0, 1.00);border-left: 0 solid rgba(0, 0, 0, 1.00);border-right: 0 solid rgba(0, 0, 0, 1.00);margin-bottom:0;margin-top:0;margin-left:0;margin-right:0;}.cl-e2fc7a8c{width:100.6pt;background-color:transparent;vertical-align: middle;border-bottom: 0 solid rgba(0, 0, 0, 1.00);border-top: 0 solid rgba(0, 0, 0, 1.00);border-left: 0 solid rgba(0, 0, 0, 1.00);border-right: 0 solid rgba(0, 0, 0, 1.00);margin-bottom:0;margin-top:0;margin-left:0;margin-right:0;}.cl-e2fc7a96{width:69.7pt;background-color:transparent;vertical-align: middle;border-bottom: 0 solid rgba(0, 0, 0, 1.00);border-top: 0 solid rgba(0, 0, 0, 1.00);border-left: 0 solid rgba(0, 0, 0, 1.00);border-right: 0 solid rgba(0, 0, 0, 1.00);margin-bottom:0;margin-top:0;margin-left:0;margin-right:0;}.cl-e2fc7a97{width:100.6pt;background-color:transparent;vertical-align: middle;border-bottom: 0 solid rgba(0, 0, 0, 1.00);border-top: 0 solid rgba(0, 0, 0, 1.00);border-left: 0 solid rgba(0, 0, 0, 1.00);border-right: 0 solid rgba(0, 0, 0, 1.00);margin-bottom:0;margin-top:0;margin-left:0;margin-right:0;}.cl-e2fc7aa0{width:69.7pt;background-color:transparent;vertical-align: middle;border-bottom: 0 solid rgba(0, 0, 0, 1.00);border-top: 0 solid rgba(0, 0, 0, 1.00);border-left: 0 solid rgba(0, 0, 0, 1.00);border-right: 0 solid rgba(0, 0, 0, 1.00);margin-bottom:0;margin-top:0;margin-left:0;margin-right:0;}.cl-e2fc7aa1{width:100.6pt;background-color:transparent;vertical-align: middle;border-bottom: 2pt solid rgba(102, 102, 102, 1.00);border-top: 0 solid rgba(0, 0, 0, 1.00);border-left: 0 solid rgba(0, 0, 0, 1.00);border-right: 0 solid rgba(0, 0, 0, 1.00);margin-bottom:0;margin-top:0;margin-left:0;margin-right:0;}.cl-e2fc7aaa{width:69.7pt;background-color:transparent;vertical-align: middle;border-bottom: 2pt solid rgba(102, 102, 102, 1.00);border-top: 0 solid rgba(0, 0, 0, 1.00);border-left: 0 solid rgba(0, 0, 0, 1.00);border-right: 0 solid rgba(0, 0, 0, 1.00);margin-bottom:0;margin-top:0;margin-left:0;margin-right:0;}.cl-e2fc7aab{width:100.6pt;background-color:transparent;vertical-align: middle;border-bottom: 2pt solid rgba(102, 102, 102, 1.00);border-top: 2pt solid rgba(102, 102, 102, 1.00);border-left: 0 solid rgba(0, 0, 0, 1.00);border-right: 0 solid rgba(0, 0, 0, 1.00);margin-bottom:0;margin-top:0;margin-left:0;margin-right:0;}.cl-e2fc7ab4{width:69.7pt;background-color:transparent;vertical-align: middle;border-bottom: 2pt solid rgba(102, 102, 102, 1.00);border-top: 2pt solid rgba(102, 102, 102, 1.00);border-left: 0 solid rgba(0, 0, 0, 1.00);border-right: 0 solid rgba(0, 0, 0, 1.00);margin-bottom:0;margin-top:0;margin-left:0;margin-right:0;}&lt;/style&gt;&lt;table class=&#39;cl-e305f260&#39;&gt;
-&lt;thead&gt;&lt;tr style=&#34;overflow-wrap:break-word;&#34;&gt;&lt;td class=&#34;cl-e2fc7aab&#34;&gt;&lt;p class=&#34;cl-e2fc2fdc&#34;&gt;&lt;span class=&#34;cl-e2fc13c6&#34;&gt;package&lt;/span&gt;&lt;/p&gt;&lt;/td&gt;&lt;td class=&#34;cl-e2fc7ab4&#34;&gt;&lt;p class=&#34;cl-e2fc2fe6&#34;&gt;&lt;span class=&#34;cl-e2fc13c6&#34;&gt;Releases&lt;/span&gt;&lt;/p&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/thead&gt;&lt;tbody&gt;&lt;tr style=&#34;overflow-wrap:break-word;&#34;&gt;&lt;td class=&#34;cl-e2fc7a5a&#34;&gt;&lt;p class=&#34;cl-e2fc2fdc&#34;&gt;&lt;span class=&#34;cl-e2fc13c6&#34;&gt;spatstat&lt;/span&gt;&lt;/p&gt;&lt;/td&gt;&lt;td class=&#34;cl-e2fc7a46&#34;&gt;&lt;p class=&#34;cl-e2fc2fe6&#34;&gt;&lt;span class=&#34;cl-e2fc13c6&#34;&gt;206&lt;/span&gt;&lt;/p&gt;&lt;/td&gt;&lt;/tr&gt;&lt;tr style=&#34;overflow-wrap:break-word;&#34;&gt;&lt;td class=&#34;cl-e2fc7a97&#34;&gt;&lt;p class=&#34;cl-e2fc2fdc&#34;&gt;&lt;span class=&#34;cl-e2fc13c6&#34;&gt;Matrix&lt;/span&gt;&lt;/p&gt;&lt;/td&gt;&lt;td class=&#34;cl-e2fc7aa0&#34;&gt;&lt;p class=&#34;cl-e2fc2fe6&#34;&gt;&lt;span class=&#34;cl-e2fc13c6&#34;&gt;204&lt;/span&gt;&lt;/p&gt;&lt;/td&gt;&lt;/tr&gt;&lt;tr style=&#34;overflow-wrap:break-word;&#34;&gt;&lt;td class=&#34;cl-e2fc7a6f&#34;&gt;&lt;p class=&#34;cl-e2fc2fdc&#34;&gt;&lt;span class=&#34;cl-e2fc13c6&#34;&gt;mgcv&lt;/span&gt;&lt;/p&gt;&lt;/td&gt;&lt;td class=&#34;cl-e2fc7a82&#34;&gt;&lt;p class=&#34;cl-e2fc2fe6&#34;&gt;&lt;span class=&#34;cl-e2fc13c6&#34;&gt;162&lt;/span&gt;&lt;/p&gt;&lt;/td&gt;&lt;/tr&gt;&lt;tr style=&#34;overflow-wrap:break-word;&#34;&gt;&lt;td class=&#34;cl-e2fc7a64&#34;&gt;&lt;p class=&#34;cl-e2fc2fdc&#34;&gt;&lt;span class=&#34;cl-e2fc13c6&#34;&gt;RcppArmadillo&lt;/span&gt;&lt;/p&gt;&lt;/td&gt;&lt;td class=&#34;cl-e2fc7a6e&#34;&gt;&lt;p class=&#34;cl-e2fc2fe6&#34;&gt;&lt;span class=&#34;cl-e2fc13c6&#34;&gt;150&lt;/span&gt;&lt;/p&gt;&lt;/td&gt;&lt;/tr&gt;&lt;tr style=&#34;overflow-wrap:break-word;&#34;&gt;&lt;td class=&#34;cl-e2fc7a64&#34;&gt;&lt;p class=&#34;cl-e2fc2fdc&#34;&gt;&lt;span class=&#34;cl-e2fc13c6&#34;&gt;rgdal&lt;/span&gt;&lt;/p&gt;&lt;/td&gt;&lt;td class=&#34;cl-e2fc7a6e&#34;&gt;&lt;p class=&#34;cl-e2fc2fe6&#34;&gt;&lt;span class=&#34;cl-e2fc13c6&#34;&gt;146&lt;/span&gt;&lt;/p&gt;&lt;/td&gt;&lt;/tr&gt;&lt;tr style=&#34;overflow-wrap:break-word;&#34;&gt;&lt;td class=&#34;cl-e2fc7a97&#34;&gt;&lt;p class=&#34;cl-e2fc2fdc&#34;&gt;&lt;span class=&#34;cl-e2fc13c6&#34;&gt;nlme&lt;/span&gt;&lt;/p&gt;&lt;/td&gt;&lt;td class=&#34;cl-e2fc7aa0&#34;&gt;&lt;p class=&#34;cl-e2fc2fe6&#34;&gt;&lt;span class=&#34;cl-e2fc13c6&#34;&gt;143&lt;/span&gt;&lt;/p&gt;&lt;/td&gt;&lt;/tr&gt;&lt;tr style=&#34;overflow-wrap:break-word;&#34;&gt;&lt;td class=&#34;cl-e2fc7a8c&#34;&gt;&lt;p class=&#34;cl-e2fc2fdc&#34;&gt;&lt;span class=&#34;cl-e2fc13c6&#34;&gt;caret&lt;/span&gt;&lt;/p&gt;&lt;/td&gt;&lt;td class=&#34;cl-e2fc7a96&#34;&gt;&lt;p class=&#34;cl-e2fc2fe6&#34;&gt;&lt;span class=&#34;cl-e2fc13c6&#34;&gt;139&lt;/span&gt;&lt;/p&gt;&lt;/td&gt;&lt;/tr&gt;&lt;tr style=&#34;overflow-wrap:break-word;&#34;&gt;&lt;td class=&#34;cl-e2fc7a64&#34;&gt;&lt;p class=&#34;cl-e2fc2fdc&#34;&gt;&lt;span class=&#34;cl-e2fc13c6&#34;&gt;spdep&lt;/span&gt;&lt;/p&gt;&lt;/td&gt;&lt;td class=&#34;cl-e2fc7a6e&#34;&gt;&lt;p class=&#34;cl-e2fc2fe6&#34;&gt;&lt;span class=&#34;cl-e2fc13c6&#34;&gt;139&lt;/span&gt;&lt;/p&gt;&lt;/td&gt;&lt;/tr&gt;&lt;tr style=&#34;overflow-wrap:break-word;&#34;&gt;&lt;td class=&#34;cl-e2fc7a97&#34;&gt;&lt;p class=&#34;cl-e2fc2fdc&#34;&gt;&lt;span class=&#34;cl-e2fc13c6&#34;&gt;lattice&lt;/span&gt;&lt;/p&gt;&lt;/td&gt;&lt;td class=&#34;cl-e2fc7aa0&#34;&gt;&lt;p class=&#34;cl-e2fc2fe6&#34;&gt;&lt;span class=&#34;cl-e2fc13c6&#34;&gt;137&lt;/span&gt;&lt;/p&gt;&lt;/td&gt;&lt;/tr&gt;&lt;tr style=&#34;overflow-wrap:break-word;&#34;&gt;&lt;td class=&#34;cl-e2fc7a64&#34;&gt;&lt;p class=&#34;cl-e2fc2fdc&#34;&gt;&lt;span class=&#34;cl-e2fc13c6&#34;&gt;plotrix&lt;/span&gt;&lt;/p&gt;&lt;/td&gt;&lt;td class=&#34;cl-e2fc7a6e&#34;&gt;&lt;p class=&#34;cl-e2fc2fe6&#34;&gt;&lt;span class=&#34;cl-e2fc13c6&#34;&gt;131&lt;/span&gt;&lt;/p&gt;&lt;/td&gt;&lt;/tr&gt;&lt;tr style=&#34;overflow-wrap:break-word;&#34;&gt;&lt;td class=&#34;cl-e2fc7a6f&#34;&gt;&lt;p class=&#34;cl-e2fc2fdc&#34;&gt;&lt;span class=&#34;cl-e2fc13c6&#34;&gt;sp&lt;/span&gt;&lt;/p&gt;&lt;/td&gt;&lt;td class=&#34;cl-e2fc7a82&#34;&gt;&lt;p class=&#34;cl-e2fc2fe6&#34;&gt;&lt;span class=&#34;cl-e2fc13c6&#34;&gt;128&lt;/span&gt;&lt;/p&gt;&lt;/td&gt;&lt;/tr&gt;&lt;tr style=&#34;overflow-wrap:break-word;&#34;&gt;&lt;td class=&#34;cl-e2fc7a8c&#34;&gt;&lt;p class=&#34;cl-e2fc2fdc&#34;&gt;&lt;span class=&#34;cl-e2fc13c6&#34;&gt;XML&lt;/span&gt;&lt;/p&gt;&lt;/td&gt;&lt;td class=&#34;cl-e2fc7a96&#34;&gt;&lt;p class=&#34;cl-e2fc2fe6&#34;&gt;&lt;span class=&#34;cl-e2fc13c6&#34;&gt;126&lt;/span&gt;&lt;/p&gt;&lt;/td&gt;&lt;/tr&gt;&lt;tr style=&#34;overflow-wrap:break-word;&#34;&gt;&lt;td class=&#34;cl-e2fc7a97&#34;&gt;&lt;p class=&#34;cl-e2fc2fdc&#34;&gt;&lt;span class=&#34;cl-e2fc13c6&#34;&gt;Rcmdr&lt;/span&gt;&lt;/p&gt;&lt;/td&gt;&lt;td class=&#34;cl-e2fc7aa0&#34;&gt;&lt;p class=&#34;cl-e2fc2fe6&#34;&gt;&lt;span class=&#34;cl-e2fc13c6&#34;&gt;123&lt;/span&gt;&lt;/p&gt;&lt;/td&gt;&lt;/tr&gt;&lt;tr style=&#34;overflow-wrap:break-word;&#34;&gt;&lt;td class=&#34;cl-e2fc7a97&#34;&gt;&lt;p class=&#34;cl-e2fc2fdc&#34;&gt;&lt;span class=&#34;cl-e2fc13c6&#34;&gt;lme4&lt;/span&gt;&lt;/p&gt;&lt;/td&gt;&lt;td class=&#34;cl-e2fc7aa0&#34;&gt;&lt;p class=&#34;cl-e2fc2fe6&#34;&gt;&lt;span class=&#34;cl-e2fc13c6&#34;&gt;122&lt;/span&gt;&lt;/p&gt;&lt;/td&gt;&lt;/tr&gt;&lt;tr style=&#34;overflow-wrap:break-word;&#34;&gt;&lt;td class=&#34;cl-e2fc7a5a&#34;&gt;&lt;p class=&#34;cl-e2fc2fdc&#34;&gt;&lt;span class=&#34;cl-e2fc13c6&#34;&gt;gstat&lt;/span&gt;&lt;/p&gt;&lt;/td&gt;&lt;td class=&#34;cl-e2fc7a46&#34;&gt;&lt;p class=&#34;cl-e2fc2fe6&#34;&gt;&lt;span class=&#34;cl-e2fc13c6&#34;&gt;121&lt;/span&gt;&lt;/p&gt;&lt;/td&gt;&lt;/tr&gt;&lt;tr style=&#34;overflow-wrap:break-word;&#34;&gt;&lt;td class=&#34;cl-e2fc7a8c&#34;&gt;&lt;p class=&#34;cl-e2fc2fdc&#34;&gt;&lt;span class=&#34;cl-e2fc13c6&#34;&gt;arm&lt;/span&gt;&lt;/p&gt;&lt;/td&gt;&lt;td class=&#34;cl-e2fc7a96&#34;&gt;&lt;p class=&#34;cl-e2fc2fe6&#34;&gt;&lt;span class=&#34;cl-e2fc13c6&#34;&gt;119&lt;/span&gt;&lt;/p&gt;&lt;/td&gt;&lt;/tr&gt;&lt;tr style=&#34;overflow-wrap:break-word;&#34;&gt;&lt;td class=&#34;cl-e2fc7a64&#34;&gt;&lt;p class=&#34;cl-e2fc2fdc&#34;&gt;&lt;span class=&#34;cl-e2fc13c6&#34;&gt;foreign&lt;/span&gt;&lt;/p&gt;&lt;/td&gt;&lt;td class=&#34;cl-e2fc7a6e&#34;&gt;&lt;p class=&#34;cl-e2fc2fe6&#34;&gt;&lt;span class=&#34;cl-e2fc13c6&#34;&gt;117&lt;/span&gt;&lt;/p&gt;&lt;/td&gt;&lt;/tr&gt;&lt;tr style=&#34;overflow-wrap:break-word;&#34;&gt;&lt;td class=&#34;cl-e2fc7a5a&#34;&gt;&lt;p class=&#34;cl-e2fc2fdc&#34;&gt;&lt;span class=&#34;cl-e2fc13c6&#34;&gt;party&lt;/span&gt;&lt;/p&gt;&lt;/td&gt;&lt;td class=&#34;cl-e2fc7a46&#34;&gt;&lt;p class=&#34;cl-e2fc2fe6&#34;&gt;&lt;span class=&#34;cl-e2fc13c6&#34;&gt;117&lt;/span&gt;&lt;/p&gt;&lt;/td&gt;&lt;/tr&gt;&lt;tr style=&#34;overflow-wrap:break-word;&#34;&gt;&lt;td class=&#34;cl-e2fc7a64&#34;&gt;&lt;p class=&#34;cl-e2fc2fdc&#34;&gt;&lt;span class=&#34;cl-e2fc13c6&#34;&gt;maptools&lt;/span&gt;&lt;/p&gt;&lt;/td&gt;&lt;td class=&#34;cl-e2fc7a6e&#34;&gt;&lt;p class=&#34;cl-e2fc2fe6&#34;&gt;&lt;span class=&#34;cl-e2fc13c6&#34;&gt;113&lt;/span&gt;&lt;/p&gt;&lt;/td&gt;&lt;/tr&gt;&lt;tr style=&#34;overflow-wrap:break-word;&#34;&gt;&lt;td class=&#34;cl-e2fc7aa1&#34;&gt;&lt;p class=&#34;cl-e2fc2fdc&#34;&gt;&lt;span class=&#34;cl-e2fc13c6&#34;&gt;raster&lt;/span&gt;&lt;/p&gt;&lt;/td&gt;&lt;td class=&#34;cl-e2fc7aaa&#34;&gt;&lt;p class=&#34;cl-e2fc2fe6&#34;&gt;&lt;span class=&#34;cl-e2fc13c6&#34;&gt;108&lt;/span&gt;&lt;/p&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/tbody&gt;&lt;/table&gt;&lt;/div&gt;&lt;/template&gt;
-&lt;div class=&#34;flextable-shadow-host&#34; id=&#34;c207439a-5643-4e95-950e-721182ef54dd&#34;&gt;&lt;/div&gt;
-&lt;script&gt;
-var dest = document.getElementById(&#34;c207439a-5643-4e95-950e-721182ef54dd&#34;);
-var template = document.getElementById(&#34;41fb6fac-ce02-4889-ac51-217e365f4058&#34;);
-var caption = template.content.querySelector(&#34;caption&#34;);
-if(caption) {
-  caption.style.cssText = &#34;display:block;text-align:center;&#34;;
-  var newcapt = document.createElement(&#34;p&#34;);
-  newcapt.appendChild(caption)
-  dest.parentNode.insertBefore(newcapt, dest.previousSibling);
-}
-var fantome = dest.attachShadow({mode: &#39;open&#39;});
-var templateContent = template.content;
-fantome.appendChild(templateContent);
-&lt;/script&gt;
-
-&lt;p&gt;Surprisingly there are packages with more than 200 versions on CRAN!&lt;/p&gt;
-&lt;div class=&#34;figure&#34;&gt;&lt;span style=&#34;display:block;&#34; id=&#34;fig:release-distribution&#34;&gt;&lt;/span&gt;
-&lt;img src=&#34;https://llrs.dev/post/2022/07/28/cran-files-2/index.en_files/figure-html/release-distribution-1.png&#34; alt=&#34;*Releases distirbution*. Packages and number of releases&#34; width=&#34;672&#34; /&gt;
-&lt;p class=&#34;caption&#34;&gt;
-Figure 2: &lt;em&gt;Releases distirbution&lt;/em&gt;. Packages and number of releases
-&lt;/p&gt;
-&lt;/div&gt;
-&lt;p&gt;Most packages have 1 release, usually packages have 3, but the mean is around 6.&lt;/p&gt;
-&lt;p&gt;Given all this different versions of packages how big are all the packages on CRAN?&lt;/p&gt;
-&lt;div id=&#34;cran-size&#34; class=&#34;section level3&#34;&gt;
-&lt;h3&gt;CRAN size&lt;/h3&gt;
-&lt;p&gt;Have you ever wondered how big is CRAN? According to the memory size of the source packages all CRAN source packages are approximately 96.8 Gb.&lt;/p&gt;
-&lt;p&gt;This doesn’t include binaries for multiple architectures and OS.
-The package size might indicate whether the package has considerable amount of data.&lt;/p&gt;
-&lt;p&gt;Looking back to the size of the packages along time we can see this pattern:&lt;/p&gt;
-&lt;div class=&#34;figure&#34;&gt;&lt;span style=&#34;display:block;&#34; id=&#34;fig:packages-size&#34;&gt;&lt;/span&gt;
-&lt;img src=&#34;https://llrs.dev/post/2022/07/28/cran-files-2/index.en_files/figure-html/packages-size-1.png&#34; alt=&#34;*Package and their median size.* Archived packages have become bigger since 2014. Packages on CRAN have been getting bigger since 2017.&#34; width=&#34;672&#34; /&gt;
-&lt;p class=&#34;caption&#34;&gt;
-Figure 3: &lt;em&gt;Package and their median size.&lt;/em&gt; Archived packages have become bigger since 2014. Packages on CRAN have been getting bigger since 2017.
-&lt;/p&gt;
-&lt;/div&gt;
-&lt;p&gt;Packages available on CRAN are smaller than those no longer on CRAN.
-But versions of packages on CRAN that got archived are usually bigger than current versions.
-Packages no longer on CRAN are usually bigger.
-Median size of packages is increasing (quickly).&lt;/p&gt;
-&lt;div class=&#34;figure&#34;&gt;&lt;span style=&#34;display:block;&#34; id=&#34;fig:release-size&#34;&gt;&lt;/span&gt;
-&lt;img src=&#34;https://llrs.dev/post/2022/07/28/cran-files-2/index.en_files/figure-html/release-size-1.png&#34; alt=&#34;*Size of package with releases.* Package are usually small but seem to gain weight when updating.&#34; width=&#34;672&#34; /&gt;
-&lt;p class=&#34;caption&#34;&gt;
-Figure 4: &lt;em&gt;Size of package with releases.&lt;/em&gt; Package are usually small but seem to gain weight when updating.
-&lt;/p&gt;
-&lt;/div&gt;
-&lt;p&gt;Typically packages increase their size with each new release up to when they reach 50 releases.
-For higher releases this plot depends on very few packages and might not be representative.&lt;/p&gt;
-&lt;div class=&#34;figure&#34;&gt;&lt;span style=&#34;display:block;&#34; id=&#34;fig:release-size2&#34;&gt;&lt;/span&gt;
-&lt;img src=&#34;https://llrs.dev/post/2022/07/28/cran-files-2/index.en_files/figure-html/release-size2-1.png&#34; alt=&#34;*Size of package with releases by availability.* Packages no longer in CRAN are usually smaller than those in it. The continous black line is CRAN&#39;s current threshold, while the discontinous black line is current median size.&#34; width=&#34;672&#34; /&gt;
-&lt;p class=&#34;caption&#34;&gt;
-Figure 5: &lt;em&gt;Size of package with releases by availability.&lt;/em&gt; Packages no longer in CRAN are usually smaller than those in it. The continous black line is CRAN’s current threshold, while the discontinous black line is current median size.
-&lt;/p&gt;
-&lt;/div&gt;
-&lt;p&gt;Here we can appreciate better how packages tend to be below the CRAN threshold.
-There isn’t much of a difference between packages available on CRAN and those archived.&lt;/p&gt;
-&lt;p&gt;If we look at the size of package of the first release over time we’ll see a representative view:&lt;/p&gt;
-&lt;div class=&#34;figure&#34;&gt;&lt;span style=&#34;display:block;&#34; id=&#34;fig:size-time&#34;&gt;&lt;/span&gt;
-&lt;img src=&#34;https://llrs.dev/post/2022/07/28/cran-files-2/index.en_files/figure-html/size-time-1.png&#34; alt=&#34;*Size of the first release by time*. Package size increases with time with a peak around 2010 and increasing again since 2014 but still hasn&#39;t surprased the previous record.&#34; width=&#34;672&#34; /&gt;
-&lt;p class=&#34;caption&#34;&gt;
-Figure 6: &lt;em&gt;Size of the first release by time&lt;/em&gt;. Package size increases with time with a peak around 2010 and increasing again since 2014 but still hasn’t surprased the previous record.
-&lt;/p&gt;
-&lt;/div&gt;
-&lt;p&gt;Package size tends to increase except for the brief period 2010-2014.
-Currently it increases less than before that period but is close to its maximum.&lt;/p&gt;
-&lt;/div&gt;
-&lt;/div&gt;
-&lt;div id=&#34;conclusions&#34; class=&#34;section level2&#34;&gt;
-&lt;h2&gt;Conclusions&lt;/h2&gt;
-&lt;ul&gt;
-&lt;li&gt;&lt;p&gt;Most packages are not updated too much, between 1 and 3 times.
-But there are packages that are updated quite a lot, this might mean they are data packages and not software packages or that they have frequent minor and major updates.&lt;/p&gt;&lt;/li&gt;
-&lt;li&gt;&lt;p&gt;Most current packages have smaller size than those archived.
-Packages no longer available usually had bigger size than those packages still on CRAN.&lt;/p&gt;&lt;/li&gt;
-&lt;li&gt;&lt;p&gt;Surprisingly packages increase their size a lot till the 25 release.
-But also with time except for a period in 2010 and 2014.
-This decreasing period might be due to a change in CRAN policy.&lt;/p&gt;&lt;/li&gt;
-&lt;/ul&gt;
-&lt;/div&gt;
-&lt;div id=&#34;future-parts&#34; class=&#34;section level2&#34;&gt;
-&lt;h2&gt;Future parts&lt;/h2&gt;
-&lt;p&gt;On future posts I’ll explore:&lt;/p&gt;
-&lt;ul&gt;
-&lt;li&gt;&lt;p&gt;patterns accepting packages and updates in packages.&lt;/p&gt;&lt;/li&gt;
-&lt;li&gt;&lt;p&gt;the relation between dependencies, initial release and updates.&lt;/p&gt;&lt;/li&gt;
-&lt;li&gt;&lt;p&gt;who handled the packages.&lt;/p&gt;&lt;/li&gt;
-&lt;/ul&gt;
 &lt;/div&gt;
 </description>
     </item>

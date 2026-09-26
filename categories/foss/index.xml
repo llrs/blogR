@@ -5,12 +5,25 @@
     <link>https://llrs.dev/categories/foss/</link>
       <atom:link href="https://llrs.dev/categories/foss/index.xml" rel="self" type="application/rss+xml" />
     <description>FOSS</description>
-    <generator>Source Themes Academic (https://sourcethemes.com/academic/)</generator><language>en-us</language><copyright>If it is code you can copy and reuse (MIT) if it is text, please cite and reuse CC-BY 2026.</copyright><lastBuildDate>Wed, 11 Jun 2025 00:00:00 +0000</lastBuildDate>
+    <generator>Source Themes Academic (https://sourcethemes.com/academic/)</generator><language>en-us</language><copyright>If it is code you can copy and reuse (MIT) if it is text, please cite and reuse CC-BY 2026.</copyright><lastBuildDate>Tue, 07 Jul 2026 10:30:00 +0200</lastBuildDate>
     <image>
       <url>img/map[gravatar:%!s(bool=false) shape:circle]</url>
       <title>FOSS</title>
       <link>https://llrs.dev/categories/foss/</link>
     </image>
+    
+    <item>
+      <title>Maintaining a package on CRAN</title>
+      <link>https://llrs.dev/talk/maintaining-a-package-on-cran/</link>
+      <pubDate>Tue, 07 Jul 2026 10:30:00 +0200</pubDate>
+      <guid>https://llrs.dev/talk/maintaining-a-package-on-cran/</guid>
+      <description>
+
+
+&lt;p&gt;This is a presentation of this &lt;a href=&#34;https://llrs.dev/post/2026/04/25/life-of-a-package/&#34;&gt;blog post&lt;/a&gt; with a bit more focus on new maintainers and to help maintainers how to keep the packages on CRAN. I used the analogy of a garden to explain the role and tasks that CRAN maintainers have regarding packages.&lt;/p&gt;
+&lt;p&gt;The session was hosted by Uwe Ligges who has reviewed many packages on CRAN.&lt;/p&gt;
+</description>
+    </item>
     
     <item>
       <title>Volunteer Responsibility Amnesty Day</title>

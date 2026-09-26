@@ -5,19 +5,40 @@
     <loc>https://llrs.dev/home/</loc>
   </url><url>
     <loc>https://llrs.dev/authors/</loc>
-    <lastmod>2026-04-25T00:00:00+00:00</lastmod>
+    <lastmod>2026-07-07T10:30:00+02:00</lastmod>
   </url><url>
     <loc>https://llrs.dev/</loc>
-    <lastmod>2026-04-25T00:00:00+00:00</lastmod>
+    <lastmod>2026-07-07T10:30:00+02:00</lastmod>
   </url><url>
     <loc>https://llrs.dev/authors/admin/</loc>
-    <lastmod>2026-04-25T00:00:00+00:00</lastmod>
+    <lastmod>2026-07-07T10:30:00+02:00</lastmod>
   </url><url>
     <loc>https://llrs.dev/categories/</loc>
-    <lastmod>2026-04-25T00:00:00+00:00</lastmod>
+    <lastmod>2026-07-07T10:30:00+02:00</lastmod>
   </url><url>
     <loc>https://llrs.dev/tags/cran/</loc>
-    <lastmod>2026-04-25T00:00:00+00:00</lastmod>
+    <lastmod>2026-07-07T10:30:00+02:00</lastmod>
+  </url><url>
+    <loc>https://llrs.dev/categories/cran/</loc>
+    <lastmod>2026-07-07T10:30:00+02:00</lastmod>
+  </url><url>
+    <loc>https://llrs.dev/categories/foss/</loc>
+    <lastmod>2026-07-07T10:30:00+02:00</lastmod>
+  </url><url>
+    <loc>https://llrs.dev/talk/maintaining-a-package-on-cran/</loc>
+    <lastmod>2026-07-07T10:30:00+02:00</lastmod>
+  </url><url>
+    <loc>https://llrs.dev/tags/r/</loc>
+    <lastmod>2026-07-07T10:30:00+02:00</lastmod>
+  </url><url>
+    <loc>https://llrs.dev/categories/r/</loc>
+    <lastmod>2026-07-07T10:30:00+02:00</lastmod>
+  </url><url>
+    <loc>https://llrs.dev/tags/</loc>
+    <lastmod>2026-07-07T10:30:00+02:00</lastmod>
+  </url><url>
+    <loc>https://llrs.dev/talk/</loc>
+    <lastmod>2026-07-07T10:30:00+02:00</lastmod>
   </url><url>
     <loc>https://llrs.dev/post/2026/04/25/life-of-a-package/</loc>
     <lastmod>2026-04-25T00:00:00+00:00</lastmod>
@@ -25,16 +46,7 @@
     <loc>https://llrs.dev/post/</loc>
     <lastmod>2026-04-25T00:00:00+00:00</lastmod>
   </url><url>
-    <loc>https://llrs.dev/categories/r/</loc>
-    <lastmod>2026-04-25T00:00:00+00:00</lastmod>
-  </url><url>
-    <loc>https://llrs.dev/tags/</loc>
-    <lastmod>2026-04-25T00:00:00+00:00</lastmod>
-  </url><url>
     <loc>https://llrs.dev/tags/bioconductor/</loc>
-    <lastmod>2025-06-11T00:00:00+00:00</lastmod>
-  </url><url>
-    <loc>https://llrs.dev/categories/foss/</loc>
     <lastmod>2025-06-11T00:00:00+00:00</lastmod>
   </url><url>
     <loc>https://llrs.dev/post/2025/06/11/volunteer-responsibility-amnesty-day/</loc>
@@ -45,12 +57,6 @@
   </url><url>
     <loc>https://llrs.dev/categories/bioconductor/</loc>
     <lastmod>2025-02-10T00:00:00+00:00</lastmod>
-  </url><url>
-    <loc>https://llrs.dev/tags/r/</loc>
-    <lastmod>2025-02-10T00:00:00+00:00</lastmod>
-  </url><url>
-    <loc>https://llrs.dev/categories/cran/</loc>
-    <lastmod>2024-12-23T00:00:00+00:00</lastmod>
   </url><url>
     <loc>https://llrs.dev/tags/cran-files/</loc>
     <lastmod>2024-12-23T00:00:00+00:00</lastmod>
@@ -80,9 +86,6 @@
     <lastmod>2024-04-02T00:00:00+00:00</lastmod>
   </url><url>
     <loc>https://llrs.dev/tags/rtweet/</loc>
-    <lastmod>2024-02-29T19:00:00+02:00</lastmod>
-  </url><url>
-    <loc>https://llrs.dev/talk/</loc>
     <lastmod>2024-02-29T19:00:00+02:00</lastmod>
   </url><url>
     <loc>https://llrs.dev/talk/user-madrid-rtweet/</loc>
