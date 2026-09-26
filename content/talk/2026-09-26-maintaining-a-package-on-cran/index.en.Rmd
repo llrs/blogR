@@ -1,0 +1,56 @@
+---
+title: 'Maintaining a package on CRAN'
+author: Lluís Revilla Sancho
+date: '2026-07-07T10:30:00+02:00'
+slug: maintaining-a-package-on-cran
+categories:
+  - CRAN
+  - r
+  - FOSS
+tags:
+  - CRAN
+  - R
+subtitle: ~
+event: useR2026
+event_url: https://user2026.r-project.org
+location: Warsaw
+address:
+  street: ~
+  city: ~
+  region: ~
+  postcode: ~
+  country: ~
+summary: "My talk about CRAN packages and why and when are they archived."
+abstract: "Publishing a package on CRAN is often half the work of a maintainer, then comes the hardest part: maintaining it there. Many resources focus on getting the package published on CRAN and what it takes one maintainer to do so. They share common problems and how to solve them but they are not based on data or focused on maintaining the package on CRAN.  
+
+
+Recently, CRAN has open up some historical data about actions take with packages. These datasets contain the historic data of each action from the CRAN team in relation to published packages. With these datasets we will learn how often are packages updated and archived. Then, we will explore characteristics related to a package staying longer on CRAN and how they reacted to CRAN's emails to update packages. Last, we will learn what are the common causes that require a package update or lead to them being archived.  
+
+
+With all this together we will learn what it takes to publish a package on CRAN, update it and keep it working for all users with the high quality R is known for. This will help reducing the friction between package developers and CRAN volunteers and keep publishing great packages."
+date_end: '2026-07-07T11:00:00+02:00'
+all_day: false
+publishDate: '2026-07-07T10:30:00+02:00'
+authors:
+  - -admin
+featured: false
+image:
+  caption: 'Reasons why packages are archived'
+  focal_point: ''
+links:
+  - icon: images
+    icon_pack: fas
+    name: slides
+    url: https://events.digital-research.academy/event/109/contributions/408/attachments/84/420/maintaining_pkg_on_cran_Lluis_revilla_useR2026.pdf
+  - icon: youtube
+    icon_pack: fab
+    name: video
+    url: https://youtu.be/uGMRitygevs?si=yKd6AursYDDtlEV4
+projects: []
+---
+
+This is a presentation of this [blog post](https://llrs.dev/post/2026/04/25/life-of-a-package/) with a bit more focus on new maintainers and to help maintainers how to keep the packages on CRAN. I used the analogy of a garden to explain the role and tasks that CRAN maintainers have regarding packages. 
+
+The session was hosted by Uwe Ligges who has reviewed many packages on CRAN. 
+
+
